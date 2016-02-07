@@ -1,0 +1,232 @@
+/*
+ * Base structure
+ */
+
+body {
+    padding-top: 50px;
+    background: #fafafa;
+}
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.glyphicon.green {
+    color: #4da74d;
+}
+
+.glyphicon.red {
+    color: #cb4b4b;
+}
+
+.glyphicon.yellow {
+    color: #f1c40f;
+}
+
+/*
+ * Navbar
+ */
+
+.logo {
+    width: 48px;
+    height: 46px;
+}
+
+.navbar-brand .logo, .profile-picture {
+    width: 24px;
+    height: 23px;
+    position: relative;
+    top: -2px;
+    display: inline;
+    border-radius:2px;
+}
+
+/*
+ * Dynamic Grid System
+ */
+
+@media screen and (min-width: 1px) and (max-width: 767px) {
+    #grid[data-columns]::before {
+        content: '1 .col-xs-12';
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    #grid[data-columns]::before {
+        content: '1 .col-sm-12';
+    }
+}
+
+@media screen and (min-width: 992px) and (max-width: 9999px) {
+    #grid[data-columns]::before {
+        content: '2 .col-md-6';
+    }
+}
+
+/*
+ * Main content
+ */
+
+.main {
+    /* Push main content below fixed navigation */
+    margin-top: 13px;
+    padding-top:20px;
+    
+}
+
+.page-header {
+    margin-top: 0;
+    padding: 0;
+}
+
+
+
+.profile-image {
+    height: 100px;
+    width: 100px;
+    border:none;
+    padding:0px;
+    
+}
+
+#housing-points {
+    position: absolute;
+    top: 148px;
+    left: 239px;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+#housing-points-chart {
+    height: 250px;
+    width: 100%;
+}
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.button-panel-title {
+    line-height: 34px;
+}
+
+.room-select-btn {
+    width:70px;
+}
+
+
+
+
+
+
+
+.on-floor-search-input {
+    font-size:15px;
+    width:180px;
+    padding:5px;
+    height:30px;
+}
+
+.on-floor-search-btn {
+    padding:4px 10px;
+    font-size:13px;
+    position:relative;
+    top:-6px;
+    right:-10px;
+    
+}
+
+.table-fill {
+    padding-left:0px;
+    padding-right:0px;
+    padding-top:0px;
+    padding-bottom:0px;
+}
+
+.panel-inner-padding {
+    padding-left:10px;
+    padding-right:10px;
+    padding-bottom:10px;
+}
+
+.no-bottom-margin {
+    margin-bottom: 0px;
+}
+.username{
+    margin-top:10px;
+    
+}
+
+@media(max-width:767px){
+    .mobile-hide {
+        display:none;
+    }
+    .major-project-title{
+           width:70%;
+            
+    }
+    .profile-image{
+        margin:auto;
+        
+    }
+    .profile-badges{
+        text-align:center;
+        
+    }
+    .username{
+        text-align:center;
+        
+    }
+    .mobile-text-center{
+        text-align:center;
+        
+    }
+    hr{
+        margin-top:25px;
+    }
+    
+}
+@media(min-width:768px){
+    .profile-image{
+        float:right;
+        
+    }
+    hr{
+        margin-top:10px;
+    }
+    
+    
+}
+.navbar-inverse .navbar-toggle{
+    border-color:transparent;
+    
+}
+
+/* Material Panels */
+
+
+.panel-default{
+    border:none;
+    border-radius:2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    
+}
+.panel.panel-default .panel-heading{
+    border-bottom:none;
+}
+
+.panel-default>.panel-heading{
+    background-color:#b0197e;
+    border-color:#b0197e;
+    color:#FFF;
+    border-bottom:none;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    
+}
