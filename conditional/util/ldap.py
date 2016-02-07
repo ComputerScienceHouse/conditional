@@ -35,6 +35,10 @@ def __ldap_get_field__(username, field):
     return ldap_results[0][1][field]
 
 @ldap_init_required
+def __ldap_get_members__():
+    return ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE, "")
+
+@ldap_init_required
 def __ldap_is_member_of_group__(username, group):
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
             "(cn=%s)" % group)
@@ -49,6 +53,12 @@ def ldap_get_housing_points(username):
 
 def ldap_get_room_number(username):
     return __ldap_get_field__('roomNumber')
+
+def ldap_get_all_members():
+    return __ldap_get_members__()
+
+def ldap_get_active_members():
+    return [x for x in __ldap_get_members__() if ldap_is_active(x)]
 
 def ldap_is_active(username):
     # When active members become a group rather than an attribute this will
