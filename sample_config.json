@@ -1,5 +1,6 @@
 {
     "flask" : {
+        "debug": true,
         "port": 6969
     }
 }
