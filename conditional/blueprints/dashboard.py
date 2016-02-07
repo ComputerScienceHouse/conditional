@@ -11,5 +11,5 @@ def display_dashboard():
 
     user_name = request.headers.get('x-webauth-user')
 
-    return render_template('index.html',
+    return render_template('dashboard.html',
                            username = user_name)
