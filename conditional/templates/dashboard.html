@@ -1,6 +1,5 @@
 {% extends "nav.html" %}
 
-
 <div class="container main">
 <div class="panel panel-default" style="margin-left:15px; margin-right:15px;">
                         <div class="panel-body">
@@ -41,11 +40,279 @@
     
     </div>
             <div id="grid" data-columns>
-                {% extends "hounsing_widget.html" %}
-                {% extends "evaluations_widget.html" %}
-                {% extends "conditional_widget.html" %}
-                {% extends "major_projects_widgdet.html" %}
-                {% extends "attendance_widget.html" %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Housing Status</h3>
+                    </div>
+                    <div class="panel-body table-fill">
+                        <table class="table table-striped table-responsive no-bottom-margin">
+                            <tbody>
+                                <tr>
+                                    <th>Housing Points</th>
+                                    <td>{% block housing_points %}{% endblock %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Room Number</th>
+                                    <td>{% block room_number %}{% endblock %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Future Room Number</th>
+                                    <td>{% block future_room %}{% endblock %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Housing Queue Position</th>
+                                    <td>{% block queue_position %}{% endblock %} / {% block total_queue %}{% endblock %}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Freshman Evaluations
+                            <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                            <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                            <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Failed</span>
+                        </h3>
+                    </div>
+                    <div class="panel-body table-fill">
+                        <table class="table table-striped table-responsive">
+                            <tbody>
+                            <tr>
+                                <th>Evaluations Date</th>
+                                <td>{% block eval_date %}{% endblock %}</td>
+                            </tr>
+                            <tr>
+                                <th>Signatures Missed</th>
+                                <td>
+                                    {% if sig_missed == 0 %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                    {% endif %}
+
+                                    {% block sig_missed %}{% endblock %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Committee Meetings</th>
+                                <td>
+                                    {% if committee_meetings >= 10 %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                    {% endif %}
+
+                                    {% block committee_meetings %}{% endblock %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>House Meetings Missed</th>
+                                <td>
+                                    {% if hm_missed == 0 %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                    {% endif %}
+                                    {% block hm_missed %}{% endblock %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Technical Seminars</th>
+                                <td>
+                                    {% if ts_total >= 2 %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                    {% endif %}
+                                    {% block ts_string %}{% endblock %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Social Events</th>
+                                <td>
+                                    {% block social_events %}{% endblock %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Freshman Project</th>
+                                <td>
+                                    {% if fresh_proj %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span><span>Pass</span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span><span>Fail</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="panel-inner-padding">
+                            <strong>General Comments:</strong>
+                            <div>{% block general_comments %}{% endblock %}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" ng-hide="evaluations.isFreshmanEvals">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Spring Evaluations
+                            {% if spring_eval_status == "Passed" %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                            {% elif spring_eval_status == "Pending" %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                            {% else %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Failed</span>
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="panel-body table-fill">
+                        <table class="table table-striped table-responsive no-bottom-margin">
+                            <tbody>
+                            <tr>
+                                <th>Committee Meetings</th>
+                                <td>
+                                    {% if committee_meetings >= 25 %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                    {% endif %}
+
+                                    {{ self.committee_meetings() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>House Meetings Missed</th>
+                                <td>
+                                    {% if hm_missed == 0 %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                    {% endif %}
+                                    {{ self.hm_missed() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Major Project</th>
+                                <td>
+                                    {% if spring_eval_status == "Passed" %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% elif spring_eval_status == "Pending" %}
+                                        <span class="glyphicon glyphicon-hourglass yellow"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% endif %}
+                                    <span>{% block mp_name %}{% endblock %}</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="panel-inner-padding">
+                            <strong>General Comments:</strong>
+                            <div>{{ self.general_comments() }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Conditionals</h3>
+                    </div>
+                    <div class="panel-body table-fill">
+                        <div class="table-responsive">
+                        <table class="table table-striped no-bottom-margin">
+                            <tbody>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Description</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                </tr>
+                                <!-- ng-repeat="conditional in conditionals.data"-->
+                                <tr dir-paginate="conditional in (conditionals.data) | itemsPerPage: 10">
+                                    <td>{% block username %}{% endblock %}</td> <!-- If showing all users -->
+                                    <td>{% block conditional_description %}{% endblock %}</td>
+                                    <td>{% block deadline %}{% endblock %}</td>
+
+                                    {% if conditional_status == "Pending" %}
+                                    <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
+                                    {% elif conditional_status == "Passed" %}
+                                    <td><span class="glyphicon glyphicon-ok-sign green"></span> Passed</td>
+                                    {% else %}
+                                    <td><span class="glyphicon glyphicon-remove-sign red"></span> Failed</td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+
+                            </div>
+
+                        <div class="alert alert-warning" style="margin:15px;">No conditionals.</div>
+                        <dir-pagination-controls></dir-pagination-controls>
+                    </div>
+                </div>
+                
+                
+                <div >
+                    <!-- If showing all major projects - show this code 
+
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Major Projects</h3>
+                    </div>
+
+                    -->
+                    <div>
+                        <div class="alert alert-warning" role="alert">You have no major projects.</div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>{% block project_name %}{% endblock %}</strong>
+
+                                {% if project_status == "Passed" %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign" style="color:#FFF"></span> <span class="mobile-hide">Passed</span></span>
+                                {% elif project_status == "Pending" %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass" style="color:#FFF"></span> <span class="mobile-hide">Pending</span></span>
+                                {% else %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-minus-sign" style="color:#FFF"></span> <span class="mobile-hide">Failed</span></span>
+                                {% endif %}
+                            </div>
+                            <div class="panel-body" style="word-wrap:break-word">
+                                {% block project_desc %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Attendance</h3>
+                    </div>
+                    {% if total_meetings == 0 %}
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">You have not attended any events.</div>
+                    </div>
+                    {% else %}
+                    <div class="panel-body table-fill" id="attendance-widget-body">
+                        <table class="table table-striped table-responsive no-bottom-margin">
+                            <tbody>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                </tr>
+                                <tr>
+                                    <td>{% block committee %}{% endblock %}</td>
+                                    <td>{% block meeting_date_time %}{% endblock %}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <dir-pagination-controls class="panel-inner-padding"></dir-pagination-controls>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         
     
