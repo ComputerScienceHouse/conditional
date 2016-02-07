@@ -1,4 +1,5 @@
 from functools import wraps
+
 import ldap
 
 # Global state is gross. I'm sorry.
@@ -28,7 +29,7 @@ def ldap_init_required(func):
     return wrapped_func
 
 @ldap_init_required
-def _ldap_get_field(username, field):
+def __ldap_get_field__(username, field):
     ldap_results = ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE, "(uid=%s)"
             % username)
     if len(ldap_results) != 1:
@@ -37,7 +38,7 @@ def _ldap_get_field(username, field):
     return ldap_results[0][1][field]
 
 @ldap_init_required
-def _ldap_is_member_of_group(username, group):
+def __ldap_is_member_of_group__(username, group):
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
             "(cn=%s)" % group)
     if len(ldap_results) != 1:
@@ -47,10 +48,23 @@ def _ldap_is_member_of_group(username, group):
         [x.decode('ascii') for x in ldap_results[0][1]['member']]
 
 def ldap_get_housing_points(username):
-    return int(_ldap_get_field('housingPoints'))
+    return int(__ldap_get_field__('housingPoints'))
 
 def ldap_get_room_number(username):
-    return _ldap_get_field('roomNumber')
+    return __ldap_get_field__('roomNumber')
+
+def ldap_is_active(username):
+    # When active members become a group rather than an attribute this will
+    # change to use __ldap_is_member_of_group__.
+    return bool(__ldap_get_field__(username, 'active'))
+
+def ldap_is_alumni(username):
+    # When alumni status becomes a group rather than an attribute this will
+    # change to use __ldap_is_member_of_group__.
+    return bool(__ldap_get_field__(username, 'alumni'))
 
 def ldap_is_eboard(username):
-    return _ldap_is_member_of_group(username, 'eboard')
+    return __ldap_is_member_of_group__(username, 'eboard')
+
+def ldap_is_intromember(username):
+    return __ldap_is_member_of_group__(username, 'intromembers')
