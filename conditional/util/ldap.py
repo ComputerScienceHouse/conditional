@@ -11,12 +11,9 @@ class HousingLDAPError(Exception):
     pass
 
 def ldap_init(ldap_url, bind_dn, bind_pw, user_ou, group_ou):
+    global user_search_ou, group_search_ou, ldap_conn
     user_search_ou = user_ou
     group_search_ou = group_ou
-    if user_search_ou == "" or user_search_ou is None:
-        raise HousingLDAPError("No user search OU provided.")
-    if group_search_ou == "" or group_search_ou is None:
-        raise HousingLDAPError("No group search OU provided.")
     ldap_conn = ldap.initialize(ldap_url, bytes_mode=False)
     ldap_conn.simple_bind_s(bind_dn, bind_pw)
 
