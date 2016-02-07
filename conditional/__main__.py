@@ -1,8 +1,16 @@
 from flask import Flask
 from flask import jsonify
 
-from dashboard import dashboard_bp
+from blueprints.dashboard import dashboard_bp
+from blueprints.attendance import attendance_bp
+from blueprints.major_project_submission import major_project_bp
+from blueprints.intro_evals import intro_evals_bp
+from blueprints.intro_evals_form import intro_evals_form_bp
+from blueprints.housing_evals import housing_evals_bp
+from blueprints.housing_evals_form import housing_evals_form_bp
 
+from blueprints.spring_evals import spring_evals_bp
+from blueprints.spring_evals_form import spring_evals_form_bp
 import os
 
 import json
@@ -19,6 +27,14 @@ app = Flask(__name__)
 app.templates_folder = app_path("templates")
 
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(attendance_bp)
+app.register_blueprint(major_project_bp)
+app.register_blueprint(intro_evals_bp)
+app.register_blueprint(intro_evals_form_bp)
+app.register_blueprint(housing_evals_bp)
+app.register_blueprint(housing_evals_form_bp)
+app.register_blueprint(spring_evals_bp)
+app.register_blueprint(spring_evals_form_bp)
 
 
 @app.route('/<path:path>')
