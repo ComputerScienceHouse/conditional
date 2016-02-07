@@ -1,0 +1,24 @@
+<div >
+    <!-- If showing all major projects - show this code 
+
+    <div class="panel-heading">
+        <h3 class="panel-title">Major Projects</h3>
+    </div>
+
+    -->
+    <div>
+        <div class="alert alert-warning" role="alert">You have no major projects.</div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>{{project.project_name}}</strong>
+                <small><em>{{project.project_committee | capitalize}}</em></small>
+                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign" style="color:#FFF"></span> <span class="mobile-hide">Passed</span></span>
+                <span class="pull-right"><span class="glyphicon glyphicon-hourglass" style="color:#FFF"></span> <span class="mobile-hide">Pending</span></span>
+                <span class="pull-right"><span class="glyphicon glyphicon-minus-sign" style="color:#FFF"></span> <span class="mobile-hide">Failed</span></span>
+            </div>
+            <div class="panel-body" style="word-wrap:break-word">
+                {{project.project_description}}
+            </div>
+        </div>
+    </div>
+</div>
