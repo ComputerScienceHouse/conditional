@@ -11,5 +11,14 @@ def display_dashboard():
 
     user_name = request.headers.get('x-webauth-user')
 
-    return render_template('dashboard.html',
-                           username = user_name)
+    data = {}
+    data['username'] = user_name
+
+    # number of committee meetings attended
+    data['committee_meetings'] = 11
+
+    # technical seminar total
+    data['ts_total'] = 2
+
+    #
+    return render_template('dashboard.html', **data)

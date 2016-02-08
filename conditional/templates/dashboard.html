@@ -1,5 +1,5 @@
 {% extends "nav.html" %}
-
+{% block body %}
 <div class="container main">
 <div class="panel panel-default" style="margin-left:15px; margin-right:15px;">
                         <div class="panel-body">
@@ -8,7 +8,7 @@
                     
             <div class="row">
                 <div class="col-md-2 col-sm-3 col-xs-12">
-                    <img class="thumbnail profile-image" src="{{gravatar}}">
+                    <img class="thumbnail profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div>
                 <div class=" col-xs-12 col-sm-9 col-md-10" >
                     
@@ -74,7 +74,7 @@
                         <h3 class="panel-title">Freshman Evaluations
                             <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
                             <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
-                            <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Failed</span>
+                            <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
                         </h3>
                     </div>
                     <div class="panel-body table-fill">
@@ -317,4 +317,4 @@
         
     
 </div>
-
+{% endblock %}
