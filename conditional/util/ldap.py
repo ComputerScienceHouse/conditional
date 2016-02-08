@@ -35,6 +35,19 @@ def __ldap_get_field__(username, field):
     return ldap_results[0][1][field]
 
 @ldap_init_required
+def __ldap_set_field__(username, field, new_val):
+    ldap_results = ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE,
+            "(uid=%s)" % username)
+    if len(ldap_results) != 1:
+        raise HousingLDAPError("Wrong number of results found for username %s."
+                % username)
+    ldap_new_val = ldap_results
+    ldap_new_val[0][1][field] = str(new_val).encode('ascii')
+    ldapModlist = ldap.modlist.modifyModlist(ldap_results, ldap_new_val)
+    userdn = "uid=%s,ou=Users,dc=csh,dc=rit,dc=edu" % username
+    ldap_conn.modify_s(userdn, ldapModlist)
+
+@ldap_init_required
 def __ldap_get_members__():
     return ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE, "")
 
@@ -75,3 +88,12 @@ def ldap_is_eboard(username):
 
 def ldap_is_intromember(username):
     return __ldap_is_member_of_group__(username, 'intromembers')
+
+def ldap_set_housingpoints(username, housing_points):
+    __ldap_set_field__(username, 'housingPoints', housing_points)
+
+def ldap_set_roomnumber(username, room_number):
+    __ldap_set_field__(username, 'roomNumber', room_number)
+
+def ldap_set_active(username, is_active):
+    __ldap_set_field__(username, str(int(is_active)).encode('ascii'))
