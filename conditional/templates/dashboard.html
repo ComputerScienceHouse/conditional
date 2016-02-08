@@ -49,19 +49,19 @@
                             <tbody>
                                 <tr>
                                     <th>Housing Points</th>
-                                    <td>{% block housing_points %}{% endblock %}</td>
+                                    <td>{{housing['points']}}</td>
                                 </tr>
                                 <tr>
                                     <th>Room Number</th>
-                                    <td>{% block room_number %}{% endblock %}</td>
+                                    <td>{{housing['room']}}</td>
                                 </tr>
                                 <tr>
                                     <th>Future Room Number</th>
-                                    <td>{% block future_room %}{% endblock %}</td>
+                                    <td>{{housing['future_room']}}</td>
                                 </tr>
                                 <tr>
                                     <th>Housing Queue Position</th>
-                                    <td>{% block queue_position %}{% endblock %} / {% block total_queue %}{% endblock %}</td>
+                                    <td>{{housing['queue_pos']}} / {{housing['queue_len']}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -72,9 +72,13 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Freshman Evaluations
-                            <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
-                            <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
-                            <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
+                            {% if freshman['status'] == "Passed" %}
+                            <span class="pull-right"><span class="glyphicon glyphicon-ok-sign white"></span> Passed</span>
+                            {% elif freshman['status'] == "Pending" %}
+                            <span class="pull-right"><span class="glyphicon glyphicon-hourglass white"></span> Pending</span>
+                            {% else %}
+                            <span class="pull-right"><span class="glyphicon glyphicon-remove-sign white"></span> Failed</span>
+                            {% endif %}
                         </h3>
                     </div>
                     <div class="panel-body table-fill">
@@ -82,64 +86,59 @@
                             <tbody>
                             <tr>
                                 <th>Evaluations Date</th>
-                                <td>{% block eval_date %}{% endblock %}</td>
+                                <td>{{freshman['eval_date']}}</td>
                             </tr>
                             <tr>
                                 <th>Signatures Missed</th>
                                 <td>
-                                    {% if sig_missed == 0 %}
+                                    {% if freshman['sig_missed'] == 0 %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-remove-sign red"></span>
                                     {% endif %}
-
-                                    {% block sig_missed %}{% endblock %}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Committee Meetings</th>
                                 <td>
-                                    {% if committee_meetings >= 10 %}
+                                    {% if freshman['committee_meetings'] >= 10 %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-remove-sign red"></span>
                                     {% endif %}
-
-                                    {% block committee_meetings %}{% endblock %}
                                 </td>
                             </tr>
                             <tr>
                                 <th>House Meetings Missed</th>
                                 <td>
-                                    {% if hm_missed == 0 %}
+                                    {% if freshman['hm_missed'] == 0 %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-remove-sign red"></span>
                                     {% endif %}
-                                    {% block hm_missed %}{% endblock %}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Technical Seminars</th>
                                 <td>
-                                    {% if ts_total >= 2 %}
+                                    {% if freshman['ts_total'] >= 2 %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-remove-sign red"></span>
                                     {% endif %}
-                                    {% block ts_string %}{% endblock %}
+                                    {{freshman['ts_string']}}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Social Events</th>
                                 <td>
-                                    {% block social_events %}{% endblock %}
+                                    {{freshman['social_events']}}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Freshman Project</th>
                                 <td>
-                                    {% if fresh_proj %}
+                                    {% if freshman['fresh_proj'] %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span><span>Pass</span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-remove-sign red"></span><span>Fail</span>
@@ -150,7 +149,7 @@
                         </table>
                         <div class="panel-inner-padding">
                             <strong>General Comments:</strong>
-                            <div>{% block general_comments %}{% endblock %}</div>
+                            <div>{{freshman['general_comments']}}</div>
                         </div>
                     </div>
                 </div>
@@ -158,12 +157,12 @@
                 <div class="panel panel-default" ng-hide="evaluations.isFreshmanEvals">
                     <div class="panel-heading">
                         <h3 class="panel-title">Spring Evaluations
-                            {% if spring_eval_status == "Passed" %}
+                            {% if spring['status'] == "Passed" %}
                                 <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
-                            {% elif spring_eval_status == "Pending" %}
+                            {% elif spring['status'] == "Pending" %}
                                 <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
                             {% else %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Failed</span>
+                                <span class="pull-right"><span class="glyphicon glyphicon-remove-sign white"></span> Failed</span>
                             {% endif %}
                         </h3>
                     </div>
@@ -173,44 +172,41 @@
                             <tr>
                                 <th>Committee Meetings</th>
                                 <td>
-                                    {% if committee_meetings >= 25 %}
+                                    {% if spring['committee_meetings'] >= 25 %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-remove-sign red"></span>
                                     {% endif %}
-
-                                    {{ self.committee_meetings() }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>House Meetings Missed</th>
                                 <td>
-                                    {% if hm_missed == 0 %}
+                                    {% if spring['hm_missed'] == 0 %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% else %}
-                                        <span class="glyphicon glyphicon-remove-sign red"></span>
+                                        <span class="glyphicon glyphicon-remove-sign red"></span><strong>{{spring['hm_missed']}}</strong>
                                     {% endif %}
-                                    {{ self.hm_missed() }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Major Project</th>
                                 <td>
-                                    {% if spring_eval_status == "Passed" %}
+                                    {% if spring['mp_status'] == "Passed" %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
-                                    {% elif spring_eval_status == "Pending" %}
+                                    {% elif spring['mp_status'] == "Pending" %}
                                         <span class="glyphicon glyphicon-hourglass yellow"></span>
                                     {% else %}
                                         <span class="glyphicon glyphicon-ok-sign green"></span>
                                     {% endif %}
-                                    <span>{% block mp_name %}{% endblock %}</span>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
+                        <hr>
                         <div class="panel-inner-padding">
                             <strong>General Comments:</strong>
-                            <div>{{ self.general_comments() }}</div>
+                            <div>{{spring['general_comments']}}</div>
                         </div>
                     </div>
                 </div>
@@ -232,25 +228,28 @@
                                     <th>Status</th>
                                 </tr>
                                 <!-- ng-repeat="conditional in conditionals.data"-->
+                                {% for c in conditionals %}
                                 <tr dir-paginate="conditional in (conditionals.data) | itemsPerPage: 10">
-                                    <td>{% block username %}{% endblock %}</td> <!-- If showing all users -->
-                                    <td>{% block conditional_description %}{% endblock %}</td>
-                                    <td>{% block deadline %}{% endblock %}</td>
+                                    <td>{{c['username']}}</td> <!-- If showing all users -->
+                                    <td>{{c['description']}}</td>
+                                    <td>{{c['deadline']}}</td>
 
-                                    {% if conditional_status == "Pending" %}
+                                    {% if c['status'] == "Pending" %}
                                     <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
-                                    {% elif conditional_status == "Passed" %}
+                                    {% elif c['status'] == "Passed" %}
                                     <td><span class="glyphicon glyphicon-ok-sign green"></span> Passed</td>
                                     {% else %}
                                     <td><span class="glyphicon glyphicon-remove-sign red"></span> Failed</td>
                                     {% endif %}
                                 </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
 
                             </div>
-
+                        {% if conditionals_len == 0 %}
                         <div class="alert alert-warning" style="margin:15px;">No conditionals.</div>
+                        {% endif %}
                         <dir-pagination-controls></dir-pagination-controls>
                     </div>
                 </div>
@@ -265,24 +264,30 @@
 
                     -->
                     <div>
+                        {% if major_projects_count == 0 %}
                         <div class="alert alert-warning" role="alert">You have no major projects.</div>
+                        {% else %}
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <strong>{% block project_name %}{% endblock %}</strong>
-
-                                {% if project_status == "Passed" %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign" style="color:#FFF"></span> <span class="mobile-hide">Passed</span></span>
-                                {% elif project_status == "Pending" %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass" style="color:#FFF"></span> <span class="mobile-hide">Pending</span></span>
+                                <strong>Major Projects</strong>
+                            </div>
+                            {% for p in major_projects %}
+                            <div class="panel-inner-padding">
+                                <strong>{{p['name']}}:</strong>
+                                {% if p['status'] == "Passed" %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> <span class="mobile-hide">Passed</span></span>
+                                {% elif p['status'] == "Pending" %}
+                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> <span class="mobile-hide">Pending</span></span>
                                 {% else %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-minus-sign" style="color:#FFF"></span> <span class="mobile-hide">Failed</span></span>
+                                <span class="pull-right"><span class="glyphicon glyphicon-minus-sign red"></span> <span class="mobile-hide">Failed</span></span>
                                 {% endif %}
+                                <div class="panel-body" style="word-wrap:break-word">{{p['description']}}</div>
                             </div>
-                            <div class="panel-body" style="word-wrap:break-word">
-                                {% block project_desc %}{% endblock %}
-                            </div>
+                            <hr>
+                            {% endfor %}
                         </div>
                     </div>
+                        {% endif %}
                 </div>
                 
                 
@@ -290,7 +295,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Attendance</h3>
                     </div>
-                    {% if total_meetings == 0 %}
+                    {% if attendance_len == 0 %}
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert">You have not attended any events.</div>
                     </div>
@@ -300,13 +305,14 @@
                             <tbody>
                                 <tr>
                                     <th>Event</th>
-                                    <th>Type</th>
                                     <th>Date</th>
                                 </tr>
+                                {% for a in attendance %}
                                 <tr>
-                                    <td>{% block committee %}{% endblock %}</td>
-                                    <td>{% block meeting_date_time %}{% endblock %}</td>
+                                    <td>{{a['type']}}</td>
+                                    <td>{{a['datetime']}}</td>
                                 </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                         <dir-pagination-controls class="panel-inner-padding"></dir-pagination-controls>
