@@ -1,0 +1,91 @@
+{% extends "nav.html" %}
+{% block body %}
+<div class="container main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Introductory Membership Evaluations</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+            <table class="table table-striped no-bottom-margin">
+                <tbody>
+                    <tr>
+                        <th>Name</th>
+                        <th>Packet Due</th>
+                        <th>Eval Date</th>
+                        <th>Signatures Missed</th>
+                        <th>Committee Meetings</th>
+                        <th>House Meetings Missed</th>
+                        <th>House Meeting Comments</th>
+                        <th>Technical Seminars</th>
+                        <th>Social Events</th>
+                        <th>Freshmen Project</th>
+                        <th>Comments</th>
+                        <th>Result</th>
+                    </tr>
+                    <!-- ng-repeat="conditional in conditionals.data"-->
+                    {% for m in members %}
+                    <tr>
+                        <td>{{m['name']}}</td> <!-- If showing all users -->
+                        <td>{{m['packet_due']}}</td>
+                        <td>{{m['eval_date']}}</td>
+                        {% if m['signatures_missed'] > 0 %}
+                        <td bgcolor="red">{{m['signatures_missed']}}</td>
+                        {% else %}
+                        <td bgcolor="green">{{m['signatures_missed']}}</td>
+                        {% endif %}
+                        {% if m['committee_meetings_passed'] %}
+                        <td bgcolor="green">{{m['committee_meetings']}}</td>
+                        {% else %}
+                        <td bgcolor="red">{{m['committee_meetings']}}</td>
+                        {% endif %}
+
+                        {% if m['house_meetings_missed'] > 0 %}
+                        <td bgcolor="red">{{m['house_meetings_missed']}}</td>
+                        {% else %}
+                        <td bgcolor="green">{{m['house_meetings_missed']}}</td>
+                        {% endif %}
+                        <td>{{m['house_meetings_comments']}}</td>
+
+                        {% if m['techincal_seminars_passed'] %}
+                        <td bgcolor="green">{{m['technical_seminars']}}</td>
+                        {% else %}
+                        <td bgcolor="red">{{m['technical_seminars']}}</td>
+                        {% endif %}
+                        {% if m['social_events'] != "" %}
+                        <td bgcolor="green">{{m['social_events']}}</td>
+                        {% else %}
+                        <td bgcolor="red">{{m['social_events']}}</td>
+                        {% endif %}
+                        {% if m['freshmen_project'] == "Pending" %}
+                        <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
+                        {% elif m['freshmen_project'] == "Passed" %}
+                        <td><span class="glyphicon glyphicon-ok-sign green"></span> Passed</td>
+                        {% else %}
+                        <td><span class="glyphicon glyphicon-remove-sign red"></span> Failed</td>
+                        {% endif %}
+                        <td>{{m['comments']}}</td>
+                        {% if m['result'] == "Pending" %}
+                        <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
+                        {% elif m['result'] == "Passed" %}
+                        <td><span class="glyphicon glyphicon-ok-sign green"></span> Passed</td>
+                        {% else %}
+                        <td><span class="glyphicon glyphicon-remove-sign red"></span> Failed</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+                </div>
+            {% if conditionals_len == 0 %}
+            <div class="alert alert-warning" style="margin:15px;">No conditionals.</div>
+            {% endif %}
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+    
+    
+    <div >
+</div>
+{% endblock %}
