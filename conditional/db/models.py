@@ -116,3 +116,10 @@ class HouseMeeting(Base):
     def __init__(self, date):
         self.date = date
         self.active = True
+
+class CurrentCoops(Base):
+    __tablename__ = 'current_coops'
+    username = Column(String(32), nullable=False)
+
+    def __init__(self, username):
+        self.username = username
