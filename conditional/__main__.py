@@ -8,9 +8,10 @@ from blueprints.intro_evals import intro_evals_bp
 from blueprints.intro_evals_form import intro_evals_form_bp
 from blueprints.housing_evals import housing_evals_bp
 from blueprints.housing_evals_form import housing_evals_form_bp
-
 from blueprints.spring_evals import spring_evals_bp
 from blueprints.spring_evals_form import spring_evals_form_bp
+from blueprints.conditional import conditionals_bp
+
 import os
 
 import json
@@ -35,7 +36,7 @@ app.register_blueprint(housing_evals_bp)
 app.register_blueprint(housing_evals_form_bp)
 app.register_blueprint(spring_evals_bp)
 app.register_blueprint(spring_evals_form_bp)
-
+app.register_blueprint(conditionals_bp)
 
 @app.route('/<path:path>')
 def static_proxy(path):
