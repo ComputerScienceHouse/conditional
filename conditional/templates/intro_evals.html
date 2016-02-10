@@ -30,32 +30,36 @@
                         <td>{{m['packet_due']}}</td>
                         <td>{{m['eval_date']}}</td>
                         {% if m['signatures_missed'] > 0 %}
-                        <td bgcolor="red">{{m['signatures_missed']}}</td>
+                        <td class="failed-eval-cell">{{m['signatures_missed']}}</td>
                         {% else %}
-                        <td bgcolor="green">{{m['signatures_missed']}}</td>
+                        <td class="passed-eval-cell">{{m['signatures_missed']}}</td>
                         {% endif %}
                         {% if m['committee_meetings_passed'] %}
-                        <td bgcolor="green">{{m['committee_meetings']}}</td>
+                        <td class="passed-eval-cell">{{m['committee_meetings']}}</td>
                         {% else %}
-                        <td bgcolor="red">{{m['committee_meetings']}}</td>
+                        <td class="failed-eval-cell">{{m['committee_meetings']}}</td>
                         {% endif %}
 
                         {% if m['house_meetings_missed'] > 0 %}
-                        <td bgcolor="red">{{m['house_meetings_missed']}}</td>
+                        <td class="failed-eval-cell">{{m['house_meetings_missed']}}</td>
+                        <td class="failed-eval-cell">{{m['house_meetings_comments']}}</td>
+
                         {% else %}
-                        <td bgcolor="green">{{m['house_meetings_missed']}}</td>
+                        <td class="passed-eval-cell">{{m['house_meetings_missed']}}</td>
+                        <td class="passed-eval-cell">{{m['house_meetings_comments']}}</td>
+
                         {% endif %}
-                        <td>{{m['house_meetings_comments']}}</td>
+                        
 
                         {% if m['techincal_seminars_passed'] %}
-                        <td bgcolor="green">{{m['technical_seminars']}}</td>
+                        <td class="passed-eval-cell">{{m['technical_seminars']}}</td>
                         {% else %}
-                        <td bgcolor="red">{{m['technical_seminars']}}</td>
+                        <td class="failed-eval-cell">{{m['technical_seminars']}}</td>
                         {% endif %}
                         {% if m['social_events'] != "" %}
-                        <td bgcolor="green">{{m['social_events']}}</td>
+                        <td class="passed-eval-cell">{{m['social_events']}}</td>
                         {% else %}
-                        <td bgcolor="red">{{m['social_events']}}</td>
+                        <td class="failed-eval-cell">{{m['social_events']}}</td>
                         {% endif %}
                         {% if m['freshmen_project'] == "Pending" %}
                         <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
