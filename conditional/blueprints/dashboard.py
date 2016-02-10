@@ -73,4 +73,5 @@ def display_dashboard():
     attendance = [{'type':'House Meeting', 'datetime': 'christmass'}]
     data['attendance'] = attendance
     data['attendance_len'] = len(attendance)
+
     return render_template('dashboard.html', **data)
