@@ -23,22 +23,22 @@
                     <tr>
                         <td>{{m['name']}}</td> <!-- If showing all users -->
                         {% if m['committee_meetings'] < 25 %}
-                        <td bgcolor="red">{{m['committee_meetings']}}</td>
+                        <td class="failed-eval-cell">{{m['committee_meetings']}}</td>
                         {% else %}
-                        <td bgcolor="green">{{m['committee_meetings']}}</td>
+                        <td class="passed-eval-cell">{{m['committee_meetings']}}</td>
                         {% endif %}
 
                         {% if m['house_meetings_missed'] > 0 %}
-                        <td bgcolor="red">{{m['house_meetings_missed']}}</td>
+                        <td class="failed-eval-cell">{{m['house_meetings_missed']}}</td>
                         {% else %}
-                        <td bgcolor="green">{{m['house_meetings_missed']}}</td>
+                        <td class="passed-eval-cell">{{m['house_meetings_missed']}}</td>
                         {% endif %}
                         <td>{{m['house_meetings_comments']}}</td>
 
                         {% if m['major_project_passed'] %}
-                        <td bgcolor="green">{{m['major_project']}}</td>
+                        <td class="passed-eval-cell">{{m['major_project']}}</td>
                         {% else %}
-                        <td bgcolor="red">{{m['major_project']}}</td>
+                        <td class="failed-eval-cell">{{m['major_project']}}</td>
                         {% endif %}
                         <td>{{m['comments']}}</td>
                         {% if m['result'] == "Pending" %}
