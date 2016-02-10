@@ -9,6 +9,8 @@ intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 def display_intro_evals():
     # get user data
 
+    user_name = request.headers.get('x-webauth-user')
+
     members = [
                 {
                     'name': "Liam Middlebrook",
@@ -30,5 +32,6 @@ def display_intro_evals():
 
     # return names in 'first last (username)' format
     return render_template('intro_evals.html',
-                           members = members)
+                            username = user_name,
+                            members = members)
 

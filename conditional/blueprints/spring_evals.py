@@ -45,4 +45,5 @@ def display_spring_evals():
             ]
     # return names in 'first last (username)' format
     return render_template('spring_evals.html',
+                            username = user_name,
                             members = members)

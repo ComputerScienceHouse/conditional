@@ -1,0 +1,51 @@
+{% extends "nav.html" %}
+{% block body %}
+<div class="container main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Housing Evaluations</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+            <table class="table table-striped no-bottom-margin">
+                <tbody>
+                    <tr>
+                        <th>Name</th>
+                        <th>Social Events Attended</th>
+                        <th>Social Events Hosted</th>
+                        <th>Seminars Attended</th>
+                        <th>Seminars Hosted</th>
+                        <th>Projects</th>
+                        <th>Comments</th>
+                        <th>Points Awarded</th>
+                        <th>Current Housing Points</th>
+                    </tr>
+                    <!-- ng-repeat="conditional in conditionals.data"-->
+                    {% for m in members %}
+                    <tr>
+                        <td>{{m['name']}}</td> <!-- If showing all users -->
+                        <td>{{m['social_attended']}}</td>
+                        <td>{{m['social_hosted']}}</td>
+                        <td>{{m['seminars_attended']}}</td>
+                        <td>{{m['seminars_hosted']}}</td>
+                        <td>{{m['projects']}}</td>
+                        <td>{{m['comments']}}</td>
+                        <td>{{m['points_awarded']}}</td>
+                        <td>{{m['points']}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+                </div>
+            {% if conditionals_len == 0 %}
+            <div class="alert alert-warning" style="margin:15px;">No conditionals.</div>
+            {% endif %}
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+    
+    
+    <div >
+</div>
+{% endblock %}
