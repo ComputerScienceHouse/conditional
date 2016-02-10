@@ -66,7 +66,7 @@ def display_dashboard():
     data['major_projects'] = major_projects
     data['major_projects_count'] = len(major_projects)
 
-    conditionals = [{'username':'loothelion','description':'redo freshman project','deadline':'next year', 'status': 'Failed'}]
+    conditionals = [{'description':'redo freshman project','deadline':'next year'}]
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
