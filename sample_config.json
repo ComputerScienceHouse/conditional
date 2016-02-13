@@ -10,5 +10,8 @@
         "bind_pw": "lolno",
         "user_ou": "ou=Users,dc=csh,dc=rit,dc=edu",
         "group_ou": "ou=Groups,dc=csh,dc=rit,dc=edu"
+    },
+    "db" : {
+        "url": "sqlalchemy_url_db_goes_here"
     }
 }
