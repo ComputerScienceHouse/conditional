@@ -16,5 +16,5 @@ def init_db(database_url):
                                              bind=engine))
     Base.query = db_session.query_property()
 
-    import conditional.db.models
+    import db.models
     Base.metadata.create_all(bind=engine)

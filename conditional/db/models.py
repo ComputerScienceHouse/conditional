@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
                        Date, Text, Boolean
-from conditional.db.database import Base
+from db.database import Base
 import time
 from datetime import date, timedelta
 
