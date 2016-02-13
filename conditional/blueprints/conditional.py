@@ -4,7 +4,6 @@ from flask import request
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
-@conditionals_bp.route('/conditionals')
 @conditionals_bp.route('/conditionals/')
 def display_conditionals():
     # get user data

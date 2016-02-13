@@ -4,7 +4,6 @@ from flask import request
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
-@spring_evals_bp.route('/spring_evals')
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals():
     # get user data

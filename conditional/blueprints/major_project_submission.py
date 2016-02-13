@@ -4,7 +4,6 @@ from flask import request
 
 major_project_bp = Blueprint('major_project_bp', __name__)
 
-@major_project_bp.route('/major_project')
 @major_project_bp.route('/major_project/')
 def display_major_project():
     # get user data

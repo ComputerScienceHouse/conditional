@@ -4,7 +4,6 @@ from flask import request
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 
-@intro_evals_bp.route('/intro_evals')
 @intro_evals_bp.route('/intro_evals/')
 def display_intro_evals():
     # get user data

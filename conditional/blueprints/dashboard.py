@@ -4,7 +4,6 @@ from flask import request
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
-@dashboard_bp.route('/dashboard')
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
     # get user data
