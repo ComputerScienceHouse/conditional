@@ -12,6 +12,7 @@ from blueprints.spring_evals import spring_evals_bp
 from blueprints.spring_evals_form import spring_evals_form_bp
 from blueprints.conditional import conditionals_bp
 from util.ldap import ldap_init
+from db.database import init_db
 
 import os
 
@@ -57,6 +58,8 @@ def web_main():
               ldap_config['bind_pw'],
               ldap_config['user_ou'],
               ldap_config['group_ou'])
+
+    init_db(json_config['db']['url'])
 
     app.run(**json_config['flask'])
 
