@@ -75,7 +75,10 @@ def ldap_get_housing_points(username):
     return int(__ldap_get_field__(username, 'housingPoints'))
 
 def ldap_get_room_number(username):
-    return __ldap_get_field__(username, 'roomNumber').decode('utf-8')
+    roomno = __ldap_get_field__(username, 'roomNumber')
+    if roomno is None:
+        return "N/A"
+    return roomno.decode('utf-8')
 
 def ldap_get_all_members():
     return __ldap_get_members__()
