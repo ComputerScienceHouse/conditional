@@ -17,6 +17,7 @@ class FreshmanAccount(Base):
 
 class FreshmanEvalData(Base):
     __tablename__ = 'freshman_eval_data'
+    id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     freshman_project = Column(Enum('Pending', 'Passed', 'Failed',
         name="freshman_project_enum"), nullable=False)
@@ -47,6 +48,7 @@ class CommitteeMeeting(Base):
 
 class MemberCommitteeAttendance(Base):
     __tablename__ = 'member_committee_attendance'
+    id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
 
@@ -56,6 +58,7 @@ class MemberCommitteeAttendance(Base):
 
 class FreshmanCommitteeAttendance(Base):
     __tablename__ = 'freshman_committee_attendance'
+    id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
     meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
 
@@ -75,6 +78,7 @@ class TechnicalSeminar(Base):
 
 class MemberSeminarAttendance(Base):
     __tablename__ = 'member_seminar_attendance'
+    id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
 
@@ -84,6 +88,7 @@ class MemberSeminarAttendance(Base):
 
 class FreshmanSeminarAttendance(Base):
     __tablename__ = 'freshman_seminar_attendance'
+    id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
     meeting_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
 
@@ -117,8 +122,29 @@ class HouseMeeting(Base):
         self.date = date
         self.active = True
 
+class MemberHouseMeetingAttendance(Base):
+    __tablename__ = 'member_hm_attendance'
+    id = Column(Integer, primary_key=True)
+    uid = Column(String(32), nullable=False)
+    meeting_id = Column(ForeignKey('house_meetings.id'), nullable=False)
+
+    def __init__(self, uid, meeting_id):
+        self.uid = uid
+        self.meeting_id = meeting_id
+
+class FreshmanHouseMeetingAttendance(Base):
+    __tablename__ = 'freshman_hm_attendance'
+    id = Column(Integer, primary_key=True)
+    fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
+    meeting_id = Column(ForeignKey('house_meetings.id'), nullable=False)
+
+    def __init__(self, fid, meeting_id):
+        self.fid = fid
+        self.meeting_id = meeting_id
+
 class CurrentCoops(Base):
     __tablename__ = 'current_coops'
+    id = Column(Integer, primary_key=True)
     username = Column(String(32), nullable=False)
 
     def __init__(self, username):
