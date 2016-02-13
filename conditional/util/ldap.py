@@ -101,6 +101,9 @@ def ldap_is_eboard(username):
 def ldap_is_intromember(username):
     return __ldap_is_member_of_group__(username, 'intromembers')
 
+def ldap_is_onfloor(username):
+    return bool(__ldap_get_field__(username, 'onfloor'))
+
 def ldap_set_housingpoints(username, housing_points):
     __ldap_set_field__(username, 'housingPoints', housing_points)
 

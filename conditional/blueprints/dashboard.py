@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from util.ldap import ldap_get_room_number, ldap_is_active, ldap_is_onfloor, \
+                      ldap_get_housing_points
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
@@ -13,11 +15,11 @@ def display_dashboard():
     data = {}
     data['username'] = user_name
     # Member Status
-    data['active'] = True
+    data['active'] = ldap_is_active(user_name)
     # On-Floor Status
-    data['onfloor'] = True
+    data['onfloor'] = ldap_is_onfloor(user_name)
     # Voting Status
-    data['voting'] = False
+    data['voting'] = True # FIXME: unimplemented
 
     freshman = {}
 
@@ -47,8 +49,8 @@ def display_dashboard():
 
     data['spring'] = spring
     housing = {}
-    housing['points'] = 2
-    housing['room'] = "NRH3103"
+    housing['points'] = ldap_get_housing_points(user_name)
+    housing['room'] = ldap_get_room_number(user_name)
     housing['future_room'] = "NRH3102"
     housing['queue_pos'] = 2
     housing['queue_len'] = 9
