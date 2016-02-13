@@ -4,6 +4,7 @@
         "port": 6969
     },
     "ldap" : {
+        "ro": true,
         "url": "ldaps://ldap.csh.rit.edu:636/",
         "bind_dn": "uid=someuser,ou=Users,dc=csh,dc=rit,dc=edu",
         "bind_pw": "lolno",

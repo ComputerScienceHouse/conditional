@@ -6,12 +6,14 @@ import ldap
 ldap_conn = None
 user_search_ou = None
 group_search_ou = None
+read_only = False
 
 class HousingLDAPError(Exception):
     pass
 
-def ldap_init(ldap_url, bind_dn, bind_pw, user_ou, group_ou):
-    global user_search_ou, group_search_ou, ldap_conn
+def ldap_init(ro, ldap_url, bind_dn, bind_pw, user_ou, group_ou):
+    global user_search_ou, group_search_ou, ldap_conn, read_only
+    read_only = ro
     user_search_ou = user_ou
     group_search_ou = group_ou
     ldap_conn = ldap.initialize(ldap_url, bytes_mode=False)
@@ -36,6 +38,10 @@ def __ldap_get_field__(username, field):
 
 @ldap_init_required
 def __ldap_set_field__(username, field, new_val):
+    if read_only:
+        print('LDAP modification: setting %s on %s to %s' % (field,
+                                                             username,
+                                                             new_val))
     ldap_results = ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE,
             "(uid=%s)" % username)
     if len(ldap_results) != 1:

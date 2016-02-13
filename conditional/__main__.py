@@ -51,7 +51,8 @@ def web_main():
         json_config = json.load(config_file)
 
     with json_config['ldap'] as ldap_config:
-        ldap_init(ldap_config['url'],
+        ldap_init(ldap_config['ro'],
+                  ldap_config['url'],
                   ldap_config['bind_dn'],
                   ldap_config['bind_pw'],
                   ldap_config['user_ou'],
