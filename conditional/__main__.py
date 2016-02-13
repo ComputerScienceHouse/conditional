@@ -11,6 +11,7 @@ from blueprints.housing_evals_form import housing_evals_form_bp
 from blueprints.spring_evals import spring_evals_bp
 from blueprints.spring_evals_form import spring_evals_form_bp
 from blueprints.conditional import conditionals_bp
+from util.ldap import ldap_init
 
 import os
 
@@ -48,6 +49,13 @@ def web_main():
 
     with open(sys.argv[1]) as config_file:
         json_config = json.load(config_file)
+
+    with json_config['ldap'] as ldap_config:
+        ldap_init(ldap_config['url'],
+                  ldap_config['bind_dn'],
+                  ldap_config['bind_pw'],
+                  ldap_config['user_ou'],
+                  ldap_config['group_ou'])
 
     app.run(**json_config['flask'])
 

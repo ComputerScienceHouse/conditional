@@ -2,5 +2,12 @@
     "flask" : {
         "debug": true,
         "port": 6969
+    },
+    "ldap" : {
+        "url": "ldaps://ldap.csh.rit.edu:636/",
+        "bind_dn": "uid=someuser,ou=Users,dc=csh,dc=rit,dc=edu",
+        "bind_pw": "lolno",
+        "user_ou": "ou=Users,dc=csh,dc=rit,dc=edu",
+        "group_ou": "ou=Groups,dc=csh,dc=rit,dc=edu"
     }
 }
