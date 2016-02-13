@@ -34,7 +34,9 @@ def __ldap_get_field__(username, field):
     if len(ldap_results) != 1:
         raise HousingLDAPError("Wrong number of results found for username %s."
                 % username)
-    return ldap_results[0][1][field]
+    if not field in ldap_results[0][1]:
+        return None
+    return ldap_results[0][1][field][0]
 
 @ldap_init_required
 def __ldap_set_field__(username, field, new_val):
@@ -42,6 +44,7 @@ def __ldap_set_field__(username, field, new_val):
         print('LDAP modification: setting %s on %s to %s' % (field,
                                                              username,
                                                              new_val))
+        return
     ldap_results = ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE,
             "(uid=%s)" % username)
     if len(ldap_results) != 1:
@@ -55,7 +58,8 @@ def __ldap_set_field__(username, field, new_val):
 
 @ldap_init_required
 def __ldap_get_members__():
-    return ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE, "")
+    return ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE,
+            "objectClass=houseMember")
 
 @ldap_init_required
 def __ldap_is_member_of_group__(username, group):
@@ -68,16 +72,18 @@ def __ldap_is_member_of_group__(username, group):
         [x.decode('ascii') for x in ldap_results[0][1]['member']]
 
 def ldap_get_housing_points(username):
-    return int(__ldap_get_field__('housingPoints'))
+    return int(__ldap_get_field__(username, 'housingPoints'))
 
 def ldap_get_room_number(username):
-    return __ldap_get_field__('roomNumber')
+    return __ldap_get_field__(username, 'roomNumber').decode('utf-8')
 
 def ldap_get_all_members():
     return __ldap_get_members__()
 
 def ldap_get_active_members():
-    return [x for x in __ldap_get_members__() if ldap_is_active(x)]
+    return [str(str(x[0]).split(",")[0]).split("=")[1] \
+            for x in __ldap_get_members__()[1:] \
+            if ldap_is_active(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 def ldap_is_active(username):
     # When active members become a group rather than an attribute this will
@@ -102,4 +108,4 @@ def ldap_set_roomnumber(username, room_number):
     __ldap_set_field__(username, 'roomNumber', room_number)
 
 def ldap_set_active(username, is_active):
-    __ldap_set_field__(username, str(int(is_active)).encode('ascii'))
+    __ldap_set_field__(username, 'active', str(int(is_active)).encode('ascii'))

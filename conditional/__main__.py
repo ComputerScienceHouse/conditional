@@ -50,13 +50,13 @@ def web_main():
     with open(sys.argv[1]) as config_file:
         json_config = json.load(config_file)
 
-    with json_config['ldap'] as ldap_config:
-        ldap_init(ldap_config['ro'],
-                  ldap_config['url'],
-                  ldap_config['bind_dn'],
-                  ldap_config['bind_pw'],
-                  ldap_config['user_ou'],
-                  ldap_config['group_ou'])
+    ldap_config = json_config['ldap']
+    ldap_init(ldap_config['ro'],
+              ldap_config['url'],
+              ldap_config['bind_dn'],
+              ldap_config['bind_pw'],
+              ldap_config['user_ou'],
+              ldap_config['group_ou'])
 
     app.run(**json_config['flask'])
 
