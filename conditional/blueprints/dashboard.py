@@ -3,7 +3,7 @@ from flask import render_template
 from flask import request
 from util.ldap import ldap_get_room_number, ldap_is_active, ldap_is_onfloor, \
                       ldap_get_housing_points
-
+from db.models import MajorProject
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
@@ -57,15 +57,15 @@ def display_dashboard():
 
     data['housing'] = housing
 
-    major_projects = []
-    proj = {}
-    proj['name'] = "open container"
-    proj['status'] = "Passed"
-    proj['description'] = "Base project description example."
-    major_projects.append(proj)
+    data['major_projects'] = [
+            {
+                'name': p.name,
+                'status': p.status,
+                'description': p.description
+            } for p in
+        MajorProject.query.filter(MajorProject.uid == user_name)]
 
-    data['major_projects'] = major_projects
-    data['major_projects_count'] = len(major_projects)
+    data['major_projects_count'] = len(data['major_projects'])
 
     conditionals = [{'description':'redo freshman project','deadline':'next year'}]
     data['conditionals'] = conditionals
