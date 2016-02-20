@@ -101,3 +101,12 @@ members who are inactive but could potentially become active later in the
 semester/year.
 * `id`: Autoincrementing primary key.
 * `username`: LDAP uid of the member on coop.
+
+### Member state ###
+* ldap:active = 0; ldap:alumni = 1: Alumni. Don't track attendance.
+* ldap:active = 0; ldap:alumni = 0; in coop table: On coop. Track committee
+  meeting attendance, but not house meeting.
+* ldap:active = 0; ldap:alumni = 0; not in coop table: Present but not active
+  yet. Track attendance as normal.
+* ldap:active = 1; ldap:alumni = 0: Active member. Track attendance as normal.
+* ldap:active = 1; ldap:alumni = 1: Invalid. Should not occur.
