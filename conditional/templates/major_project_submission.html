@@ -63,7 +63,18 @@
     <div style="padding-top:20px"></div>
     <div class="panel panel-default">
         <div class="panel-body">
+            {% if major_projects_len <= 0 %}
             <p class="text-center">No Pending Major Projects</p>
+            {% else %}
+                {% for p in major_projects %}
+                {
+                    'uid': {{p['uid']}},
+                    'name': {{p['name']}},
+                    'status': {{p['status']}},
+                    'description': {{p['description']}}
+                }
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
         
