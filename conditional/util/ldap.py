@@ -91,12 +91,14 @@ def ldap_get_active_members():
 def ldap_is_active(username):
     # When active members become a group rather than an attribute this will
     # change to use __ldap_is_member_of_group__.
-    return __ldap_get_field__(username, 'active').decode('utf-8') == '1'
+    active_status = __ldap_get_field__(username, 'active')
+    return active_status != None and active_status.decode('utf-8') == '1'
 
 def ldap_is_alumni(username):
     # When alumni status becomes a group rather than an attribute this will
     # change to use __ldap_is_member_of_group__.
-    return __ldap_get_field__(username, 'alumni').decode('utf-8') == '1'
+    alum_status = __ldap_get_field__(username, 'alumni')
+    return alum_status != None and alum_status.decode('utf-8') == '1'
 
 def ldap_is_eboard(username):
     return __ldap_is_member_of_group__(username, 'eboard')
@@ -105,7 +107,8 @@ def ldap_is_intromember(username):
     return __ldap_is_member_of_group__(username, 'intromembers')
 
 def ldap_is_onfloor(username):
-    return __ldap_get_field__(username, 'onfloor').decode('utf-8') == '1'
+    onfloor_status = __ldap_get_field__(username, 'onfloor')
+    return onfloor_status != None and onfloor_status.decode('utf-8') == '1'
 
 def ldap_set_housingpoints(username, housing_points):
     __ldap_set_field__(username, 'housingPoints', housing_points)
