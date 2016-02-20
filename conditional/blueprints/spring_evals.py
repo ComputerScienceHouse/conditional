@@ -16,7 +16,13 @@ def display_spring_evals():
                     'uid': 'loothelion',
                     'committee_meetings': 24,
                     'house_meetings_missed': [{'date': "aprial fools fayas ads", 'reason': "I was playing videogames"}],
-                    'major_project': 'open_container',
+                    'major_projects': [
+                        {
+                            'name': "open container",
+                            'status': "Passed",
+                            'description': "Riding With A Flask"
+                        }],
+                    'major_projects_len': 1,
                     'major_project_passed': True,
                     'social_events': "",
                     'comments': "please don't fail me",
@@ -27,8 +33,14 @@ def display_spring_evals():
                     'uid': 'jeid',
                     'committee_meetings': 69,
                     'house_meetings_missed': [],
-                    'major_project': 'wii-u shit',
-                    'major_project_passed': True,
+                    'major_projects': [
+                        {
+                            'name': "wii-u shit",
+                            'status': "Failed",
+                            'description': "Rot 3 Encryption"
+                        }],
+                    'major_projects_len': 1,
+                    'major_project_passed': False,
                     'social_events': "Manipulation and Opportunism",
                     'comments': "imdabes",
                     'result': 'Passed'
