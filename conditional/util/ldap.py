@@ -88,6 +88,11 @@ def ldap_get_active_members():
             for x in __ldap_get_members__()[1:] \
             if ldap_is_active(str(str(x[0]).split(",")[0]).split("=")[1])]
 
+def ldap_get_non_alumni_members():
+    return [str(str(x[0]).split(",")[0]).split("=")[1] \
+            for x in __ldap_get_members__()[1:] \
+            if not ldap_is_alumni(str(str(x[0]).split(",")[0]).split("=")[1])]
+
 def ldap_is_active(username):
     # When active members become a group rather than an attribute this will
     # change to use __ldap_is_member_of_group__.
@@ -118,3 +123,16 @@ def ldap_set_roomnumber(username, room_number):
 
 def ldap_set_active(username, is_active):
     __ldap_set_field__(username, 'active', str(int(is_active)).encode('ascii'))
+
+def ldap_get_name(username):
+    first = __ldap_get_field__(username, 'givenName')
+    if first == None:
+        first = ""
+    else:
+        first = first.decode('utf-8')
+    last = __ldap_get_field__(username, 'sn')
+    if last == None:
+        last = ""
+    else:
+        last = last.decode('utf-8')
+    return "{first} {last}".format(first=first, last=last)
