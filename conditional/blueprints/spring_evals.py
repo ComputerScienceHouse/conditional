@@ -13,6 +13,7 @@ def display_spring_evals():
     members = [
                 {
                     'name': "Liam Middlebrook",
+                    'uid': 'loothelion',
                     'committee_meetings': 24,
                     'house_meetings_missed': [{'date': "aprial fools fayas ads", 'reason': "I was playing videogames"}],
                     'major_project': 'open_container',
@@ -23,6 +24,7 @@ def display_spring_evals():
                 },
                 {
                     'name': "Julien Eid",
+                    'uid': 'jeid',
                     'committee_meetings': 69,
                     'house_meetings_missed': [],
                     'major_project': 'wii-u shit',
