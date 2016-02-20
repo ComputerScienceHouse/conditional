@@ -14,8 +14,7 @@ def display_spring_evals():
                 {
                     'name': "Liam Middlebrook",
                     'committee_meetings': 24,
-                    'house_meetings_missed': 0,
-                    'house_meetings_comments': "",
+                    'house_meetings_missed': [{'date': "aprial fools fayas ads", 'reason': "I was playing videogames"}],
                     'major_project': 'open_container',
                     'major_project_passed': True,
                     'comments': "please don't fail me",
@@ -24,22 +23,11 @@ def display_spring_evals():
                 {
                     'name': "Julien Eid",
                     'committee_meetings': 69,
-                    'house_meetings_missed': 0,
-                    'house_meetings_comments': "",
+                    'house_meetings_missed': [],
                     'major_project': 'wii-u shit',
                     'major_project_passed': True,
                     'comments': "imdabes",
                     'result': 'Passed'
-                },
-                {
-                    'name': "James Forcier",
-                    'committee_meetings': 3,
-                    'house_meetings_missed': 5,
-                    'house_meetings_comments': "",
-                    'major_project': 'Bobby Junior',
-                    'major_project_passed': False,
-                    'comments': "Jazzazazazazzz",
-                    'result': 'Failed'
                 }
             ]
     # return names in 'first last (username)' format
