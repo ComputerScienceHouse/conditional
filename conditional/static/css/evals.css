@@ -270,7 +270,7 @@ box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
         width:90%;
         max-width:400px;
         margin:auto;
-        padding: .2em .6em .3em;
+        padding: .3em .6em .4em;
         font-size: 75%;
         font-weight: 700;
         line-height: 1;
@@ -284,13 +284,13 @@ box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     }
 .danger{
     
-        background-color: #e11c52;
+        background-color: #FF262D;
 }
 .warning{
-    background-color: #ffb43f;
+    background-color: #FF3207;
 }
 .success{
-    background-color: #5ba215;
+    background-color: #00B44A;
     
 }
 
