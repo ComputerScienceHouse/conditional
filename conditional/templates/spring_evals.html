@@ -1,63 +1,166 @@
 {% extends "nav.html" %}
 {% block body %}
 <div class="container main">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Spring Membership Evaluations</h3>
-        </div>
-        <div class="panel-body table-fill">
-            <div class="table-responsive">
-            <table class="table table-striped no-bottom-margin">
+{% for m in members %}
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding-top:30px;">
+                
+                
+                <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-sm-6 vcenter" style="padding-right:0px;padding-left:0px;">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-md-4 vcenter">
+                            <div style="margin:auto; width:100px">
+                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
+                            
+                            </div>
+                            
+                        </div><!----><div class="col-xs-12 col-sm-8 col-md-8 name-container vcenter">
+                            <h3>
+                                {{m['name']}}
+                            </h3>
+                            {% if m['result'] == "Passed" %}
+                            <p><span class="glyphicon glyphicon-ok-sign black"></span> Passed</p>
+                            {% elif m['result'] == "Pending" %}
+                            <p><span class="glyphicon glyphicon-hourglass black"></span> Pending</p>
+                            {% else %}
+                            <p><span class="glyphicon glyphicon-remove-sign black"></span> Failed</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div><!----><div class="col-sm-6 vcenter">
+                    <div class="row">
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                            {% if m['committee_meetings'] < 25 %}
+                                <div class="eval-info-label danger">Committee Meetings: {{m['committee_meetings']}}</div>
+                            {% else %}
+                                <div class="eval-info-label success">Committee Meetings: {{m['committee_meetings']}}</div>
+                            {% endif %}
+                        
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                            {% if m['major_project_passed'] %}
+                                <div class="eval-info-label success">Major Project: <span class="glyphicon glyphicon-ok-sign white"></span></div>
+                            {% elif m['major_project_passed'] %}
+                                <div class="eval-info-label warning">Major Project: <span class="glyphicon glyphicon-hourglass"></span></div>
+                            {% else %}
+                                <div class="eval-info-label danger">Major Project: <span class="glyphicon glyphicon-remove-sign white"></span></div>
+                            {% endif %}
+                            
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                            {% if m['house_meetings_missed']|length > 0 %}
+                            <div class="eval-info-label danger">House Meetings Missed: {{m['house_meetings_missed']|length}}</div>
+                            {% else %}
+                            <div class="eval-info-label success">House Meetings Missed: {{m['house_meetings_missed']|length}}</div>
+                            {% endif %}
+                        </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </div>
+        {% if m['house_meetings_missed']|length > 0 or m['technical_seminars']|length > 0 or m['social_events'] != "" or m['major_projects_len'] == 0 %}            
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                
+                <button class="btn btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse{{m['uid']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+                
+            </div>
+        </div>    
+        {% endif %}
+        <div class="collapse" id="evalsCollapse{{m['uid']}}">
+            {% if m['house_meetings_missed']|length > 0 %}
+            <!-- VV only display if missing house meetings VV -->
+            <hr class="eval-hr">
+            <h4>Missed House Meetings</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <th>Name</th>
-                        <th>Committee Meetings</th>
-                        <th>House Meetings Missed</th>
-                        <th>House Meeting Comments</th>
-                        <th>Major Project</th>
-                        <th>Comments</th>
-                        <th>Result</th>
+                        {% for hm_missed in m['house_meetings_missed'] %}
+                        <td>{{hm_missed['date']}}</td>
+                        <td>{{hm_missed['reason']}}</td>
+                        {% endfor %}
                     </tr>
-                    <!-- ng-repeat="conditional in conditionals.data"-->
-                    {% for m in members %}
-                    <tr>
-                        <td>{{m['name']}}</td> <!-- If showing all users -->
-                        {% if m['committee_meetings'] < 25 %}
-                        <td class="failed-eval-cell">{{m['committee_meetings']}}</td>
-                        {% else %}
-                        <td class="passed-eval-cell">{{m['committee_meetings']}}</td>
-                        {% endif %}
-
-                        {% if m['house_meetings_missed'] > 0 %}
-                        <td class="failed-eval-cell">{{m['house_meetings_missed']}}</td>
-                        {% else %}
-                        <td class="passed-eval-cell">{{m['house_meetings_missed']}}</td>
-                        {% endif %}
-                        <td>{{m['house_meetings_comments']}}</td>
-
-                        {% if m['major_project_passed'] %}
-                        <td class="passed-eval-cell">{{m['major_project']}}</td>
-                        {% else %}
-                        <td class="failed-eval-cell">{{m['major_project']}}</td>
-                        {% endif %}
-                        <td>{{m['comments']}}</td>
-                        {% if m['result'] == "Pending" %}
-                        <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
-                        {% elif m['result'] == "Passed" %}
-                        <td><span class="glyphicon glyphicon-ok-sign green"></span> Passed</td>
-                        {% else %}
-                        <td><span class="glyphicon glyphicon-remove-sign red"></span> Failed</td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
                 </tbody>
             </table>
-
-                </div>
-        </div>
+            {% endif %}
+            <!-- ^^ HOUSE MEETINGS TABLE -->
+            {% if m['technical_seminars']|length > 0 %}
+            <hr class="eval-hr">
+            <h4>Technical Seminars</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Seminar Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for seminar in m['technical_seminars'] %}
+                        <td>{{seminar['date']}}</td>
+                        <td>{{seminar['name']}}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            {% endif %}
+            
+            {% if m['social_events'] != "" %}
+            <hr class="eval-hr">
+            <h4>Social Events</h4>
+            <p>{{m['social_events']}}</p>
+            
+            {% endif %}
+            
+            {% if m['major_projects_len'] > 0 %}
+            <h4>Major Projects</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                {% for p in m['major_projects'] %}
+                <tbody>
+                    <tr>
+                        <td>{{p['name']}}</td>
+                            {% if p['status'] == "Passed" %}
+                            <td><span class="glyphicon glyphicon-ok-sign black"></span> Passed</td>
+                            {% elif p['status'] == "Pending" %}
+                            <td><span class="glyphicon glyphicon-hourglass black"></span> Pending</td>
+                            {% else %}
+                            <td><span class="glyphicon glyphicon-remove-sign black"></span> Failed</td>
+                            {% endif %}
+                        <td>{{p['description']}}</td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+                
+            </table>
+            {% endif %}
+            </div>
     </div>
-    
-    
-    <div >
+                    
 </div>
+                
+            </div>
+        
+        
+{% endfor %}
+    </div>
 {% endblock %}
