@@ -17,6 +17,7 @@ def display_spring_evals():
                     'house_meetings_missed': [{'date': "aprial fools fayas ads", 'reason': "I was playing videogames"}],
                     'major_project': 'open_container',
                     'major_project_passed': True,
+                    'social_events': "",
                     'comments': "please don't fail me",
                     'result': 'Pending'
                 },
@@ -26,6 +27,7 @@ def display_spring_evals():
                     'house_meetings_missed': [],
                     'major_project': 'wii-u shit',
                     'major_project_passed': True,
+                    'social_events': "Manipulation and Opportunism",
                     'comments': "imdabes",
                     'result': 'Passed'
                 }
