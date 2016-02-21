@@ -17,7 +17,13 @@ def get_all_members():
     for m in members:
         uid = m
         name = ldap_get_name(m)
-        named_members.append("{name} ({uid})".format(name=name, uid=uid))
+        name = "{name} ({uid})".format(name=name, uid=uid)
+
+        named_members.append(
+            {
+                'display': name,
+                'value': m
+            })
 
     return jsonify({'members': named_members}), 200
 
@@ -33,7 +39,13 @@ def get_non_alumni_non_coop():
     for m in members:
         uid = m
         name = ldap_get_name(m)
-        named_members.append("{name} ({uid})".format(name=name, uid=uid))
+        name = "{name} ({uid})".format(name=name, uid=uid)
+
+        named_members.append(
+            {
+                'display': name,
+                'value': m
+            })
 
     return jsonify({'members': named_members}), 200
 
@@ -46,7 +58,13 @@ def get_non_alumni():
     for m in non_alumni_members:
         uid = m
         name = ldap_get_name(m)
-        named_members.append("{name} ({uid})".format(name=name, uid=uid))
+        name = "{name} ({uid})".format(name=name, uid=uid)
+
+        named_members.append(
+            {
+                'display': name,
+                'value': m
+            })
 
     return jsonify({'members': named_members}), 200
 
