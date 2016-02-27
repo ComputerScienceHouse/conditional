@@ -1,4 +1,5 @@
 from functools import wraps
+from functools import lru_cache
 
 import ldap
 
@@ -80,16 +81,19 @@ def ldap_get_room_number(username):
         return "N/A"
     return roomno.decode('utf-8')
 
+@lru_cache(maxsize=1024)
 def ldap_get_all_members():
-    return __ldap_get_members__()
+    return [x[1] for x in __ldap_get_members__()]
 
+@lru_cache(maxsize=1024)
 def ldap_get_active_members():
-    return [str(str(x[0]).split(",")[0]).split("=")[1] \
+    return [x[1] \
             for x in __ldap_get_members__()[1:] \
             if ldap_is_active(str(str(x[0]).split(",")[0]).split("=")[1])]
 
+@lru_cache(maxsize=1024)
 def ldap_get_non_alumni_members():
-    return [str(str(x[0]).split(",")[0]).split("=")[1] \
+    return [x[1] \
             for x in __ldap_get_members__()[1:] \
             if not ldap_is_alumni(str(str(x[0]).split(",")[0]).split("=")[1])]
 
@@ -124,6 +128,7 @@ def ldap_set_roomnumber(username, room_number):
 def ldap_set_active(username, is_active):
     __ldap_set_field__(username, 'active', str(int(is_active)).encode('ascii'))
 
+@lru_cache(maxsize=1024)
 def ldap_get_name(username):
     first = __ldap_get_field__(username, 'givenName')
     if first == None:
