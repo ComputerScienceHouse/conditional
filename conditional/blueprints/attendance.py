@@ -9,20 +9,32 @@ from db.models import CurrentCoops
 
 attendance_bp = Blueprint('attendance_bp', __name__)
 
+def get_name(m):
+    first = None
+    if 'givenName' in m:
+        first = m['givenName'][0].decode('utf-8')
+    else:
+        first = ""
+    last = None
+    if 'sn' in m:
+        last = m['sn'][0].decode('utf-8')
+    else:
+        last = ""
+    return "{first} {last}".format(first=first, last=last)
+
 @attendance_bp.route('/attendance/ts_members')
 def get_all_members():
     members = ldap_get_all_members()
 
     named_members = []
     for m in members:
-        uid = m
-        name = ldap_get_name(m)
-        name = "{name} ({uid})".format(name=name, uid=uid)
+        uid = m['uid'][0].decode('utf-8')
+        name = "{name} ({uid})".format(name=get_name(m), uid=uid)
 
         named_members.append(
             {
                 'display': name,
-                'value': m
+                'value': uid
             })
 
     return jsonify({'members': named_members}), 200
@@ -32,19 +44,18 @@ def get_non_alumni_non_coop():
     non_alumni_members = ldap_get_non_alumni_members()
     coop_members = [u.username for u in CurrentCoops.query.all()]
 
-    members = list(set(non_alumni_members).difference(coop_members))
-
-
     named_members = []
-    for m in members:
-        uid = m
-        name = ldap_get_name(m)
-        name = "{name} ({uid})".format(name=name, uid=uid)
+    for m in non_alumni_members:
+        uid = m['uid'][0].decode('utf-8')
+
+        if uid in coop_members:
+            continue
+        name = "{name} ({uid})".format(name=get_name(m), uid=uid)
 
         named_members.append(
             {
                 'display': name,
-                'value': m
+                'value': uid
             })
 
     return jsonify({'members': named_members}), 200
@@ -56,14 +67,13 @@ def get_non_alumni():
 
     named_members = []
     for m in non_alumni_members:
-        uid = m
-        name = ldap_get_name(m)
-        name = "{name} ({uid})".format(name=name, uid=uid)
+        uid = m['uid'][0].decode('utf-8')
+        name = "{name} ({uid})".format(name=get_name(m), uid=uid)
 
         named_members.append(
             {
                 'display': name,
-                'value': m
+                'value': uid
             })
 
     return jsonify({'members': named_members}), 200
