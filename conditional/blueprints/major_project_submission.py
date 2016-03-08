@@ -26,3 +26,17 @@ def display_major_project():
                             major_projects = major_projects,
                             major_projects_len = major_projects_len,
                             username = user_name)
+
+@major_project_bp.route('/major_project/submit', methods=['POST'])
+def submit_major_project():
+    from db.database import db_session
+    user_name = request.headers.get('x-webauth-user')
+
+    name = request.form.get('project_name')
+    description = request.form.get('project_description')
+
+    project = MajorProject(user_name, name, description)
+
+    db_session.add(project)
+    db_session.commit()
+    return "", 200
