@@ -6,6 +6,9 @@ from flask import request
 from util.ldap import ldap_get_all_members, ldap_get_non_alumni_members, ldap_get_name
 
 from db.models import CurrentCoops
+from db.models import CommitteeMeeting
+from db.models import MemberCommitteeAttendance
+from datetime import datetime
 
 attendance_bp = Blueprint('attendance_bp', __name__)
 
@@ -86,3 +89,31 @@ def display_attendance():
 
     return "", 200
     # return names in 'first last (username)' format
+
+@attendance_bp.route('/attendance/submit/cm', methods=['POST'])
+def submit_committee_attendance():
+
+    ##
+    from db.database import db_session
+
+    user_name = request.headers.get('x-webauth-user')
+
+    post_data = request.get_json()
+
+    info = post_data['info']
+    m_attendees = post_data['members']
+    f_attendees = post_data['freshmen']
+
+    meeting = CommitteeMeeting(
+        info['committee'],
+        datetime.strptime(info['timestamp'], "%A %d. %B %Y"))
+
+    db_session.add(meeting)
+    db_session.flush()
+    db_session.refresh(meeting)
+
+    for m in m_attendees:
+        db_session.add(MemberCommitteeAttendance(m, meeting.id))
+
+    db_session.commit()
+    return '', 200
