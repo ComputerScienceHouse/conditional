@@ -3,7 +3,7 @@ from flask import render_template
 from flask import request
 from util.ldap import ldap_get_room_number, ldap_is_active, ldap_is_onfloor, \
                       ldap_get_housing_points
-from db.models import MajorProject
+from db.models import CommitteeMeeting, MajorProject, MemberCommitteeAttendance
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
@@ -43,7 +43,12 @@ def display_dashboard():
 
     spring = {}
     spring['mp_status'] = "Failed"
-    spring['committee_meetings'] = 26
+
+    c_meetings = [m.meeting_id for m in
+        MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.uid == user_name
+        )]
+    spring['committee_meetings'] = len(c_meetings)
     spring['hm_missed'] = 26
     spring['general_comments'] = "I should win, please don't kick me out"
 
@@ -72,6 +77,15 @@ def display_dashboard():
     data['conditionals_len'] = len(conditionals)
 
     attendance = [{'type':'House Meeting', 'datetime': 'christmass'}]
+    print(c_meetings)
+    attendance.extend([
+        {
+            'type': m.committee,
+            'datetime': m.timestamp
+        } for m in CommitteeMeeting.query.filter(
+                CommitteeMeeting.id.in_(c_meetings)
+            )])
+
     data['attendance'] = attendance
     data['attendance_len'] = len(attendance)
 

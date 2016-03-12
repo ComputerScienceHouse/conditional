@@ -4,9 +4,15 @@ from flask import request
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
+from db.models import MemberCommitteeAttendance
+
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals():
     # get user data
+
+    def get_cm_count(uid):
+        return len([a for a in MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.uid == uid)])
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -14,7 +20,7 @@ def display_spring_evals():
                 {
                     'name': "Liam Middlebrook",
                     'uid': 'loothelion',
-                    'committee_meetings': 24,
+                    'committee_meetings': get_cm_count('loothelion'),
                     'house_meetings_missed': [{'date': "aprial fools fayas ads", 'reason': "I was playing videogames"}],
                     'major_projects': [
                         {
@@ -31,7 +37,7 @@ def display_spring_evals():
                 {
                     'name': "Julien Eid",
                     'uid': 'jeid',
-                    'committee_meetings': 69,
+                    'committee_meetings': get_cm_count('jeid'),
                     'house_meetings_missed': [],
                     'major_projects': [
                         {
