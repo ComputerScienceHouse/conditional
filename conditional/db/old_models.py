@@ -43,7 +43,7 @@ class FreshmanEval(Base):
 class HouseMeeting(Base):
     __tablename__ = 'house_meetings'
     username = Column(String(100), nullable=False, primary_key=True)
-    date = Column(Date, nullable=False)
+    date = Column(Date, nullable=False, primary_key=True)
     present = Column(Integer, nullable=False)
     excused = Column(Integer, nullable=False)
     comments = Column(String(2000), nullable=False)

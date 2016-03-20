@@ -148,5 +148,49 @@ def migrate_models():
     # ==========
     # TODO implements db for conditionals
     print("END: migrate conditionals")
+
+    # ==========
+
+    print("BEGIN: house meetings")
+
+    h_meetings = [hm.date for hm in zoo_session.query(zoo.HouseMeeting).all()]
+
+    for hm in h_meetings:
+        m = models.HouseMeeting(hm)
+        db_session.add(m)
+
+    # TODO actually assign house meeting attendance rather than just
+    # saying that house meetings happened
+    print("END: house meetings")
+
+    # ==========
+
+    print("BEGIN: Major Projects")
+
+    projects = [
+        {
+            'username': mp.username,
+            'name': mp.project_name,
+            'description': mp.project_description,
+            'status': mp.status
+        } for mp in zoo_session.query(zoo.MajorProject).all()]
+
+    for p in projects:
+        mp = models.MajorProject(
+            p['username'],
+            p['name'],
+            p['description']
+        )
+
+        if p['status'] == 'pass':
+            mp.status = 'Passed'
+        if p['status'] == 'fail':
+            mp.status = 'Failed'
+
+        db_session.add(mp)
+    print("END: Major Projects")
+
+    # ==========
+
     db_session.flush()
     db_session.commit()
