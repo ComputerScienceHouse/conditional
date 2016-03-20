@@ -14,15 +14,17 @@
                 <tbody>
                     <tr>
                         <th>Name</th>
+                        <th>Date Created</th>
+                        <th>Date Due</th>
                         <th>Description</th>
-                        <th>Deadline</th>
                     </tr>
                     <!-- ng-repeat="conditional in conditionals.data"-->
-                    {% for m in members %}
+                    {% for c in conditionals %}
                     <tr>
-                        <td>{{m['name']}}</td> <!-- If showing all users -->
-                        <td>{{m['description']}}</td>
-                        <td>{{m['deadline']}}</td>
+                        <td>{{c['name']}}</td> <!-- If showing all users -->
+                        <td>{{c['date_created']}}</td>
+                        <td>{{c['date_due']}}</td>
+                        <td>{{c['description']}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -31,8 +33,6 @@
                 </div>
         </div>
     </div>
-    
-    
     <div >
 </div>
 {% endblock %}

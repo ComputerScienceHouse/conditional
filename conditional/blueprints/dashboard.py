@@ -2,8 +2,9 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from util.ldap import ldap_get_room_number, ldap_is_active, ldap_is_onfloor, \
-                      ldap_get_housing_points
-from db.models import CommitteeMeeting, MajorProject, MemberCommitteeAttendance
+                      ldap_get_housing_points, ldap_is_intromember
+import db.models as models
+from util.housing import get_queue_length, get_queue_position
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
@@ -21,44 +22,72 @@ def display_dashboard():
     # Voting Status
     data['voting'] = True # FIXME: unimplemented
 
-    freshman = {}
+    # freshman shit
+    if ldap_is_intromember(user_name) or user_name == 'loothelion':
+        freshman = {}
+        freshman_data = models.FreshmanEvalData.query.filter(models.FreshmanEvalData.uid == user_name).first()
 
-    freshman['status'] = "Pending"
-    # number of committee meetings attended
-    freshman['committee_meetings'] = 11
+        freshman['status'] = freshman_data.freshman_eval_result
+        # number of committee meetings attended
+        c_meetings = [m.meeting_id for m in
+            models.MemberCommitteeAttendance.query.filter(
+                models.MemberCommitteeAttendance.uid == user_name
+            )]
+        freshman['committee_meetings'] = len(c_meetings)
+        # technical seminar total
+        t_seminars = [s.seminar_id for s in
+            models.MemberSeminarAttendance.query.filter(
+                models.MemberSeminarAttendance.uid == user_name
+            )]
+        freshman['ts_total'] = len(t_seminars)
+        attendance = [m.name for m in models.TechnicalSeminar.query.filter(
+                    models.TechnicalSeminar.id.in_(t_seminars)
+                )]
 
-    # technical seminar total
-    freshman['ts_total'] = 42
-    freshman['ts_string'] = "Seminar #1\nSeminar #2"
+        freshman['ts_list'] = attendance
 
-    freshman['hm_missed'] = 0
+        h_meetings = [(m.meeting_id, m.attendance_status) for m in
+            models.MemberHouseMeetingAttendance.query.filter(
+                models.MemberHouseMeetingAttendance.uid == user_name
+            )]
+        freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
+        freshman['social_events'] = freshman_data.social_events
+        freshman['general_comments'] = freshman_data.other_notes
+        freshman['fresh_proj'] = freshman_data.freshman_project
+        freshman['sig_missed'] = freshman_data.signatures_missed
+        freshman['eval_date'] = freshman_data.eval_date
 
-    freshman['social_events'] = "Welcome Back, First Marks"
-
-    freshman['general_comments'] = "Please accept me as a member kthnxbai."
-
-    freshman['eval_date'] = "Oct 31, 2015"
-
-    data['freshman'] = freshman
+        data['freshman'] = freshman
+    else:
+        data['freshman'] = False
 
     spring = {}
-    spring['mp_status'] = "Failed"
-
     c_meetings = [m.meeting_id for m in
-        MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == user_name
+        models.MemberCommitteeAttendance.query.filter(
+            models.MemberCommitteeAttendance.uid == user_name
         )]
     spring['committee_meetings'] = len(c_meetings)
-    spring['hm_missed'] = 26
-    spring['general_comments'] = "I should win, please don't kick me out"
+    h_meetings = [(m.meeting_id, m.attendance_status) for m in
+        models.MemberHouseMeetingAttendance.query.filter(
+            models.MemberHouseMeetingAttendance.uid == user_name
+        )]
+    spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
+    h_meetings = [h[0] for h in h_meetings if h[1] != "Absent"]
 
     data['spring'] = spring
-    housing = {}
-    housing['points'] = ldap_get_housing_points(user_name)
-    housing['room'] = ldap_get_room_number(user_name)
-    housing['future_room'] = "NRH3102"
-    housing['queue_pos'] = 2
-    housing['queue_len'] = 9
+
+    housing = False
+
+    # only show housing if member has onfloor status
+    if ldap_is_onfloor(user_name):
+        housing = {}
+        housing['points'] = ldap_get_housing_points(user_name)
+        housing['room'] = ldap_get_room_number(user_name)
+        if housing['room'] == "N/A":
+            housing['queue_pos'] = get_queue_position(user_name)
+        else:
+            housing['queue_pos'] = "On Floor"
+        housing['queue_len'] = get_queue_length()
 
     data['housing'] = housing
 
@@ -68,22 +97,42 @@ def display_dashboard():
                 'status': p.status,
                 'description': p.description
             } for p in
-        MajorProject.query.filter(MajorProject.uid == user_name)]
+        models.MajorProject.query.filter(models.MajorProject.uid == user_name)]
 
     data['major_projects_count'] = len(data['major_projects'])
 
-    conditionals = [{'description':'redo freshman project','deadline':'next year'}]
+    spring['mp_status'] = "Failed"
+    for mp in data['major_projects']:
+        if mp['status'] == "Pending":
+            spring['mp_status'] = 'Pending'
+            continue
+        if mp['status'] == "Passed":
+            spring['mp_status'] = 'Passed'
+            break
+
+    conditionals = [
+            {
+                'date_created': c.date_created,
+                'date_due': c.date_due,
+                'description': c.description
+            } for c in
+        models.Conditional.query.filter(models.Conditional.uid == user_name)]
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
-    attendance = [{'type':'House Meeting', 'datetime': 'christmass'}]
-    print(c_meetings)
+    attendance = [
+        {
+            'type': "House Meeting",
+            'datetime': m.date
+        } for m in models.HouseMeeting.query.filter(
+                models.HouseMeeting.id.in_(h_meetings)
+            )]
     attendance.extend([
         {
             'type': m.committee,
             'datetime': m.timestamp
-        } for m in CommitteeMeeting.query.filter(
-                CommitteeMeeting.id.in_(c_meetings)
+        } for m in models.CommitteeMeeting.query.filter(
+                models.CommitteeMeeting.id.in_(c_meetings)
             )])
 
     data['attendance'] = attendance

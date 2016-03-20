@@ -72,9 +72,11 @@ def __ldap_is_member_of_group__(username, group):
     return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
         [x.decode('ascii') for x in ldap_results[0][1]['member']]
 
+@lru_cache(maxsize=1024)
 def ldap_get_housing_points(username):
     return int(__ldap_get_field__(username, 'housingPoints'))
 
+@lru_cache(maxsize=1024)
 def ldap_get_room_number(username):
     roomno = __ldap_get_field__(username, 'roomNumber')
     if roomno is None:
@@ -92,11 +94,24 @@ def ldap_get_active_members():
             if ldap_is_active(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 @lru_cache(maxsize=1024)
+def ldap_get_intro_members():
+    return [x[1] \
+            for x in __ldap_get_members__()[1:] \
+            if ldap_is_intromember(str(str(x[0]).split(",")[0]).split("=")[1])]
+
+@lru_cache(maxsize=1024)
 def ldap_get_non_alumni_members():
     return [x[1] \
             for x in __ldap_get_members__()[1:] \
             if not ldap_is_alumni(str(str(x[0]).split(",")[0]).split("=")[1])]
 
+@lru_cache(maxsize=1024)
+def ldap_get_onfloor_members():
+    return [x[1]['uid'] \
+            for x in __ldap_get_members__()[1:] \
+            if ldap_is_onfloor(str(str(x[0]).split(",")[0]).split("=")[1])]
+
+@lru_cache(maxsize=1024)
 def ldap_is_active(username):
     # When active members become a group rather than an attribute this will
     # change to use __ldap_is_member_of_group__.
@@ -116,8 +131,10 @@ def ldap_is_intromember(username):
     return __ldap_is_member_of_group__(username, 'intromembers')
 
 def ldap_is_onfloor(username):
-    onfloor_status = __ldap_get_field__(username, 'onfloor')
-    return onfloor_status != None and onfloor_status.decode('utf-8') == '1'
+    # april 3rd created onfloor group
+    #onfloor_status = __ldap_get_field__(username, 'onfloor')
+    #return onfloor_status != None and onfloor_status.decode('utf-8') == '1'
+    return __ldap_is_member_of_group__(username, 'onfloor')
 
 def ldap_set_housingpoints(username, housing_points):
     __ldap_set_field__(username, 'housingPoints', housing_points)

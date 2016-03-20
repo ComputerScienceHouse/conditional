@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 col-md-4 vcenter">
                             <div style="margin:auto; width:100px">
-                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/loothelion" width="100" height="100" />
+                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
                             
                             </div>
                             
@@ -22,13 +22,6 @@
                             <h3>
                                 {{m['name']}}
                             </h3>
-                            {% if m['result'] == "Passed" %}
-                            <p><span class="glyphicon glyphicon-ok-sign"></span> Passed</p>
-                            {% elif m['result'] == "Pending" %}
-                            <p><span class="glyphicon glyphicon-hourglass"></span> Pending</p>
-                            {% else %}
-                            <p><span class="glyphicon glyphicon-remove-sign"></span> Failed</p>
-                            {% endif %}
                         </div>
                     </div>
                 </div><!----><div class="col-sm-6 vcenter">
@@ -49,9 +42,9 @@
                         
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                            {% if m['freshmen_project'] == "Pending" %}
+                            {% if m['freshman_project'] == "Pending" %}
                                 <div class="eval-info-label warning">Freshman Project: <span class="glyphicon glyphicon-hourglass white"></span></div>
-                            {% elif m['freshmen_project'] == "Passed" %}
+                            {% elif m['freshman_project'] == "Passed" %}
                                 <div class="eval-info-label success">Freshman Project: <span class="glyphicon glyphicon-ok-sign white"></span></div>
                             {% else %}
                                 <div class="eval-info-label danger">Freshman Project: <span class="glyphicon glyphicon-remove-sign white"></span></div>
@@ -71,16 +64,16 @@
                 </div>
             </div>
                 </div>
-        {% if m['house_meetings_missed']|length > 0 or m['technical_seminars']|length > 0 or m['social_events'] != "" %}            
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 
-                <button class="btn btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse" aria-expanded="false" aria-controls="evalsCollapse"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+                <button class="btn btn-expand-panel" role="button"
+                data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}"
+                aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
                 
             </div>
         </div>    
-        {% endif %}
-        <div class="collapse" id="evalsCollapse">
+        <div class="collapse" id="evalsCollapse-{{m['uid']}}">
             {% if m['house_meetings_missed']|length > 0 %}
             <!-- VV only display if missing house meetings VV -->
             <hr class="eval-hr">
@@ -103,23 +96,21 @@
             </table>
             {% endif %}
             <!-- ^^ HOUSE MEETINGS TABLE -->
-            {% if m['technical_seminars']|length > 0 %}
+            {% if True or m['technical_seminars']|length > 0 %}
             <hr class="eval-hr">
             <h4>Technical Seminars</h4>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Seminar Name</th>
+                        <th>Seminar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
                         {% for seminar in m['technical_seminars'] %}
-                        <td>{{seminar['date']}}</td>
-                        <td>{{seminar['name']}}</td>
-                        {% endfor %}
+                    <tr>
+                        <td>{{seminar}}</td>
                     </tr>
+                        {% endfor %}
                 </tbody>
             </table>
             {% endif %}
@@ -128,8 +119,11 @@
             <hr class="eval-hr">
             <h4>Social Events</h4>
             <p>{{m['social_events']}}</p>
-            
             {% endif %}
+
+            <hr class="eval-hr">
+            <h4>Other Notes</h4>
+            <p>{{m['comments']}}</p>
             </div>
     </div>
                     

@@ -12,6 +12,7 @@ from datetime import datetime
 
 attendance_bp = Blueprint('attendance_bp', __name__)
 
+#TODO: Packet Freshmen need attendance too
 def get_name(m):
     first = None
     if 'givenName' in m:

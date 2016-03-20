@@ -18,7 +18,7 @@ def display_major_project():
                 'status': p.status,
                 'description': p.description
             } for p in
-        MajorProject.query.filter(MajorProject.uid == user_name)]
+        MajorProject.query.filter(MajorProject.status == "Pending")]
 
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format

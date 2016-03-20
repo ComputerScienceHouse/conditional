@@ -22,13 +22,6 @@
                             <h3>
                                 {{m['name']}}
                             </h3>
-                            {% if m['result'] == "Passed" %}
-                            <p><span class="glyphicon glyphicon-ok-sign black"></span> Passed</p>
-                            {% elif m['result'] == "Pending" %}
-                            <p><span class="glyphicon glyphicon-hourglass black"></span> Pending</p>
-                            {% else %}
-                            <p><span class="glyphicon glyphicon-remove-sign black"></span> Failed</p>
-                            {% endif %}
                         </div>
                     </div>
                 </div><!----><div class="col-sm-6 vcenter">
@@ -65,7 +58,7 @@
                 </div>
             </div>
                 </div>
-        {% if m['house_meetings_missed']|length > 0 or m['technical_seminars']|length > 0 or m['social_events'] != "" or m['major_projects_len'] == 0 %}            
+        {% if m['house_meetings_missed']|length > 0 or m['major_projects_len'] > 0 %}            
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 
@@ -116,13 +109,6 @@
                     </tr>
                 </tbody>
             </table>
-            {% endif %}
-            
-            {% if m['social_events'] != "" %}
-            <hr class="eval-hr">
-            <h4>Social Events</h4>
-            <p>{{m['social_events']}}</p>
-            
             {% endif %}
             
             {% if m['major_projects_len'] > 0 %}

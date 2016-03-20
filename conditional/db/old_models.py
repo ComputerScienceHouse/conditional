@@ -53,7 +53,7 @@ class MajorProject(Base):
     username = Column(String(100), nullable=False, primary_key=True)
     timestamp = Column(DateTime, nullable=False)
     project_committee= Column(Text)
-    project_name = Column(String(200), nullable=False)
+    project_name = Column(String(200), nullable=False, primary_key=True)
     project_description = Column(Text)
     status = Column(Enum('pending', 'pass', 'fail'), nullable=False)
 
