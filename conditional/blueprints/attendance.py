@@ -88,6 +88,7 @@ def display_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
+    #TODO FIXME ADD CONTENT
     return "", 200
     # return names in 'first last (username)' format
 
@@ -99,15 +100,13 @@ def submit_committee_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    post_data = request.get_json()
+    committee = request.form.get('committee')
+    timestamp = request.form.get('timestamp')
+    m_attendees = request.form.get('members')
+    f_attendees = request.form.get('freshmen')
 
-    info = post_data['info']
-    m_attendees = post_data['members']
-    f_attendees = post_data['freshmen']
-
-    meeting = CommitteeMeeting(
-        info['committee'],
-        datetime.strptime(info['timestamp'], "%A %d. %B %Y"))
+    meeting = CommitteeMeeting(committee,
+        datetime.strptime(timestamp, "%A %d. %B %Y"))
 
     db_session.add(meeting)
     db_session.flush()
@@ -115,6 +114,8 @@ def submit_committee_attendance():
 
     for m in m_attendees:
         db_session.add(MemberCommitteeAttendance(m, meeting.id))
+
+    # TODO FIXME FRESHMAN ATTENDEANCE
 
     db_session.commit()
     return '', 200

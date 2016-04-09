@@ -6,17 +6,19 @@ import ldap
 # Global state is gross. I'm sorry.
 ldap_conn = None
 user_search_ou = None
+committee_search_ou = None
 group_search_ou = None
 read_only = False
 
 class HousingLDAPError(Exception):
     pass
 
-def ldap_init(ro, ldap_url, bind_dn, bind_pw, user_ou, group_ou):
-    global user_search_ou, group_search_ou, ldap_conn, read_only
+def ldap_init(ro, ldap_url, bind_dn, bind_pw, user_ou, group_ou, committee_ou):
+    global user_search_ou, group_search_ou, committee_search_ou, ldap_conn, read_only
     read_only = ro
     user_search_ou = user_ou
     group_search_ou = group_ou
+    committee_search_ou = committee_ou
     ldap_conn = ldap.initialize(ldap_url, bytes_mode=False)
     ldap_conn.simple_bind_s(bind_dn, bind_pw)
 
@@ -72,6 +74,16 @@ def __ldap_is_member_of_group__(username, group):
     return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
         [x.decode('ascii') for x in ldap_results[0][1]['member']]
 
+@ldap_init_required
+def __ldap_is_member_of_committee__(username, committee):
+    ldap_results = ldap_conn.search_s(committee_search_ou, ldap.SCOPE_SUBTREE,
+            "(cn=%s)" % committee)
+    if len(ldap_results) != 1:
+        raise HousingLDAPError("Wrong number of results found for committee %s." %
+                committee)
+    return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
+        [x.decode('ascii') for x in ldap_results[0][1]['head']]
+
 @lru_cache(maxsize=1024)
 def ldap_get_housing_points(username):
     return int(__ldap_get_field__(username, 'housingPoints'))
@@ -106,6 +118,12 @@ def ldap_get_non_alumni_members():
             if not ldap_is_alumni(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 @lru_cache(maxsize=1024)
+def ldap_get_current_students():
+    return [x[1]['uid'] \
+            for x in __ldap_get_members__()[1:] \
+            if ldap_is_current_student(str(str(x[0]).split(",")[0]).split("=")[1])]
+
+@lru_cache(maxsize=1024)
 def ldap_get_onfloor_members():
     return [x[1]['uid'] \
             for x in __ldap_get_members__()[1:] \
@@ -135,6 +153,12 @@ def ldap_is_onfloor(username):
     #onfloor_status = __ldap_get_field__(username, 'onfloor')
     #return onfloor_status != None and onfloor_status.decode('utf-8') == '1'
     return __ldap_is_member_of_group__(username, 'onfloor')
+
+def ldap_is_financial_director(username):
+    return __ldap_is_member_of_committee__(username, 'Financial')
+
+def ldap_is_current_student(username):
+    return __ldap_is_member_of_group__(username, 'current_student')
 
 def ldap_set_housingpoints(username, housing_points):
     __ldap_set_field__(username, 'housingPoints', housing_points)

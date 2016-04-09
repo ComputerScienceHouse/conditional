@@ -15,5 +15,6 @@ if __name__ == '__main__':
               ldap_config['bind_dn'],
               ldap_config['bind_pw'],
               ldap_config['user_ou'],
-              ldap_config['group_ou'])
+              ldap_config['group_ou'],
+              ldap_config['committee_ou'])
     free_the_zoo(json_config['zoo']['url'], json_config['db']['url'])

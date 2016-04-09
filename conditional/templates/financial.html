@@ -1,0 +1,39 @@
+{% extends "nav.html" %}
+{% block body %}
+<div class="container main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Financial</h3>
+        </div>
+        <div class="panel-body table-fill">
+        table of every member
+        Name, username, onfloor status, checkbox, submit button
+        checkbox for active (if dues are paid)
+        </br>
+        <table>
+        <th>
+            <td>name</td>
+            <td>uid</td>
+            <td>onfloor</td>
+            <td>DUES CHECKBOX</td>
+            <td>SUBMIT BUTTON</td>
+        </th>
+        {% for m in members %}
+
+        <!-- TODO FIXME make an ajax request so no redirect-->
+        <form action="/financial/edit" method="POST">
+        <tr>
+            <td>{{m['name']}}</td>
+            <td><input type="text" name="uid" value="{{m['uid']}}" readonly/></td>
+            <td>{{m['onfloor']}}</td>
+            <td><input type="checkbox" name="active" {{m['paid']}}></td>
+            <td><input type="submit" value="Update"></td>
+        </tr>
+        </form>
+        {% endfor %}
+        </table>
+        </div>
+    </div>
+    <div >
+</div>
+{% endblock %}
