@@ -9,6 +9,12 @@ from db.models import CurrentCoops
 from db.models import CommitteeMeeting
 from db.models import FreshmanCommitteeAttendance
 from db.models import MemberCommitteeAttendance
+from db.models import TechnicalSeminar
+from db.models import FreshmanSeminarAttendance
+from db.models import MemberSeminarAttendance
+from db.models import HouseMeeting
+from db.models import FreshmanHouseMeetingAttendance
+from db.models import MemberHouseMeetingAttendance
 from datetime import datetime
 
 attendance_bp = Blueprint('attendance_bp', __name__)
@@ -119,6 +125,7 @@ def display_attendance():
     return "", 200
     # return names in 'first last (username)' format
 
+# TODO FIXME Add checks for eboard members only
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
     from db.database import db_session
@@ -144,6 +151,33 @@ def submit_committee_attendance():
 
     for f in f_attendees:
         db_session.add(FreshmanCommitteeAttendance(f, meeting.id))
+
+    db_session.commit()
+    return '', 200
+
+@attendance_bp.route('/attendance/submit/ts', methods=['POST'])
+def submit_seminar_attendance():
+    from db.database import db_session
+
+    user_name = request.headers.get('x-webauth-user')
+
+    post_data = request.get_json()
+
+    seminar_name = post_data['name']
+    m_attendees = post_data['members']
+    f_attendees = post_data['freshmen']
+
+    seminar = TechnicalSeminar(seminar_name)
+
+    db_session.add(seminar)
+    db_session.flush()
+    db_session.refresh(seminar)
+
+    for m in m_attendees:
+        db_session.add(MemberSeminarAttendance(m, seminar.id))
+
+    for f in f_attendees:
+        db_session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db_session.commit()
     return '', 200
