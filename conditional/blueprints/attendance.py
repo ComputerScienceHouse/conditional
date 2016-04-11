@@ -117,6 +117,17 @@ def get_non_alumni():
 
     return jsonify({'members': named_members}), 200
 
+@attendance_bp.route('/attendance')
+def display_attendance():
+
+    user_name = request.headers.get('x-webauth-user')
+    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+        return "must be eboard", 403
+
+
+    return render_template('eboard_attend.html',
+                           username = user_name)
+
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
     from db.database import db_session
