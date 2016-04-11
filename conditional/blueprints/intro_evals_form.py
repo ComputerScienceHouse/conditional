@@ -3,6 +3,8 @@ from flask import render_template
 from flask import request
 
 from db.models import FreshmanEvalData
+from db.models import EvalSettings
+
 intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 
 @intro_evals_form_bp.route('/intro_evals_form/')
@@ -12,11 +14,14 @@ def display_intro_evals_form():
 
     evalData = FreshmanEvalData.query.filter(
                 FreshmanEvalData.uid == user_name).first()
+
+    is_open = EvalSettings.all().first().intro_form_active
     # return names in 'first last (username)' format
     return render_template('intro_evals_form.html',
                            username = user_name,
                            social_events = evalData.social_events,
-                           other_notes = evalData.other_notes)
+                           other_notes = evalData.other_notes,
+                           is_open = is_open)
 
 @intro_evals_form_bp.route('/intro_evals/submit', methods=['POST'])
 def submit_intro_evals():

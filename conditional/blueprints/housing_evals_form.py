@@ -23,11 +23,14 @@ def display_housing_evals_form():
             } for e in
         HousingEvalsSubmission.query.all()]
 
+    is_open = EvalSettings.all().first().intro_form_active
+
     # return names in 'first last (username)' format
     return render_template('housing_evals_form.html',
                            username = user_name,
                            housing_evals = housing_evals,
-                           housing_evals_len = len(housing_evals))
+                           housing_evals_len = len(housing_evals),
+                           is_open = is_open)
 
 @housing_evals_form_bp.route('/housing_evals/submit', methods=['POST'])
 def display_housing_evals_submit_form():
