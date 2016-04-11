@@ -68,7 +68,7 @@ def display_spring_evals():
 
     sp_members.sort(key = lambda x: x['committee_meetings'], reverse=True)
     sp_members.sort(key = lambda x: len(x['house_meetings_missed']))
-    sp_members.sort(key = lambda x: x['major_project_passed'])
+    sp_members.sort(key = lambda x: x['major_project_passed'], reverse=True)
     # return names in 'first last (username)' format
     return render_template('spring_evals.html',
                             username = user_name,
