@@ -11,7 +11,7 @@ from db.models import MemberCommitteeAttendance
 from db.models import FreshmanEvalData
 from db.models import MemberHouseMeetingAttendance
 from db.models import HouseMeeting
-from db.models import TechincalSeminar
+from db.models import TechnicalSeminar
 
 @intro_evals_bp.route('/intro_evals/')
 def display_intro_evals():
