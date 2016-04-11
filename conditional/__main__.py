@@ -11,6 +11,7 @@ from blueprints.financial import financial_bp
 from blueprints.housing_evals_form import housing_evals_form_bp
 from blueprints.spring_evals import spring_evals_bp
 from blueprints.conditional import conditionals_bp
+from blueprints.eboard_attend import eboard_attend_bp
 from util.ldap import ldap_init
 from db.database import init_db
 
@@ -39,7 +40,7 @@ app.register_blueprint(financial_bp)
 app.register_blueprint(housing_evals_form_bp)
 app.register_blueprint(spring_evals_bp)
 app.register_blueprint(conditionals_bp)
-
+app.register_blueprint(eboard_attend_bp)
 @app.route('/<path:path>')
 def static_proxy(path):
     # send_static_file will guess the correct MIME type

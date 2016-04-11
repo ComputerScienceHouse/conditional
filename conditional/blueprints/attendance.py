@@ -117,16 +117,6 @@ def get_non_alumni():
 
     return jsonify({'members': named_members}), 200
 
-@attendance_bp.route('/attendance/')
-def display_attendance():
-    # get user data
-
-    user_name = request.headers.get('x-webauth-user')
-
-    #TODO FIXME ADD CONTENT
-    return "", 200
-    # return names in 'first last (username)' format
-
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
     from db.database import db_session
