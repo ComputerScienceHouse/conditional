@@ -10,6 +10,7 @@ from util.ldap import ldap_get_name
 from db.models import MemberCommitteeAttendance
 from db.models import FreshmanEvalData
 from db.models import MemberHouseMeetingAttendance
+from db.models import MemberSeminarAttendance
 from db.models import HouseMeeting
 from db.models import TechnicalSeminar
 
@@ -19,11 +20,6 @@ def display_intro_evals():
     def get_cm_count(uid):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == uid)])
-
-    def freshman_cm_pass(uid):
-        # TODO FIXME
-        # 1 per week for 10 weeks
-        return True
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -46,7 +42,7 @@ def display_intro_evals():
                     'eval_date': freshman_data.eval_date,
                     'signatures_missed': freshman_data.signatures_missed,
                     'committee_meetings': get_cm_count(uid),
-                    'committee_meetings_passed': freshman_cm_pass(uid),
+                    'committee_meetings_passed': get_cm_count(uid) >= 10,
                     'house_meetings_missed':
                         [
                             {
