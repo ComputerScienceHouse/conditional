@@ -3,7 +3,7 @@ from flask import jsonify
 from flask import render_template
 from flask import request
 
-from util.ldap import ldap_get_all_members, ldap_get_non_alumni_members, ldap_get_name, ldap_get_current_students
+from util.ldap import ldap_get_all_members, ldap_get_non_alumni_members, ldap_get_name, ldap_get_current_students, ldap_is_eboard, ldap_is_eval_director
 
 from db.models import CurrentCoops
 from db.models import CommitteeMeeting
@@ -125,12 +125,14 @@ def display_attendance():
     return "", 200
     # return names in 'first last (username)' format
 
-# TODO FIXME Add checks for eboard members only
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+        return "must be eboard", 403
 
     post_data = request.get_json()
 
@@ -161,6 +163,9 @@ def submit_seminar_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
+    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+        return "must be eboard", 403
+
     post_data = request.get_json()
 
     seminar_name = post_data['name']
@@ -189,6 +194,9 @@ def submit_house_attendance():
     # status: Attended | Excused | Absent
 
     user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return "must be evals", 403
 
     post_data = request.get_json()
 

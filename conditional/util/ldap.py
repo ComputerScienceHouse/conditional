@@ -157,6 +157,10 @@ def ldap_is_onfloor(username):
 def ldap_is_financial_director(username):
     return __ldap_is_member_of_committee__(username, 'Financial')
 
+def ldap_is_eval_director(username):
+    # TODO FIXME Evaulations -> Evaluations
+    return __ldap_is_member_of_committee__(username, 'Evaulations')
+
 def ldap_is_current_student(username):
     return __ldap_is_member_of_group__(username, 'current_student')
 

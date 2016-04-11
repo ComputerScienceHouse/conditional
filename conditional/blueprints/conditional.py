@@ -4,7 +4,7 @@ from flask import request
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
-from util.ldap import ldap_get_name
+from util.ldap import ldap_get_name, ldap_is_eval_director
 
 from datetime import datetime
 
@@ -30,12 +30,13 @@ def display_conditionals():
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
 def create_conditional():
-    # TODO FIXME AUTH ONLY FOR EVALS DIRECTOR
-
     import db.models as models
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return "must be eval director", 403
 
     post_data = request.get_json()
 
