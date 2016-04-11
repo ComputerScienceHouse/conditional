@@ -6,6 +6,8 @@ conditionals_bp = Blueprint('conditionals_bp', __name__)
 
 from util.ldap import ldap_get_name
 
+from datetime import datetime
+
 @conditionals_bp.route('/conditionals/')
 def display_conditionals():
     # get user data
@@ -25,3 +27,24 @@ def display_conditionals():
                             username = user_name,
                             conditionals=conditionals,
                             conditionals_len = len(conditionals))
+
+@conditionals_bp.route('/conditionals/create', methods=['POST'])
+def create_conditional():
+    # TODO FIXME AUTH ONLY FOR EVALS DIRECTOR
+
+    import db.models as models
+    from db.database import db_session
+
+    user_name = request.headers.get('x-webauth-user')
+
+    post_data = request.get_json()
+
+    uid = post_data['uid']
+    description = post_data['description']
+    due_date = datetime.strptime(post_data['due_date'], "%A %d. %B %Y")
+
+    db_session.add(models.Conditional(uid, description, due_date))
+    db_session.flush()
+    db_session.commit()
+
+    return 'ok', 200
