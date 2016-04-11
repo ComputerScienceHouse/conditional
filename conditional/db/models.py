@@ -188,6 +188,7 @@ class Conditional(Base):
 
 class EvalSettings(Base):
     __tablename__ = 'settings'
+    id = Column(Integer, primary_key=True)
     housing_form_active = Column(Boolean)
     intro_form_active = Column(Boolean)
     site_lockdown = Column(Boolean)
