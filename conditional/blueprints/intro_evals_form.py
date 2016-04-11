@@ -25,8 +25,9 @@ def submit_intro_evals():
     import db.models as models
     user_name = request.headers.get('x-webauth-user')
 
-    social_events = request.form.get('social_events')
-    comments = request.form.get('comments')
+    post_data = request.get_json()
+    social_events = post_data['social_events']
+    comments = post_data['comments']
 
     models.FreshmanEvalData.query.filter(
         models.FreshmanEvalData.uid == user_name).\

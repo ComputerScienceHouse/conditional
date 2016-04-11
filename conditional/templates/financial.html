@@ -21,7 +21,6 @@
         {% for m in members %}
 
         <!-- TODO FIXME make an ajax request so no redirect-->
-        <form action="/financial/edit" method="POST">
         <tr>
             <td>{{m['name']}}</td>
             <td><input type="text" name="uid" value="{{m['uid']}}" readonly/></td>
@@ -29,7 +28,6 @@
             <td><input type="checkbox" name="active" {{m['paid']}}></td>
             <td><input type="submit" value="Update"></td>
         </tr>
-        </form>
         {% endfor %}
         </table>
         </div>

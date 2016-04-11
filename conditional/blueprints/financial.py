@@ -40,8 +40,9 @@ def edit_financial():
     if not ldap_is_financial_director(user_name) and user_name != 'loothelion':
         return redirect("/dashboard", code=302)
 
-    uid = request.form.get('uid')
-    active = request.form.get('active') == "on"
+    post_data = request.get_json()
+    uid = post_data['uid']
+    active = post-data['active'] == "on"
 
     # LDAP SET VALUE
     ldap_set_active(uid, active)

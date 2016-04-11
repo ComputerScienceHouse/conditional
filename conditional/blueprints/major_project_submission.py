@@ -32,8 +32,9 @@ def submit_major_project():
     from db.database import db_session
     user_name = request.headers.get('x-webauth-user')
 
-    name = request.form.get('project_name')
-    description = request.form.get('project_description')
+    post_data = request.get_json()
+    name = post_data['project_name']
+    description = post_data['project_description']
 
     project = MajorProject(user_name, name, description)
 

@@ -38,12 +38,13 @@ def display_housing_evals_submit_form():
 
     user_name = request.headers.get('x-webauth-user')
 
-    social_attended = request.form.get('social_attended')
-    social_hosted = request.form.get('social_hosted')
-    seminars_attended = request.form.get('seminars_attended')
-    seminars_hosted = request.form.get('seminars_hosted')
-    projects = request.form.get('projects')
-    comments = request.form.get('comments')
+    post_data = request.get_json()
+    social_attended = post_data['social_attended']
+    social_hosted = post_data['social_hosted']
+    seminars_attended = post_data['seminars_attended']
+    seminars_hosted = post_data['seminars_hosted']
+    projects = post_data['projects']
+    comments = post_data['comments']
 
     hEval = models.HousingEvalsSubmission(user_name, social_attended,
         social_hosted, seminars_attended, seminars_hosted,
