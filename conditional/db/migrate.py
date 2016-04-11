@@ -304,7 +304,7 @@ def migrate_models():
     print("BEGIN: ON FLOOR")
     import util.ldap as ldap
     from datetime import datetime
-    members = [m[0].decode('utf-8') for m in ldap.ldap_get_onfloor_members()]
+    members = [m[0]['uid'].decode('utf-8') for m in ldap.ldap_get_onfloor_members()]
     for m in members:
         db_session.add(models.OnFloorStatusAssigned(m, datetime.utcnow()))
     print("END: ON FLOOR")

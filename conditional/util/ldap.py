@@ -119,13 +119,13 @@ def ldap_get_non_alumni_members():
 
 @lru_cache(maxsize=1024)
 def ldap_get_current_students():
-    return [x[1]['uid'] \
+    return [x[1] \
             for x in __ldap_get_members__()[1:] \
             if ldap_is_current_student(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 @lru_cache(maxsize=1024)
 def ldap_get_onfloor_members():
-    return [x[1]['uid'] \
+    return [x[1] \
             for x in __ldap_get_members__()[1:] \
             if ldap_is_onfloor(str(str(x[0]).split(",")[0]).split("=")[1])]
 
