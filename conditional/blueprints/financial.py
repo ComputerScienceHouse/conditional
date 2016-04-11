@@ -23,10 +23,10 @@ def display_financial():
 
     members = [
         {
-            'uid': m[0]['uid'].decode('utf-8'),
-            'name': ldap_get_name(m[0]['uid'].decode('utf-8')),
-            'onfloor': ldap_get_room_number(m[0]['uid'].decode('utf-8')) != "N/A",
-            'paid': "checked" if ldap_is_active(m[0]['uid'].decode('utf-8')) else ""
+            'uid': m['uid'][0].decode('utf-8'),
+            'name': ldap_get_name(m['uid'][0].decode('utf-8')),
+            'onfloor': ldap_get_room_number(m['uid'][0].decode('utf-8')) != "N/A",
+            'paid': "checked" if ldap_is_active(m['uid'][0].decode('utf-8')) else ""
         } for m in ldap_get_current_students()]
 
     # return names in 'first last (username)' format

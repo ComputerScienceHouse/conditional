@@ -15,7 +15,7 @@ def display_housing():
     user_name = request.headers.get('x-webauth-user')
 
     housing = {}
-    onfloors = [uids[0]['uid'].decode('utf-8') for uids in ldap_get_onfloor_members()]
+    onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
 
     for m in onfloors:
         room = ldap_get_room_number(m)
