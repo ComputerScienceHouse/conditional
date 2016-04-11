@@ -332,5 +332,9 @@ def migrate_models():
                 he['projects'],
                 he['comments']))
     print("END: Housing Evals")
+
+    # Default EvalDB Settings
+    db_session.add(models.EvalSettings())
+
     db_session.flush()
     db_session.commit()

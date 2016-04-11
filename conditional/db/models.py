@@ -186,6 +186,17 @@ class Conditional(Base):
         self.date_due = due
         self.date_created = datetime.utcnow()
 
+class EvalSettings(Base):
+    __tablename__ = 'settings'
+    housing_form_active = Column(Boolean)
+    intro_form_active = Column(Boolean)
+    site_lockdown = Column(Boolean)
+
+    def __init__(self):
+        self.housing_form_active = True
+        self.intro_form_active = True
+        self.site_lockdown = False
+
 class HousingEvalsSubmission(Base):
     __tablename__ = 'housing_evals'
     id = Column(Integer, primary_key=True)
