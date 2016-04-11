@@ -3,7 +3,12 @@ from flask import jsonify
 from flask import render_template
 from flask import request
 
-from util.ldap import ldap_get_all_members, ldap_get_non_alumni_members, ldap_get_name, ldap_get_current_students, ldap_is_eboard, ldap_is_eval_director
+from util.ldap import ldap_get_all_members
+from util.ldap import ldap_get_non_alumni_members
+from util.ldap import ldap_get_name
+from util.ldap import ldap_get_current_students
+from util.ldap import ldap_is_eboard
+from util.ldap import ldap_is_eval_director
 
 from db.models import CurrentCoops
 from db.models import CommitteeMeeting
@@ -15,6 +20,7 @@ from db.models import MemberSeminarAttendance
 from db.models import HouseMeeting
 from db.models import FreshmanHouseMeetingAttendance
 from db.models import MemberHouseMeetingAttendance
+from db.models import FreshmanAccount
 from datetime import datetime
 
 attendance_bp = Blueprint('attendance_bp', __name__)
@@ -34,8 +40,6 @@ def get_name(m):
 
 @attendance_bp.route('/attendance/ts_members')
 def get_all_members():
-    import db.models as models
-
     members = ldap_get_current_students()
 
     named_members = [
@@ -43,8 +47,8 @@ def get_all_members():
             'display': f.name,
             'value': f.id,
             'freshman': True
-        } for f in models.FreshmanAccount.query.filter(
-        models.FreshmanAccount.eval_date > datetime.now())]
+        } for f in FreshmanAccount.query.filter(
+            FreshmanAccount.eval_date > datetime.now())]
 
     for m in members:
         uid = m['uid'][0].decode('utf-8')
@@ -61,7 +65,6 @@ def get_all_members():
 
 @attendance_bp.route('/attendance/hm_members')
 def get_non_alumni_non_coop():
-    import db.models as models
     non_alumni_members = ldap_get_current_students()
     coop_members = [u.username for u in CurrentCoops.query.all()]
 
@@ -70,8 +73,8 @@ def get_non_alumni_non_coop():
             'display': f.name,
             'value': f.id,
             'freshman': True
-        } for f in models.FreshmanAccount.query.filter(
-        models.FreshmanAccount.eval_date > datetime.now())]
+        } for f in FreshmanAccount.query.filter(
+            FreshmanAccount.eval_date > datetime.now())]
 
     for m in non_alumni_members:
         uid = m['uid'][0].decode('utf-8')
@@ -92,7 +95,6 @@ def get_non_alumni_non_coop():
 
 @attendance_bp.route('/attendance/cm_members')
 def get_non_alumni():
-    import db.models as models
     non_alumni_members = ldap_get_current_students()
 
     named_members = [
@@ -100,8 +102,8 @@ def get_non_alumni():
             'display': f.name,
             'value': f.id,
             'freshman': True
-        } for f in models.FreshmanAccount.query.filter(
-        models.FreshmanAccount.eval_date > datetime.now())]
+        } for f in FreshmanAccount.query.filter(
+            FreshmanAccount.eval_date > datetime.now())]
     for m in non_alumni_members:
         uid = m['uid'][0].decode('utf-8')
         name = "{name} ({uid})".format(name=get_name(m), uid=uid)

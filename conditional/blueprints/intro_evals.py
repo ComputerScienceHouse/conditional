@@ -4,16 +4,21 @@ from flask import request
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 
-from util.ldap import ldap_get_intro_members, ldap_get_name
+from util.ldap import ldap_get_intro_members
+from util.ldap import ldap_get_name
+
+from db.models import MemberCommitteeAttendance
+from db.models import FreshmanEvalData
+from db.models import MemberHouseMeetingAttendance
+from db.models import HouseMeeting
+from db.models import TechincalSeminar
 
 @intro_evals_bp.route('/intro_evals/')
 def display_intro_evals():
     # get user data
-    import db.models as models
-
     def get_cm_count(uid):
-        return len([a for a in models.MemberCommitteeAttendance.query.filter(
-            models.MemberCommitteeAttendance.uid == uid)])
+        return len([a for a in MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.uid == uid)])
 
     def freshman_cm_pass(uid):
         # TODO FIXME
@@ -27,13 +32,13 @@ def display_intro_evals():
     ie_members = []
     for member_uid in members:
         uid = member_uid[0].decode('utf-8')
-        freshman_data = models.FreshmanEvalData.query.filter(
-            models.FreshmanEvalData.uid == uid).first()
+        freshman_data = FreshmanEvalData.query.filter(
+            FreshmanEvalData.uid == uid).first()
         h_meetings = [m.meeting_id for m in
-            models.MemberHouseMeetingAttendance.query.filter(
-                models.MemberHouseMeetingAttendance.uid == uid
+            MemberHouseMeetingAttendance.query.filter(
+                MemberHouseMeetingAttendance.uid == uid
             ).filter(
-                models.MemberHouseMeetingAttendance.attendance_status == "Absent"
+                MemberHouseMeetingAttendance.attendance_status == "Absent"
             )]
         member = {
                     'name': ldap_get_name(uid),
@@ -47,19 +52,19 @@ def display_intro_evals():
                             {
                                 "date": m.date,
                                 "reason":
-    models.MemberHouseMeetingAttendance.query.filter(
-        models.MemberHouseMeetingAttendance.uid == uid).filter(
-            models.MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
+    MemberHouseMeetingAttendance.query.filter(
+        MemberHouseMeetingAttendance.uid == uid).filter(
+            MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
                             }
-                            for m in models.HouseMeeting.query.filter(
-                                models.HouseMeeting.id.in_(h_meetings)
+                            for m in HouseMeeting.query.filter(
+                                HouseMeeting.id.in_(h_meetings)
                             )
                         ],
                     'technical_seminars':
-                        [s.name for s in models.TechnicalSeminar.query.filter(
-                            models.TechnicalSeminar.id.in_(
-                                [a.seminar_id for a in models.MemberSeminarAttendance.query.filter(
-                                    models.MemberSeminarAttendance.uid == uid)]
+                        [s.name for s in TechnicalSeminar.query.filter(
+                            TechnicalSeminar.id.in_(
+                                [a.seminar_id for a in MemberSeminarAttendance.query.filter(
+                                    MemberSeminarAttendance.uid == uid)]
                             ))
                         ],
                     'social_events': freshman_data.social_events,

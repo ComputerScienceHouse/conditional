@@ -1,9 +1,23 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
-from util.ldap import ldap_get_room_number, ldap_is_active, ldap_is_onfloor, \
-                      ldap_get_housing_points, ldap_is_intromember
-import db.models as models
+
+from util.ldap import ldap_get_room_number
+from util.ldap import ldap_is_active
+from util.ldap import ldap_is_onfloor
+from util.ldap import ldap_get_housing_points
+from util.ldap import ldap_is_intromember
+
+from db.models import FreshmanEvalData
+from db.models import MemberCommitteeAttendance
+from db.models import MemberSeminarAttendance
+from db.models import TechnicalSeminar
+from db.models import MemberHouseMeetingAttendance
+from db.models import MajorProject
+from db.models import Conditional
+from db.models import HouseMeeting
+from db.models import CommitteeMeeting
+
 from util.housing import get_queue_length, get_queue_position
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
@@ -25,30 +39,30 @@ def display_dashboard():
     # freshman shit
     if ldap_is_intromember(user_name) or user_name == 'loothelion':
         freshman = {}
-        freshman_data = models.FreshmanEvalData.query.filter(models.FreshmanEvalData.uid == user_name).first()
+        freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
 
         freshman['status'] = freshman_data.freshman_eval_result
         # number of committee meetings attended
         c_meetings = [m.meeting_id for m in
-            models.MemberCommitteeAttendance.query.filter(
-                models.MemberCommitteeAttendance.uid == user_name
+            MemberCommitteeAttendance.query.filter(
+                MemberCommitteeAttendance.uid == user_name
             )]
         freshman['committee_meetings'] = len(c_meetings)
         # technical seminar total
         t_seminars = [s.seminar_id for s in
-            models.MemberSeminarAttendance.query.filter(
-                models.MemberSeminarAttendance.uid == user_name
+            MemberSeminarAttendance.query.filter(
+                MemberSeminarAttendance.uid == user_name
             )]
         freshman['ts_total'] = len(t_seminars)
-        attendance = [m.name for m in models.TechnicalSeminar.query.filter(
-                    models.TechnicalSeminar.id.in_(t_seminars)
+        attendance = [m.name for m in TechnicalSeminar.query.filter(
+                    TechnicalSeminar.id.in_(t_seminars)
                 )]
 
         freshman['ts_list'] = attendance
 
         h_meetings = [(m.meeting_id, m.attendance_status) for m in
-            models.MemberHouseMeetingAttendance.query.filter(
-                models.MemberHouseMeetingAttendance.uid == user_name
+            MemberHouseMeetingAttendance.query.filter(
+                MemberHouseMeetingAttendance.uid == user_name
             )]
         freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
         freshman['social_events'] = freshman_data.social_events
@@ -63,13 +77,13 @@ def display_dashboard():
 
     spring = {}
     c_meetings = [m.meeting_id for m in
-        models.MemberCommitteeAttendance.query.filter(
-            models.MemberCommitteeAttendance.uid == user_name
+        MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.uid == user_name
         )]
     spring['committee_meetings'] = len(c_meetings)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in
-        models.MemberHouseMeetingAttendance.query.filter(
-            models.MemberHouseMeetingAttendance.uid == user_name
+        MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.uid == user_name
         )]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     h_meetings = [h[0] for h in h_meetings if h[1] != "Absent"]
@@ -97,7 +111,7 @@ def display_dashboard():
                 'status': p.status,
                 'description': p.description
             } for p in
-        models.MajorProject.query.filter(models.MajorProject.uid == user_name)]
+        MajorProject.query.filter(MajorProject.uid == user_name)]
 
     data['major_projects_count'] = len(data['major_projects'])
 
@@ -116,7 +130,7 @@ def display_dashboard():
                 'date_due': c.date_due,
                 'description': c.description
             } for c in
-        models.Conditional.query.filter(models.Conditional.uid == user_name)]
+        Conditional.query.filter(Conditional.uid == user_name)]
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
@@ -124,15 +138,15 @@ def display_dashboard():
         {
             'type': "House Meeting",
             'datetime': m.date
-        } for m in models.HouseMeeting.query.filter(
-                models.HouseMeeting.id.in_(h_meetings)
+        } for m in HouseMeeting.query.filter(
+                HouseMeeting.id.in_(h_meetings)
             )]
     attendance.extend([
         {
             'type': m.committee,
             'datetime': m.timestamp
-        } for m in models.CommitteeMeeting.query.filter(
-                models.CommitteeMeeting.id.in_(c_meetings)
+        } for m in CommitteeMeeting.query.filter(
+                CommitteeMeeting.id.in_(c_meetings)
             )])
 
     data['attendance'] = attendance

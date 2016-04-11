@@ -3,15 +3,19 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import jsonify
-from util.ldap import ldap_get_room_number, ldap_get_name, ldap_get_current_students, ldap_is_financial_director, ldap_set_active, ldap_is_active
+
+from util.ldap import ldap_get_room_number
+from util.ldap import ldap_get_name
+from util.ldap import ldap_get_current_students
+from util.ldap import ldap_is_financial_director
+from util.ldap import ldap_set_active
+from util.ldap import ldap_is_active
 
 financial_bp = Blueprint('financial_bp', __name__)
 
 @financial_bp.route('/financial')
 def display_financial():
     # get user data
-    import db.models as models
-
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_financial_director(user_name) and user_name != 'loothelion':
@@ -33,8 +37,6 @@ def display_financial():
 @financial_bp.route('/financial/edit', methods=['POST'])
 def edit_financial():
     # get user data
-    import db.models as models
-
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_financial_director(user_name) and user_name != 'loothelion':

@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 
 from db.models import MajorProject
+
 major_project_bp = Blueprint('major_project_bp', __name__)
 
 @major_project_bp.route('/major_project/')

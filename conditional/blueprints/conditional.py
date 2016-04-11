@@ -4,14 +4,16 @@ from flask import request
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
-from util.ldap import ldap_get_name, ldap_is_eval_director
+from util.ldap import ldap_get_name
+from util.ldap import ldap_is_eval_director
 
 from datetime import datetime
+
+from db.models import Conditional
 
 @conditionals_bp.route('/conditionals/')
 def display_conditionals():
     # get user data
-    import db.models as models
     user_name = request.headers.get('x-webauth-user')
 
     conditionals = [
@@ -21,7 +23,7 @@ def display_conditionals():
                 'date_due': c.date_due,
                 'description': c.description
             } for c in
-        models.Conditional.query.all()]
+        Conditional.query.all()]
     # return names in 'first last (username)' format
     return render_template('conditional.html',
                             username = user_name,
@@ -30,7 +32,6 @@ def display_conditionals():
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
 def create_conditional():
-    import db.models as models
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
@@ -44,7 +45,7 @@ def create_conditional():
     description = post_data['description']
     due_date = datetime.strptime(post_data['due_date'], "%A %d. %B %Y")
 
-    db_session.add(models.Conditional(uid, description, due_date))
+    db_session.add(Conditional(uid, description, due_date))
     db_session.flush()
     db_session.commit()
 

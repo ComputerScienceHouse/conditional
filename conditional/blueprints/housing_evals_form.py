@@ -2,13 +2,12 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 
+from db.models import HousingEvalsSubmission
 housing_evals_form_bp = Blueprint('housing_evals_form_bp', __name__)
 
 @housing_evals_form_bp.route('/housing_evals_form/')
 def display_housing_evals_form():
     # get user data
-
-    import db.models as models
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -22,7 +21,7 @@ def display_housing_evals_form():
                 'projects': e.projects,
                 'comments': e.comments
             } for e in
-        models.HousingEvalsSubmission.query.all()]
+        HousingEvalsSubmission.query.all()]
 
     # return names in 'first last (username)' format
     return render_template('housing_evals_form.html',
@@ -34,8 +33,6 @@ def display_housing_evals_form():
 def display_housing_evals_submit_form():
 
     from db.database import db_session
-    import db.models as models
-
     user_name = request.headers.get('x-webauth-user')
 
     post_data = request.get_json()
@@ -46,7 +43,7 @@ def display_housing_evals_submit_form():
     projects = post_data['projects']
     comments = post_data['comments']
 
-    hEval = models.HousingEvalsSubmission(user_name, social_attended,
+    hEval = HousingEvalsSubmission(user_name, social_attended,
         social_hosted, seminars_attended, seminars_hosted,
         projects, comments)
 

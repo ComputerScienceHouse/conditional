@@ -4,15 +4,19 @@ from flask import request
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
-from util.ldap import ldap_get_active_members, ldap_get_name
+from util.ldap import ldap_get_active_members
+from util.ldap import ldap_get_name
+
+from db.models import MemberCommitteeAttendance
+from db.models import MemberHouseMeetingAttendance
+from db.models import MajorProject
+from db.models import HouseMeeting
+
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals():
-    import db.models as models
-    # get user data
-
     def get_cm_count(uid):
-        return len([a for a in models.MemberCommitteeAttendance.query.filter(
-            models.MemberCommitteeAttendance.uid == uid)])
+        return len([a for a in MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.uid == uid)])
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -23,10 +27,10 @@ def display_spring_evals():
         uid = member_uid[0].decode('utf-8')
         print(uid)
         h_meetings = [m.meeting_id for m in
-            models.MemberHouseMeetingAttendance.query.filter(
-                models.MemberHouseMeetingAttendance.uid == uid
+            MemberHouseMeetingAttendance.query.filter(
+                MemberHouseMeetingAttendance.uid == uid
             ).filter(
-                models.MemberHouseMeetingAttendance.attendance_status == "Absent"
+                MemberHouseMeetingAttendance.attendance_status == "Absent"
             )]
         member = {
                     'name': ldap_get_name(uid),
@@ -37,12 +41,12 @@ def display_spring_evals():
                             {
                                 "date": m.date,
                                 "reason":
-    models.MemberHouseMeetingAttendance.query.filter(
-        models.MemberHouseMeetingAttendance.uid == uid).filter(
-            models.MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
+    MemberHouseMeetingAttendance.query.filter(
+        MemberHouseMeetingAttendance.uid == uid).filter(
+            MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
                             }
-                            for m in models.HouseMeeting.query.filter(
-                                models.HouseMeeting.id.in_(h_meetings)
+                            for m in HouseMeeting.query.filter(
+                                HouseMeeting.id.in_(h_meetings)
                             )
                         ],
                     'major_projects': [
@@ -50,8 +54,8 @@ def display_spring_evals():
                             'name': p.name,
                             'status': p.status,
                             'description': p.description
-                        } for p in models.MajorProject.query.filter(
-                            models.MajorProject.uid == uid)]
+                        } for p in MajorProject.query.filter(
+                            MajorProject.uid == uid)]
                 }
         member['major_projects_len'] = len(member['major_projects'])
         member['major_project_passed'] = False
