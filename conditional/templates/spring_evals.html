@@ -80,12 +80,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for hm_missed in m['house_meetings_missed'] %}
                     <tr>
-                        {% for hm_missed in m['house_meetings_missed'] %}
                         <td>{{hm_missed['date']}}</td>
                         <td>{{hm_missed['reason']}}</td>
-                        {% endfor %}
                     </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             {% endif %}
