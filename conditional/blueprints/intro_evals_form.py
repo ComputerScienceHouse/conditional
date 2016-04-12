@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
-
+from flask import jsonify
 from db.models import FreshmanEvalData
 from db.models import EvalSettings
 
@@ -43,4 +43,4 @@ def submit_intro_evals():
     from db.database import db_session
     db_session.flush()
     db_session.commit()
-    return "", 200
+    return jsonify({"success": True}), 200
