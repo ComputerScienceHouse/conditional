@@ -16,7 +16,9 @@
         <link href="../static/css/alertify.default.css" rel="stylesheet">
         <link href="../static/css/evals.css" rel="stylesheet">
         <link href="../static/css/bootstrap-material-design.css" rel="stylesheet">
-        
+        {% block extraHeader %}
+        {% endblock %}
+
         <title>{% block title %}{% endblock %}</title>
     </head>
     
@@ -35,7 +37,9 @@
         <script src="../static/js/plugins/alertify.js"></script>
         <script src="../static/js/plugins/dirPagination.js"></script>
         <script src="../static/js/app.js"></script>    
-        <script src="../static/js/material.js"></script>    
+        <script src="../static/js/material.js"></script>
+        {% block extraFooter %}
+        {% endblock %}
         <script>
         $.material.init();
         </script>

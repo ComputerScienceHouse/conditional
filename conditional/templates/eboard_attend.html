@@ -1,4 +1,31 @@
 {% extends "nav.html" %}
+{% block extraHeader %}
+    <link href="../static/css/selectize.css" rel="stylesheet">
+    <link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
+{% endblock %}
+{% block extraFooter %}
+    <script src="../static/js/libraries/selectize.js"></script>
+    <script>
+        $.ajax({
+            url: '/attendance/cm_members',
+            type: 'GET',
+            error: function (e) {
+                console.error(e.responseText);
+            },
+            success: function (res) {
+                $("#attendees").selectize({
+                    delimiter: ',',
+                    persist: false,
+                    valueField: 'value',
+                    labelField: 'display',
+                    searchField: 'display',
+                    selectOnTab: true,
+                    options: res.members
+                });
+            }
+        });
+    </script>
+{% endblock %}
 {% block body %}
 <div class="container main">
     <h3>Attendance</h3>
@@ -43,39 +70,10 @@
                          <div class="form-group is-empty">
             <label for="likes" class=" control-label" id="attendeeLabel">Attendees</label>
 
-            <textarea type="text" name="attendees" class="form-control" rows="7" id="attendees"></textarea>
-                  
-                
+            <input type="text" name="attendees" class="form-control" id="attendees"/>
+
+
               <span class="material-input"></span></div>
-                        
-                             
-                <script>
-                    
-                    var $select = $('#attendees').selectize({
-                        valueField: 'value',
-                        labelField: 'display',
-                        searchField: ['display'],
-                        preload: true,
-                    });
-
-                    var selectize = $select[0].selectize;
-
-                    selectize.load(function (callback) {
-                        $.ajax({
-                            url: './cm_members',
-                            type: 'GET',
-                            error: function (e) {
-                                console.error(e.responseText);
-                                callback();
-                            },
-                            success: function (data) {
-                                callback(data);
-                            }
-                        });
-                    });
-                             
-                             
-                </script>
                         
                     
                         
