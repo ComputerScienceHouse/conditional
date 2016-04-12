@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import jsonify
 from flask import render_template
+from flask import redirect
 from flask import request
 
 from util.ldap import ldap_get_non_alumni_members
@@ -121,7 +122,7 @@ def display_attendance():
 
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eboard(user_name) and user_name != 'loothelion':
-        return "must be eboard", 403
+        return redirect("/dashboard")
 
 
     return render_template('eboard_attend.html',
@@ -139,12 +140,10 @@ def submit_committee_attendance():
     post_data = request.get_json()
 
     committee = post_data['committee']
-    timestamp = datetime.now()
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
 
-    meeting = CommitteeMeeting(committee,
-        datetime.strptime(timestamp, "%A %d. %B %Y"))
+    meeting = CommitteeMeeting(committee, datetime.now())
 
     db_session.add(meeting)
     db_session.flush()
@@ -157,7 +156,7 @@ def submit_committee_attendance():
         db_session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
     db_session.commit()
-    return '', 200
+    return jsonify({"success": True}), 200
 
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
 def submit_seminar_attendance():
@@ -169,6 +168,8 @@ def submit_seminar_attendance():
         return "must be eboard", 403
 
     post_data = request.get_json()
+
+    print(post_data)
 
     seminar_name = post_data['name']
     m_attendees = post_data['members']

@@ -26,25 +26,27 @@ $(document).ready(function () {
         var attendees = $("#attendees").val().split(DELIMITER);
         var freshmen = [];
         var upperclassmen = [];
-
         $.each(attendees, function(memberId) {
-            if (parseInt(memberId) !== memberId) {
+            memberId = attendees[memberId];
+            if (!isNaN(memberId)) {
                 // Numeric UID, freshman account
-                freshmen.add(memberId);
+                freshmen.push(memberId);
             } else {
                 // Upperclassman
-                upperclassmen.add(memberId);
+                upperclassmen.push(memberId);
             }
         });
 
         $.ajax({
             url: '/attendance/submit/cm',
             type: 'POST',
-            data: {
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            data: JSON.stringify({
                 "committee": $("#position").val(),
                 "freshmen": freshmen,
                 "members": upperclassmen
-            },
+            }),
             error: function () {
                 alertify.error("Error submitting attendance.");
             },
@@ -52,5 +54,6 @@ $(document).ready(function () {
                 alertify.success("Attendance submitted successfully.");
             }
         });
+
     });
 });
