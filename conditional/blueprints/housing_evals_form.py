@@ -25,7 +25,7 @@ def display_housing_evals_form():
             } for e in
         HousingEvalsSubmission.query.all()]
 
-    is_open = EvalSettings.query.first().intro_form_active
+    is_open = EvalSettings.query.first().housing_form_active
 
     # return names in 'first last (username)' format
     return render_template('housing_evals_form.html',

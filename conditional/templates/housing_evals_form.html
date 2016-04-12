@@ -21,7 +21,7 @@
             
             </div>
           </div> 
-          
+          {% if is_open %}
           <!-- Project Description -->
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -79,6 +79,8 @@
             {% endif %}
         </div>
     </div>
-        
+    {% else %}
+    Housing Form Currently Closed
+    {% endif %}
 </div>
 {% endblock %}
