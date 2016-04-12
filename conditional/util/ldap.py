@@ -96,38 +96,30 @@ def ldap_get_room_number(username):
     return roomno.decode('utf-8')
 
 @lru_cache(maxsize=1024)
-def ldap_get_all_members():
-    return [x[1] for x in __ldap_get_members__()]
-
-@lru_cache(maxsize=1024)
 def ldap_get_active_members():
-    return [x[1] \
-            for x in __ldap_get_members__()[1:] \
-            if ldap_is_active(str(str(x[0]).split(",")[0]).split("=")[1])]
+    return [x for x in ldap_get_current_students()
+            if ldap_is_active(x['uid'][0].decode('utf-8'))]
 
 @lru_cache(maxsize=1024)
 def ldap_get_intro_members():
-    return [x[1] \
-            for x in __ldap_get_members__()[1:] \
-            if ldap_is_intromember(str(str(x[0]).split(",")[0]).split("=")[1])]
+    return [x for x in ldap_get_current_students()
+            if ldap_is_intromember(x['uid'][0].decode('utf-8'))]
 
 @lru_cache(maxsize=1024)
 def ldap_get_non_alumni_members():
-    return [x[1] \
-            for x in __ldap_get_members__()[1:] \
-            if not ldap_is_alumni(str(str(x[0]).split(",")[0]).split("=")[1])]
+    return [x for x in ldap_get_current_students()
+            if ldap_is_alumni(x['uid'][0].decode('utf-8'))]
+
+@lru_cache(maxsize=1024)
+def ldap_get_onfloor_members():
+    return [x for x in ldap_get_current_students()
+            if ldap_is_onfloor(x['uid'][0].decode('utf-8'))]
 
 @lru_cache(maxsize=1024)
 def ldap_get_current_students():
     return [x[1] \
             for x in __ldap_get_members__()[1:] \
             if ldap_is_current_student(str(str(x[0]).split(",")[0]).split("=")[1])]
-
-@lru_cache(maxsize=1024)
-def ldap_get_onfloor_members():
-    return [x[1] \
-            for x in __ldap_get_members__()[1:] \
-            if ldap_is_onfloor(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 @lru_cache(maxsize=1024)
 def ldap_is_active(username):

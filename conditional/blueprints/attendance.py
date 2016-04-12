@@ -3,7 +3,6 @@ from flask import jsonify
 from flask import render_template
 from flask import request
 
-from util.ldap import ldap_get_all_members
 from util.ldap import ldap_get_non_alumni_members
 from util.ldap import ldap_get_name
 from util.ldap import ldap_get_current_students
