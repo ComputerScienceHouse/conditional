@@ -139,7 +139,7 @@ def submit_committee_attendance():
     post_data = request.get_json()
 
     committee = post_data['committee']
-    timestamp = post_data['timestamp']
+    timestamp = datetime.now()
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
 
