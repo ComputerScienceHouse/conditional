@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from flask import jsonify
 
 from db.models import HousingEvalsSubmission
 from db.models import EvalSettings
@@ -54,4 +55,4 @@ def display_housing_evals_submit_form():
 
     db_session.add(hEval)
     db_session.commit()
-    return "", 200
+    return jsonify({"success": True}), 200
