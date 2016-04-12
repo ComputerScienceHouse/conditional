@@ -223,12 +223,11 @@
                             </tr>
                             </tbody>
                         </table>
-                        <hr>
                     </div>
                 </div>
                 
                 
-                
+                {% if conditionals_len != 0 %}
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Conditionals</h3>
@@ -253,12 +252,9 @@
                         </table>
 
                             </div>
-                        {% if conditionals_len == 0 %}
-                        <div class="alert alert-warning" style="margin:15px;">No conditionals.</div>
-                        {% endif %}
                     </div>
                 </div>
-                
+                {% endif %}
                 
                 <div >
                     <!-- If showing all major projects - show this code 
