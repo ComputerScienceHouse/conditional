@@ -117,7 +117,7 @@ def get_non_alumni():
 
     return jsonify({'members': named_members}), 200
 
-@attendance_bp.route('/attendance')
+@attendance_bp.route('/attendance_cm')
 def display_attendance():
 
     user_name = request.headers.get('x-webauth-user')
@@ -125,7 +125,7 @@ def display_attendance():
         return redirect("/dashboard")
 
 
-    return render_template('eboard_attend.html',
+    return render_template('attendance_cm.html',
                            username = user_name)
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
