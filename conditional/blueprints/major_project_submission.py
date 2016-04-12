@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from flask import jsonify
 
 from db.models import MajorProject
 
@@ -42,7 +43,7 @@ def submit_major_project():
 
     db_session.add(project)
     db_session.commit()
-    return "", 200
+    return jsonify({"success": True}), 200
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
 def edit_financial():

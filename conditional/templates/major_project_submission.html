@@ -1,64 +1,44 @@
 {% extends "nav.html" %}
+{% block extraFooter %}
+<script src="../static/js/major_project.js"></script>
+{% endblock %}
 {% block body %}
 <div class="container main">
     <h3>Major Project Form</h3>
     <div style="padding-top:20px"></div>
-    <form name="evalform" method="post" id="evalForm" action="resources/api/">
-        <!-- Project Name -->
+    <form name="evalform" id="evalForm">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:20px;">
-
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="name">Project Name</label>
                             <input class="form-control" id="name" name="name" type="text">
-                            <span class="material-input"></span></div>
-
-
+                            <span class="material-input"></span>
+                        </div>
                     </div>
                 </div>
-
-
             </div>
-        </div> 
-
-        <!-- Project Description -->
+        </div>
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:20px;">
-
-
                         <div class="form-group label-floating is-empty">
-                            <label for="likes" class=" control-label">Project Description</label>
-
-
-                            <textarea name="likes" class="form-control" rows="3" id="likes"></textarea>
-                            <span class="help-block">Please describe your project.</span>
-
-                            <span class="material-input"></span></div>
-
-
-
-
-
+                            <label class="control-label" for="description">Description</label>
+                            <textarea name="description" class="form-control" rows="3" id="description"></textarea>
+                            <span class="material-input"></span>
+                        </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
-
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <button class= "btn btn-raised btn-primary" style="width:100%;" id="submit" type="submit">Submit Major Project</button>
             </div>
         </div>
-
-
     </form>
-
     <h3 style="padding-top:30px;">All Pending Major Projects</h3>
     <div style="padding-top:20px"></div>
     <div class="panel panel-default">
