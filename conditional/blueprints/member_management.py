@@ -13,6 +13,9 @@ from db.models import MemberHouseMeetingAttendance
 from db.models import EvalSettings
 from db.models import OnFloorStatusAssigned
 
+from util.ldap import ldap_set_roomnumber
+from util.ldap import ldap_set_active
+from util.ldap import ldap_set_housingpoints
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 @member_management_bp.route('/manage')
@@ -59,6 +62,28 @@ def member_management_adduser():
     db_session.commit()
     return ""
 
+@member_management_bp.route('/manage/edituser', methods=['POST'])
+def member_management_edituser():
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return "must be eval director", 403
+
+    post_data = request.get_json()
+
+    uid = post_data['uid']
+    room_number = post_data['room_number']
+    onfloor_status = post_data['onfloor_status']
+    housing_points = post_data['housing_points']
+    active_member = post_data['active_member']
+
+    ldap_set_roomnumber(uid, room_number)
+    #TODO FIXME ADD USER TO ONFLOOR GROUP
+    ldap_set_housingpoints(uid, housing_points)
+    ldap_set_active(uid, active_member)
+
+    return "ok", 200
 
 # TODO FIXME XXX Maybe change this to an endpoint where it can be called by our
 # user creation script. There's no reason that the evals director should ever
