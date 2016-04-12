@@ -17,15 +17,19 @@ def display_housing():
     housing = {}
     onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
 
+
+    room_list = set()
     for m in onfloors:
         room = ldap_get_room_number(m)
         if room in housing:
             housing[room].append(ldap_get_name(m))
         else:
             housing[room] = [ldap_get_name(m)]
-    print(housing)
+        room_list.add(room)
+
     # return names in 'first last (username)' format
     return render_template('housing.html',
                            username = user_name,
                            queue=get_queue_with_points(),
-                           housing=housing)
+                           housing=housing,
+                           room_list=list(room_list))

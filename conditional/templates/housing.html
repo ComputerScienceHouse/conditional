@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" ng-app="evals">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="images/favicon.ico">
-    <title>CSH Evaluations</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/members-flat.min.css" rel="stylesheet">
-    <link href="css/evals.css" rel="stylesheet">
-</head>
-
-<body>
-
+{% extends "nav.html" %}
+{% block extraHeader %}
+    <link href="../static/css/selectize.css" rel="stylesheet">
+    <link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
+{% endblock %}
+{% block extraFooter %}
+    <script src="../static/js/libraries/selectize.js"></script>
+    <script src="../static/js/attendance_ts.js"></script>
+{% endblock %}
+{% block body %}
 <div class="container main">
     
         
@@ -45,61 +40,23 @@
                     </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12">                         <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title button-panel-title">
-                                Rooms
-                                <div class="dropdown pull-right">
-  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Filter
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu">
-    <li class="dropdown-header">Year</li>
-    <li><a>Current</a></li>
-    <li><a>Next</a></li>
-    <li class="dropdown-header">Room Type</li>
-    <li><a>All</a></li>
-    <li><a>Empty</a></li>
-  </ul>
-</div>
-                            
-                            </h3>
-                        </div>
+                <div class="col-xs-6 col-sm-6 col-md-6">                         <div class="panel panel-default">
                         <div class="panel-body table-fill" >
-                            <div class="table-responsive">
-                            <table class="table table-striped no-bottom-margin">
-                                
-                            
-                            <tbody>
-                                    <tr>
-                                        <th>Room Number</th>
-                                        <th>Roommate 1</th>
-                                        <th>Roommate 2</th>
-                                        
-                                    </tr>
-                                   
-                                    <!-- FIX UPDATE FILTER CALL -->
-                                    <tr>
-                                        <td>room number</td>
-                                        <td>roommate1</td>
-                                        <td>roommate2</td>
-                                    </tr>
-                                </tbody>
-                                </table>
-                                </div>
-                            <dir-pagination-controls class="panel-inner-padding"></dir-pagination-controls>
-                        HOUSING INFO IN FORMAT { { housing['ROOMNUMBER'][LIST OF
-                        PEOPLE]} }
-
-                        List of members not in housing
-                        {% for m in housing['N/A'] %}
-                            {{m}}
+                        <table>
+                        <th>
+                            <td>Room</td>
+                            <td>Occupants</td>
+                        </th>
+                        {% for room in room_list %}
+                        <tr>
+                            <td>{{room}}</td>
+                            <td><ul>
+                            {% for m in housing[room] %}
+                                <li>{{m}}</li>
+                            {% endfor %}
+                            </ul></td>
+                            </br>
                         {% endfor %}
-                    </div>
-                    </div>
                 
                 
                 </div>
@@ -109,12 +66,4 @@
        
     
 </div>
-
-<script src="js/libraries/jquery.min.js"></script>
-<script src="js/libraries/bootstrap.min.js"></script>
-<script src="js/libraries/angular.min.js"></script>
-<script src="js/plugins/salvattore.min.js"></script>
-<script src="js/plugins/dirPagination.js"></script>
-<script src="js/app.js"></script>
-</body>
-</html>
+{% endblock %}
