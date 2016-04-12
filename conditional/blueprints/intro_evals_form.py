@@ -15,7 +15,7 @@ def display_intro_evals_form():
     evalData = FreshmanEvalData.query.filter(
                 FreshmanEvalData.uid == user_name).first()
 
-    is_open = EvalSettings.all().first().intro_form_active
+    is_open = EvalSettings.query.first().intro_form_active
     # return names in 'first last (username)' format
     return render_template('intro_evals_form.html',
                            username = user_name,

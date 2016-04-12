@@ -3,6 +3,8 @@ from flask import render_template
 from flask import request
 
 from db.models import HousingEvalsSubmission
+from db.models import EvalSettings
+
 housing_evals_form_bp = Blueprint('housing_evals_form_bp', __name__)
 
 @housing_evals_form_bp.route('/housing_evals_form/')
@@ -23,7 +25,7 @@ def display_housing_evals_form():
             } for e in
         HousingEvalsSubmission.query.all()]
 
-    is_open = EvalSettings.all().first().intro_form_active
+    is_open = EvalSettings.query.first().intro_form_active
 
     # return names in 'first last (username)' format
     return render_template('housing_evals_form.html',

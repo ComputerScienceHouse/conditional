@@ -34,7 +34,7 @@ def member_management_eval():
     intro_form_active = post_data['intro']
     site_lockdown = post_data['lockdown']
 
-    EvalSettings.query.all().first().update(
+    EvalSettings.query.first().update(
         {
             'housing_form_active': housing_form_active,
             'intro_form_active': intro_form_active,
