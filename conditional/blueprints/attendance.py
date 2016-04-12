@@ -118,7 +118,7 @@ def get_non_alumni():
     return jsonify({'members': named_members}), 200
 
 @attendance_bp.route('/attendance_cm')
-def display_attendance():
+def display_attendance_cm():
 
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eboard(user_name) and user_name != 'loothelion':
@@ -126,6 +126,17 @@ def display_attendance():
 
 
     return render_template('attendance_cm.html',
+                           username = user_name)
+
+@attendance_bp.route('/attendance_ts')
+def display_attendance_ts():
+
+    user_name = request.headers.get('x-webauth-user')
+    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+        return redirect("/dashboard")
+
+
+    return render_template('attendance_ts.html',
                            username = user_name)
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
@@ -188,7 +199,7 @@ def submit_seminar_attendance():
         db_session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db_session.commit()
-    return '', 200
+    return jsonify({"success": True}), 200
 
 @attendance_bp.route('/attendance/submit/hm', methods=['POST'])
 def submit_house_attendance():
@@ -228,4 +239,4 @@ def submit_house_attendance():
                         f['status']))
 
     db_session.commit()
-    return '', 200
+    return jsonify({"success": True}), 200
