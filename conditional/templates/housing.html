@@ -1,48 +1,48 @@
 {% extends "nav.html" %}
 {% block extraHeader %}
-    <link href="../static/css/selectize.css" rel="stylesheet">
-    <link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
+<link href="../static/css/selectize.css" rel="stylesheet">
+<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
 {% endblock %}
 {% block extraFooter %}
-    <script src="../static/js/libraries/selectize.js"></script>
-    <script src="../static/js/attendance_ts.js"></script>
+<script src="../static/js/libraries/selectize.js"></script>
+<script src="../static/js/attendance_ts.js"></script>
 {% endblock %}
 {% block body %}
 <div class="container main">
-    
-        
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Housing Queue</h3>
-                        </div>
-                        <div class="panel-body table-fill" >
-                        <div class="table-responsive">
-                        <table class="table table-striped no-bottom-margin">
-                                <tbody>
-                                    <tr>
-                                        <th>Member</th>
-                                        <th>Housing Points</th>
-                                    </tr>
-                                    {% for m in queue %}
-                                    <tr>
-                                        <td>{{m['name']}}</td>
-                                        <td>{{m['points']}}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            </div>
-                            <dir-pagination-controls></dir-pagination-controls>
-                        
-                        
-                    </div>
-                    </div>
+
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Housing Queue</h3>
                 </div>
-                <div class="col-xs-6 col-sm-6 col-md-6">                         <div class="panel panel-default">
-                        <div class="panel-body table-fill" >
-                        <table>
+                <div class="panel-body table-fill" >
+                    <div class="table-responsive">
+                        <table class="table table-striped no-bottom-margin">
+                            <tbody>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Housing Points</th>
+                                </tr>
+                                {% for m in queue %}
+                                <tr>
+                                    <td>{{m['name']}}</td>
+                                    <td>{{m['points']}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <dir-pagination-controls></dir-pagination-controls>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6">                         <div class="panel panel-default">
+                <div class="panel-body table-fill" >
+                    <table>
                         <th>
                             <td>Room</td>
                             <td>Occupants</td>
@@ -51,19 +51,19 @@
                         <tr>
                             <td>{{room}}</td>
                             <td><ul>
-                            {% for m in housing[room] %}
-                                <li>{{m}}</li>
-                            {% endfor %}
-                            </ul></td>
-                            </br>
-                        {% endfor %}
-                
-                
+                                    {% for m in housing[room] %}
+                                    <li>{{m}}</li>
+                                    {% endfor %}
+                                </ul></td>
+                                </br>
+                                {% endfor %}
+
+
                 </div>
-            
+
             </div>
-        
-       
-    
-</div>
-{% endblock %}
+
+
+
+        </div>
+        {% endblock %}
