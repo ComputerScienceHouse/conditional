@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from flask import jsonify
 
 from db.models import FreshmanAccount
 from db.models import FreshmanEvalData
@@ -13,9 +14,14 @@ from db.models import MemberHouseMeetingAttendance
 from db.models import EvalSettings
 from db.models import OnFloorStatusAssigned
 
+from util.ldap import ldap_is_eval_director
 from util.ldap import ldap_set_roomnumber
 from util.ldap import ldap_set_active
 from util.ldap import ldap_set_housingpoints
+from util.ldap import ldap_get_room_number
+from util.ldap import ldap_get_housing_points
+from util.ldap import ldap_is_active
+from util.ldap import ldap_is_onfloor
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 @member_management_bp.route('/manage')
@@ -88,6 +94,24 @@ def member_management_edituser():
 
     return "ok", 200
 
+@member_management_bp.route('/manage/getuserinfo', methods=['POST'])
+def member_management_getuserinfo():
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return "must be eval director", 403
+
+    post_data = request.get_json()
+
+    uid = post_data['uid']
+
+    return jsonify(
+        {
+            'room_number': ldap_get_room_number(uid),
+            'onfloor_status': ldap_is_onfloor(uid),
+            'housing_points': ldap_get_housing_points(uid),
+            'active_member': ldap_is_active(uid)
+        })
 # TODO FIXME XXX Maybe change this to an endpoint where it can be called by our
 # user creation script. There's no reason that the evals director should ever
 # manually need to do this
