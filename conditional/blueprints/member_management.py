@@ -41,6 +41,9 @@ def member_management_eval():
             'site_lockdown': site_lockdown
         })
 
+    from db.database import db_session
+    db_session.flush()
+    db_session.commit()
     return ""
 
 @member_management_bp.route('/manage/adduser', methods=['POST'])

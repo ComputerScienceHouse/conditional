@@ -40,4 +40,7 @@ def submit_intro_evals():
                 'other_notes': comments
             })
 
+    from db.database import db_session
+    db_session.flush()
+    db_session.commit()
     return "", 200
