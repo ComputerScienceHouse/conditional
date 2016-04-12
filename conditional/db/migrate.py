@@ -105,7 +105,9 @@ def migrate_models():
             db_session.add(eval)
         else:
             # freshman not yet done with packet
-            account = models.FreshmanAccount(f['username'])
+            # TODO FIXME The FALSE dictates that they are not given onfloor
+            # status
+            account = models.FreshmanAccount(f['username'], False)
             account.eval_date = f['evalDate']
             if f['techSems'] != None:
                 t_sems = f['techSems'].split(',')

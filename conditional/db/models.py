@@ -11,11 +11,13 @@ class FreshmanAccount(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(64), nullable=False)
     eval_date = Column(Date, nullable=False)
+    onfloor_status = Column(Boolean)
 
-    def __init__(self, name):
+    def __init__(self, name, onfloor):
         self.name = name
         today = date.fromtimestamp(time.time())
         self.eval_date = today + timedelta(weeks=10)
+        self.onfloor_status = onfloor
 
 class FreshmanEvalData(Base):
     __tablename__ = 'freshman_eval_data'
