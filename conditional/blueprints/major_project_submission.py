@@ -4,6 +4,7 @@ from flask import request
 
 from db.models import MajorProject
 
+from util.ldap import ldap_is_eval_director
 major_project_bp = Blueprint('major_project_bp', __name__)
 
 @major_project_bp.route('/major_project/')
@@ -42,3 +43,27 @@ def submit_major_project():
     db_session.add(project)
     db_session.commit()
     return "", 200
+
+@major_project_bp.route('/major_project/review', methods=['POST'])
+def edit_financial():
+    # get user data
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return redirect("/dashboard", code=302)
+
+    post_data = request.get_json()
+    pid = post_data['id']
+    status = post_data['status']
+
+    MajorProject.query.filter(
+        MajorProject.id == pid).\
+        update(
+            {
+                'status': status
+            })
+
+    from db.database import db_session
+    db_session.flush()
+    db_session.commit()
+    return "ok", 200
