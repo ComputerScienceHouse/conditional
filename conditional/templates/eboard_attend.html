@@ -5,98 +5,55 @@
 {% endblock %}
 {% block extraFooter %}
     <script src="../static/js/libraries/selectize.js"></script>
-    <script>
-        $.ajax({
-            url: '/attendance/cm_members',
-            type: 'GET',
-            error: function (e) {
-                console.error(e.responseText);
-            },
-            success: function (res) {
-                $("#attendees").selectize({
-                    delimiter: ',',
-                    persist: false,
-                    valueField: 'value',
-                    labelField: 'display',
-                    searchField: 'display',
-                    selectOnTab: true,
-                    options: res.members
-                });
-            }
-        });
-    </script>
+    <script src="../static/js/attendance.js"></script>
 {% endblock %}
 {% block body %}
-<div class="container main">
-    <h3>Attendance</h3>
+    <div class="container main">
+        <h3>Attendance</h3>
         <div style="padding-top:20px"></div>
-        <form name="evalform" method="post" id="evalForm" action="resources/api/"> 
-        <!-- Meeting Type -->
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:10px;">
-
-                        <div class="form-group">
-                <label for="type" class="control-label">Meeting Type</label>
-
-                  <select id="position" name="position" class="form-control">
-                    <option value="chairman">Chairman</option>
-                    <option value="evals">Evaluations</option>
-                    <option value="financial">Financial</option>
-                    <option value="rd">Research and Development</option>
-                    <option value="imps">House Improvements</option>
-                    <option value="opcomm">OpComm</option>
-                    <option value="history">History</option>
-                    <option value="social">Social</option>
-                  </select>
-                
-              <span class="material-input"></span></div>
-
-
-                    </div>
-                </div>
-
-
-            </div>
-          </div>
-          <!-- Attendees -->
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        
-                        
-                         <div class="form-group is-empty">
-            <label for="likes" class=" control-label" id="attendeeLabel">Attendees</label>
-
-            <input type="text" name="attendees" class="form-control" id="attendees"/>
-
-
-              <span class="material-input"></span></div>
-                        
-                    
-                        
-                        
-                    </div>
-                </div>
-            
-            
-            </div>
-          </div>
-            
-            
-            
-            
-            
+        <form name="evalform" id="evalForm">
+            <!-- Meeting Type -->
             <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-            <button class= "btn btn-raised btn-primary" style="width:100%;" id="submit" type="submit">Submit Form</button>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="padding-top:10px;">
+                            <div class="form-group">
+                                <label for="type" class="control-label">Meeting Type</label>
+                                <select id="position" name="position" class="form-control">
+                                    <option value="chairman">Chairman</option>
+                                    <option value="evals">Evaluations</option>
+                                    <option value="financial">Financial</option>
+                                    <option value="rd">Research and Development</option>
+                                    <option value="imps">House Improvements</option>
+                                    <option value="opcomm">OpComm</option>
+                                    <option value="history">History</option>
+                                    <option value="social">Social</option>
+                                </select>
+                                <span class="material-input"></span></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-  
-            
+            <!-- Attendees -->
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="padding-top:20px;">
+                            <div class="form-group is-empty">
+                                <label for="likes" class=" control-label" id="attendeeLabel">Attendees</label>
+                                <input type="text" name="attendees" class="form-control" id="attendees"/>
+                                <span class="material-input"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <button class="btn btn-raised btn-primary" style="width:100%;" id="submit" type="submit">Submit
+                        Form
+                    </button>
+                </div>
+            </div>
         </form>
-        
-</div>
+    </div>
 {% endblock %}
