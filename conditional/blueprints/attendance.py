@@ -128,7 +128,8 @@ def display_attendance_cm():
 
     return render_template(request,
                            'attendance_cm.html',
-                           username = user_name)
+                           username = user_name,
+                           date = datetime.utcnow().strftime("%Y-%m-%d"))
 
 @attendance_bp.route('/attendance_ts')
 def display_attendance_ts():

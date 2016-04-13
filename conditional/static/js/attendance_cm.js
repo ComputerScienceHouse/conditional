@@ -1,6 +1,18 @@
 var DELIMITER = ",";
 
 $(document).ready(function () {
+    // Initialize date picker
+    $('#date').bootstrapMaterialDatePicker({weekStart: 0, time: false});
+
+    // Disable submit on enter
+    $('#cmAttendanceForm').on('keyup keypress', function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
     $.ajax({
         url: '/attendance/cm_members',
         type: 'GET',
@@ -26,7 +38,7 @@ $(document).ready(function () {
         var attendees = $("#attendees").val().split(DELIMITER);
         var freshmen = [];
         var upperclassmen = [];
-        $.each(attendees, function(memberId) {
+        $.each(attendees, function (memberId) {
             memberId = attendees[memberId];
             if (!isNaN(memberId)) {
                 // Numeric UID, freshman account
@@ -45,7 +57,8 @@ $(document).ready(function () {
             data: JSON.stringify({
                 "committee": $("#position").val(),
                 "freshmen": freshmen,
-                "members": upperclassmen
+                "members": upperclassmen,
+                "timestamp": $("#date").val()
             }),
             error: function () {
                 alertify.error("Error submitting attendance.");
