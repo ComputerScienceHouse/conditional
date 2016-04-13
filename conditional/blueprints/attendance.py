@@ -142,6 +142,17 @@ def display_attendance_ts():
                            'attendance_ts.html',
                            username = user_name)
 
+@attendance_bp.route('/attendance_hm')
+def display_attendance_hm():
+
+    user_name = request.headers.get('x-webauth-user')
+    if not ldap_is_eval_director(user_name):
+        return redirect("/dashboard")
+
+    return render_template(request,
+                           'attendance_hm.html',
+                           username = user_name)
+
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
     from db.database import db_session

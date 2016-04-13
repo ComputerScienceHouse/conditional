@@ -1,0 +1,51 @@
+{% extends "nav.html" %}
+{% block extraHeader %}
+<link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
+{% endblock %}
+{% block extraFooter %}
+<script src="../static/js/libraries/moment.js"></script>
+<script src="../static/js/libraries/bootstrap-material-datetimepicker.js"></script>
+<script src="../static/js/attendance_hm.js"></script>
+{% endblock %}
+{% block body %}
+<div class="container main">
+    <h3>House Meeting Attendance</h3>
+    <div style="padding-top:20px"></div>
+    <form name="hmAttendanceForm" id="hmAttendanceForm">
+        <!-- Meeting Type -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="padding-top:10px;">
+                        <div class="form-group is-empty">
+                            <label for="likes" class=" control-label" id="seminarLabel">Seminar Name</label>
+                            <input type="text" name="seminar_name" class="form-control" id="seminar_name"/>
+                            <span class="material-input"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Attendees -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="padding-top:20px;">
+                        <div class="form-group is-empty">
+                            <label for="likes" class=" control-label" id="attendeeLabel">Attendees</label>
+                            <input type="text" name="attendees" class="form-control" id="attendees"/>
+                            <span class="material-input"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit">
+                    Submit Form
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
