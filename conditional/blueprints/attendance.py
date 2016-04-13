@@ -167,8 +167,10 @@ def submit_committee_attendance():
     committee = post_data['committee']
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
+    timestamp = post_data['timestamp']
 
-    meeting = CommitteeMeeting(committee, datetime.now())
+    timestamp = datetime.strptime(timestamp, "%A %d. %B %Y")
+    meeting = CommitteeMeeting(committee, timestamp)
 
     db_session.add(meeting)
     db_session.flush()
@@ -230,8 +232,11 @@ def submit_house_attendance():
 
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
+    timestamp = post_data['timestamp']
 
-    meeting = HouseMeeting(datetime.now())
+    timestamp = datetime.strptime(timestamp, "%A %d. %B %Y")
+
+    meeting = HouseMeeting(timestamp)
 
     db_session.add(meeting)
     db_session.flush()
