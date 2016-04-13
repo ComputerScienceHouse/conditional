@@ -5,7 +5,7 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-2 col-sm-3 col-xs-12">
-                    <img class="thumbnail profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
+                    <img style="margin-bottom: 5px;" class="thumbnail profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div>
                 <div class=" col-xs-12 col-sm-9 col-md-10" >
 
@@ -202,7 +202,7 @@
                                 {% if spring['hm_missed'] == 0 %}
                                 <span class="glyphicon glyphicon-ok-sign green"></span>
                                 {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span><strong>{{spring['hm_missed']}}</strong>
+                                <span><span class="glyphicon glyphicon-remove-sign red"></span> {{spring['hm_missed']}}</span>
                                 {% endif %}
                             </td>
                         </tr>
