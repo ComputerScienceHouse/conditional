@@ -48,7 +48,7 @@ def submit_major_project():
     return jsonify({"success": True}), 200
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
-def edit_financial():
+def major_project_review():
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
@@ -59,6 +59,7 @@ def edit_financial():
     pid = post_data['id']
     status = post_data['status']
 
+    print(post_data)
     MajorProject.query.filter(
         MajorProject.id == pid).\
         update(
@@ -69,4 +70,4 @@ def edit_financial():
     from db.database import db_session
     db_session.flush()
     db_session.commit()
-    return "ok", 200
+    return jsonify({"success": True}), 200

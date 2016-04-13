@@ -48,33 +48,46 @@
         </div>
     </div>
     {% else %}
+    <div class="container-fluid" id="projects">
         {% for p in major_projects %}
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="project-{{p['id']}}" project_id="{{p['id']}}">
             <div class="panel-body" style="padding-top:30px;">
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-sm-6 vcenter" style="padding-right:0px;padding-left:0px;">
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-4 col-md-4 vcenter">
-                                            <div style="margin:auto; width:100px">
-                                                <img class="eval-user-img" alt="{{p['username']}}" src="https://profiles.csh.rit.edu/image/{{p['username']}}" width="100" height="100" />
+                    <div class="col-xs-12 col-sm-12 col-md-12 vcenter">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-3 col-md-3 vcenter">
+                                <div style="margin:auto; width:100px">
+                                    <img class="eval-user-img" alt="{{p['username']}}" src="https://profiles.csh.rit.edu/image/{{p['username']}}" width="100" height="100" />
 
-                                            </div>
-
-                                        </div><!----><div class="col-xs-12 col-sm-8 col-md-8 name-container vcenter">
-                                            <h3>
-                                                {{p['username']}}
-                                            </h3>
-                                        </div><!----><div class="col-xs-12 col-sm-8 col-md-8 name-container vcenter">
-                                            <h3>
-                                                {{p['name']}}
-                                            </h3>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 name-container vcenter">
+                                <div class="row">
+                                    <h3>
+                                        {{p['username']}}
+                                    </h3>
+                                </div>
+                                <div class="row">
+                                    <h3>
+                                        {{p['name']}}
+                                    </h3>
+                                </div>
+                            </div>
+                            {% if is_eval_director %}
+                            <div class="col-xs-12 col-sm-2 col-md-2 name-container vcenter">
+                                <div class="row">
+                                    <button role="button" class="btn btn-raised btn-primary btn-success" style="width:100%;" id="pass-{{p['id']}}">
+                                        Pass
+                                    </button>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <button role="button" class="btn btn-raised btn-primary btn-danger" style="width:100%;" id="fail-{{p['id']}}">
+                                        Fail
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="row">
@@ -97,6 +110,7 @@
 
         </div>
         {% endfor %}
+    </div>
     {% endif %}
 
 </div>
