@@ -31,6 +31,7 @@ class FreshmanEvalData(Base):
     other_notes = Column(Text)
     freshman_eval_result = Column(Enum('Pending', 'Passed', 'Failed',
         name="freshman_eval_enum"), nullable=False)
+    active = Column(Boolean)
 
     def __init__(self, uid, signatures_missed):
         self.uid = uid
@@ -38,6 +39,7 @@ class FreshmanEvalData(Base):
         self.signatures_missed = signatures_missed
         self.social_events = ""
         self.other_notes = ""
+        self.active = True
 
 class CommitteeMeeting(Base):
     __tablename__ = 'committee_meetings'
