@@ -1,10 +1,10 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 from flask import jsonify
 
 from db.models import HousingEvalsSubmission
 from db.models import EvalSettings
+from util.flask import render_template
 
 housing_evals_form_bp = Blueprint('housing_evals_form_bp', __name__)
 
@@ -30,7 +30,8 @@ def display_housing_evals_form():
     is_open = EvalSettings.query.first().housing_form_active
 
     # return names in 'first last (username)' format
-    return render_template('housing_evals_form.html',
+    return render_template(request,
+                           'housing_evals_form.html',
                            username = user_name,
                            eval_data = evalData,
                            is_open = is_open)

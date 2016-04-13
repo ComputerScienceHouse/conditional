@@ -1,10 +1,10 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 from util.housing import get_queue_with_points
 from util.ldap import ldap_get_onfloor_members
 from util.ldap import ldap_get_room_number
 from util.ldap import ldap_get_name
+from util.flask import render_template
 
 housing_bp = Blueprint('housing_bp', __name__)
 
@@ -28,7 +28,8 @@ def display_housing():
         room_list.add(room)
 
     # return names in 'first last (username)' format
-    return render_template('housing.html',
+    return render_template(request,
+                           'housing.html',
                            username = user_name,
                            queue=get_queue_with_points(),
                            housing=housing,

@@ -1,11 +1,11 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 from flask import redirect
 from flask import jsonify
 from db.models import FreshmanEvalData
 from db.models import EvalSettings
 from util.ldap import ldap_is_intromember
+from util.flask import render_template
 
 intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 
@@ -22,7 +22,8 @@ def display_intro_evals_form():
 
     is_open = EvalSettings.query.first().intro_form_active
     # return names in 'first last (username)' format
-    return render_template('intro_evals_form.html',
+    return render_template(request,
+                           'intro_evals_form.html',
                            username = user_name,
                            social_events = evalData.social_events,
                            other_notes = evalData.other_notes,

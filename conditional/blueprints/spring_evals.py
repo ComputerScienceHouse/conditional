@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
@@ -11,6 +10,7 @@ from db.models import MemberCommitteeAttendance
 from db.models import MemberHouseMeetingAttendance
 from db.models import MajorProject
 from db.models import HouseMeeting
+from util.flask import render_template
 
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals():
@@ -70,6 +70,7 @@ def display_spring_evals():
     sp_members.sort(key = lambda x: len(x['house_meetings_missed']))
     sp_members.sort(key = lambda x: x['major_project_passed'], reverse=True)
     # return names in 'first last (username)' format
-    return render_template('spring_evals.html',
+    return render_template(request,
+                            'spring_evals.html',
                             username = user_name,
                             members = sp_members)

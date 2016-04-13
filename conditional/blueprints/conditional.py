@@ -1,11 +1,11 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
 from util.ldap import ldap_get_name
 from util.ldap import ldap_is_eval_director
+from util.flask import render_template
 
 from datetime import datetime
 
@@ -25,7 +25,8 @@ def display_conditionals():
             } for c in
         Conditional.query.all()]
     # return names in 'first last (username)' format
-    return render_template('conditional.html',
+    return render_template(request,
+                            'conditional.html',
                             username = user_name,
                             conditionals=conditionals,
                             conditionals_len = len(conditionals))

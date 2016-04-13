@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 from flask import jsonify
 
@@ -22,6 +21,7 @@ from util.ldap import ldap_get_room_number
 from util.ldap import ldap_get_housing_points
 from util.ldap import ldap_is_active
 from util.ldap import ldap_is_onfloor
+from util.flask import render_template
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 @member_management_bp.route('/manage')

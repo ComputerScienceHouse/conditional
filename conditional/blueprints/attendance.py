@@ -1,6 +1,5 @@
 from flask import Blueprint
 from flask import jsonify
-from flask import render_template
 from flask import redirect
 from flask import request
 
@@ -22,6 +21,8 @@ from db.models import FreshmanHouseMeetingAttendance
 from db.models import MemberHouseMeetingAttendance
 from db.models import FreshmanAccount
 from datetime import datetime
+
+from util.flask import render_template
 
 attendance_bp = Blueprint('attendance_bp', __name__)
 
@@ -125,7 +126,8 @@ def display_attendance_cm():
         return redirect("/dashboard")
 
 
-    return render_template('attendance_cm.html',
+    return render_template(request,
+                           'attendance_cm.html',
                            username = user_name)
 
 @attendance_bp.route('/attendance_ts')
@@ -136,7 +138,8 @@ def display_attendance_ts():
         return redirect("/dashboard")
 
 
-    return render_template('attendance_ts.html',
+    return render_template(request,
+                           'attendance_ts.html',
                            username = user_name)
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])

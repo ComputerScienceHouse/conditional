@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 from flask import redirect
 from flask import jsonify
@@ -10,6 +9,7 @@ from util.ldap import ldap_get_current_students
 from util.ldap import ldap_is_financial_director
 from util.ldap import ldap_set_active
 from util.ldap import ldap_is_active
+from util.flask import render_template
 
 financial_bp = Blueprint('financial_bp', __name__)
 
@@ -30,7 +30,8 @@ def display_financial():
         } for m in ldap_get_current_students()]
 
     # return names in 'first last (username)' format
-    return render_template('financial.html',
+    return render_template(request,
+                           'financial.html',
                            username = user_name,
                            members=members)
 

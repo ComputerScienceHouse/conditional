@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 
 from util.ldap import ldap_get_room_number
@@ -19,6 +18,7 @@ from db.models import HouseMeeting
 from db.models import CommitteeMeeting
 
 from util.housing import get_queue_length, get_queue_position
+from util.flask import render_template
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
@@ -152,4 +152,4 @@ def display_dashboard():
     data['attendance'] = attendance
     data['attendance_len'] = len(attendance)
 
-    return render_template('dashboard.html', **data)
+    return render_template(request, 'dashboard.html', **data)

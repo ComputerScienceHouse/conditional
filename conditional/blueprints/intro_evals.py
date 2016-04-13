@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)
@@ -13,6 +12,7 @@ from db.models import MemberHouseMeetingAttendance
 from db.models import MemberSeminarAttendance
 from db.models import HouseMeeting
 from db.models import TechnicalSeminar
+from util.flask import render_template
 
 @intro_evals_bp.route('/intro_evals/')
 def display_intro_evals():
@@ -75,7 +75,8 @@ def display_intro_evals():
     ie_members.sort(key = lambda x: x['signatures_missed'])
 
     # return names in 'first last (username)' format
-    return render_template('intro_evals.html',
+    return render_template(request,
+                            'intro_evals.html',
                             username = user_name,
                             members = ie_members)
 

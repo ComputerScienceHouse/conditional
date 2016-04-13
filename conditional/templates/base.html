@@ -24,12 +24,14 @@
     </head>
 
     <body>
-
         {% block nav %}
         {% endblock %}
-        {% block body %}
-        {% endblock %}
-
+        {% if not lockdown %}
+            {% block body %}
+            {% endblock %}
+        {% else %}
+            SITE LOCKDOWN: ONLY FOR EVALS DIRECTORS EYES
+        {% endif %}
 
         <script src="../static/js/libraries/jquery.min.js"></script>
         <script src="../static/js/libraries/bootstrap.min.js"></script>
