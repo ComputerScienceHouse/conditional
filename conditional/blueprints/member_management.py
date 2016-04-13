@@ -50,7 +50,7 @@ def member_management_eval():
     from db.database import db_session
     db_session.flush()
     db_session.commit()
-    return ""
+    return jsonify({"success": True}), 200
 
 @member_management_bp.route('/manage/adduser', methods=['POST'])
 def member_management_adduser():
@@ -69,7 +69,7 @@ def member_management_adduser():
     db_session.add(FreshmanAccount(name, onfloor_status))
     db_session.flush()
     db_session.commit()
-    return ""
+    return jsonify({"success": True}), 200
 
 @member_management_bp.route('/manage/edituser', methods=['POST'])
 def member_management_edituser():
@@ -92,7 +92,7 @@ def member_management_edituser():
     ldap_set_housingpoints(uid, housing_points)
     ldap_set_active(uid, active_member)
 
-    return "ok", 200
+    return jsonify({"success": True}), 200
 
 @member_management_bp.route('/manage/getuserinfo', methods=['POST'])
 def member_management_getuserinfo():
@@ -112,6 +112,33 @@ def member_management_getuserinfo():
             'housing_points': ldap_get_housing_points(uid),
             'active_member': ldap_is_active(uid)
         })
+
+@member_management_bp.route('/manage/edit_hm_excuse', methods=['POST'])
+def member_management_edit_hm_excuse():
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return "must be eval director", 403
+
+    post_data = request.get_json()
+
+    hm_id = post_data['id']
+    hm_status = post_data['status']
+    hm_excuse = post_data['excuse']
+
+    MemberHouseMeetingAttendance.query.filter(
+        MemberHouseMeetingAttendance.id == hm_id).update(
+        {
+            'excuse': hm_excuse,
+            'attendance_status': hm_status
+        })
+
+    from db.database import db_session
+    db_session.flush()
+    db_session.commit()
+    return jsonify({"success": True}), 200
+
+
 # TODO FIXME XXX Maybe change this to an endpoint where it can be called by our
 # user creation script. There's no reason that the evals director should ever
 # manually need to do this
@@ -152,3 +179,4 @@ def member_management_upgrade_user():
     db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
     db_session.flush()
     db_session.commit()
+    return jsonify({"success": True}), 200
