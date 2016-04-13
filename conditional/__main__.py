@@ -13,6 +13,8 @@ from blueprints.housing_evals_form import housing_evals_form_bp
 from blueprints.spring_evals import spring_evals_bp
 from blueprints.conditional import conditionals_bp
 from blueprints.member_management import member_management_bp
+from blueprints.slideshow import slideshow_bp
+
 from util.ldap import ldap_init
 from db.database import init_db
 
@@ -42,6 +44,7 @@ app.register_blueprint(housing_evals_form_bp)
 app.register_blueprint(spring_evals_bp)
 app.register_blueprint(conditionals_bp)
 app.register_blueprint(member_management_bp)
+app.register_blueprint(slideshow_bp)
 
 @app.route('/<path:path>')
 def static_proxy(path):
