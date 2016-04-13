@@ -40,9 +40,9 @@ $(document).ready(function () {
 
         rows.each(function (row) {
             row = rows[row];
-            member = row.attributes.member.value;
-            status = $("input:radio[name=attendance-" + member + "]:checked").val();
-            excuse = $("#comment-" + member).val();
+            var member = row.attributes.member.value;
+            var status = $("input:radio[name=attendance-" + member + "]:checked").val();
+            var excuse = $("#comment-" + member).val();
 
             if (!isNaN(member)) {
                 freshmen.push({
