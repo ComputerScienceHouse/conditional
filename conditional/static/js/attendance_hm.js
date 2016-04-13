@@ -33,7 +33,7 @@ $(document).ready(function () {
     $("#submit").click(function (e) {
         e.preventDefault();
 
-        rows = $("#attendees").children()
+        rows = $("#attendees").children();
 
         var freshmen = [];
         var upperclassmen = [];
@@ -41,8 +41,8 @@ $(document).ready(function () {
         rows.each(function (row) {
             row = rows[row];
             member = row.attributes.member.value;
-            status = $("input:radio[name=attendance-" + member + "]:checked").val()
-            excuse = $("#comment-" + member).val()
+            status = $("input:radio[name=attendance-" + member + "]:checked").val();
+            excuse = $("#comment-" + member).val();
 
             if (!isNaN(member)) {
                 freshmen.push({
@@ -72,7 +72,7 @@ $(document).ready(function () {
             error: function () {
                 alertify.error("Error submitting attendance.");
             },
-            success: function (res) {
+            success: function () {
                 alertify.success("Attendance submitted successfully.");
             }
         });
