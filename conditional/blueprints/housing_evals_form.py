@@ -17,15 +17,18 @@ def display_housing_evals_form():
     evalData = HousingEvalsSubmission.query.filter(
         HousingEvalsSubmission.uid == user_name).first()
 
-    evalData = \
-        {
-            'social_attended': evalData.social_attended,
-            'social_hosted': evalData.social_hosted,
-            'seminars_attended': evalData.technical_attended,
-            'seminars_hosted': evalData.technical_hosted,
-            'projects': evalData.projects,
-            'comments': evalData.comments
-        }
+    evalData = None
+    if HousingEvalsSubmission.query.filter(
+        HousingEvalsSubmission.uid == user_name).count() > 0:
+        evalData = \
+            {
+                'social_attended': evalData.social_attended,
+                'social_hosted': evalData.social_hosted,
+                'seminars_attended': evalData.technical_attended,
+                'seminars_hosted': evalData.technical_hosted,
+                'projects': evalData.projects,
+                'comments': evalData.comments
+            }
 
     is_open = EvalSettings.query.first().housing_form_active
 
