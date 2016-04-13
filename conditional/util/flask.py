@@ -6,6 +6,7 @@ from util.ldap import ldap_is_alumni
 from util.ldap import ldap_is_eboard
 from util.ldap import ldap_is_financial_director
 from util.ldap import ldap_is_eval_director
+from util.ldap import ldap_is_intromember
 
 def render_template(request, template_name, **kwargs):
     user_name = request.headers.get('x-webauth-user')
@@ -17,14 +18,22 @@ def render_template(request, template_name, **kwargs):
     is_eboard = ldap_is_eboard(user_name)
     is_financial = ldap_is_financial_director(user_name)
     is_eval = ldap_is_eval_director(user_name)
+    is_intromember = ldap_is_intromember(user_name)
 
     if is_eval:
         lockdown = False
 
+    # TODO FIXME AUTH BREACH
+    if user_name == 'loothelion':
+        is_eboard = True
+
     return flask_render_template(
         template_name,
         lockdown=lockdown,
+        is_active=is_active,
+        is_alumni=is_alumni,
         is_eboard=is_eboard,
         is_eval=is_eval,
         is_financial=is_financial,
+        is_intromember=is_intromember,
         **kwargs)
