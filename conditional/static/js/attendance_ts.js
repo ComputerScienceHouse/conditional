@@ -1,6 +1,15 @@
 var DELIMITER = ",";
 
 $(document).ready(function () {
+    // Disable submit on enter
+    $('#tsAttendanceForm').on('keyup keypress', function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
     $.ajax({
         url: '/attendance/ts_members',
         type: 'GET',
