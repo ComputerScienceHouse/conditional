@@ -63,3 +63,10 @@ target/
 
 # JetBrains IDEs
 .idea
+
+# OS X
+.DS_Store
+
+# Sensitive project files
+config.json
+data.db
