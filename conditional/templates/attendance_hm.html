@@ -35,9 +35,9 @@
                             <h3 class="panel-title">Attendees</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="container-fluid attendees-container" name="attendees" id="attendees">
+                            <div class="container-fluid attendees-container" id="attendees">
                                 {% for m in members %}
-                                <div class="row" name="member-{{m['value']}}" id="member-{{m['value']}}" member="{{m['value']}}">
+                                <div class="row" id="member-{{m['value']}}" data-member="{{m['value']}}">
                                     <div class="col-xs-12 col-md-7">
                                         <div class="row">
                                             <div class="col-xs-12 col-md-2">

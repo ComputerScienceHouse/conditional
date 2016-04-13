@@ -40,7 +40,7 @@ $(document).ready(function () {
 
         rows.each(function (row) {
             row = rows[row];
-            var member = row.attributes.member.value;
+            var member = $(row).data('member');
             var status = $("input:radio[name=attendance-" + member + "]:checked").val();
             var excuse = $("#comment-" + member).val();
 
