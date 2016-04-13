@@ -65,7 +65,7 @@ def get_all_members():
     return jsonify({'members': named_members}), 200
 
 @attendance_bp.route('/attendance/hm_members')
-def get_non_alumni_non_coop():
+def get_non_alumni_non_coop(internal=False):
     non_alumni_members = ldap_get_current_students()
     coop_members = [u.username for u in CurrentCoops.query.all()]
 
@@ -91,7 +91,10 @@ def get_non_alumni_non_coop():
                 'freshman': False
             })
 
-    return jsonify({'members': named_members}), 200
+    if internal:
+        return named_members
+    else:
+        return jsonify({'members': named_members}), 200
 
 
 @attendance_bp.route('/attendance/cm_members')
@@ -152,7 +155,9 @@ def display_attendance_hm():
 
     return render_template(request,
                            'attendance_hm.html',
-                           username = user_name)
+                           username = user_name,
+                           date = datetime.utcnow().strftime("%Y-%m-%d"),
+                           members = get_non_alumni_non_coop(internal=True))
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():

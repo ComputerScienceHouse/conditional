@@ -241,17 +241,16 @@ box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 .eval-card-photo{
     
 }
-@media(max-width:767px){
+@media(max-width:978px){
     .name-container{
         text-align:center;
     }
     
     
 }
-@media(min-width:768px){
+@media(min-width:978px){
     .name-container{
         text-align:left;
-        
     }
     .vcenter {
         display: inline-block;
@@ -331,4 +330,22 @@ box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 
 .selectize-dropdown-content .active {
     font-weight: bold;
+}
+
+
+.btn-group  .btn {
+    padding: 8px 0 !important;
+}
+
+.attendance-absent.btn-danger {
+    background-color: #f44336 !important;
+}
+
+.attendees-container > div.row {
+    padding: 1em 0;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.attendees-container > div.row:last-of-type {
+    border-bottom: none;
 }
