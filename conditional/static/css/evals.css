@@ -396,6 +396,10 @@ box-shadow: 0px 0px 6px 0px rgba(34,34,34,1);
     background-color: #f44336 !important;
 }
 
+.btn.btn-danger:hover {
+    background-color: #f55549 !important;
+}
+
 .attendees-container > div.row {
     padding: 1em 0;
     border-bottom: 1px solid #d0d0d0;
