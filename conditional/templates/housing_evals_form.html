@@ -14,7 +14,7 @@
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="social_attended">Social Events Attended</label>
-                            <textarea name="social_attended" class="form-control" rows="3" id="social_attended"></textarea>
+                            <textarea name="social_attended" class="form-control" rows="3" id="social_attended">{{eval_data['social_attended']}}</textarea>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="social_hosted">Social Events Hosted</label>
-                            <textarea name="social_hosted" class="form-control" rows="3" id="social_hosted"></textarea>
+                            <textarea name="social_hosted" class="form-control" rows="3" id="social_hosted">{{eval_data['social_hosted']}}</textarea>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="seminars_attended">Technical Seminars Attended</label>
-                            <textarea name="seminars_attended" class="form-control" rows="3" id="seminars_attended"></textarea>
+                            <textarea name="seminars_attended" class="form-control" rows="3" id="seminars_attended">{{eval_data['seminars_attended']}}</textarea>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="seminars_hosted">Technical Seminars Hosted</label>
-                            <textarea name="seminars_hosted" class="form-control" rows="3" id="seminars_hosted"></textarea>
+                            <textarea name="seminars_hosted" class="form-control" rows="3" id="seminars_hosted">{{eval_data['seminars_hosted']}}</textarea>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="projects">Projects</label>
-                            <textarea name="projects" class="form-control" rows="3" id="projects"></textarea>
+                            <textarea name="projects" class="form-control" rows="3" id="projects">{{eval_data['projects']}}</textarea>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group label-floating is-empty">
                             <label class="control-label" for="comments">Comments</label>
-                            <textarea name="comments" class="form-control" rows="3" id="comments"></textarea>
+                            <textarea name="comments" class="form-control" rows="3" id="comments">{{eval_data['comments']}}</textarea>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -91,31 +91,7 @@
                 <button class= "btn btn-raised btn-primary" style="width:100%;" id="submit" type="submit">Submit Housing Evaluation</button>
             </div>
         </div>
-
-
     </form>
-
-    <h3 style="padding-top:30px;">All Pending Housing Evals</h3>
-    <div style="padding-top:20px"></div>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            {% if housing_evals_len <= 0 %}
-            <p class="text-center">No Pending Housing Evals</p>
-            {% else %}
-            {% for e in housing_evals %}
-            {
-            'username': {{e['username']}},
-            'social_attended': {{e['social_attended']}},
-            'social_hosted': {{e['social_hosted']}},
-            'seminars_attended': {{e['seminars_attended']}},
-            'seminars_hosted': {{e['seminars_hosted']}},
-            'projects': {{e['projects']}},
-            'comments': {{e['comments']}}
-            }
-            {% endfor %}
-            {% endif %}
-        </div>
-    </div>
     {% else %}
     Housing Form Currently Closed
     {% endif %}

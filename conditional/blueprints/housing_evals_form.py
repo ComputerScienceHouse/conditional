@@ -14,25 +14,25 @@ def display_housing_evals_form():
 
     user_name = request.headers.get('x-webauth-user')
 
-    housing_evals = [
-            {
-                'username': e.uid,
-                'social_attended': e.social_attended,
-                'social_hosted': e.social_hosted,
-                'seminars_attended': e.technical_attended,
-                'seminars_hosted': e.technical_hosted,
-                'projects': e.projects,
-                'comments': e.comments
-            } for e in
-        HousingEvalsSubmission.query.all()]
+    evalData = HousingEvalsSubmission.query.filter(
+        HousingEvalsSubmission.uid == user_name).first()
+
+    evalData = \
+        {
+            'social_attended': evalData.social_attended,
+            'social_hosted': evalData.social_hosted,
+            'seminars_attended': evalData.technical_attended,
+            'seminars_hosted': evalData.technical_hosted,
+            'projects': evalData.projects,
+            'comments': evalData.comments
+        }
 
     is_open = EvalSettings.query.first().housing_form_active
 
     # return names in 'first last (username)' format
     return render_template('housing_evals_form.html',
                            username = user_name,
-                           housing_evals = housing_evals,
-                           housing_evals_len = len(housing_evals),
+                           eval_data = evalData,
                            is_open = is_open)
 
 @housing_evals_form_bp.route('/housing_evals/submit', methods=['POST'])
@@ -49,10 +49,24 @@ def display_housing_evals_submit_form():
     projects = post_data['projects']
     comments = post_data['comments']
 
-    hEval = HousingEvalsSubmission(user_name, social_attended,
-        social_hosted, seminars_attended, seminars_hosted,
-        projects, comments)
+    if HousingEvalsSubmission.query.filter(
+        HousingEvalsSubmission.uid == user_name).count() > 0:
+        HousingEvalsSubmission.query.filter(
+            HousingEvalsSubmission.uid == user_name).\
+            update(
+                {
+                    'social_attended': social_attended,
+                    'social_hosted': social_hosted,
+                    'technical_attended': seminars_attended,
+                    'technical_hosted': seminars_hosted,
+                    'projects': projects,
+                    'comments': comments
+                })
+    else:
+        hEval = HousingEvalsSubmission(user_name, social_attended,
+            social_hosted, seminars_attended, seminars_hosted,
+            projects, comments)
 
-    db_session.add(hEval)
+        db_session.add(hEval)
     db_session.commit()
     return jsonify({"success": True}), 200
