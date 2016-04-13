@@ -237,12 +237,22 @@
                                 <th>Date Assigned</th>
                                 <th>Date Due</th>
                                 <th>Description</th>
+                                <th>Status</th>
                             </tr>
                             {% for c in conditionals %}
                             <tr>
                                 <td>{{c['date_created']}}</td>
                                 <td>{{c['date_due']}}</td>
                                 <td>{{c['description']}}</td>
+                                <td>
+                                    {% if c['status'] == "Passed" %}
+                                    <span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign green"></span>
+                                    {% elif c['status'] == "Pending" %}
+                                    <span class="glyphicon glyphicon-hourglass yellow"></span> <span class="mobile-hide">Pending</span>
+                                    {% else %}
+                                    <span class="glyphicon glyphicon-minus-sign red"></span> <span class="mobile-hide">Failed</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>

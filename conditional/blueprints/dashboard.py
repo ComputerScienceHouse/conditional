@@ -128,7 +128,8 @@ def display_dashboard():
             {
                 'date_created': c.date_created,
                 'date_due': c.date_due,
-                'description': c.description
+                'description': c.description,
+                'status': c.status
             } for c in
         Conditional.query.filter(Conditional.uid == user_name)]
     data['conditionals'] = conditionals

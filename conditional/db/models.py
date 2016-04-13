@@ -181,12 +181,15 @@ class Conditional(Base):
     description = Column(String(512), nullable=False)
     date_created = Column(Date, nullable=False)
     date_due = Column(Date, nullable=False)
+    status = Column(Enum('Pending', 'Passed', 'Failed',
+                          name="conditional_enum"))
 
     def __init__(self, uid, description, due):
         self.uid = uid
         self.description = description
         self.date_due = due
         self.date_created = datetime.utcnow()
+        self.status = "Pending"
 
 class EvalSettings(Base):
     __tablename__ = 'settings'

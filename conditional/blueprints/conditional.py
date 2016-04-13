@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import request
+from flask import jsonify
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
@@ -21,9 +22,11 @@ def display_conditionals():
                 'name': ldap_get_name(c.uid),
                 'date_created': c.date_created,
                 'date_due': c.date_due,
-                'description': c.description
+                'description': c.description,
+                'id': c.id
             } for c in
-        Conditional.query.all()]
+        Conditional.query.filter(
+            Conditional.status == "Pending")]
     # return names in 'first last (username)' format
     return render_template(request,
                             'conditional.html',
@@ -44,10 +47,34 @@ def create_conditional():
 
     uid = post_data['uid']
     description = post_data['description']
-    due_date = datetime.strptime(post_data['due_date'], "%A %d. %B %Y")
+    due_date = datetime.strptime(post_data['due_date'], "%Y-%m-%d")
 
     db_session.add(Conditional(uid, description, due_date))
     db_session.flush()
     db_session.commit()
 
     return 'ok', 200
+@conditionals_bp.route('/conditionals/review', methods=['POST'])
+def conditional_review():
+    # get user data
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return redirect("/dashboard", code=302)
+
+    post_data = request.get_json()
+    cid = post_data['id']
+    status = post_data['status']
+
+    print(post_data)
+    Conditional.query.filter(
+        Conditional.id == cid).\
+        update(
+            {
+                'status': status
+            })
+
+    from db.database import db_session
+    db_session.flush()
+    db_session.commit()
+    return jsonify({"success": True}), 200
