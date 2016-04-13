@@ -153,7 +153,7 @@ def display_attendance_ts():
 def display_attendance_hm():
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name) or user_name == "loothelion":
+    if not ldap_is_eval_director(user_name) and user_name != "loothelion":
         return redirect("/dashboard")
 
     return render_template(request,
