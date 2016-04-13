@@ -2,7 +2,7 @@ from functools import wraps
 from functools import lru_cache
 
 import ldap
-
+from ldap.ldapobject import ReconnectLDAPObject
 # Global state is gross. I'm sorry.
 ldap_conn = None
 user_search_ou = None
@@ -19,7 +19,7 @@ def ldap_init(ro, ldap_url, bind_dn, bind_pw, user_ou, group_ou, committee_ou):
     user_search_ou = user_ou
     group_search_ou = group_ou
     committee_search_ou = committee_ou
-    ldap_conn = ldap.initialize(ldap_url, bytes_mode=False)
+    ldap_conn = ReconnectLDAPObject(ldap_url)
     ldap_conn.simple_bind_s(bind_dn, bind_pw)
 
 def ldap_init_required(func):
