@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import jsonify
+from flask import redirect
 
 from blueprints.dashboard import dashboard_bp
 from blueprints.attendance import attendance_bp
@@ -46,6 +47,10 @@ app.register_blueprint(member_management_bp)
 def static_proxy(path):
     # send_static_file will guess the correct MIME type
     return app.send_static_file(path)
+
+@app.route('/')
+def default_route():
+    return redirect('/dashboard')
 
 def web_main():
     json_config = None
