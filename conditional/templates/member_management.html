@@ -1,0 +1,53 @@
+{% extends "nav.html" %}
+{% block extraFooter %}
+    <script src="../static/js/member_management.js"></script>
+{% endblock %}
+{% block body %}
+<div class="container main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Site Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="col-xs-12 col-md-4">
+                <h3>Housing Form</h3>
+                <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
+                    <label class="btn btn-success active">
+                        <input type="radio" name="housing_form" autocomplete="off" value="1" {% if housing_form_active %} checked {% endif %}> Unlocked </label>
+                    <label class="btn btn-danger">
+                        <input type="radio" name="housing_form" autocomplete="off" value="0" {% if not housing_form_active %} checked {% endif %}> Locked </label>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <h3>Intro Evals Form</h3>
+                <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
+                    <label class="btn btn-success active">
+                        <input type="radio" name="intro_form" autocomplete="off" value="1" checked {% if intro_form_active %} checked {% endif %}> Unlocked </label>
+                    <label class="btn btn-danger">
+                        <input type="radio" name="intro_form" autocomplete="off" value="0" {% if not intro_form_active %} checked {% endif %}> Locked </label>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <h3>Site Lockdown</h3>
+                <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
+                    <label class="btn btn-success active">
+                        <input type="radio" name="site_lockdown" autocomplete="off" value="0" checked {% if not site_lockdown %} checked {% endif %}> Unlocked </label>
+                    <label class="btn btn-danger">
+                        <input type="radio" name="site_lockdown" autocomplete="off" value="1" {% if site_lockdown %} checked {% endif %}> Locked </label>
+                </div>
+            </div>
+            <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-settings">Submit</button>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Member Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            table of every member
+            Name, username, onfloor status, checkbox, submit button
+            checkbox for active (if dues are paid)
+        </div>
+    </div>
+</div>
+{% endblock %}

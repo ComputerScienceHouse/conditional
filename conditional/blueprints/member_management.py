@@ -26,9 +26,19 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 
 @member_management_bp.route('/manage')
 def display_member_management():
-    return ""
+    user_name = request.headers.get('x-webauth-user')
 
-@member_management_bp.route('/manage/eval', methods=['POST'])
+    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+        return "must be eval director", 403
+
+    settings = EvalSettings.query.first()
+    return render_template(request, "member_management.html",
+            user_name=user_name,
+            housing_form_active=settings.housing_form_active,
+            intro_form_active=settings.intro_form_active,
+            site_lockdown=settings.site_lockdown)
+
+@member_management_bp.route('/manage/settings', methods=['POST'])
 def member_management_eval():
     user_name = request.headers.get('x-webauth-user')
 
@@ -40,7 +50,7 @@ def member_management_eval():
     intro_form_active = post_data['intro']
     site_lockdown = post_data['lockdown']
 
-    EvalSettings.query.first().update(
+    EvalSettings.query.update(
         {
             'housing_form_active': housing_form_active,
             'intro_form_active': intro_form_active,
