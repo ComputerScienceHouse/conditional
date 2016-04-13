@@ -17,7 +17,6 @@ def display_housing_evals_form():
     evalData = HousingEvalsSubmission.query.filter(
         HousingEvalsSubmission.uid == user_name).first()
 
-    evalData = None
     if HousingEvalsSubmission.query.filter(
         HousingEvalsSubmission.uid == user_name).count() > 0:
         evalData = \
