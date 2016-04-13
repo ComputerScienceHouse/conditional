@@ -33,7 +33,7 @@ def render_template(request, template_name, **kwargs):
         is_active=is_active,
         is_alumni=is_alumni,
         is_eboard=is_eboard,
-        is_eval=is_eval,
-        is_financial=is_financial,
+        is_eval_director=is_eval,
+        is_financial_director=is_financial,
         is_intromember=is_intromember,
         **kwargs)
