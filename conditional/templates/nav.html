@@ -39,11 +39,24 @@
                     <ul class="dropdown-menu">
                         <li><a href="/attendance_cm"><span class="glyphicon glyphicon-briefcase"></span> Committee Meeting </a></li>
                         <li><a href="/attendance_ts"><span class="glyphicon glyphicon-blackboard"></span> Technical Seminar </a></li>
-                        {% if is_eval %}
+                        {% if is_eval_director %}
                         <li><a href="/attendance_hm"><span class="glyphicon glyphicon-home"></span> House Meeting </a></li>
                         {% endif %}
                     </ul>
                 </li>
+                {% endif %}
+                {% if is_eval_director or is_financial_director %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> Admin <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/member_management"><span class="glyphicon glyphicon-user"></span> Member Management </a></li>
+                        {% if is_eval_director %}
+                        <li><a href="/presentation_fall"><span class="glyphicon glyphicon-eye-open"></span> Fall Presentation  </a></li>
+                        <li><a href="/attendance_hm"><span class="glyphicon glyphicon-eye-open"></span> Spring Presentation_</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+
                 {% endif %}
 
 
