@@ -1,9 +1,11 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from flask import redirect
 from flask import jsonify
 from db.models import FreshmanEvalData
 from db.models import EvalSettings
+from util.ldap import ldap_is_intromember
 
 intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 
@@ -11,6 +13,9 @@ intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 def display_intro_evals_form():
     # get user data
     user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_intromember(user_name):
+        return redirect("/dashboard")
 
     evalData = FreshmanEvalData.query.filter(
                 FreshmanEvalData.uid == user_name).first()
