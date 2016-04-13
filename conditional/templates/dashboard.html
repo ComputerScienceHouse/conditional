@@ -267,22 +267,22 @@
                 {% else %}
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <strong>Major Projects</strong>
+                        <h3 class="panel-title">Major Projects</h3>
                     </div>
+                    <table>
                     {% for p in major_projects %}
-                    <div class="panel-inner-padding">
-                        <strong>{{p['name']}}:</strong>
+                    <tr>
                         {% if p['status'] == "Passed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> <span class="mobile-hide">Passed</span></span>
+                        <span><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign green"></span>  <strong>{{p['name']}}</strong></span>
                         {% elif p['status'] == "Pending" %}
                         <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> <span class="mobile-hide">Pending</span></span>
                         {% else %}
                         <span class="pull-right"><span class="glyphicon glyphicon-minus-sign red"></span> <span class="mobile-hide">Failed</span></span>
                         {% endif %}
                         <div class="panel-body" style="word-wrap:break-word">{{p['description']}}</div>
-                    </div>
-                    <hr>
+                    </tr>
                     {% endfor %}
+                    </table>
                 </div>
             </div>
             {% endif %}
