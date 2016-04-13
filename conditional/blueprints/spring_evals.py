@@ -11,6 +11,7 @@ from db.models import MemberHouseMeetingAttendance
 from db.models import MajorProject
 from db.models import HouseMeeting
 from db.models import SpringEval
+from db.models import HousingEvalsSubmission
 
 from util.flask import render_template
 
@@ -39,6 +40,23 @@ def display_spring_evals(internal=False):
             # something bad happened to get here
             print("CRITICAL ERROR!")
             continue
+
+        evalData = None
+        if internal:
+            evalData = HousingEvalsSubmission.query.filter(
+                HousingEvalsSubmission.uid == uid).first()
+
+            if HousingEvalsSubmission.query.filter(
+                HousingEvalsSubmission.uid == uid).count() > 0:
+                evalData = \
+                    {
+                        'social_attended': evalData.social_attended,
+                        'social_hosted': evalData.social_hosted,
+                        'seminars_attended': evalData.technical_attended,
+                        'seminars_hosted': evalData.technical_hosted,
+                        'projects': evalData.projects,
+                        'comments': evalData.comments
+                    }
         h_meetings = [m.meeting_id for m in
             MemberHouseMeetingAttendance.query.filter(
                 MemberHouseMeetingAttendance.uid == uid
@@ -78,6 +96,8 @@ def display_spring_evals(internal=False):
                 member['major_project_passed'] = True
                 break
 
+        if internal:
+            member['housing_evals'] = evalData
         sp_members.append(member)
 
     sp_members.sort(key = lambda x: x['committee_meetings'], reverse=True)
