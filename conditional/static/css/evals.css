@@ -117,7 +117,9 @@ body {
     width:70px;
 }
 
-
+a, a:hover, a:focus {
+    color: #b0197e !important;
+}
 
 
 
