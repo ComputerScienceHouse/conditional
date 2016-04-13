@@ -10,6 +10,7 @@ from util.ldap import ldap_is_financial_director
 from util.ldap import ldap_set_active
 from util.ldap import ldap_is_active
 from util.flask import render_template
+from db.models import SpringEval
 
 financial_bp = Blueprint('financial_bp', __name__)
 
@@ -47,7 +48,12 @@ def edit_financial():
     uid = post_data['uid']
     active = post-data['active'] == "on"
 
+    
     # LDAP SET VALUE
     ldap_set_active(uid, active)
 
+    from db.database import db_session
+    db_session.add(SpringEval(uid))
+    db_session.flush()
+    db_session.commit()
     return redirect("/financial", code=302)

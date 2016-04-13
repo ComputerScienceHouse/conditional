@@ -92,6 +92,19 @@ def member_management_edituser():
     ldap_set_housingpoints(uid, housing_points)
     ldap_set_active(uid, active_member)
 
+    from db.database import db_session
+    if active_member:
+        db_session.add(SpringEval(uid))
+    else:
+        SpringEval.query.filter(
+            SpringEval.uid == uid and
+            SpringEval.active).update(
+            {
+                'active': False
+            })
+    db_session.flush()
+    db_session.commit()
+
     return jsonify({"success": True}), 200
 
 @member_management_bp.route('/manage/getuserinfo', methods=['POST'])
