@@ -15,13 +15,15 @@ from db.models import TechnicalSeminar
 from util.flask import render_template
 
 @intro_evals_bp.route('/intro_evals/')
-def display_intro_evals():
+def display_intro_evals(internal=False):
     # get user data
     def get_cm_count(uid):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == uid)])
 
-    user_name = request.headers.get('x-webauth-user')
+    user_name = None
+    if not internal:
+        user_name = request.headers.get('x-webauth-user')
 
     members = [m['uid'] for m in ldap_get_intro_members()]
 
@@ -39,14 +41,14 @@ def display_intro_evals():
         member = {
                     'name': ldap_get_name(uid),
                     'uid': uid,
-                    'eval_date': freshman_data.eval_date,
+                    'eval_date': freshman_data.eval_date.strftime("%Y-%m-%d"),
                     'signatures_missed': freshman_data.signatures_missed,
                     'committee_meetings': get_cm_count(uid),
                     'committee_meetings_passed': get_cm_count(uid) >= 10,
                     'house_meetings_missed':
                         [
                             {
-                                "date": m.date,
+                                "date": m.date.strftime("%Y-%m-%d"),
                                 "reason":
     MemberHouseMeetingAttendance.query.filter(
         MemberHouseMeetingAttendance.uid == uid).filter(
@@ -65,7 +67,8 @@ def display_intro_evals():
                         ],
                     'social_events': freshman_data.social_events,
                     'freshman_project': freshman_data.freshman_project,
-                    'comments': freshman_data.other_notes
+                    'comments': freshman_data.other_notes,
+                    'status': freshman_data.freshman_eval_result
                  }
         ie_members.append(member)
 
@@ -74,9 +77,11 @@ def display_intro_evals():
     ie_members.sort(key = lambda x: x['committee_meetings'], reverse=True)
     ie_members.sort(key = lambda x: x['signatures_missed'])
 
-    # return names in 'first last (username)' format
-    return render_template(request,
-                            'intro_evals.html',
-                            username = user_name,
-                            members = ie_members)
-
+    if internal:
+        return ie_members
+    else:
+        # return names in 'first last (username)' format
+        return render_template(request,
+                                'intro_evals.html',
+                                username = user_name,
+                                members = ie_members)

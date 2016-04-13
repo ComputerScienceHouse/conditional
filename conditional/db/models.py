@@ -109,6 +109,7 @@ class MajorProject(Base):
     uid = Column(String(32), nullable=False)
     name = Column(String(64), nullable=False)
     description = Column(Text)
+    active = Column(Boolean, nullable=False)
     status = Column(Enum('Pending', 'Passed', 'Failed',
                           name="major_project_enum"),
                     nullable=False)
@@ -118,6 +119,7 @@ class MajorProject(Base):
         self.name = name
         self.description = desc
         self.status = 'Pending'
+        self.active = True
 
 class HouseMeeting(Base):
     __tablename__ = 'house_meetings'
@@ -161,9 +163,13 @@ class CurrentCoops(Base):
     __tablename__ = 'current_coops'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
+    active = Column(Boolean, nullable=False)
+    date_created = Column(Date, nullable=False)
 
     def __init__(self, uid):
         self.uid = uid
+        self.active = True
+        self.date_created = datetime.now()
 
 class OnFloorStatusAssigned(Base):
     __tablename__ = 'onfloor_datetime'
@@ -181,8 +187,10 @@ class Conditional(Base):
     description = Column(String(512), nullable=False)
     date_created = Column(Date, nullable=False)
     date_due = Column(Date, nullable=False)
+    active = Column(Boolean, nullable=False)
     status = Column(Enum('Pending', 'Passed', 'Failed',
-                          name="conditional_enum"))
+                          name="conditional_enum"),
+                          nullable=False)
 
     def __init__(self, uid, description, due):
         self.uid = uid
@@ -190,6 +198,7 @@ class Conditional(Base):
         self.date_due = due
         self.date_created = datetime.utcnow()
         self.status = "Pending"
+        self.active = True
 
 class EvalSettings(Base):
     __tablename__ = 'settings'
@@ -203,6 +212,22 @@ class EvalSettings(Base):
         self.intro_form_active = True
         self.site_lockdown = False
 
+class SpringEval(Base):
+    __tablename__ = 'spring_evals'
+    id = Column(Integer, primary_key=True)
+    uid = Column(String(32), nullable=False)
+    active = Column(Boolean, nullable=False)
+    date_created = Column(Date, nullable=False)
+    status = Column(Enum('Pending', 'Passed', 'Failed',
+                          name="spring_eval_enum"),
+                          nullable=False)
+
+    def __init__(self, uid):
+        self.uid = uid
+        self.active = True
+        self.date_created = datetime.now()
+        self.status = "Pending"
+
 class HousingEvalsSubmission(Base):
     __tablename__ = 'housing_evals'
     id = Column(Integer, primary_key=True)
@@ -214,6 +239,8 @@ class HousingEvalsSubmission(Base):
     projects = Column(Text, nullable=False)
     comments = Column(Text, nullable=False)
     points = Column(Integer, nullable=False)
+    active = Column(Boolean, nullable=False)
+    date_created = Column(Date, nullable=False)
 
     def __init__(self, uid, social_attended,
         social_hosted, technical_attended,
@@ -227,3 +254,5 @@ class HousingEvalsSubmission(Base):
         self.projects = projects
         self.comments = comments
         self.points = 0
+        self.active = True
+        self.date_created = datetime.now()

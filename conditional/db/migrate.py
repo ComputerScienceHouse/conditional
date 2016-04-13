@@ -311,6 +311,11 @@ def migrate_models():
         db_session.add(models.OnFloorStatusAssigned(m, datetime.utcnow()))
     print("END: ON FLOOR")
 
+    print("BEGIN: SPRING EVALS")
+    members = [m['uid'][0].decode('utf-8') for m in ldap.ldap_get_active_members()]
+    for m in members:
+        db_session.add(models.SpringEval(m))
+    print("END: SPRING EVALS")
     print("BEGIN: Housing Evals")
     hevals = [
         {

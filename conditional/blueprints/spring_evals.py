@@ -10,15 +10,19 @@ from db.models import MemberCommitteeAttendance
 from db.models import MemberHouseMeetingAttendance
 from db.models import MajorProject
 from db.models import HouseMeeting
+from db.models import SpringEval
+
 from util.flask import render_template
 
 @spring_evals_bp.route('/spring_evals/')
-def display_spring_evals():
+def display_spring_evals(internal=False):
     def get_cm_count(uid):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == uid)])
 
-    user_name = request.headers.get('x-webauth-user')
+    user_name = None
+    if not internal:
+        user_name = request.headers.get('x-webauth-user')
 
     members = [m['uid'] for m in ldap_get_active_members()]
 
@@ -26,6 +30,15 @@ def display_spring_evals():
     for member_uid in members:
         uid = member_uid[0].decode('utf-8')
         print(uid)
+        spring_entry = SpringEval.query.filter(
+            SpringEval.uid == uid and
+            SpringEval.active).first()
+
+        if spring_entry is None:
+            # This user isn't actually supposed to be here
+            # something bad happened to get here
+            print("CRITICAL ERROR!")
+            continue
         h_meetings = [m.meeting_id for m in
             MemberHouseMeetingAttendance.query.filter(
                 MemberHouseMeetingAttendance.uid == uid
@@ -35,11 +48,12 @@ def display_spring_evals():
         member = {
                     'name': ldap_get_name(uid),
                     'uid': uid,
+                    'status': spring_entry.status,
                     'committee_meetings': get_cm_count(uid),
                     'house_meetings_missed':
                         [
                             {
-                                "date": m.date,
+                                "date": m.date.strftime("%Y-%m-%d"),
                                 "reason":
     MemberHouseMeetingAttendance.query.filter(
         MemberHouseMeetingAttendance.uid == uid).filter(
@@ -70,7 +84,10 @@ def display_spring_evals():
     sp_members.sort(key = lambda x: len(x['house_meetings_missed']))
     sp_members.sort(key = lambda x: x['major_project_passed'], reverse=True)
     # return names in 'first last (username)' format
-    return render_template(request,
-                            'spring_evals.html',
-                            username = user_name,
-                            members = sp_members)
+    if internal:
+        return sp_members
+    else:
+        return render_template(request,
+                                'spring_evals.html',
+                                username = user_name,
+                                members = sp_members)
