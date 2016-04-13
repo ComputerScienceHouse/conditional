@@ -1,5 +1,3 @@
-var DELIMITER = ",";
-
 $(document).ready(function () {
     // Initialize date picker
     $('#date').bootstrapMaterialDatePicker({weekStart: 0, time: false});
@@ -27,7 +25,7 @@ $(document).ready(function () {
     });
 
     // Show comment box when add comment is clicked
-    $('.comment-trigger').click(function() {
+    $('.comment-trigger').click(function () {
         $(this).hide();
         $(this).siblings(".comment-field").show();
     });
@@ -46,7 +44,7 @@ $(document).ready(function () {
             status = $("input:radio[name=attendance-" + member + "]:checked").val()
             excuse = $("#comment-" + member).val()
 
-            if(!isNaN(member)) {
+            if (!isNaN(member)) {
                 freshmen.push({
                     'id': member,
                     'excuse': excuse,
