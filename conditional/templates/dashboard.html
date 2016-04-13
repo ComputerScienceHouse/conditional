@@ -175,10 +175,10 @@
                 <h3 class="panel-title">Spring Evaluations
                     {% if spring['status'] == "Passed" %}
                     <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
-                    {% elif spring['status'] == "Pending" %}
-                    <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
-                    {% else %}
+                    {% elif spring['status'] == "Failed" %}
                     <span class="pull-right"><span class="glyphicon glyphicon-remove-sign white"></span> Failed</span>
+                    {% else %}
+                    <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
                     {% endif %}
                 </h3>
             </div>
