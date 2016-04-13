@@ -39,6 +39,9 @@
                     <ul class="dropdown-menu">
                         <li><a href="/attendance_cm"><span class="glyphicon glyphicon-briefcase"></span> Eboard Meeting </a></li>
                         <li><a href="/attendance_ts"><span class="glyphicon glyphicon-blackboard"></span> Technical Seminar </a></li>
+                        {% if is_eval %}
+                        <li><a href="/attendance_hm"><span class="glyphicon glyphicon-home"></span> House Meeting </a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endif %}
