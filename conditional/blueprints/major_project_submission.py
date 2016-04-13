@@ -19,7 +19,8 @@ def display_major_project():
                 'username': p.uid,
                 'name': p.name,
                 'status': p.status,
-                'description': p.description
+                'description': p.description,
+                'id': p.id
             } for p in
         MajorProject.query.filter(MajorProject.status == "Pending")]
 

@@ -41,22 +41,63 @@
     </form>
     <h3 style="padding-top:30px;">All Pending Major Projects</h3>
     <div style="padding-top:20px"></div>
+    {% if major_projects_len <= 0 %}
     <div class="panel panel-default">
         <div class="panel-body">
-            {% if major_projects_len <= 0 %}
             <p class="text-center">No Pending Major Projects</p>
-            {% else %}
-            {% for p in major_projects %}
-            {
-            'uid': {{p['username']}},
-            'name': {{p['name']}},
-            'status': {{p['status']}},
-            'description': {{p['description']}}
-            }
-            {% endfor %}
-            {% endif %}
         </div>
     </div>
+    {% else %}
+        {% for p in major_projects %}
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding-top:30px;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-sm-6 vcenter" style="padding-right:0px;padding-left:0px;">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-4 col-md-4 vcenter">
+                                            <div style="margin:auto; width:100px">
+                                                <img class="eval-user-img" alt="{{p['username']}}" src="https://profiles.csh.rit.edu/image/{{p['username']}}" width="100" height="100" />
+
+                                            </div>
+
+                                        </div><!----><div class="col-xs-12 col-sm-8 col-md-8 name-container vcenter">
+                                            <h3>
+                                                {{p['username']}}
+                                            </h3>
+                                        </div><!----><div class="col-xs-12 col-sm-8 col-md-8 name-container vcenter">
+                                            <h3>
+                                                {{p['name']}}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+
+                            <button class="btn btn-expand-panel" role="button"
+                                                                 data-toggle="collapse" href="#evalsCollapse-{{p['id']}}"
+                                                                                        aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+
+                        </div>
+                    </div> 
+                    <div class="collapse" id="evalsCollapse-{{p['id']}}">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                                        {{p['description']}}
+                                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        {% endfor %}
+    {% endif %}
 
 </div>
 {% endblock %}
