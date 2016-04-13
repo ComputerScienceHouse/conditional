@@ -14,15 +14,15 @@ $(document).ready(function () {
     });
 
     // Update attendance picker colors when changed
-    $('.attendance-present').click(function () {
+    $('.attendance-Attended').click(function () {
         $(this).addClass('btn-success').siblings().removeClass('btn-danger').removeClass('btn-info');
     });
 
-    $('.attendance-absent').click(function () {
+    $('.attendance-Absent').click(function () {
         $(this).addClass('btn-danger').siblings().removeClass('btn-success').removeClass('btn-info');
     });
 
-    $('.attendance-excused').click(function () {
+    $('.attendance-Excused').click(function () {
         $(this).addClass('btn-info').siblings().removeClass('btn-success').removeClass('btn-danger');
     });
 
@@ -35,29 +35,41 @@ $(document).ready(function () {
     $("#submit").click(function (e) {
         e.preventDefault();
 
-        var attendees = $("#attendees").val().split(DELIMITER);
+        rows = $("#attendees").children()
+
         var freshmen = [];
         var upperclassmen = [];
-        $.each(attendees, function (memberId) {
-            memberId = attendees[memberId];
-            if (!isNaN(memberId)) {
-                // Numeric UID, freshman account
-                freshmen.push(memberId);
+
+        rows.each(function (row) {
+            row = rows[row];
+            member = row.attributes.member.value;
+            status = $("input:radio[name=attendance-" + member + "]:checked").val()
+            excuse = $("#comment-" + member).val()
+
+            if(!isNaN(member)) {
+                freshmen.push({
+                    'id': member,
+                    'excuse': excuse,
+                    'status': status
+                })
             } else {
-                // Upperclassman
-                upperclassmen.push(memberId);
+                upperclassmen.push({
+                    'uid': member,
+                    'excuse': excuse,
+                    'status': status
+                })
             }
         });
 
         $.ajax({
-            url: '/attendance/submit/cm',
+            url: '/attendance/submit/hm',
             type: 'POST',
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
             data: JSON.stringify({
-                "committee": $("#position").val(),
                 "freshmen": freshmen,
-                "members": upperclassmen
+                "members": upperclassmen,
+                "timestamp": $("#date").val()
             }),
             error: function () {
                 alertify.error("Error submitting attendance.");

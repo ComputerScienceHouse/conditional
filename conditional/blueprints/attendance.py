@@ -8,6 +8,7 @@ from util.ldap import ldap_get_name
 from util.ldap import ldap_get_current_students
 from util.ldap import ldap_is_eboard
 from util.ldap import ldap_is_eval_director
+from util.ldap import ldap_get_active_members
 
 from db.models import CurrentCoops
 from db.models import CommitteeMeeting
@@ -66,7 +67,9 @@ def get_all_members():
 
 @attendance_bp.route('/attendance/hm_members')
 def get_non_alumni_non_coop(internal=False):
-    non_alumni_members = ldap_get_current_students()
+    # Only Members Who Have Paid Dues Are Required to
+    # go to house meetings
+    non_alumni_members = ldap_get_active_members()
     coop_members = [u.username for u in CurrentCoops.query.all()]
 
     named_members = [
