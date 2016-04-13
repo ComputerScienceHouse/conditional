@@ -228,11 +228,10 @@ def submit_house_attendance():
 
     post_data = request.get_json()
 
-    timestamp = post_data['timestamp']
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
 
-    meeting = HouseMeeting(datetime.strptime(timestamp, "%A %d. %B %Y"))
+    meeting = HouseMeeting(datetime.now())
 
     db_session.add(meeting)
     db_session.flush()
