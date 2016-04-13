@@ -134,6 +134,8 @@ def display_dashboard():
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
+    # TODO FIXME Create two seperate dropdown panels for
+    # house and committee attendance
     attendance = [
         {
             'type': "House Meeting",
