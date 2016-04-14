@@ -12,8 +12,10 @@ from db.models import FreshmanHouseMeetingAttendance
 from db.models import MemberHouseMeetingAttendance
 from db.models import EvalSettings
 from db.models import OnFloorStatusAssigned
+from db.models import SpringEval
 
 from util.ldap import ldap_is_eval_director
+from util.ldap import ldap_is_financial_director
 from util.ldap import ldap_set_roomnumber
 from util.ldap import ldap_set_active
 from util.ldap import ldap_set_housingpoints
@@ -28,12 +30,12 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 def display_member_management():
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
         return "must be eval director", 403
 
     settings = EvalSettings.query.first()
     return render_template(request, "member_management.html",
-            user_name=user_name,
+            username=user_name,
             housing_form_active=settings.housing_form_active,
             intro_form_active=settings.intro_form_active,
             site_lockdown=settings.site_lockdown)
@@ -86,34 +88,39 @@ def member_management_edituser():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
         return "must be eval director", 403
 
     post_data = request.get_json()
 
     uid = post_data['uid']
-    room_number = post_data['room_number']
-    onfloor_status = post_data['onfloor_status']
-    housing_points = post_data['housing_points']
     active_member = post_data['active_member']
 
-    ldap_set_roomnumber(uid, room_number)
-    #TODO FIXME ADD USER TO ONFLOOR GROUP
-    ldap_set_housingpoints(uid, housing_points)
-    ldap_set_active(uid, active_member)
+    if ldap_is_eval_director(user_name):
+        room_number = post_data['room_number']
+        onfloor_status = post_data['onfloor_status']
+        housing_points = post_data['housing_points']
 
-    from db.database import db_session
-    if active_member:
-        db_session.add(SpringEval(uid))
-    else:
-        SpringEval.query.filter(
-            SpringEval.uid == uid and
-            SpringEval.active).update(
-            {
-                'active': False
-            })
-    db_session.flush()
-    db_session.commit()
+        ldap_set_roomnumber(uid, room_number)
+        #TODO FIXME ADD USER TO ONFLOOR GROUP
+        ldap_set_housingpoints(uid, housing_points)
+
+    # Only update if there's a diff
+    if ldap_is_active(uid) != active_member:
+        ldap_set_active(uid, active_member)
+
+        from db.database import db_session
+        if active_member:
+            db_session.add(SpringEval(uid))
+        else:
+            SpringEval.query.filter(
+                SpringEval.uid == uid and
+                SpringEval.active).update(
+                {
+                    'active': False
+                })
+        db_session.flush()
+        db_session.commit()
 
     return jsonify({"success": True}), 200
 
@@ -121,20 +128,28 @@ def member_management_edituser():
 def member_management_getuserinfo():
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
-        return "must be eval director", 403
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
+        return "must be eval or financial director", 403
 
     post_data = request.get_json()
 
     uid = post_data['uid']
 
-    return jsonify(
-        {
-            'room_number': ldap_get_room_number(uid),
-            'onfloor_status': ldap_is_onfloor(uid),
-            'housing_points': ldap_get_housing_points(uid),
-            'active_member': ldap_is_active(uid)
-        })
+    if ldap_is_eval_director(user_name):
+        return jsonify(
+            {
+                'room_number': ldap_get_room_number(uid),
+                'onfloor_status': ldap_is_onfloor(uid),
+                'housing_points': ldap_get_housing_points(uid),
+                'active_member': ldap_is_active(uid),
+                'user': 'eval'
+            })
+    else:
+        return jsonify(
+            {
+                'active_member': ldap_is_active(uid),
+                'user': 'financial'
+            })
 
 @member_management_bp.route('/manage/edit_hm_excuse', methods=['POST'])
 def member_management_edit_hm_excuse():

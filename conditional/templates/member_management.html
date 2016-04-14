@@ -1,6 +1,13 @@
 {% extends "nav.html" %}
+{% block extraHeader %}
+<link href="../static/css/selectize.css" rel="stylesheet">
+<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
+<link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+{% endblock %}
 {% block extraFooter %}
-    <script src="../static/js/member_management.js"></script>
+<script src="../static/js/libraries/selectize.js"></script>
+<script src="../static/js/member_management.js"></script>
 {% endblock %}
 {% block body %}
 <div class="container main">
@@ -44,9 +51,38 @@
             <h3 class="panel-title">Member Management</h3>
         </div>
         <div class="panel-body table-fill">
-            table of every member
-            Name, username, onfloor status, checkbox, submit button
-            checkbox for active (if dues are paid)
+            <div class="row">
+                <div class="form-group is-empty">
+                    <label for="likes" class=" control-label" id="userLabel">User</label>
+                    <input type="text" name="user" class="form-control" id="user"/>
+                    <span class="material-input"></span>
+                </div>
+            </div>
+            <div id="financial-form" class="row">
+                <div class="checkbox">
+                    <label><input type="checkbox" id="dues_checkbox_financial">Paid Dues</label>
+                </div>
+                <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-financial">Submit</button>
+            </div>
+            <div id="eval-form" class="row">
+                <div class="checkbox">
+                    <label><input type="checkbox" id="dues_checkbox_eval">Paid Dues</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" id="onfloor_checkbox_eval">Onfloor Status</label>
+                </div>
+                <div class="form-group is-empty">
+                    <label for="likes" class=" control-label" id="roomNum-evalLabel">Room Number</label>
+                    <input type="text" name="roomNum-eval" class="form-control" id="roomNum-eval"/>
+                    <span class="material-input"></span>
+                </div>
+                <div class="form-group is-empty">
+                    <label for="likes" class=" control-label" id="housePts-evalLabel">Housing Points</label>
+                    <input type="text" name="housePts-eval" class="form-control" id="housePts-eval"/>
+                    <span class="material-input"></span>
+                </div>
+                 <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-eval">Submit</button>
+            </div>
         </div>
     </div>
 </div>
