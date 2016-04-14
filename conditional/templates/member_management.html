@@ -81,9 +81,35 @@
                     <input type="text" name="housePts-eval" class="form-control" id="housePts-eval"/>
                     <span class="material-input"></span>
                 </div>
-                 <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-eval">Submit</button>
+            </div>
+            <div id="hm_template0" class="row">
+                <div class="row" id="member-0">
+                    <div class="col-xs-12 col-md-5">
+                        <h3 id="date-0"></h3>
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="excused-0">Excused</label>
+                        </div>
+                        <div>
+                            <a role="button" class="comment-trigger pull-right">
+                                <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                                Add a comment
+                            </a>
+                            <div class="comment-field" style="display: none;">
+                                <div class="form-group">
+                                    <input type="text" class="form-control"
+                                           id="comment-0"
+                                           placeholder="Comment">
+                                </div>
+                            </div>
+                            SUBMIT BUTTON HERE FOR THIS SPECIFIC HMA
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <div id="missed_hms"></div>
+        <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-eval">Submit</button>
     </div>
+</div>
 </div>
 {% endblock %}

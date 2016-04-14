@@ -2,8 +2,43 @@ $(document).ready(function () {
     // Initialize date picker
     // Disable submit on enter
 
+
+    function addMissedHM(date, hm_id, attend_status) {
+        console.log(date + " " + hm_id + " " + attend_status)
+        $("#hm_template0").clone()
+            .appendTo("#missed_hms")
+            .attr("id", "hm-" + hm_id)
+            .find('*')
+            .each(function() {
+                var id = this.id || "";
+                // Get the non-number part of the divid
+                var match = id.match(/^(.+?)(\d+)$/i) || [];
+                if (match.length == 3) {
+                    this.id = match[1] + (hm_id);
+                }
+            });
+        $('#excused-' + hm_id).prop('checked', attend_status == "Excused");
+        $("#hm-" + hm_id).show()
+        $("#date-" + hm_id).html(date)
+    }
+
     $("#financial-form").hide();
     $("#eval-form").hide();
+    $("#hm_template0").hide();
+    $("#submit-eval").hide();
+
+    // Update attendance picker colors when changed
+    $('.attendance-Attended').click(function () {
+        $(this).addClass('btn-success').siblings().removeClass('btn-danger').removeClass('btn-info');
+    });
+
+    $('.attendance-Absent').click(function () {
+        $(this).addClass('btn-danger').siblings().removeClass('btn-success').removeClass('btn-info');
+    });
+
+    $('.attendance-Excused').click(function () {
+        $(this).addClass('btn-info').siblings().removeClass('btn-success').removeClass('btn-danger');
+    });
 
     $("#submit-settings").click(function (e) {
         var housing_form = $("input:radio[name=housing_form]:checked").val();
@@ -84,6 +119,7 @@ $(document).ready(function () {
                                 $("#submit-eval").unbind('click');
                                 $("#submit-eval").click(function (e) {
                                     e.preventDefault();
+
                                     $.ajax({
                                         url: '/manage/edituser',
                                         type: 'POST',
@@ -101,6 +137,17 @@ $(document).ready(function () {
                                         }
                                     });
                                 });
+                                $("#submit-eval").show()
+                                for (var i = 0; i < res.missed_hm.length; i++) {
+                                    hm = res.missed_hm[i]
+                                    addMissedHM(hm.date, hm.id, hm.status);
+                                    // Show comment box when add comment is clicked
+                                    $('.comment-trigger').click(function () {
+                                        $(this).hide();
+                                        $(this).siblings(".comment-field").show();
+                                    });
+
+                                }
                             }
                         }
                     });

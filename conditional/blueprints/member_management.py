@@ -10,6 +10,7 @@ from db.models import FreshmanSeminarAttendance
 from db.models import MemberSeminarAttendance
 from db.models import FreshmanHouseMeetingAttendance
 from db.models import MemberHouseMeetingAttendance
+from db.models import HouseMeeting
 from db.models import EvalSettings
 from db.models import OnFloorStatusAssigned
 from db.models import SpringEval
@@ -136,12 +137,34 @@ def member_management_getuserinfo():
     uid = post_data['uid']
 
     if ldap_is_eval_director(user_name):
+
+        # missed hm
+        def get_hm_date(hm_id):
+            return HouseMeeting.query.filter(
+                HouseMeeting.id == hm_id).\
+                first().date.strftime("%Y-%m-%d")
+
+        missed_hm = [
+            {
+                'date': get_hm_date(hma.meeting_id),
+                'id': hma.meeting_id,
+                'excuse': hma.excuse,
+                'status': hma.attendance_status
+            } for hma in MemberHouseMeetingAttendance.query.filter(
+                MemberHouseMeetingAttendance.uid == uid and
+                (MemberHouseMeetingAttendance.attendance_status != attendance_enum.Attenaded))]
+
+        hms_missed = []
+        for hm in missed_hm:
+            if hm['status'] != "Attended":
+                hms_missed.append(hm)
         return jsonify(
             {
                 'room_number': ldap_get_room_number(uid),
                 'onfloor_status': ldap_is_onfloor(uid),
                 'housing_points': ldap_get_housing_points(uid),
                 'active_member': ldap_is_active(uid),
+                'missed_hm': hms_missed,
                 'user': 'eval'
             })
     else:
