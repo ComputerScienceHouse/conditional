@@ -17,6 +17,8 @@ from db.models import FreshmanEvalData
 from db.models import SpringEval
 from db.models import HousingEvalsSubmission
 
+from datetime import datetime
+
 slideshow_bp = Blueprint('slideshow_bp', __name__)
 
 @slideshow_bp.route('/slideshow/intro')
@@ -29,7 +31,7 @@ def slideshow_intro_display():
                            'slideshow_intro.html',
                            username = user_name,
                            date = datetime.utcnow().strftime("%Y-%m-%d"),
-                           members = get_non_alumni_non_coop(internal=True))
+                           members = display_intro_evals(internal=True))
 
 @slideshow_bp.route('/slideshow/intro/members')
 def slideshow_intro_members():
@@ -63,6 +65,18 @@ def slideshow_intro_review():
     db_session.commit()
     return jsonify({"success": True}), 200
 
+@slideshow_bp.route('/slideshow/spring')
+def slideshow_spring_display():
+    user_name = request.headers.get('x-webauth-user')
+    if not ldap_is_eval_director(user_name) and user_name != "loothelion":
+        return redirect("/dashboard")
+
+    return render_template(request,
+                           'spring_eval_slideshow.html',
+                           username = user_name,
+                           date = datetime.utcnow().strftime("%Y-%m-%d"),
+                           members = display_spring_evals(internal=True))
+
 @slideshow_bp.route('/slideshow/spring/members')
 def slideshow_spring_members():
     # can't be jsonify because
@@ -81,7 +95,7 @@ def slideshow_spring_review():
     post_data = request.get_json()
     uid = post_data['uid']
     status = post_data['status']
-    points = post_data['points']
+    #points = post_data['points']
 
     SpringEval.query.filter(
         SpringEval.uid == uid and
@@ -91,16 +105,17 @@ def slideshow_spring_review():
                 'status': status
             })
 
-    HousingEvalsSubmission.query.filter(
-        HousingEvalsSubmission.uid == uid and
-        HousingEvalsSubmission.active).\
-        update(
-            {
-                'points': points
-            })
+    # points are handeled automagically through constitutional override
+    #HousingEvalsSubmission.query.filter(
+    #    HousingEvalsSubmission.uid == uid and
+    #    HousingEvalsSubmission.active).\
+    #    update(
+    #        {
+    #            'points': points
+    #        })
 
-    current_points = ldap_get_housing_points(uid)
-    ldap_set_housingpoints(uid, current_points + points)
+    #current_points = ldap_get_housing_points(uid)
+    #ldap_set_housingpoints(uid, current_points + points)
 
     from db.database import db_session
     db_session.flush()

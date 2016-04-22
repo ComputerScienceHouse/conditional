@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block extraHeader %}
+        <script src="../static/js/libraries/jquery.min.js"></script>
+        <link rel="stylesheet" href="/css/reveal.css">
+        <link rel="stylesheet" href="/css/white.css">
+{% endblock %}
+{% block extraFooter %}
+        <script src="/js/reveal.js"></script>
+        <script>
+            Reveal.initialize();
+        </script>
+{% endblock %}
+{% block body %}
+        <div class="reveal">
+            <div class="slides">
+                {% for m in members %}
+                <section id="slide-{{m['uid']}}">
+                    <section>
+                        <h2>{{m['name']}}</h2>
+                        <h4>Committee Meetings Attended:</h4>
+                        <p>{{m['committee_meetings']}}</p>
+                        <h4>House Meetings Missed:</h4>
+                        <p>{{m['house_meetings_missed']|length}}</p>
+                        <h4>Major Project Passed:</h4>
+                        <p>{{m['major_project_passed']}}</p>
+                        <button id="pass-{{m['uid']}}" type="button">Pass</button>
+                        <button id="fail-{{m['uid']}}" type="button">Fail</button>
+                        <script>
+                            $("#fail-{{m['uid']}}").click(function (e) {
+                                e.preventDefault();
+
+                                $.ajax({
+                                    url: '/slideshow/spring/review',
+                                    type: 'POST',
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: 'json',
+                                    data: JSON.stringify({
+                                        'uid': "{{m['uid']}}",
+                                        'status': "Failed"
+                                    }),
+                                    success: function (res) {
+                                        Reveal.next()
+                                        alertify.success("Evaluation submitted successfully.");
+                                        $("#slide-{{m['uid']}}").remove()
+                                        Reveal.initialize();
+                                    }
+                                });
+                            });
+                            $("#pass-{{m['uid']}}").click(function (e) {
+                                e.preventDefault();
+
+                                $.ajax({
+                                    url: '/slideshow/spring/review',
+                                    type: 'POST',
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: 'json',
+                                    data: JSON.stringify({
+                                        'uid': "{{m['uid']}}",
+                                        'status': "Passed"
+                                    }),
+                                    success: function (res) {
+                                        Reveal.next()
+                                        alertify.success("Evaluation submitted successfully.");
+                                        $("#slide-{{m['uid']}}").remove()
+                                        Reveal.initialize();
+                                    }
+                                });
+                            });
+                        </script>
+                    </section>
+                    {% if m['house_meetings_missed']|length > 0 %}
+                    <section>
+                        <h2>Missed House Meetings</h2>
+                        <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Reason</th>
+                        </tr>
+                        {% for hm in m['house_meetings_missed'] %}
+                        <tr>
+                            <td>{{hm['date']}}</td>
+                            <td>{{hm['reason']}}</td>
+                        </tr>
+                        {% endfor %}
+                        </table>
+                    </section>
+                    {% endif %}
+                </section>
+                {% endfor %}
+            </div>
+        </div>
+{% endblock %}
