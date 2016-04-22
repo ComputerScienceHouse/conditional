@@ -102,7 +102,7 @@ def display_spring_evals(internal=False):
 
     sp_members.sort(key = lambda x: x['committee_meetings'], reverse=True)
     sp_members.sort(key = lambda x: len(x['house_meetings_missed']))
-    sp_members.sort(key = lambda x: x['major_project_passed'], reverse=True)
+    sp_members.sort(key = lambda x: len([p for p in x['major_projects'] if p['status'] == "Passed"]), reverse=True)
     # return names in 'first last (username)' format
     if internal:
         return sp_members
