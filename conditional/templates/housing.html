@@ -34,33 +34,36 @@
                             </tbody>
                         </table>
                     </div>
-                    <dir-pagination-controls></dir-pagination-controls>
-
-
                 </div>
             </div>
         </div>
-        <div class="col-xs-6 col-sm-6 col-md-6">                         <div class="panel panel-default">
-                <div class="panel-body table-fill" >
-                    <table>
-                        <th>
-                            <td>Room</td>
-                            <td>Occupants</td>
-                        </th>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Current Room Numbers</h3>
+                </div>
+                <div class="panel-body table-fill">
+                    <div class="table-responsive">
+                    <table class="table table-striped no-bottom-margin">
+                        <tr>
+                            <th>Room</th>
+                            <th>Occupants</th>
+                        </tr>
                         {% for room in room_list %}
                         <tr>
-                            <td>{{room}}</td>
-                            <td><ul>
+                            {% if room != "N/A" %}
+                            <td><h3 style="padding-left:20px">{{room}}</h3></td>
+                            <td>
                                     {% for m in housing[room] %}
-                                    <li>{{m}}</li>
+                                    <p>{{m}}</p>
                                     {% endfor %}
-                                </ul></td>
-                                </br>
+                                </td>
+                                {% endif %}
                                 {% endfor %}
 
-
+                    </table>
                 </div>
-
+                </div>
             </div>
 
 

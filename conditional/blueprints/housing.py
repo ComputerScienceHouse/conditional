@@ -33,4 +33,4 @@ def display_housing():
                            username = user_name,
                            queue=get_queue_with_points(),
                            housing=housing,
-                           room_list=list(room_list))
+                           room_list=sorted(list(room_list)))
