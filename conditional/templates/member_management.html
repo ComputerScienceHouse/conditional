@@ -15,7 +15,29 @@
         <div class="panel-heading">
             <h3 class="panel-title">Site Management</h3>
         </div>
-        <div class="panel-body table-fill">
+        <div class="panel-body">
+                 <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="togglebutton" style="text-align:center">
+                                <label class="togglebutton"> Housing Form <input type="checkbox" style="margin-right:5px" {% if housing_form_active %} checked {% endif %}></label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="togglebutton" style="text-align:center">
+                                <label class="togglebutton"> Introductory Form <input type="checkbox" style="margin-right:5px" {% if intro_form_active %} checked {% endif %}></label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">  
+                            <div class="togglebutton" style="text-align:center">
+                                <label class="togglebutton"> Site Lockdown <input type="checkbox" style="margin-right:5px" {% if site_lockdown %} checked {% endif %}></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                       <!--
             <div class="col-xs-12 col-md-4">
                 <h3>Housing Form</h3>
                 <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
@@ -42,15 +64,17 @@
                     <label class="btn btn-danger">
                         <input type="radio" name="site_lockdown" autocomplete="off" value="1" {% if site_lockdown %} checked {% endif %}> Locked </label>
                 </div>
-            </div>
+                </div> 
             <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-settings">Submit</button>
+            -->
         </div>
     </div>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Member Management</h3>
         </div>
-        <div class="panel-body table-fill">
+        <div class="panel-body">
+            <div class="container-fluid">
             <div class="row">
                 <div class="form-group is-empty">
                     <label for="likes" class=" control-label" id="userLabel">User</label>
@@ -60,16 +84,16 @@
             </div>
             <div id="financial-form" class="row">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="dues_checkbox_financial">Paid Dues</label>
+                    <label><input type="checkbox" id="dues_checkbox_financial"> Paid Dues</label>
                 </div>
                 <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-financial">Submit</button>
             </div>
             <div id="eval-form" class="row">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="dues_checkbox_eval">Paid Dues</label>
+                    <label><input type="checkbox" id="dues_checkbox_eval"> Paid Dues</label>
                 </div>
                 <div class="checkbox">
-                    <label><input type="checkbox" id="onfloor_checkbox_eval">Onfloor Status</label>
+                    <label><input type="checkbox" id="onfloor_checkbox_eval"> Onfloor Status</label>
                 </div>
                 <div class="form-group is-empty">
                     <label for="likes" class=" control-label" id="roomNum-evalLabel">Room Number</label>
@@ -82,12 +106,13 @@
                     <span class="material-input"></span>
                 </div>
             </div>
+            <div class="container-fluid">
             <div id="hm_template0" class="row">
                 <div class="row" id="member-0">
-                    <div class="col-xs-12 col-md-5">
-                        <h3 id="date-0"></h3>
-                        <div class="checkbox">
-                            <label><input type="checkbox" id="excused-0">Excused</label>
+                    <div class="col-md-12">
+                        <h4 id="date-0"></h4>
+                       <div class="checkbox">
+                            <label><input type="checkbox" id="excused-0"> Excused</label>
                         </div>
                         <div>
                             <a role="button" class="comment-trigger pull-right">
@@ -101,7 +126,7 @@
                                            placeholder="Comment">
                                 </div>
                             </div>
-                            SUBMIT BUTTON HERE FOR THIS SPECIFIC HMA
+                            
                         </div>
                     </div>
                 </div>
@@ -109,6 +134,7 @@
         </div>
         <div id="missed_hms"></div>
         <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-eval">Submit</button>
+    </div>
     </div>
 </div>
 </div>
