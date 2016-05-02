@@ -20,19 +20,46 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Housing Form <input type="checkbox" style="margin-right:5px" {% if housing_form_active %} checked {% endif %}></label>
+                                <label class="togglebutton"> Housing Form
+                                    <input
+                                        type="checkbox"
+                                        style="margin-right:5px"
+                                        name="housing_form_checkbox"
+                                        {% if housing_form_active %}
+                                            checked
+                                        {% endif %}
+                                    >
+                                </label>
                             </div>
                         </div>
 
                         <div class="col-sm-4">
                             <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Introductory Form <input type="checkbox" style="margin-right:5px" {% if intro_form_active %} checked {% endif %}></label>
+                                <label class="togglebutton"> Introductory Form
+                                    <input
+                                        type="checkbox"
+                                        style="margin-right:5px"
+                                        name="intro_form_checkbox"
+                                        {% if intro_form_active %}
+                                            checked
+                                        {% endif %}
+                                    >
+                                </label>
                             </div>
                         </div>
 
-                        <div class="col-sm-4">  
+                        <div class="col-sm-4">
                             <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Site Lockdown <input type="checkbox" style="margin-right:5px" {% if site_lockdown %} checked {% endif %}></label>
+                                <label class="togglebutton"> Site Lockdown
+                                    <input
+                                        type="checkbox"
+                                        style="margin-right:5px"
+                                        name="site_lockdown_checkbox"
+                                        {% if site_lockdown %}
+                                            checked
+                                        {% endif %}
+                                    >
+                                </label>
                             </div>
                         </div>
                     </div>

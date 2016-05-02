@@ -40,20 +40,14 @@ $(document).ready(function () {
         $(this).addClass('btn-info').siblings().removeClass('btn-success').removeClass('btn-danger');
     });
 
-    $("#submit-settings").click(function (e) {
-        var housing_form = $("input:radio[name=housing_form]:checked").val();
-        var intro_form = $("input:radio[name=intro_form]:checked").val();
-        var site_locked = $("input:radio[name=site_lockdown]:checked").val();
-
+    $("input:checkbox[name=housing_form_checkbox]").change(function () {
         $.ajax({
             url: '/manage/settings',
             type: 'POST',
             contentType: "application/json; charset=utf-8",
             dataType: 'json',
             data: JSON.stringify({
-                'housing': housing_form,
-                'intro': intro_form,
-                'lockdown': site_locked
+                'housing': this.checked
             }),
             error: function () {
                 alertify.error("Error changing site settings.");
@@ -62,8 +56,44 @@ $(document).ready(function () {
                 alertify.success("Site settings changed successfully.");
             }
         });
-
     });
+
+    $("input:checkbox[name=intro_form_checkbox]").change(function () {
+        $.ajax({
+            url: '/manage/settings',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            data: JSON.stringify({
+                'intro': this.checked
+            }),
+            error: function () {
+                alertify.error("Error changing site settings.");
+            },
+            success: function () {
+                alertify.success("Site settings changed successfully.");
+            }
+        });
+    });
+
+    $("input:checkbox[name=site_lockdown_checkbox]").change(function () {
+        $.ajax({
+            url: '/manage/settings',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            data: JSON.stringify({
+                'site_lockdown': this.checked
+            }),
+            error: function () {
+                alertify.error("Error changing site settings.");
+            },
+            success: function () {
+                alertify.success("Site settings changed successfully.");
+            }
+        });
+    });
+
     $.ajax({
         url: '/attendance/cm_members',
         type: 'GET',

@@ -49,16 +49,24 @@ def member_management_eval():
         return "must be eval director", 403
 
     post_data = request.get_json()
-    housing_form_active = post_data['housing']
-    intro_form_active = post_data['intro']
-    site_lockdown = post_data['lockdown']
 
-    EvalSettings.query.update(
-        {
-            'housing_form_active': housing_form_active,
-            'intro_form_active': intro_form_active,
-            'site_lockdown': site_lockdown
-        })
+    if 'housing' in post_data:
+        EvalSettings.query.update(
+            {
+                'housing_form_active': post_data['housing']
+            })
+
+    if 'intro' in post_data:
+        EvalSettings.query.update(
+            {
+                'intro_form_active': post_data['intro']
+            })
+
+    if 'site_lockdown' in post_data:
+        EvalSettings.query.update(
+            {
+                'site_lockdown': post_data['site_lockdown']
+            })
 
     from db.database import db_session
     db_session.flush()
