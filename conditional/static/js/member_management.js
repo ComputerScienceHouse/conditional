@@ -168,6 +168,7 @@ $(document).ready(function () {
                                     });
                                 });
                                 $("#submit-eval").show()
+                                $("#missed_hms").empty()
                                 for (var i = 0; i < res.missed_hm.length; i++) {
                                     hm = res.missed_hm[i]
                                     addMissedHM(hm.date, hm.id, hm.status);
