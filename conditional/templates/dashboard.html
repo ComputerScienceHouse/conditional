@@ -1,4 +1,12 @@
 {% extends "nav.html" %}
+{% block extraHeader %}
+    <link href="../static/css/dataTables.bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+{% block extraFooter %}
+    <script src="../static/js/plugins/jquery.dataTables.min.js"></script>
+    <script src="../static/js/plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../static/js/dashboard.js"></script>
+{% endblock %}
 {% block body %}
 <div class="container main">
     <div class="panel panel-default" style="margin-left:15px; margin-right:15px;">
@@ -341,11 +349,13 @@
             {% else %}
             <div class="panel-body table-fill" id="attendance-widget-body">
                 <table class="table table-striped table-responsive no-bottom-margin">
-                    <tbody>
+                    <thead>
                         <tr>
                             <th>Event</th>
                             <th>Date</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {% for a in cm_attendance %}
                         <tr>
                             <td>{{a['type']}}</td>
