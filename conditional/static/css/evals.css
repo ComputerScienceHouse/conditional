@@ -86,10 +86,11 @@ body {
 
 
 .profile-image {
-    height: 100px;
-    width: 100px;
+    width: 100%;
+    max-width:200px;
     border:none;
     padding:0px;
+    margin:0px;
     
 }
 
