@@ -6,6 +6,7 @@ from util.ldap import ldap_is_active
 from util.ldap import ldap_is_onfloor
 from util.ldap import ldap_get_housing_points
 from util.ldap import ldap_is_intromember
+from util.ldap import ldap_get_name
 
 from db.models import FreshmanEvalData
 from db.models import MemberCommitteeAttendance
@@ -31,6 +32,7 @@ def display_dashboard():
 
     data = {}
     data['username'] = user_name
+    data['name'] = ldap_get_name(user_name)
     # Member Status
     data['active'] = ldap_is_active(user_name)
     # On-Floor Status
