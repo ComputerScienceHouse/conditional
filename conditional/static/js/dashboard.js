@@ -1,5 +1,5 @@
 $(function () {
-    $("#attendance-widget-body > table").DataTable({
+    $("table.paginated").DataTable({
         "searching": false,
         "lengthChange": false
     });
