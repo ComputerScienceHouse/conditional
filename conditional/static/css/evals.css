@@ -411,3 +411,8 @@ box-shadow: 0px 0px 6px 0px rgba(34,34,34,1);
 .attendees-container > div.row:last-of-type {
     border-bottom: none;
 }
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
