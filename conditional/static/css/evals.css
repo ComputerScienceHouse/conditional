@@ -441,8 +441,8 @@ table.dataTable {
 }
 
 div.dataTables_wrapper div.dataTables_paginate {
-    margin-top: 1em !important;
-    margin-right: 1.5em !important;
+    margin-top: 0px !important;
+    margin-right: 0px !important;
     text-align: center;
 }
 
