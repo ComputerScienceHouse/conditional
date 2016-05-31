@@ -432,13 +432,18 @@ table.dataTable {
     margin-top: 0 !important;
 }
 
+.pagination {
+    text-align: center;
+}
+
 .dataTables_wrapper div.row:last-of-type div.col-sm-7 {
     width: 100%;
 }
 
-.dataTables_paginate {
+div.dataTables_wrapper div.dataTables_paginate {
     margin-top: 1em !important;
     margin-right: 1.5em !important;
+    text-align: center;
 }
 
 @media(max-width:768px){
