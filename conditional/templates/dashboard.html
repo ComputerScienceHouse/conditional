@@ -301,9 +301,9 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Attendance</h3>
+                <h3 class="panel-title">Committee Meeting Attendance</h3>
             </div>
-            {% if attendance_len == 0 %}
+            {% if cm_attendance_len == 0 %}
             <div class="panel-body">
                 <div class="alert alert-warning" role="alert">You have not attended any events.</div>
             </div>
@@ -315,7 +315,7 @@
                             <th>Event</th>
                             <th>Date</th>
                         </tr>
-                        {% for a in attendance %}
+                        {% for a in cm_attendance %}
                         <tr>
                             <td>{{a['type']}}</td>
                             <td>{{a['datetime']}}</td>

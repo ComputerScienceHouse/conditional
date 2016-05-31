@@ -19,6 +19,8 @@ from db.models import CommitteeMeeting
 
 from util.housing import get_queue_length, get_queue_position
 from util.flask import render_template
+import datetime
+
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
@@ -137,22 +139,24 @@ def display_dashboard():
 
     # TODO FIXME Create two seperate dropdown panels for
     # house and committee attendance
-    attendance = [
+    hm_attendance = [
         {
             'type': "House Meeting",
             'datetime': m.date
         } for m in HouseMeeting.query.filter(
                 HouseMeeting.id.in_(h_meetings)
             )]
-    attendance.extend([
+    cm_attendance = [
         {
             'type': m.committee,
             'datetime': m.timestamp
         } for m in CommitteeMeeting.query.filter(
                 CommitteeMeeting.id.in_(c_meetings)
-            )])
+            )]
 
-    data['attendance'] = attendance
-    data['attendance_len'] = len(attendance)
+    data['cm_attendance'] = cm_attendance
+    data['cm_attendance_len'] = len(cm_attendance)
+    data['hm_attendance'] = hm_attendance
+
 
     return render_template(request, 'dashboard.html', **data)
