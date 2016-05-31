@@ -1,5 +1,5 @@
 from functools import lru_cache
-from util.ldap import ldap_get_housing_points, ldap_get_room_number, ldap_get_name
+from util.ldap import ldap_get_housing_points, ldap_get_room_number, ldap_get_name, ldap_is_active
 import db.models as models
 
 @lru_cache(maxsize=1024)
@@ -9,7 +9,8 @@ def get_housing_queue():
             'uid': m.uid,
             'time': m.onfloor_granted,
             'points': ldap_get_housing_points(m.uid)
-        } for m in models.OnFloorStatusAssigned.query.all()]
+        } for m in models.OnFloorStatusAssigned.query.all()
+        if ldap_is_active(m.uid)]
 
     # sort by housing points then by time in queue
     ofm.sort(key = lambda m: m['time'])
@@ -25,7 +26,8 @@ def get_queue_with_points():
             'uid': m.uid,
             'time': m.onfloor_granted,
             'points': ldap_get_housing_points(m.uid)
-        } for m in models.OnFloorStatusAssigned.query.all()]
+        } for m in models.OnFloorStatusAssigned.query.all()
+        if ldap_is_active(m.uid)]
 
     # sort by housing points then by time in queue
     ofm.sort(key = lambda m: m['time'])
