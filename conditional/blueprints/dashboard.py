@@ -137,15 +137,7 @@ def display_dashboard():
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
-    # TODO FIXME Create two seperate dropdown panels for
-    # house and committee attendance
-    hm_attendance = [
-        {
-            'type': "House Meeting",
-            'datetime': m.date
-        } for m in HouseMeeting.query.filter(
-                HouseMeeting.id.in_(h_meetings)
-            )]
+
     cm_attendance = [
         {
             'type': m.committee,
@@ -154,9 +146,19 @@ def display_dashboard():
                 CommitteeMeeting.id.in_(c_meetings)
             )]
 
+    hm_attendance = [
+        {
+            'reason': m.excuse,
+            'datetime': HouseMeeting.query.filter(
+                HouseMeeting.id == m.meeting_id).first().date
+        } for m in
+        MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.uid == user_name
+        ).filter(MemberHouseMeetingAttendance.attendance_status == "Absent")]
+
     data['cm_attendance'] = cm_attendance
     data['cm_attendance_len'] = len(cm_attendance)
     data['hm_attendance'] = hm_attendance
-
+    data['hm_attendance_len'] = len(hm_attendance)
 
     return render_template(request, 'dashboard.html', **data)
