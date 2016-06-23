@@ -53,7 +53,7 @@ def create_conditional():
     db_session.flush()
     db_session.commit()
 
-    return 'ok', 200
+    return jsonify({"success": True}), 200
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
 def conditional_review():
     # get user data

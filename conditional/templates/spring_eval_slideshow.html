@@ -8,6 +8,15 @@
         <script src="/js/reveal.js"></script>
         <script>
             Reveal.initialize();
+            $('.popover-markup>.trigger').popover({
+                html: true,
+                title: function () {
+                    return $(this).parent().find('.head').html();
+                },
+                content: function () {
+                    return $(this).parent().find('.content').html();
+                }
+            });
         </script>
 {% endblock %}
 {% block body %}
@@ -24,8 +33,14 @@
                         <h4>Major Project Passed:</h4>
                         <p>{{m['major_project_passed']}}</p>
                         <button id="pass-{{m['uid']}}" type="button">Pass</button>
-                        <button id="fail-{{m['uid']}}" type="button">Fail</button>
-                        <script>
+                        <div class="popover-markup">
+                            <a href="#" class="trigger btn btn-default">Fail</a>
+                            <div class="head hide">Conditional Form</div>
+                            <div class="content hide">
+                                <input class="form-control" id="reason-{{m['uid']}}" type="text">
+                                <button id="conditional-{{m['uid']}}" type="button">Conditional</button>
+                                <button id="fail-{{m['uid']}}" type="button">Fail</button>
+                            <script>
                             $("#fail-{{m['uid']}}").click(function (e) {
                                 e.preventDefault();
 
@@ -46,6 +61,46 @@
                                     }
                                 });
                             });
+                            $("#conditional-{{m['uid']}}").click(function (e) {
+                                e.preventDefault();
+
+                                $.ajax({
+                                    url: '/slideshow/spring/review',
+                                    type: 'POST',
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: 'json',
+                                    data: JSON.stringify({
+                                        'uid': "{{m['uid']}}",
+                                        'status': "Failed"
+                                    }),
+                                    success: function (res) {
+                                        Reveal.next()
+                                        alertify.success("Evaluation submitted successfully.");
+                                        $.ajax({
+                                            url: '/conditionals/create',
+                                            type: 'POST',
+                                            contentType: "application/json; charset=utf-8",
+                                            dataType: 'json',
+                                            data: JSON.stringify({
+                                                "uid": "{{m['uid']}}",
+                                                "description": $("#reason-{{m['uid']}}").val(),
+                                                "due_date": "2016-09-15"
+                                            }),
+                                            error: function () {
+                                                alertify.error("Error adding conditional.");
+                                            },
+                                            success: function (res) {
+                                                alertify.success("Conditional added successfully.");
+                                            }
+                                        });
+                                        $("#slide-{{m['uid']}}").remove()
+                                        Reveal.initialize();
+                                    }
+                                });
+                            });
+                            </script>
+                            </div>
+                        <script>
                             $("#pass-{{m['uid']}}").click(function (e) {
                                 e.preventDefault();
 
