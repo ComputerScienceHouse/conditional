@@ -32,6 +32,7 @@ def display_intro_evals(internal=False):
         uid = member_uid[0].decode('utf-8')
         freshman_data = FreshmanEvalData.query.filter(
             FreshmanEvalData.uid == uid).first()
+        ## Add continue for if freshman_data.status != Pending
         h_meetings = [m.meeting_id for m in
             MemberHouseMeetingAttendance.query.filter(
                 MemberHouseMeetingAttendance.uid == uid

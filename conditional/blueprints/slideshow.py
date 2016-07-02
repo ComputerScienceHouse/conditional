@@ -28,7 +28,7 @@ def slideshow_intro_display():
         return redirect("/dashboard")
 
     return render_template(request,
-                           'slideshow_intro.html',
+                           'intro_eval_slideshow.html',
                            username = user_name,
                            date = datetime.utcnow().strftime("%Y-%m-%d"),
                            members = display_intro_evals(internal=True))
