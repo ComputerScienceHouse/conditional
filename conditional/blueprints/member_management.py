@@ -234,18 +234,28 @@ def member_management_upgrade_user():
     for fca in FreshmanCommitteeAttendance.query.filter(
         FreshmanCommitteeAttendance.fid == fid):
         db_session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
-        # TODO FIXME Do we need to also remove FID stuff?
+        # XXX this might fail horribly #yoloswag
+        db_session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(
         FreshmanSeminarAttendance.fid == fid):
         db_session.add(MemberSeminarAttendance(uid, fca.seminar_id))
+        # XXX this might fail horribly #yoloswag
+        db_session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == fid):
         db_session.add(MemberHouseMeetingAttendance(
             uid, fhm.meeting_id, fhm.excuse, fhm.status))
+        # XXX this might fail horribly #yoloswag
+        db_session.delete(fhm)
 
-    db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
+    if acct.onfloor_status:
+        db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
+
+    # XXX this might fail horribly #yoloswag
+    db_session.delete(acct)
+
     db_session.flush()
     db_session.commit()
     return jsonify({"success": True}), 200
