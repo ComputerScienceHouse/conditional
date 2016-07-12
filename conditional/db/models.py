@@ -36,6 +36,7 @@ class FreshmanEvalData(Base):
     def __init__(self, uid, signatures_missed):
         self.uid = uid
         self.freshman_project = 'Pending'
+        self.freshman_eval_result = 'Pending'
         self.signatures_missed = signatures_missed
         self.social_events = ""
         self.other_notes = ""

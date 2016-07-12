@@ -144,6 +144,16 @@ def member_management_getuserinfo():
 
     uid = post_data['uid']
 
+    acct = FreshmanAccount.query.filter(
+            FreshmanAccount.id == uid).first()
+
+    # if fid
+    if acct:
+        return jsonify(
+            {
+                'user': 'fid'
+            })
+
     if ldap_is_eval_director(user_name):
 
         # missed hm
@@ -229,8 +239,10 @@ def member_management_upgrade_user():
     acct = FreshmanAccount.query.filter(
             FreshmanAccount.id == fid).first()
 
-    db_session.add(FreshmanEvalData(uid, signatures_missed))
+    new_acct = FreshmanEvalData(uid, signatures_missed)
+    new_acct.eval_date = acct.eval_date
 
+    db_session.add(new_acct)
     for fca in FreshmanCommitteeAttendance.query.filter(
         FreshmanCommitteeAttendance.fid == fid):
         db_session.add(MemberCommitteeAttendance(uid, fca.meeting_id))

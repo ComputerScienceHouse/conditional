@@ -23,6 +23,7 @@ $(document).ready(function () {
     }
 
     $("#financial-form").hide();
+    $("#fid-form").hide();
     $("#eval-form").hide();
     $("#hm_template0").hide();
     $("#submit-eval").hide();
@@ -119,6 +120,12 @@ $(document).ready(function () {
                             "uid": val
                         }),
                         success: function (res) {
+                            $("#financial-form").hide();
+                            $("#fid-form").hide();
+                            $("#eval-form").hide();
+                            $("#hm_template0").hide();
+                            $("#submit-eval").hide();
+                            $("#missed_hms").empty()
                             // show form for eval/financial
                             $("#" + res.user + "-form").show();
                             console.log(res)
@@ -137,7 +144,29 @@ $(document).ready(function () {
                                             "active_member": $("#dues_checkbox_financial").is(':checked')
                                         }),
                                         success: function (res) {
+                                            $("#financial-form").hide();
                                             alertify.success("Site settings changed successfully.");
+                                        }
+                                    });
+                                });
+                            } else if (res.user == "fid") {
+                                $("#submit-fid").unbind('click');
+                                $("#submit-fid").click(function (e) {
+                                    e.preventDefault();
+                                    $.ajax({
+                                        url: '/manage/upgrade_user',
+                                        type: 'POST',
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: 'json',
+                                        data: JSON.stringify({
+                                            "fid": val,
+                                            "uid": $("#uid-fid").val(),
+                                            "sigsMissed": $("#sigsMissed-fid").val()
+                                        }),
+                                        success: function (res) {
+                                            $("#fid-form").hide();
+                                            alertify.success("Upgraded User!");
+                                            window.reload();
                                         }
                                     });
                                 });
@@ -163,6 +192,7 @@ $(document).ready(function () {
                                             "housing_points": $("#housePts-eval").val()
                                         }),
                                         success: function (res) {
+                                            $("#eval-form").hide();
                                             alertify.success("Site settings changed successfully.");
                                         }
                                     });
