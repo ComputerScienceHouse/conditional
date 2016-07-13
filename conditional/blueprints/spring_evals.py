@@ -36,10 +36,13 @@ def display_spring_evals(internal=False):
             SpringEval.active).first()
 
         if spring_entry is None:
-            # This user isn't actually supposed to be here
+            from db.database import db_session
+
+            db_session.add(SpringEval(uid))
+            db_session.flush()
+            db_session.commit()
             # something bad happened to get here
-            print("CRITICAL ERROR!")
-            continue
+            print("User did not have existing spring eval data")
 
         evalData = None
         if internal:
