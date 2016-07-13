@@ -8,7 +8,6 @@ from blueprints.major_project_submission import major_project_bp
 from blueprints.intro_evals import intro_evals_bp
 from blueprints.intro_evals_form import intro_evals_form_bp
 from blueprints.housing import housing_bp
-from blueprints.financial import financial_bp
 from blueprints.housing_evals_form import housing_evals_form_bp
 from blueprints.spring_evals import spring_evals_bp
 from blueprints.conditional import conditionals_bp
@@ -17,6 +16,8 @@ from blueprints.slideshow import slideshow_bp
 
 from util.ldap import ldap_init
 from db.database import init_db
+
+import structlog
 
 import os
 
@@ -29,6 +30,7 @@ base_dir = os.getcwd()
 def app_path(*args):
     return os.path.join(base_dir, *args)
 
+logger = structlog.get_logger()
 app = Flask(__name__)
 
 app.templates_folder = app_path("templates")
@@ -39,7 +41,6 @@ app.register_blueprint(major_project_bp)
 app.register_blueprint(intro_evals_bp)
 app.register_blueprint(intro_evals_form_bp)
 app.register_blueprint(housing_bp)
-app.register_blueprint(financial_bp)
 app.register_blueprint(housing_evals_form_bp)
 app.register_blueprint(spring_evals_bp)
 app.register_blueprint(conditionals_bp)
@@ -72,6 +73,7 @@ def web_main():
 
     init_db(json_config['db']['url'])
 
+    logger.info('conditonal started')
     app.run(**json_config['flask'])
 
 if __name__ == '__main__':

@@ -6,3 +6,4 @@ psycopg2
 pyldap
 SQLAlchemy
 Werkzeug
+structlog

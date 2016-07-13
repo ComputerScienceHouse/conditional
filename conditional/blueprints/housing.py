@@ -6,10 +6,18 @@ from util.ldap import ldap_get_room_number
 from util.ldap import ldap_get_name
 from util.flask import render_template
 
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 housing_bp = Blueprint('housing_bp', __name__)
 
 @housing_bp.route('/housing')
 def display_housing():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display housing')
+
     # get user data
 
     user_name = request.headers.get('x-webauth-user')

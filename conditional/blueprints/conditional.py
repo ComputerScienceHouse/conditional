@@ -12,8 +12,16 @@ from datetime import datetime
 
 from db.models import Conditional
 
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 @conditionals_bp.route('/conditionals/')
 def display_conditionals():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display conditional listing page')
+
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
@@ -36,6 +44,9 @@ def display_conditionals():
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
 def create_conditional():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='create new conditional')
+
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
@@ -56,6 +67,9 @@ def create_conditional():
     return jsonify({"success": True}), 200
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
 def conditional_review():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='review a conditional')
+
     # get user data
     user_name = request.headers.get('x-webauth-user')
 

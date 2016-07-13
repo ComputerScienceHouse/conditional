@@ -19,10 +19,18 @@ from db.models import HousingEvalsSubmission
 
 from datetime import datetime
 
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 slideshow_bp = Blueprint('slideshow_bp', __name__)
 
 @slideshow_bp.route('/slideshow/intro')
 def slideshow_intro_display():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display intro slideshow')
+
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eval_director(user_name) and user_name != "loothelion":
         return redirect("/dashboard")
@@ -35,6 +43,9 @@ def slideshow_intro_display():
 
 @slideshow_bp.route('/slideshow/intro/members')
 def slideshow_intro_members():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='retreive intro members slideshow data')
+
     # can't be jsonify because
     #   ValueError: dictionary update sequence element #0 has length 7; 2 is
     #   required
@@ -42,6 +53,9 @@ def slideshow_intro_members():
 
 @slideshow_bp.route('/slideshow/intro/review', methods=['POST'])
 def slideshow_intro_review():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='submit intro member evaluation')
+
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
@@ -67,6 +81,9 @@ def slideshow_intro_review():
 
 @slideshow_bp.route('/slideshow/spring')
 def slideshow_spring_display():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display membership evaluations slideshow')
+
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eval_director(user_name) and user_name != "loothelion":
         return redirect("/dashboard")
@@ -79,6 +96,9 @@ def slideshow_spring_display():
 
 @slideshow_bp.route('/slideshow/spring/members')
 def slideshow_spring_members():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='retreive membership evaluations slideshow daat')
+
     # can't be jsonify because
     #   ValueError: dictionary update sequence element #0 has length 7; 2 is
     #   required
@@ -86,6 +106,9 @@ def slideshow_spring_members():
 
 @slideshow_bp.route('/slideshow/spring/review', methods=['POST'])
 def slideshow_spring_review():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='submit membership evaulation')
+
     # get user data
     user_name = request.headers.get('x-webauth-user')
 

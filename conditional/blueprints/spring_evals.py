@@ -15,8 +15,16 @@ from db.models import HousingEvalsSubmission
 
 from util.flask import render_template
 
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals(internal=False):
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display membership evaluations listing')
+
     def get_cm_count(uid):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == uid)])

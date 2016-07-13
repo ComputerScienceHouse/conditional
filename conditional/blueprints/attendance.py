@@ -25,6 +25,11 @@ from datetime import datetime
 
 from util.flask import render_template
 
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 attendance_bp = Blueprint('attendance_bp', __name__)
 
 def get_name(m):
@@ -42,6 +47,9 @@ def get_name(m):
 
 @attendance_bp.route('/attendance/ts_members')
 def get_all_members():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='retrieve techincal seminar attendance list')
+
     members = ldap_get_current_students()
 
     named_members = [
@@ -67,6 +75,9 @@ def get_all_members():
 
 @attendance_bp.route('/attendance/hm_members')
 def get_non_alumni_non_coop(internal=False):
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='retrieve house meeting attendance list')
+
     # Only Members Who Have Paid Dues Are Required to
     # go to house meetings
     non_alumni_members = ldap_get_active_members()
@@ -102,6 +113,9 @@ def get_non_alumni_non_coop(internal=False):
 
 @attendance_bp.route('/attendance/cm_members')
 def get_non_alumni():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='retrieve committee meeting attendance list')
+
     non_alumni_members = ldap_get_current_students()
 
     named_members = [
@@ -126,6 +140,8 @@ def get_non_alumni():
 
 @attendance_bp.route('/attendance_cm')
 def display_attendance_cm():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display committee meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eboard(user_name) and user_name != 'loothelion':
@@ -139,6 +155,8 @@ def display_attendance_cm():
 
 @attendance_bp.route('/attendance_ts')
 def display_attendance_ts():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display technical seminar attendance page')
 
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eboard(user_name) and user_name != 'loothelion':
@@ -151,6 +169,8 @@ def display_attendance_ts():
 
 @attendance_bp.route('/attendance_hm')
 def display_attendance_hm():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display house meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
     if not ldap_is_eval_director(user_name) and user_name != "loothelion":
@@ -164,6 +184,9 @@ def display_attendance_hm():
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='submit committee meeting attendance')
+
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
@@ -196,6 +219,9 @@ def submit_committee_attendance():
 
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
 def submit_seminar_attendance():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='submit technical seminar attendance')
+
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
@@ -204,8 +230,6 @@ def submit_seminar_attendance():
         return "must be eboard", 403
 
     post_data = request.get_json()
-
-    print(post_data)
 
     seminar_name = post_data['name']
     m_attendees = post_data['members']
@@ -228,6 +252,9 @@ def submit_seminar_attendance():
 
 @attendance_bp.route('/attendance/submit/hm', methods=['POST'])
 def submit_house_attendance():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='submit house meeting attendance')
+
     from db.database import db_session
 
     # status: Attended | Excused | Absent

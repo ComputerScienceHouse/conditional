@@ -25,10 +25,19 @@ from util.ldap import ldap_get_housing_points
 from util.ldap import ldap_is_active
 from util.ldap import ldap_is_onfloor
 from util.flask import render_template
+
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 @member_management_bp.route('/manage')
 def display_member_management():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display member management')
+
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
@@ -43,6 +52,9 @@ def display_member_management():
 
 @member_management_bp.route('/manage/settings', methods=['POST'])
 def member_management_eval():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='submit site-settings')
+
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
@@ -75,6 +87,9 @@ def member_management_eval():
 
 @member_management_bp.route('/manage/adduser', methods=['POST'])
 def member_management_adduser():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='add fid user')
+
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
@@ -94,6 +109,8 @@ def member_management_adduser():
 
 @member_management_bp.route('/manage/edituser', methods=['POST'])
 def member_management_edituser():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='edit uid user')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -135,6 +152,9 @@ def member_management_edituser():
 
 @member_management_bp.route('/manage/getuserinfo', methods=['POST'])
 def member_management_getuserinfo():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='retreive user info')
+
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
@@ -194,6 +214,9 @@ def member_management_getuserinfo():
 
 @member_management_bp.route('/manage/edit_hm_excuse', methods=['POST'])
 def member_management_edit_hm_excuse():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='edit house meeting excuse')
+
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
@@ -223,6 +246,9 @@ def member_management_edit_hm_excuse():
 # manually need to do this
 @member_management_bp.route('/manage/upgrade_user', methods=['POST'])
 def member_management_upgrade_user():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('api', action='convert fid to uid entry')
+
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')

@@ -22,10 +22,18 @@ from util.housing import get_queue_length, get_queue_position
 from util.flask import render_template
 import datetime
 
+import structlog
+import uuid
+
+logger = structlog.get_logger()
+
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
+    log = logger.new(request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display dashboard')
+
     # get user data
 
     user_name = request.headers.get('x-webauth-user')
