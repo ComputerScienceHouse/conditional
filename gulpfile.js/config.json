@@ -37,7 +37,7 @@
       "sass": {
         "indentedSyntax": true,
         "includePaths": [
-          "./node_modules/normalize.css"
+          "./node_modules/csh-material-bootstrap/dist/css"
         ]
       },
       "extensions": ["sass", "scss", "css"]

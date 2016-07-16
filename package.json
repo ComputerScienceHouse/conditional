@@ -17,12 +17,12 @@
     "npm": ">=2.14.12 ~3.7.3"
   },
   "scripts": {
-    "start": "gulp && python conditional config.json",
+    "start": "gulp",
     "gulp": "gulp",
     "development": "gulp",
     "production": "gulp production",
     "deploy": "gulp deploy",
-    "demo": "gulp production && python conditional config.json"
+    "demo": "gulp production"
   },
   "devDependencies": {
     "babel-core": "6.10.4",

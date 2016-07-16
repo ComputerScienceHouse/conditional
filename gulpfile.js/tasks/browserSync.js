@@ -32,5 +32,5 @@ var browserSyncTask = function() {
   browserSync.init(config.tasks.browserSync)
 }
 
-gulp.task('browserSync', browserSyncTask)
-module.exports = browserSyncTask
+gulp.task('browserSync', ['server'], browserSyncTask);
+module.exports = browserSyncTask;
