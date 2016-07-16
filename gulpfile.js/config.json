@@ -49,6 +49,13 @@
       "extensions": ["sass", "scss", "css"]
     },
 
+    "fonts": {
+      "src": "fonts",
+      "dest": "fonts",
+      "vendor": ["./node_modules/csh-material-bootstrap/dist/fonts"],
+      "extensions": ["woff2", "woff", "eot", "ttf", "svg"]
+    },
+
     "images": {
       "src": "images",
       "dest": "images",
