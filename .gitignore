@@ -15,8 +15,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
@@ -68,5 +66,8 @@ target/
 .DS_Store
 
 # Sensitive project files
-config.json
+/config.json
 data.db
+
+# Frontend dependencies
+node_modules
