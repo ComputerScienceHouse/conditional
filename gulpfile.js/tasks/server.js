@@ -1,8 +1,8 @@
-var config   = require('../config');
-var gulp     = require('gulp');
-var exec     = require('child_process').exec;
+var config = require('../config');
+var gulp = require('gulp');
+var exec = require('child_process').exec;
 
-var serverTask = function() {
+var serverTask = function () {
     var proc = exec('python conditional config.json');
 };
 

@@ -32,7 +32,7 @@
     "browser-sync": "2.13.0",
     "chai": "3.5.0",
     "compression": "1.6.2",
-    "csh-material-bootstrap": "^3.3.6",
+    "csh-material-bootstrap": "1.0.0",
     "del": "2.2.1",
     "express": "4.14.0",
     "gulp": "3.9.1",

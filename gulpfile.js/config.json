@@ -1,12 +1,18 @@
 {
   "root": {
     "src": "./frontend",
-    "dest": "./conditional/static"
+    "dest": "./conditional/static",
+    "publicPath": "static"
   },
 
   "tasks": {
     "browserSync": {
       "proxy": "127.0.0.1:6969"
+    },
+
+    "watch": {
+      "tasks": ["images", "css"],
+      "paths": ["./conditional/templates"]
     },
 
     "static": {
@@ -15,8 +21,8 @@
     },
 
     "js": {
-      "src": "javascripts",
-      "dest": "javascripts",
+      "src": "javascript",
+      "dest": "js",
       "entries": {
         "app": ["./app.js"]
       },
@@ -30,7 +36,7 @@
 
     "css": {
       "src": "stylesheets",
-      "dest": "stylesheets",
+      "dest": "css",
       "autoprefixer": {
         "browsers": ["last 3 version"]
       },

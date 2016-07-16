@@ -67,7 +67,10 @@ target/
 
 # Sensitive project files
 /config.json
-data.db
+/data.db
 
 # Frontend dependencies
-node_modules
+/node_modules
+
+# Built frontend files
+/conditional/static/*

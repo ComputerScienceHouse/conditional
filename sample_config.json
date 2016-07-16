@@ -1,18 +1,22 @@
 {
-    "flask" : {
-        "debug": true,
-        "port": 6969
-    },
-    "ldap" : {
-        "ro": true,
-        "url": "ldaps://ldap.csh.rit.edu:636/",
-        "bind_dn": "uid=someuser,ou=Users,dc=csh,dc=rit,dc=edu",
-        "bind_pw": "lolno",
-        "user_ou": "ou=Users,dc=csh,dc=rit,dc=edu",
-        "group_ou": "ou=Groups,dc=csh,dc=rit,dc=edu",
-        "commitee_ou": "ou=Committees,dc=csh,dc=rit,dc=edu"
-    },
-    "db" : {
-        "url": "sqlalchemy_url_db_goes_here"
-    }
+  "flask": {
+    "debug": true,
+    "host": "127.0.0.1",
+    "port": 6969
+  },
+  "ldap": {
+    "ro": true,
+    "url": "ldaps://ldap.csh.rit.edu:636/",
+    "bind_dn": "uid=someuser,ou=Users,dc=csh,dc=rit,dc=edu",
+    "bind_pw": "lolno",
+    "user_ou": "ou=Users,dc=csh,dc=rit,dc=edu",
+    "group_ou": "ou=Groups,dc=csh,dc=rit,dc=edu",
+    "commitee_ou": "ou=Committees,dc=csh,dc=rit,dc=edu"
+  },
+  "db": {
+    "url": "sqlite:///data.db"
+  },
+  "zoo": {
+    "url": "mysql+pymysql://user:pass@host/database"
+  }
 }
