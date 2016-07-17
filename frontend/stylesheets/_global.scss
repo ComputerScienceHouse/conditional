@@ -3,38 +3,45 @@
  */
 
 .sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
 
 .table-fill {
-  padding: 0;
+    padding: 0;
+    
+    td:first-of-type, th:first-of-type {
+        padding-left: 15px !important;
+    }
+    td:last-of-type, th:last-of-type {
+        padding-right: 15px !important;
+    }
 }
 
 .no-bottom-margin {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .glyphicon.green {
-  color: #4da74d;
+    color: #4da74d;
 }
 
 .glyphicon.red {
-  color: #cb4b4b;
+    color: #cb4b4b;
 }
 
 .glyphicon.yellow {
-  color: #f1c40f;
+    color: #f1c40f;
 }
 
 .danger {
-  background-color: #FF262D;
+    background-color: #FF262D;
 }
 
 .warning {
-  background-color: #FF3207;
+    background-color: #FF3207;
 }
 
 .success {
-  background-color: #00B44A;
+    background-color: #00B44A;
 }
