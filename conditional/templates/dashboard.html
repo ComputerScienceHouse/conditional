@@ -10,16 +10,16 @@
 {% block body %}
 <div class="container main">
     <div class="panel panel-default" style="margin-left:15px; margin-right:15px;">
-        <div class="panel-body">
+        <div class="panel-body dashboard-user">
             <div class="row">
                 <div class="col-md-2 col-sm-3 col-xs-12 vcenter">
-                    <img class="thumbnail profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
+                    <img class="profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div><!--
                 --><div class="col-xs-12 col-sm-9 col-md-9 vcenter" style="padding-bottom:10px">
 
 
-                    <h1 class="username">{{name}}</h1>
-                    <h4 class="username" style="padding-bottom:6px">{{username}}@csh.rit.edu</h4>
+                    <h2 class="username">{{name}}</h2>
+                    <h5 class="email">{{username}}@csh.rit.edu</h5>
                     <div class="profile-badges">
                         {% if active %}
                         <span class="label label-success">Active</span>

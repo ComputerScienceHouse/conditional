@@ -1,17 +1,22 @@
-.profile-image {
-  width: 100%;
-  max-width: 200px;
-  border: none;
-  padding: 0;
-  margin: 0;
-}
+.dashboard-user {
+    .profile-image {
+      width: 100%;
+      max-width: 200px;
+        border-radius: 2px;
+    }
 
-.panel-inner-padding {
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 10px;
-}
+    .panel-inner-padding {
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-bottom: 10px;
+    }
 
-.username {
-  margin-top: 10px;
+    .username {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    .email {
+      margin-top: 5px;
+    }
 }
