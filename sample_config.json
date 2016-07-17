@@ -11,7 +11,7 @@
     "bind_pw": "lolno",
     "user_ou": "ou=Users,dc=csh,dc=rit,dc=edu",
     "group_ou": "ou=Groups,dc=csh,dc=rit,dc=edu",
-    "commitee_ou": "ou=Committees,dc=csh,dc=rit,dc=edu"
+    "committee_ou": "ou=Committees,dc=csh,dc=rit,dc=edu"
   },
   "db": {
     "url": "sqlite:///data.db"
