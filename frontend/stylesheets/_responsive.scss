@@ -1,0 +1,53 @@
+@media(max-width: 767px) {
+  .mobile-hide {
+    display: none;
+  }
+
+  .profile-image {
+    margin: auto;
+  }
+
+  .profile-badges {
+    text-align: center;
+  }
+
+  .username {
+    text-align: center;
+  }
+
+  hr {
+    margin-top: 25px;
+  }
+}
+
+@media(min-width: 768px) {
+  .profile-image {
+    float: right;
+  }
+
+  hr {
+    margin-top: 10px;
+  }
+}
+
+@media(max-width: 978px) {
+  .name-container {
+    text-align: center;
+  }
+}
+
+@media(min-width: 978px) {
+  .name-container {
+    text-align: left;
+  }
+
+  .vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+  }
+
+  .eval-user-img {
+    margin-bottom: 5px;
+  }
+}

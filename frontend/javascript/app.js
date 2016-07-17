@@ -1,3 +1,7 @@
-import './modules'
+const jQuery = require('jquery');
+global.jQuery = jQuery;
+global.$ = jQuery;
 
-console.log(`app.js has loaded!`);
+const bootstrap = require('bootstrap');
+
+import './modules'
