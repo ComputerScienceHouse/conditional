@@ -1,35 +1,49 @@
 .eval-info-label {
-  width: 90%;
-  max-width: 400px;
-  padding: .3em .6em .4em;
-  font-size: 75%;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: .25em;
-  margin: 4px auto;
+    width: 100%;
+    max-width: 400px;
+    padding: .3em .6em .4em;
+    font-size: 90%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    margin: 4px auto;
 }
 
 .eval-user-img {
-  border-radius: 2px;
+    border-radius: 5px;
 }
 
-.eval-hr {
-  width: 100%;
-  padding-left: 0;
-  padding-right: 0;
-  margin-left: 0;
-  margin-right: 0;
+.panel-body {
+    padding: 20px 20px 10px 20px;
 }
 
-.btn-expand-panel, .btn-expand-panel:hover, .btn-expand-panel:focus, .btn-expand-panel:active {
-  background: transparent;
-  border: none;
-  outline: 0;
-  width: 100%;
-  text-align: center;
-  margin-top: 5px;
+.col-sm-2 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.eval-name {
+    padding-top: 12px;
+    margin-bottom: 5px;
+}
+
+.eval-uid {
+    margin-top: 0px;
+    color: gray;
+}
+
+.btn-expand-panel,
+.btn-expand-panel:hover,
+.btn-expand-panel:focus,
+.btn-expand-panel:active {
+    background: transparent;
+    border: none;
+    outline: 0;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
 }
