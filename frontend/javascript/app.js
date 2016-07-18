@@ -1,6 +1,6 @@
-const jQuery = require('jquery');
-global.jQuery = jQuery;
-global.$ = jQuery;
+const jquery = require('jquery');
+global.jQuery = jquery;
+global.$ = jquery;
 
 const bootstrap = require('bootstrap');
 
