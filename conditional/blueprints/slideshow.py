@@ -69,6 +69,7 @@ def slideshow_intro_review():
     uid = post_data['uid']
     status = post_data['status']
 
+    logger.info("backend", action="submit intro eval for %s status: %s" % (uid, status))
     FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == uid and
         FreshmanEvalData.active).\
@@ -125,6 +126,7 @@ def slideshow_spring_review():
     uid = post_data['uid']
     status = post_data['status']
     #points = post_data['points']
+    logger.info("backend", action="submit spring eval for %s status: %s" % (uid, status))
 
     SpringEval.query.filter(
         SpringEval.uid == uid and

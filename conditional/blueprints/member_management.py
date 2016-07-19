@@ -65,18 +65,21 @@ def member_management_eval():
     post_data = request.get_json()
 
     if 'housing' in post_data:
+        logger.info('backend', action="changed housing form activity to %s" % post_data['housing'])
         EvalSettings.query.update(
             {
                 'housing_form_active': post_data['housing']
             })
 
     if 'intro' in post_data:
+        logger.info('backend', action="changed intro form activity to %s" % post_data['intro'])
         EvalSettings.query.update(
             {
                 'intro_form_active': post_data['intro']
             })
 
     if 'site_lockdown' in post_data:
+        logger.info('backend', action="changed site lockdown to %s" % post_data['site_lockdown'])
         EvalSettings.query.update(
             {
                 'site_lockdown': post_data['site_lockdown']
@@ -105,6 +108,7 @@ def member_management_adduser():
     name = post_data['name']
     onfloor_status = post_data['onfloor']
 
+    logger.info('backend', action="add f_%s as onfloor: %s" % (name, onfloor_status))
     db_session.add(FreshmanAccount(name, onfloor_status))
     db_session.flush()
     db_session.commit()
@@ -127,6 +131,8 @@ def member_management_edituser():
     active_member = post_data['active_member']
 
     if ldap_is_eval_director(user_name):
+        logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
+            (uid, post_data['room_number'], post_data['onfloor_status'], post_data['housing_points']))
         room_number = post_data['room_number']
         onfloor_status = post_data['onfloor_status']
         housing_points = post_data['housing_points']
@@ -136,6 +142,7 @@ def member_management_edituser():
         ldap_set_housingpoints(uid, housing_points)
 
     # Only update if there's a diff
+    logger.info('backend', action="edit %s active: %s" % (uid, active_member))
     if ldap_is_active(uid) != active_member:
         ldap_set_active(uid, active_member)
 
@@ -233,6 +240,8 @@ def member_management_edit_hm_excuse():
     hm_id = post_data['id']
     hm_status = post_data['status']
     hm_excuse = post_data['excuse']
+    logger.info('backend', action="edit hm %s status: %s excuse: %s" %
+        (hm_id, hm_status, hm_excuse))
 
     MemberHouseMeetingAttendance.query.filter(
         MemberHouseMeetingAttendance.id == hm_id).update(
@@ -269,6 +278,8 @@ def member_management_upgrade_user():
     uid = post_data['uid']
     signatures_missed = post_data['sigsMissed']
 
+    logger.info('backend', action="upgrade freshman-%s to %s sigsMissed: %s" %
+        (fid, uid, signatures_missed))
     acct = FreshmanAccount.query.filter(
             FreshmanAccount.id == fid).first()
 
@@ -284,14 +295,14 @@ def member_management_upgrade_user():
 
     for fts in FreshmanSeminarAttendance.query.filter(
         FreshmanSeminarAttendance.fid == fid):
-        db_session.add(MemberSeminarAttendance(uid, fca.seminar_id))
+        db_session.add(MemberSeminarAttendance(uid, fts.seminar_id))
         # XXX this might fail horribly #yoloswag
         db_session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == fid):
         db_session.add(MemberHouseMeetingAttendance(
-            uid, fhm.meeting_id, fhm.excuse, fhm.status))
+            uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
         # XXX this might fail horribly #yoloswag
         db_session.delete(fhm)
 
