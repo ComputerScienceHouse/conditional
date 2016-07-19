@@ -74,7 +74,7 @@ def __ldap_is_member_of_group__(username, group):
     if len(ldap_results) != 1:
         raise HousingLDAPError("Wrong number of results found for group %s." %
                 group)
-    return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
+    return "uid=" + username + "," + user_search_ou in \
         [x.decode('ascii') for x in ldap_results[0][1]['member']]
 
 @ldap_init_required
@@ -86,7 +86,7 @@ def __ldap_add_member_to_group__(username, group):
                 group)
     old_results = ldap_results[0][1]
     new_results = copy.deepcopy(ldap_results[0][1])
-    new_entry = "uid=%s,ou=Users,dc=csh,dc=rit,dc=edu" % username
+    new_entry = "uid=%s,%s" % (username, user_search_ou)
     new_entry = new_entry.encode('utf-8')
     new_results['member'].append(new_entry)
     ldap_modlist = ldap.modlist.modifyModlist(old_results, new_results)
@@ -113,7 +113,7 @@ def __ldap_is_member_of_committee__(username, committee):
     if len(ldap_results) != 1:
         raise HousingLDAPError("Wrong number of results found for committee %s." %
                 committee)
-    return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
+    return "uid=" + username + "," + user_search_ou in \
         [x.decode('ascii') for x in ldap_results[0][1]['head']]
 
 @lru_cache(maxsize=1024)
