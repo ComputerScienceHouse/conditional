@@ -21,7 +21,8 @@ logger = structlog.get_logger()
 
 @intro_evals_bp.route('/intro_evals/')
 def display_intro_evals(internal=False):
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display intro evals listing')
 
     # get user data

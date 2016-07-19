@@ -15,7 +15,8 @@ housing_bp = Blueprint('housing_bp', __name__)
 
 @housing_bp.route('/housing')
 def display_housing():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display housing')
 
     # get user data

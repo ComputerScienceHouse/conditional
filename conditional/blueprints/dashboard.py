@@ -31,7 +31,8 @@ dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display dashboard')
 
     # get user data

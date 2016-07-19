@@ -72,7 +72,6 @@ def web_main():
               ldap_config['committee_ou'])
 
     init_db(json_config['db']['url'])
-
     logger.info('conditonal started')
     app.run(**json_config['flask'])
 

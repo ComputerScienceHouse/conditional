@@ -15,7 +15,8 @@ housing_evals_form_bp = Blueprint('housing_evals_form_bp', __name__)
 
 @housing_evals_form_bp.route('/housing_evals_form/')
 def display_housing_evals_form():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display housing evals form')
 
     # get user data
@@ -48,7 +49,8 @@ def display_housing_evals_form():
 
 @housing_evals_form_bp.route('/housing_evals/submit', methods=['POST'])
 def display_housing_evals_submit_form():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='submit housing evals form')
 
     from db.database import db_session
