@@ -216,9 +216,15 @@ def submit_committee_attendance():
     db_session.refresh(meeting)
 
     for m in m_attendees:
+        logger.info('backend',
+            action=("gave attendance to %s for %s" % (m, committee))
+        )
         db_session.add(MemberCommitteeAttendance(m, meeting.id))
 
     for f in f_attendees:
+        logger.info('backend',
+            action=("gave attendance to freshman-%s for %s" % (f, committee))
+        )
         db_session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
     db_session.commit()
@@ -250,9 +256,15 @@ def submit_seminar_attendance():
     db_session.refresh(seminar)
 
     for m in m_attendees:
+        logger.info('backend',
+            action=("gave attendance to %s for %s" % (m, seminar_name))
+        )
         db_session.add(MemberSeminarAttendance(m, seminar.id))
 
     for f in f_attendees:
+        logger.info('backend',
+            action=("gave attendance to freshman-%s for %s" % (f, seminar_name))
+        )
         db_session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db_session.commit()
@@ -288,6 +300,9 @@ def submit_house_attendance():
     db_session.refresh(meeting)
 
     for m in m_attendees:
+        logger.info('backend',
+            action=("gave %s (%s) to %s for %s" % (m['status'], m['excuse'], m['uid'], timestamp.strftime("%Y-%m-%d")))
+        )
         db_session.add(MemberHouseMeetingAttendance(
                         m['uid'],
                         meeting.id,
@@ -295,6 +310,9 @@ def submit_house_attendance():
                         m['status']))
 
     for f in f_attendees:
+        logger.info('backend',
+            action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['excuse'], f['id'], timestamp.strftime("%Y-%m-%d")))
+        )
         db_session.add(FreshmanHouseMeetingAttendance(
                         f['id'],
                         meeting.id,
