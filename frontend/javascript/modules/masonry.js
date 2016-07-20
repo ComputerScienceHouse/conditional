@@ -1,19 +1,34 @@
-require("simple-masonry");
+import SimpleMasonry from "simple-masonry";
 import FreqencyMap from "../models/frequencyMap";
 import Exception from "../exceptions/exception";
 import MasonryException from "../exceptions/masonryException";
 
-export default class MasonryLayout {
+export default class Masonry {
     constructor(grid) {
         this.grid = grid;
+
+        this.masonry = new SimpleMasonry({
+            masonryBox: this.grid,
+            masonryColumn: this._findSharedSelector(this.grid)
+        });
+
+        this.render();
     }
 
-    _findSharedSelector() {
+    render() {
+        this.masonry.init();
+    }
+
+    _findSharedSelector(parent) {
         let selectors = new FreqencyMap();
         let sharedSelector = null;
 
         try {
-            this.grid.childNodes.forEach((child) => {
+            parent.childNodes.forEach((child) => {
+                if (typeof child.tagName !== "undefined" && child.tagName !== null && child.tagName !== "") {
+                    selectors.increment(child.tagName);
+                }
+
                 if (typeof child.id !== "undefined" && child.id !== null && child.id !== "") {
                     selectors.increment("#" + child.id);
                 }

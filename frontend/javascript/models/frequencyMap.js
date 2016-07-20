@@ -32,9 +32,10 @@ export default class FrequencyMap {
         let highestFreq = 0;
         let highestKey = null;
 
-        for (let item of this.entries()) {
-            if (item[1] > highestFreq) {
-                highestKey = item[0];
+        for (let [key, freq] of this.entries()) {
+            if (freq > highestFreq) {
+                highestKey = key;
+                highestFreq = freq;
             }
         }
 
