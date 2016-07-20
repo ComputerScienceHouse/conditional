@@ -196,6 +196,7 @@ def ldap_set_roomnumber(username, room_number):
 
 def ldap_set_active(username, is_active):
     __ldap_set_field__(username, 'active', str(int(is_active)).encode('ascii'))
+    # TODO something about active memebers group
 
 @lru_cache(maxsize=1024)
 def ldap_get_name(username):

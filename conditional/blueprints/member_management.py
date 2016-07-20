@@ -24,6 +24,8 @@ from util.ldap import ldap_get_room_number
 from util.ldap import ldap_get_housing_points
 from util.ldap import ldap_is_active
 from util.ldap import ldap_is_onfloor
+from util.ldap import __ldap_add_member_to_group__ as ldap_add_member_to_group
+from util.ldap import __ldap_remove_member_from_group__ as ldap_remove_member_from_group
 from util.flask import render_template
 
 import structlog
@@ -138,7 +140,10 @@ def member_management_edituser():
         housing_points = post_data['housing_points']
 
         ldap_set_roomnumber(uid, room_number)
-        #TODO FIXME ADD USER TO ONFLOOR GROUP
+        if onfloor_status:
+            ldap_add_member_to_group(uid, "onfloor")
+        else:
+            ldap_remove_member_from_group(uid, "onfloor")
         ldap_set_housingpoints(uid, housing_points)
 
     # Only update if there's a diff
