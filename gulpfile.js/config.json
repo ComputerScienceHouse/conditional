@@ -15,6 +15,11 @@
       "paths": ["./conditional/templates"]
     },
 
+    "server": {
+      "command": "python",
+      "arguments": ["conditional", "config.json"]
+    },
+
     "static": {
       "src": "static",
       "dest": "./"

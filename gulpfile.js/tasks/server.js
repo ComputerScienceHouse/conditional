@@ -1,15 +1,21 @@
 var config = require('../config');
 var gulp = require('gulp');
-var exec = require('child_process').exec;
+var gutil = require('gulp-util');
+var spawn = require('child_process').spawn;
 
 var serverTask = function () {
-    var proc = exec('python conditional config.json', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Unable to start Python server: ${error}`);
-            return;
-        }
-        console.log(`${stdout}`);
-        console.log(`${stderr}`);
+    var server = spawn(config.tasks.server.command, config.tasks.server.arguments);
+
+    server.stdout.on('data', function (data) {
+        gutil.log(gutil.colors.blue(data));
+    });
+
+    server.stderr.on('data', function (data) {
+        gutil.log(gutil.colors.blue(data));
+    });
+
+    server.on('exit', function (code) {
+        gutil.log(gutil.colors.red('Python server stopped: child process exited with code ' + code));
     });
 };
 
