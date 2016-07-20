@@ -1,5 +1,5 @@
 from functools import lru_cache
-from util.ldap import ldap_get_housing_points, ldap_get_room_number, ldap_get_name, ldap_is_active
+from util.ldap import ldap_get_housing_points, ldap_get_room_number, ldap_get_name, ldap_is_active, ldap_is_current_student
 import db.models as models
 
 @lru_cache(maxsize=1024)
@@ -16,7 +16,7 @@ def get_housing_queue():
     ofm.sort(key = lambda m: m['time'])
     ofm.sort(key = lambda m: m['points'], reverse=True)
 
-    queue = [m['uid'] for m in ofm if ldap_get_room_number(m['uid']) == "N/A"]
+    queue = [m['uid'] for m in ofm if ldap_get_room_number(m['uid']) == "N/A" and ldap_is_current_student(m['uid'])]
 
     return queue
 
@@ -37,7 +37,7 @@ def get_queue_with_points():
         {
             'name': ldap_get_name(m['uid']),
             'points': m['points']
-        } for m in ofm if ldap_get_room_number(m['uid']) == "N/A"]
+        } for m in ofm if ldap_get_room_number(m['uid']) == "N/A" and ldap_is_current_student(m['uid'])]
 
     return queue
 
