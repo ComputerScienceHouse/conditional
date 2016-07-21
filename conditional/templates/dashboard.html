@@ -1,9 +1,4 @@
-{% extends "nav.html" %} {% block extraHeader %}
-<link href="../static/css/dataTables.bootstrap.min.css" rel="stylesheet"> {% endblock %} {% block extraFooter %}
-<script src="../static/js/plugins/jquery.dataTables.min.js"></script>
-<script src="../static/js/plugins/dataTables.bootstrap.min.js"></script>
-<script src="../static/js/dashboard.js"></script>
-{% endblock %}
+{% extends "nav.html" %}
 
 {% block body %}
 <div class="container main">
@@ -290,7 +285,7 @@
                 </div>
 
                 <div class="panel-body table-fill">
-                    <table class="table table-striped table-responsive no-bottom-margin paginated">
+                    <table class="table table-striped table-responsive no-bottom-margin" data-module="table">
                         <thead>
                         <tr>
                             <th>Event</th>

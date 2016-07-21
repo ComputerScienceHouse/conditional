@@ -1,0 +1,18 @@
+table.dataTable {
+  margin-top: 0 !important;
+}
+
+.dataTables_wrapper div.row:last-of-type div.col-sm-7 {
+  width: 100%;
+}
+
+div.dataTables_wrapper div.dataTables_paginate {
+  margin: 0 0 10px 0 !important;
+  text-align: center;
+}
+
+@media(max-width:768px){
+  .dataTables_paginate {
+    margin-right: 0 !important;
+  }
+}

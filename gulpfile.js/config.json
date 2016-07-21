@@ -47,7 +47,8 @@
       },
       "sass": {
         "includePaths": [
-          "./node_modules/csh-material-bootstrap/dist/css"
+          "./node_modules/csh-material-bootstrap/dist/css",
+          "./node_modules/datatables.net-bs/css"
         ]
       },
       "extensions": ["sass", "scss", "css"]

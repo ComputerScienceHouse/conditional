@@ -20,7 +20,13 @@ module.exports = function (env) {
 
     var webpackConfig = {
         context: jsSrc,
-        plugins: [],
+        plugins: [
+            new webpack.ProvidePlugin({
+                $: "jquery",
+                jQuery: "jquery",
+                "window.jQuery": "jquery"
+            })
+        ],
         resolve: {
             root: jsSrc,
             extensions: [''].concat(extensions)
@@ -32,6 +38,10 @@ module.exports = function (env) {
                     loader: 'babel-loader',
                     exclude: /node_modules/,
                     query: config.tasks.js.babel
+                },
+                {
+                    test: /datatables\.net.*/,
+                    loader: 'imports?define=>false'
                 }
             ]
         }

@@ -1,7 +1,3 @@
-const jquery = require('jquery');
-global.jQuery = jquery;
-global.$ = jquery;
+import "bootstrap";
 
-const bootstrap = require('bootstrap');
-
-import './modules'
+import "./modules";
