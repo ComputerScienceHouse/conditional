@@ -52,10 +52,10 @@
                         {% for room in room_list %}
                         <tr>
                             {% if room != "N/A" %}
-                            <td><h3 style="padding-left:20px">{{room}}</h3></td>
+                            <td><h3 class="room-number">{{room}}</h3></td>
                             <td>
                                     {% for m in housing[room] %}
-                                    <p>{{m}}</p>
+                                    <p class="room-name">{{m}}</p>
                                     {% endfor %}
                                 </td>
                                 {% endif %}
