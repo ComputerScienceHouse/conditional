@@ -18,50 +18,37 @@
         <div class="panel-body">
                  <div class="container-fluid">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Housing Form
-                                    <input
-                                        type="checkbox"
-                                        style="margin-right:5px"
-                                        name="housing_form_checkbox"
-                                        {% if housing_form_active %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                </label>
+                        <div class="col-xs-6">
+                            <div class="material-switch" style="text-align:center;">
+                                <div class="switch-label">Spring Form</div> 
+                                <input
+                                    type="checkbox"
+                                    id="housing_form_checkbox"
+                                    name="housing_form_checkbox"
+                                    {% if housing_form_active %}
+                                    checked
+                                    {% endif %}
+                                >
+                                <label for="housing_form_checkbox" class="label-primary"></label>
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
-                            <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Introductory Form
-                                    <input
-                                        type="checkbox"
-                                        style="margin-right:5px"
-                                        name="intro_form_checkbox"
-                                        {% if intro_form_active %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                </label>
+                        <div class="col-xs-6">
+                            <div class="material-switch" style="text-align:center;">
+                                <div class="switch-label">Site Lockdown</div> 
+                                <input
+                                    type="checkbox"
+                                    id="site_lockdown_checkbox"
+                                    name="site_lockdown_checkbox"
+                                    {% if site_lockdown %}
+                                    checked
+                                    {% endif %}
+                                >
+                                <label for="site_lockdown_checkbox" class="label-primary"></label>
                             </div>
+ 
                         </div>
 
-                        <div class="col-sm-4">
-                            <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Site Lockdown
-                                    <input
-                                        type="checkbox"
-                                        style="margin-right:5px"
-                                        name="site_lockdown_checkbox"
-                                        {% if site_lockdown %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
                        <!--
