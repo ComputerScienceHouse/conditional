@@ -11,7 +11,7 @@ export default class Table {
             "pagingType": "numbers"
         });
 
-        this.table.order([1, "asc"]);
+        this.table.order([1, "desc"]);
         this.render();
     }
 
