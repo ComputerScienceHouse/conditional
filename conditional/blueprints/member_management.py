@@ -92,7 +92,7 @@ def member_management_adduser():
     log = logger.new(request_id=str(uuid.uuid4()))
     log.info('api', action='add fid user')
 
-    from db.database import db_session
+    from database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -327,6 +327,9 @@ def member_management_upgrade_user():
 
     if acct.onfloor_status:
         db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
+        
+    if acct.room_number:
+        ldap_set_roomnumber(uid, room_number)
 
     # XXX this might fail horribly #yoloswag
     db_session.delete(acct)
