@@ -1,0 +1,19 @@
+@import "variables";
+
+.dtp div.dtp-date, .dtp div.dtp-time,
+.dtp table.dtp-picker-days tr > td > a.selected {
+  background: $primary-color;
+}
+
+.dtp > .dtp-content > .dtp-date-view > header.dtp-header {
+  background: darken($primary-color, 5%);
+}
+
+.dtp div.dtp-actual-year,
+.dtp .p10 > a {
+  color: lighten($primary-color, 50%);
+}
+
+.dtp .dtp-buttons {
+  background: #ffffff;
+}

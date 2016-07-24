@@ -20,13 +20,7 @@ module.exports = function (env) {
 
     var webpackConfig = {
         context: jsSrc,
-        plugins: [
-            new webpack.ProvidePlugin({
-                $: "jquery",
-                jQuery: "jquery",
-                "window.jQuery": "jquery"
-            })
-        ],
+        plugins: [],
         resolve: {
             root: jsSrc,
             extensions: [''].concat(extensions)
@@ -40,8 +34,16 @@ module.exports = function (env) {
                     query: config.tasks.js.babel
                 },
                 {
+                    test: /jquery/,
+                    loader: 'expose?$!expose?jQuery'
+                },
+                {
                     test: /datatables\.net.*/,
                     loader: 'imports?define=>false'
+                },
+                {
+                    test: /bootstrap-material-datetimepicker/,
+                    loader: 'imports?moment'
                 }
             ]
         }

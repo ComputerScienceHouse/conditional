@@ -48,7 +48,8 @@
       "sass": {
         "includePaths": [
           "./node_modules/csh-material-bootstrap/dist/css",
-          "./node_modules/datatables.net-bs/css"
+          "./node_modules/datatables.net-bs/css",
+          "./node_modules/bootstrap-material-datetimepicker/css"
         ]
       },
       "extensions": ["sass", "scss", "css"]

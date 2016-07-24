@@ -1,10 +1,11 @@
+import $ from "jquery";
 import dt from "datatables.net-bs";
 
 export default class Table {
     constructor(table) {
-        dt(window, jQuery);
+        dt(window, $);
 
-        this.table = jQuery(table).DataTable({
+        this.table = $(table).DataTable({
             "searching": false,
             "lengthChange": false,
             "info": false,

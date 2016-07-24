@@ -1,16 +1,5 @@
 {% extends "nav.html" %}
-{% block extraHeader %}
-<link href="../static/css/selectize.css" rel="stylesheet">
-<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
-<link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{% endblock %}
-{% block extraFooter %}
-<script src="../static/js/libraries/selectize.js"></script>
-<script src="../static/js/libraries/moment.js"></script>
-<script src="../static/js/libraries/bootstrap-material-datetimepicker.js"></script>
-<script src="../static/js/attendance_cm.js"></script>
-{% endblock %}
+
 {% block body %}
 <div class="container main">
     <h3>Committee Attendance</h3>
@@ -22,7 +11,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:10px;">
                         <div class="form-group">
-                            <label for="type" class="control-label">Meeting Type</label>
+                            <label for="position" class="control-label">Meeting Type</label>
                             <select id="position" name="position" class="form-control">
                                 <option value="Chairman">Chairman</option>
                                 <option value="Evaluations">Evaluations</option>
@@ -45,7 +34,7 @@
                     <div class="panel-body" style="padding-top:10px;">
                         <div class="form-group is-empty">
                             <label for="date" class=" control-label">Date</label>
-                            <input type="text" name="date" class="form-control" id="date" value="{{date}}"/>
+                            <input type="text" name="date" class="form-control" id="date" value="{{date}}" data-module="datepicker"/>
                             <span class="material-input"></span>
                         </div>
                     </div>
@@ -58,7 +47,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group is-empty">
-                            <label for="likes" class=" control-label" id="attendeeLabel">Attendees</label>
+                            <label for="attendees" class=" control-label" id="attendeeLabel">Attendees</label>
                             <input type="text" name="attendees" class="form-control" id="attendees"/>
                             <span class="material-input"></span></div>
                     </div>

@@ -1,13 +1,13 @@
 // Material Switches for Member Management Toggles
 .material-switch > input[type="checkbox"] {
-    display: none;   
+    display: none;
 }
 
 .material-switch > label {
     cursor: pointer;
     height: 0px;
-    position: relative; 
-    width: 40px;  
+    position: relative;
+    width: 40px;
 }
 
 .material-switch > label::before {
@@ -43,4 +43,30 @@
 .material-switch > input[type="checkbox"]:checked + label::after {
     background: inherit;
     left: 20px;
+}
+
+// Flat Buttons
+
+$btn-flat-hover-bg: rgba(153, 153, 153, 0.2);
+
+.btn-flat {
+    background-color: transparent;
+    position: relative;
+    padding: 8px 25px;
+    margin: 0 5px;
+    border: none;
+    text-decoration: none;
+    text-transform: uppercase;
+    outline: 0 !important;
+    box-shadow: none !important;
+}
+
+.btn-flat:hover {
+    background-color: $btn-flat-hover-bg;
+}
+
+.btn-primary:active {
+    background: darken($btn-flat-hover-bg, 20%) radial-gradient(circle, #7a1158 10%, #b0197e 11%) no-repeat;
+    background-size: 1000% 1000%;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
