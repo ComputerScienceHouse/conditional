@@ -28,6 +28,8 @@ from util.flask import render_template
 
 import structlog
 import uuid
+import csv
+import io
 
 logger = structlog.get_logger()
 
@@ -106,6 +108,35 @@ def member_management_adduser():
     db_session.flush()
     db_session.commit()
     return jsonify({"success": True}), 200
+    
+    
+@member_management_bp.route('/manage/uploaduser', methods=['POST'])
+def member_management_uploaduser():
+    from db.database import db_session
+    
+    user_name = request.headers.get('x-webauth-user')
+    
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+        
+    f = request.files['data_file']
+    if not f:
+        return "No file", 400
+    
+    try:
+        stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
+        csv_input = csv.reader(stream)
+    
+        for new_user in csv_input:
+            name = new_user[0]
+            onfloor_status = new_user[1]
+            db_session.add(FreshmanAccount(name, onfloor_status))
+            
+        db_session.flush()
+        db_session.commit()
+        return jsonify({"success": True}), 200
+    except:
+        return "file could not be processed", 400
 
 @member_management_bp.route('/manage/edituser', methods=['POST'])
 def member_management_edituser():
