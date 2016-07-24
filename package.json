@@ -74,6 +74,7 @@
     "open": "0.0.5",
     "pretty-hrtime": "1.0.2",
     "require-dir": "0.3.0",
+    "selectize": "^0.12.2",
     "simple-masonry": "1.0.5",
     "sinon": "1.17.4",
     "sinon-chai": "2.8.0",

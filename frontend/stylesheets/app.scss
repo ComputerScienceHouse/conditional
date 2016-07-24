@@ -1,16 +1,22 @@
+// Third Party
 @import "csh-material-bootstrap";
 @import "dataTables.bootstrap";
 @import "bootstrap-material-datetimepicker";
 
+// External
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
 
-@import "structure";
-@import "global";
-@import "responsive";
-@import "management";
-@import "dashboard";
-@import "evals";
-@import "dataTables";
-@import "datePicker";
-@import "components";
-@import "housing";
+// Global
+@import "partials/base";
+
+// Components
+@import "components/switches";
+@import "components/flat-buttons";
+@import "components/datatables";
+@import "components/date-picker";
+
+// Pages
+@import "pages/dashboard";
+@import "pages/evals";
+@import "pages/housing";
+@import "pages/management";
