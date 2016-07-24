@@ -130,7 +130,13 @@ def member_management_uploaduser():
         for new_user in csv_input:
             name = new_user[0]
             onfloor_status = new_user[1]
-            db_session.add(FreshmanAccount(name, onfloor_status))
+            
+            if new_user[2]:
+                room_number = new_user[2]
+            else:
+                room_number = None
+            
+            db_session.add(FreshmanAccount(name, onfloor_status, room_number))
             
         db_session.flush()
         db_session.commit()
