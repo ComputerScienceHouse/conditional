@@ -1,29 +1,29 @@
 import {Enum} from 'enumify';
 
-export default class ConditionalException {
+export default class ConditionalException extends Error {
     constructor(exception, additionalMessage) {
-        this.message = "[Conditional] ";
+        let message = "";
 
         if (exception instanceof Enum) {
             try {
-                this.message += exception.message;
+                message += exception.message;
             } catch (e) {
-                this.message += exception.name;
+                message += exception.name;
             }
         } else {
             try {
-                this.message += exception;
+                message += exception;
             } catch (e) {
-                this.message += "Unknown exception"
+                message += "An unknown error has occured"
             }
         }
 
-        if (typeof additionalMessage !== "undefined") {
-            this.message += ": " + additionalMessage;
+        if (typeof additionalMessage !== "undefined" && additionalMessage !== "" && additionalMessage !== null) {
+            message += ": " + additionalMessage;
         }
-    }
-
-    print() {
-        console.error(this.message);
+        
+        super(message);
+        this.name = "ConditionalException";
+        this.message = message;
     }
 }

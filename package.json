@@ -31,6 +31,7 @@
     "babel-preset-stage-1": "6.5.0",
     "bootstrap": "^3.3.6",
     "bootstrap-material-datetimepicker": "github:t00rk/bootstrap-material-datetimepicker#gh-pages",
+    "bootstrap-sass": "^3.3.6",
     "browser-sync": "2.13.0",
     "chai": "3.5.0",
     "compression": "1.6.2",
@@ -75,11 +76,13 @@
     "pretty-hrtime": "1.0.2",
     "require-dir": "0.3.0",
     "selectize": "^0.12.2",
+    "selectize-scss": "^0.9.1",
     "simple-masonry": "1.0.5",
     "sinon": "1.17.4",
     "sinon-chai": "2.8.0",
     "webpack": "1.13.1",
     "webpack-dev-middleware": "1.6.1",
-    "webpack-hot-middleware": "2.12.1"
+    "webpack-hot-middleware": "2.12.1",
+    "whatwg-fetch": "^1.0.0"
   }
 }
