@@ -1,33 +1,45 @@
-{% extends "nav.html" %}
-{% block extraHeader %}
-<link href="../static/css/selectize.css" rel="stylesheet">
-<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
-<link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
-{% endblock %}
-{% block extraFooter %}
-<script src="../static/js/libraries/selectize.js"></script>
-<script src="../static/js/member_management.js"></script>
-{% endblock %}
-{% block body %}
+{% extends "nav.html" %} {% block body %}
 <div class="container main">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Site Management</h3>
+            <h3 class="panel-title">Add Users</h3>
         </div>
         <div class="panel-body">
             <div class="container-fluid">
                 <div class="row">
-
-                    <div class="col-xs-6">
-                        <div class="material-switch" style="text-align:center;">
-                            <div class="switch-label">Site Lockdown</div>
-                            <input type="checkbox" id="site_lockdown_checkbox" name="site_lockdown_checkbox" {% if site_lockdown %} checked {% endif %}>
-                            <label for="site_lockdown_checkbox" class="label-primary"></label>
-                        </div>
-
+                    <div class="col-md-6 remove_padding">
+                        <form action="/manage/uploaduser" id="upload_user" class="dropzone" data-module="dropzone">
+                            <div class="dz-message">
+                                <img src="../images/user_upload.svg" width="72px">
+                                <div class="upload_title">Mass User Upload</div>
+                                <div class="upload_sub">Drag file here or click to upload.</div>
+                            </div>
+                        </form>      
                     </div>
-
+                    <div class="col-md-6 member_form">
+                        <form>
+                            <div class="form-group">
+                                <label class="control-label" for="name">Member Name</label>
+                                <input class="form-control" id="name" name="name" type="text">
+                                <span class="material-input"></span>
+                            </div>
+                            <div class="col-xs-8 remove_padding">
+                                <div class="form-group">
+                                    <label class="control-label" for="room">Room Number</label>
+                                    <input class="form-control" id="roome" name="room" type="text">
+                                    <span class="material-input"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 onfloor_box">
+                                <div class="form-group">
+                                    <label >
+                                    <input id="onfloor" name="onfloor" type="checkbox">
+                                    On-Floor</label>
+                                </div>
+                            </div>
+                            <button class= "btn btn-raised btn-primary user_submit" id="submit" type="submit">Create New User</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,85 +49,15 @@
             <h3 class="panel-title">Member Management</h3>
         </div>
 
-        <form action="/manage/uploaduser" method="post" enctype="multipart/form-data">
-            <input type="file" name="data_file" />
-            <input type="submit" />
-        </form>
-
-        <div class="panel-body">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="form-group is-empty">
-                        <label for="likes" class=" control-label" id="userLabel">User</label>
-                        <input type="text" name="user" class="form-control" id="user" />
-                        <span class="material-input"></span>
-                    </div>
-                </div>
-                <div id="financial-form" class="row">
-                    <div class="checkbox">
-                        <label><input type="checkbox" id="dues_checkbox_financial"> Paid Dues</label>
-                    </div>
-                    <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-financial">Submit</button>
-                </div>
-                <div id="eval-form" class="row">
-                    <div class="checkbox">
-                        <label><input type="checkbox" id="dues_checkbox_eval"> Paid Dues</label>
-                    </div>
-                    <div class="checkbox">
-                        <label><input type="checkbox" id="onfloor_checkbox_eval"> Onfloor Status</label>
-                    </div>
-                    <div class="form-group is-empty">
-                        <label for="likes" class=" control-label" id="roomNum-evalLabel">Room Number</label>
-                        <input type="text" name="roomNum-eval" class="form-control" id="roomNum-eval" />
-                        <span class="material-input"></span>
-                    </div>
-                    <div class="form-group is-empty">
-                        <label for="likes" class=" control-label" id="housePts-evalLabel">Housing Points</label>
-                        <input type="text" name="housePts-eval" class="form-control" id="housePts-eval" />
-                        <span class="material-input"></span>
-                    </div>
-                </div>
-                <div id="fid-form" class="row">
-                    <div class="form-group is-empty">
-                        <label for="likes" class=" control-label" id="uid-fidLabel">Username</label>
-                        <input type="text" name="uid-fid" class="form-control" id="uid-fid" />
-                        <span class="material-input"></span>
-                    </div>
-                    <div class="form-group is-empty">
-                        <label for="likes" class=" control-label" id="sigsMissed-fidLabel">Signatures Missed</label>
-                        <input type="text" name="sigsMissed-fid" class="form-control" id="sigsMissed-fid" />
-                        <span class="material-input"></span>
-                    </div>
-                    <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-fid">Submit</button>
-                </div>
-            </div>
-            <div class="container-fluid">
-                <div id="hm_template0" class="row">
-                    <div class="row" id="member-0">
-                        <div class="col-md-12">
-                            <h4 id="date-0"></h4>
-                            <div class="checkbox">
-                                <label><input type="checkbox" id="excused-0"> Excused</label>
-                            </div>
-                            <div>
-                                <a role="button" class="comment-trigger pull-right">
-                                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a comment
-                                </a>
-                                <div class="comment-field" style="display: none;">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" id="comment-0" placeholder="Comment">
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="missed_hms"></div>
-            <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-eval">Submit</button>
-        </div>
+        
     </div>
 </div>
-</div>
 {% endblock %}
+
+<!--
+<div class="material-switch" style="float:right">
+    <div class="switch-label">Site Lockdown</div>
+    <input type="checkbox" id="site_lockdown_checkbox" name="site_lockdown_checkbox" {% if site_lockdown %} checked {% endif %}>
+    <label for="site_lockdown_checkbox" class="label-primary"></label>
+</div>
+-->

@@ -119,7 +119,7 @@ def member_management_uploaduser():
     if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
         
-    f = request.files['data_file']
+    f = request.files['file']
     if not f:
         return "No file", 400
     

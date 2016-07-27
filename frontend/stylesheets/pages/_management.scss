@@ -2,3 +2,35 @@
     display: inline;
     padding-right: 10px;
 }
+
+.upload_title {
+    color: rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    font-size: 24px;
+    padding-top: 20px;
+    height: 55px;
+}
+
+.upload_sub {
+    color: rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    height: 15px;
+}
+
+.remove_padding {
+    padding: 0;
+}
+
+.onfloor_box {
+   padding: 25px 0 0 0;
+   text-align: center;
+}
+
+.user_submit {
+    width: 100%;
+    margin: 10px 0 0 0;
+}
+
+.member_form {
+    padding: 10px 10px 10px 10px;
+}
