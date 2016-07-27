@@ -8,7 +8,6 @@ from blueprints.major_project_submission import major_project_bp
 from blueprints.intro_evals import intro_evals_bp
 from blueprints.intro_evals_form import intro_evals_form_bp
 from blueprints.housing import housing_bp
-from blueprints.housing_evals_form import housing_evals_form_bp
 from blueprints.spring_evals import spring_evals_bp
 from blueprints.conditional import conditionals_bp
 from blueprints.member_management import member_management_bp
@@ -41,7 +40,6 @@ app.register_blueprint(major_project_bp)
 app.register_blueprint(intro_evals_bp)
 app.register_blueprint(intro_evals_form_bp)
 app.register_blueprint(housing_bp)
-app.register_blueprint(housing_evals_form_bp)
 app.register_blueprint(spring_evals_bp)
 app.register_blueprint(conditionals_bp)
 app.register_blueprint(member_management_bp)
