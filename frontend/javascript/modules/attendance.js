@@ -33,6 +33,9 @@ export default class Attendance {
     render() {
         window.$(this.element).selectize({
             persist: false,
+            openOnFocus: false,
+            closeAfterSelect: true,
+            plugins: ['remove_button'],
             valueField: 'value',
             labelField: 'display',
             searchField: 'display',

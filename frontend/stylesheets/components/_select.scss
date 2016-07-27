@@ -16,6 +16,7 @@
 
 @import "./node_modules/csh-material-bootstrap/sass/variables";
 @import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/nav-divider";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/vendor-prefixes";
 
 $selectize-font-family: inherit !default;
 $selectize-font-size: inherit !default;
@@ -143,4 +144,6 @@ $selectize-arrow-offset: $selectize-padding-x + 5px !default;
     background: none;
     @include selectize-box-shadow (inset 0 -1px 0 #ddd);
     @include selectize-border-radius (0);
+    
+
 }
