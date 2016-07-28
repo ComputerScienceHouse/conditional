@@ -22,6 +22,9 @@ from util.ldap import ldap_set_active
 from util.ldap import ldap_set_housingpoints
 from util.ldap import ldap_get_room_number
 from util.ldap import ldap_get_housing_points
+from util.ldap import ldap_get_active_members
+from util.ldap import ldap_get_current_students
+from util.ldap import ldap_get_name
 from util.ldap import ldap_is_active
 from util.ldap import ldap_is_onfloor
 from util.flask import render_template
@@ -44,12 +47,44 @@ def display_member_management():
 
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
         return "must be eval director", 403
-
+        
+    members = [m['uid'] for m in ldap_get_current_students()]
+    member_list = []
+    
+    for member_uid in members:
+        uid = member_uid[0].decode('utf-8')
+        name = ldap_get_name(uid)
+        active = ldap_is_active(uid)
+        onfloor = ldap_is_onfloor(uid)
+        room_number = ldap_get_room_number(uid)
+        room = room_number if room_number != "N/A" else ""
+        hp = ldap_get_housing_points(uid)
+        member_list.append({
+            "name": name,
+            "active": active,
+            "onfloor": onfloor,
+            "room": room,
+            "hp": hp
+        })
+        
+    freshmen = FreshmanAccount.query
+    freshmen_list = []
+    
+    for freshman_user in freshmen:
+        name = freshman_user.name
+        onfloor = freshman_user.onfloor_status
+        room = freshman_user.room_number
+        freshmen_list.append({
+            "name": name,
+            "onfloor": onfloor,
+            "room": room
+        })
+        
     settings = EvalSettings.query.first()
     return render_template(request, "member_management.html",
             username=user_name,
-            housing_form_active=settings.housing_form_active,
-            intro_form_active=settings.intro_form_active,
+            active=member_list,
+            freshmen=freshmen_list,
             site_lockdown=settings.site_lockdown)
 
 @member_management_bp.route('/manage/settings', methods=['POST'])

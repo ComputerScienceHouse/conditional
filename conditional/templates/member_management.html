@@ -1,5 +1,6 @@
 {% extends "nav.html" %} {% block body %}
 <div class="container main">
+    {% if is_eval_director %}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Add Users</h3>
@@ -44,13 +45,89 @@
             </div>
         </div>
     </div>
+    {% endif %}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Member Management</h3>
         </div>
-
-        
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" 
+                    data-module="table" 
+                    data-searchable="true" 
+                    data-sort-column="0" 
+                    data-sort-order="asc"
+                    data-length-changable="true">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Active</th>
+                            <th>On Floor</th>
+                            <th>Room</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in active %}
+                        <tr>
+                            <td>{{m['name']}}</td>
+                            <td>
+                                {% if m['active'] %}
+                                &#x2605;
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if m['onfloor'] %}
+                                &#10003;
+                                {% endif %}
+                            </td>
+                            <td>{{m['room']}}</td>
+                            <td>{{m['hp']}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+    {% if is_eval_director %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Freshmen Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" 
+                    data-module="table" 
+                    data-searchable="true" 
+                    data-sort-column="0" 
+                    data-sort-order="asc"
+                    data-length-changable="true">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>On Floor</th>
+                            <th>Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for f in freshmen %}
+                        <tr>
+                            <td>{{f['name']}}</td>
+                            <td>
+                                {% if f['onfloor'] %}
+                                &#10003;
+                                {% endif %}
+                            </td>
+                            <td>{{f['room']}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 

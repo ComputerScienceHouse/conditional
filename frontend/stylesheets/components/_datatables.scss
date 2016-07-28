@@ -15,6 +15,16 @@ div.dataTables_wrapper div.dataTables_paginate {
   text-align: center;
 }
 
+.dataTables_length {
+  margin-top: 5px;
+  margin-left: 15px;
+}
+
+div.dataTables_filter {
+  margin-top:5px;
+  margin-right: 15px;
+}
+
 @media(max-width:768px){
   .dataTables_paginate {
     margin-right: 0 !important;
