@@ -60,6 +60,7 @@ def display_member_management():
         room = room_number if room_number != "N/A" else ""
         hp = ldap_get_housing_points(uid)
         member_list.append({
+            "uid": uid,
             "name": name,
             "active": active,
             "onfloor": onfloor,

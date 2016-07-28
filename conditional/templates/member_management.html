@@ -70,7 +70,10 @@
                     <tbody>
                     {% for m in active %}
                         <tr>
-                            <td>{{m['name']}}</td>
+                            <td>
+                                <img class="table_img mobile-hide" src="https://profiles.csh.rit.edu/image/{{m['uid']}}">
+                                {{m['name']}}
+                            </td>
                             <td>
                                 {% if m['active'] %}
                                 &#x2605;
