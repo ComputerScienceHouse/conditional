@@ -50,7 +50,8 @@
           "./node_modules/csh-material-bootstrap/dist/css",
           "./node_modules/datatables.net-bs/css",
           "./node_modules/bootstrap-material-datetimepicker/css",
-          "./node_modules/selectize-scss/src"
+          "./node_modules/selectize-scss/src",
+          "./node_modules/load-awesome/css"
         ]
       },
       "extensions": ["sass", "scss", "css"]

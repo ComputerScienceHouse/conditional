@@ -44,6 +44,11 @@ module.exports = function (env) {
                 {
                     test: /bootstrap-material-datetimepicker/,
                     loader: 'imports?moment'
+                },
+                {
+                    test: /bootstrap-sweetalert.*$/,
+                    loader: 'babel-loader',
+                    query: config.tasks.js.babel
                 }
             ]
         }

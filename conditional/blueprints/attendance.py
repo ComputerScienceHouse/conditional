@@ -165,7 +165,8 @@ def display_attendance_ts():
 
     return render_template(request,
                            'attendance_ts.html',
-                           username = user_name)
+                           username = user_name,
+                           date = datetime.utcnow().strftime("%Y-%m-%d"))
 
 @attendance_bp.route('/attendance_hm')
 def display_attendance_hm():
@@ -234,8 +235,10 @@ def submit_seminar_attendance():
     seminar_name = post_data['name']
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
+    timestamp = post_data['timestamp']
 
-    seminar = TechnicalSeminar(seminar_name)
+    timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
+    seminar = TechnicalSeminar(seminar_name, timestamp)
 
     db_session.add(seminar)
     db_session.flush()

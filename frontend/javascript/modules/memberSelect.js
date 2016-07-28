@@ -6,7 +6,7 @@ import Exception from "../exceptions/exception";
 import AttendanceException from "../exceptions/attendanceException";
 import FetchException from "../exceptions/fetchException";
 
-export default class Attendance {
+export default class MemberSelect {
     constructor(element) {
         this.element = element;
         this.dataSrc = element.dataset.src;

@@ -82,10 +82,12 @@ class TechnicalSeminar(Base):
     __tablename__ = 'technical_seminars'
     id = Column(Integer, primary_key=True)
     name = Column(String(128), nullable=False)
+    timestamp = Column(DateTime, nullable=False)
     active = Column(Boolean)
 
-    def __init__(self, name):
+    def __init__(self, name, timestamp):
         self.name = name
+        self.timestamp = timestamp
         self.active = True
 
 class MemberSeminarAttendance(Base):

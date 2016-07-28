@@ -1,26 +1,30 @@
 {% extends "nav.html" %}
-{% block extraHeader %}
-<link href="../static/css/selectize.css" rel="stylesheet">
-<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
-{% endblock %}
-{% block extraFooter %}
-<script src="../static/js/libraries/selectize.js"></script>
-<script src="../static/js/attendance_ts.js"></script>
-{% endblock %}
 {% block body %}
 <div class="container main">
     <h3>Seminar Attendance</h3>
     <div style="padding-top:20px"></div>
-    <form name="tsAttendanceForm" id="tsAttendanceForm">
+    <form data-module="attendanceForm" data-type="seminar">
         <!-- Meeting Type -->
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:10px;">
                         <div class="form-group is-empty">
-                            <label for="likes" class=" control-label" id="seminarLabel">Seminar Name</label>
-                            <input type="text" name="seminar_name" class="form-control" id="seminar_name"/>
-                            <span class="material-input"></span>
+                            <label for="name" class="control-label">Seminar Name</label>
+                            <input type="text" name="name" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Date -->
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="padding-top:10px;">
+                        <div class="form-group is-empty">
+                            <label for="date" class=" control-label">Date</label>
+                            <input type="text" name="date" class="form-control" value="{{date}}" data-module="datepicker"/>
                         </div>
                     </div>
                 </div>
@@ -32,18 +36,16 @@
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group is-empty">
-                            <label for="likes" class=" control-label" id="attendeeLabel">Attendees</label>
-                            <input type="text" name="attendees" class="form-control" id="attendees" data-module="attendance" data-src="ts_members"/>
-                            <span class="material-input"></span></div>
+                            <label for="attendees" class="control-label">Attendees</label>
+                            <input type="text" name="attendees" class="form-control" data-module="memberSelect" data-src="ts_members"/>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
-                <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit">
-                    Submit Form
-                </button>
+                <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
             </div>
         </div>
     </form>
