@@ -45,4 +45,7 @@ def get_queue_length():
     return len(get_housing_queue())
 
 def get_queue_position(username):
-    return get_housing_queue().index(username)
+    try:
+        return get_housing_queue().index(username)
+    except:
+        return "0"
