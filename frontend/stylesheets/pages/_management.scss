@@ -42,3 +42,62 @@
     margin: -2px 5px 0 0;
     vertical-align: center;
 }
+
+.vertical-alignment-helper {
+    display: table;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+.vertical-align-center {
+    /* To center vertically */
+    display: table-cell;
+    vertical-align: middle;
+    pointer-events: none;
+}
+.modal-content {
+    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+    width: inherit;
+    height: inherit;
+    /* To center horizontally */
+    margin: 0 auto;
+    pointer-events: all;
+}
+
+.hp-input {
+    width: 50px;
+    text-align: center;
+    display: inline-block;
+}
+
+.hm-reason {
+    margin-top: -15px;
+}
+
+.user-edit-row {
+    margin: 10px 0 30px 0;
+}
+
+.hm-wrapper {
+    background-color: #f5f5f5;
+    border-radius: 0px;
+    margin: 0 5px;
+    padding: 10px 0 0 0;
+}
+
+.hm-date {
+    margin-top: 3px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.hm-present-btn {
+    float: right;
+    box-shadow: none;
+    background-color: #f5f5f5;
+}
+
+
+.modal-body {
+    padding-top: 0;
+}
