@@ -193,7 +193,7 @@
             {% endif %}
 
             {% if major_projects_count == 0 %}
-            <div class="alert alert-warning" role="alert">You have no major projects.</div>
+            <div class="alert alert-warning" role="alert"> <span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"> </span> You have no major projects.</div>
             {% else %}
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -221,13 +221,13 @@
 
         </div>
         <div class="col-lg-6 col-md-6">
-
+            {% if housing != False %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Housing Status</h3>
                 </div>
                 <div class="panel-body table-fill">
-                    {% if housing != False %}
+                    
                     <table class="table table-striped table-responsive no-bottom-margin">
                         <tbody>
                         <tr>
@@ -244,7 +244,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    {% else %} You do not currently have onfloor status! {% endif %}
+                    {% endif %}
                 </div>
             </div>
 
