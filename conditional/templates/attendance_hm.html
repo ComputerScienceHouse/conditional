@@ -1,17 +1,7 @@
 {% extends "nav.html" %}
-{% block extraHeader %}
-    <link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{% endblock %}
-{% block extraFooter %}
-    <script src="../static/js/libraries/moment.js"></script>
-    <script src="../static/js/libraries/bootstrap-material-datetimepicker.js"></script>
-    <script src="../static/js/attendance_hm.js"></script>
-{% endblock %}
 {% block body %}
     <div class="container main">
-        <h3>House Meeting Attendance</h3>
-        <div style="padding-top:20px"></div>
+        <h3 class="page-title">House Meeting Attendance</h3>
         <form name="hmAttendanceForm" id="hmAttendanceForm">
             <!-- Meeting Type -->
             <div class="row">
