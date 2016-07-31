@@ -101,3 +101,22 @@
 .modal-body {
     padding-top: 0;
 }
+
+.dropdown-list-item {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.846;
+    color: #666;
+    white-space: nowrap;
+}
+
+.dropdown-list-item:focus, .dropdown-list-item:hover {
+  text-decoration: none;
+  color: #141414;
+  background-color: #eee; }
+  
+.btn-mp {
+    margin-top: 20px;
+}
