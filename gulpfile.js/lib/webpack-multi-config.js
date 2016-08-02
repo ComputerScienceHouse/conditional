@@ -34,12 +34,8 @@ module.exports = function (env) {
                     query: config.tasks.js.babel
                 },
                 {
-                    test: /jquery/,
-                    loader: 'expose?$!expose?jQuery'
-                },
-                {
-                    test: /datatables\.net.*/,
-                    loader: 'imports?define=>false'
+                    test: require.resolve("jquery"),
+                    loader: "expose?$!expose?jQuery"
                 },
                 {
                     test: /bootstrap-material-datetimepicker/,

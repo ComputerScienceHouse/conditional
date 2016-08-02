@@ -269,11 +269,7 @@ def submit_house_attendance():
 
     post_data = request.get_json()
 
-    m_attendees = post_data['members']
-    f_attendees = post_data['freshmen']
-    timestamp = post_data['timestamp']
-
-    timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
+    timestamp = datetime.strptime(post_data['timestamp'], "%Y-%m-%d")
 
     meeting = HouseMeeting(timestamp)
 
@@ -281,19 +277,21 @@ def submit_house_attendance():
     db_session.flush()
     db_session.refresh(meeting)
 
-    for m in m_attendees:
-        db_session.add(MemberHouseMeetingAttendance(
-                        m['uid'],
-                        meeting.id,
-                        m['excuse'],
-                        m['status']))
+    if "members" in post_data:
+        for m in post_data['members']:
+            db_session.add(MemberHouseMeetingAttendance(
+                            m['uid'],
+                            meeting.id,
+                            None,
+                            m['status']))
 
-    for f in f_attendees:
-        db_session.add(FreshmanHouseMeetingAttendance(
-                        f['id'],
-                        meeting.id,
-                        f['excuse'],
-                        f['status']))
+    if "freshmen" in post_data:
+        for f in post_data['freshmen']:
+            db_session.add(FreshmanHouseMeetingAttendance(
+                            f['id'],
+                            meeting.id,
+                            None,
+                            f['status']))
 
     db_session.commit()
     return jsonify({"success": True}), 200

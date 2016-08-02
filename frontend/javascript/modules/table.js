@@ -1,31 +1,31 @@
-import $ from "jquery";
-import dt from "datatables.net-bs";
+/* global $ */
+import "datatables.net-bs";
 
 export default class Table {
     constructor(table) {
         this.table = table;
-        this.paginated = this.table.dataset.paginated;
-        this.searchable = this.table.dataset.searchable;
+
+        // Set options based on data attributes
+        this.paginated = this.table.dataset.paginated === 'false' ? false : true;
         this.sortColumn = !isNaN(this.table.dataset.sortColumn) ? this.table.dataset.sortColumn : 1;
         this.sortOrder = this.table.dataset.sortOrder === "asc" ? "asc" : "desc";
-        this.lengthChangable = this.table.dataset.lengthChangable;
-        
-        // Explicitly initialize DataTables
-        dt(window, $);
+        this.lengthChangable = this.table.dataset.lengthChangable === 'true' ? true : false;
 
-        this.table = $(table).DataTable({
-            "searching": this.searchable === 'true' ? true : false,
-            "lengthChange": this.lengthChangable === 'true' ? true : false,
-            "info": false,
-            "paging": this.paginated === 'false' ? false : true,
-            "pagingType": "numbers"
-        });
+        // Just remove the search input from the DOM instead of disabling search all together
+        this.domOptions = "l" + this.table.dataset.searchable === 'true' ? "t" : "" + "rtip";
 
-        this.table.order([this.sortColumn, this.sortOrder]);
         this.render();
     }
 
     render() {
-        this.table.draw();
+        this.table = $(this.table).DataTable({
+            "sDom": this.domOptions,
+            "lengthChange": this.lengthChangable,
+            "info": false,
+            "paging": this.paginated,
+            "pagingType": "numbers"
+        })
+            .order([this.sortColumn, this.sortOrder])
+            .draw();
     }
 }
