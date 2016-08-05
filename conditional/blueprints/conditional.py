@@ -53,7 +53,7 @@ def create_conditional():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -76,7 +76,7 @@ def conditional_review():
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()

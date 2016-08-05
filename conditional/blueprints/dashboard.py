@@ -50,7 +50,7 @@ def display_dashboard():
     data['voting'] = True # FIXME: unimplemented
 
     # freshman shit
-    if ldap_is_intromember(user_name) or user_name == 'loothelion':
+    if ldap_is_intromember(user_name):
         freshman = {}
         freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
 

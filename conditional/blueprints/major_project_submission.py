@@ -70,7 +70,7 @@ def major_project_review():
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()

@@ -148,7 +148,7 @@ def display_attendance_cm():
     log.info('frontend', action='display committee meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return redirect("/dashboard")
 
 
@@ -164,7 +164,7 @@ def display_attendance_ts():
     log.info('frontend', action='display technical seminar attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return redirect("/dashboard")
 
 
@@ -179,7 +179,7 @@ def display_attendance_hm():
     log.info('frontend', action='display house meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name) and user_name != "loothelion":
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -198,7 +198,7 @@ def submit_committee_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -240,7 +240,7 @@ def submit_seminar_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name)':
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -282,7 +282,7 @@ def submit_house_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be evals", 403
 
     post_data = request.get_json()

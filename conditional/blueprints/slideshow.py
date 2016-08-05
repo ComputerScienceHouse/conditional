@@ -33,7 +33,7 @@ def slideshow_intro_display():
     log.info('frontend', action='display intro slideshow')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name) and user_name != "loothelion":
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -62,7 +62,7 @@ def slideshow_intro_review():
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -90,7 +90,7 @@ def slideshow_spring_display():
     log.info('frontend', action='display membership evaluations slideshow')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name) and user_name != "loothelion":
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -119,7 +119,7 @@ def slideshow_spring_review():
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()

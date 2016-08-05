@@ -43,7 +43,7 @@ def display_member_management():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval director", 403
 
     settings = EvalSettings.query.first()
@@ -61,7 +61,7 @@ def member_management_eval():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -102,7 +102,7 @@ def member_management_adduser():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -124,7 +124,7 @@ def member_management_edituser():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -174,7 +174,7 @@ def member_management_getuserinfo():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval or financial director", 403
 
     post_data = request.get_json()
@@ -237,7 +237,7 @@ def member_management_edit_hm_excuse():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -274,7 +274,7 @@ def member_management_upgrade_user():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
 
     post_data = request.get_json()
