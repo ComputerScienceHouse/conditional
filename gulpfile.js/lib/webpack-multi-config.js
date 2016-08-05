@@ -35,7 +35,7 @@ module.exports = function (env) {
                 },
                 {
                     test: require.resolve("jquery"),
-                    loader: "expose?$!expose?jQuery"
+                    loader: 'expose?$!expose?jQuery'
                 },
                 {
                     test: /bootstrap-material-datetimepicker/,

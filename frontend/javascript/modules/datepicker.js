@@ -2,16 +2,16 @@
 import "bootstrap-material-datetimepicker";
 
 export default class DatePicker {
-    constructor(input) {
-        this.input = input;
-        
-        this.render();
-    }
+  constructor(input) {
+    this.input = input;
 
-    render() {
-        $(this.input).bootstrapMaterialDatePicker({
-            weekStart: 0,
-            time: false
-        });
-    }
+    this.render();
+  }
+
+  render() {
+    $(this.input).bootstrapMaterialDatePicker({
+      weekStart: 0,
+      time: false
+    });
+  }
 }

@@ -11,7 +11,7 @@
     },
 
     "watch": {
-      "tasks": ["images", "css"],
+      "tasks": ["images", "css", "eslint"],
       "paths": ["./conditional/templates"]
     },
 
@@ -37,6 +37,11 @@
         "plugins": []
       },
       "extractSharedJs": false
+    },
+
+    "eslint": {
+      "src": "javascript",
+      "extensions": ["js"]
     },
 
     "css": {
