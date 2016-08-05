@@ -1,3 +1,4 @@
+import _ from "lodash";
 import FetchUtil from "../utils/fetchUtil";
 
 export default class HouseMeetingForm {
@@ -40,7 +41,7 @@ export default class HouseMeetingForm {
           const uid = checkbox.name;
           const status = checkbox.checked ? "Attended" : "Absent";
 
-          if (isNaN(uid)) {
+          if (_.isNaN(uid)) {
             upperclassmen.push({
               uid: uid,
               status: status

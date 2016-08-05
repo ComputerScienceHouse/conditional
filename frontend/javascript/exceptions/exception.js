@@ -18,9 +18,7 @@ export default class ConditionalException extends Error {
       }
     }
 
-    if (typeof additionalMessage !== "undefined" &&
-        additionalMessage !== "" &&
-        additionalMessage !== null) {
+    if (additionalMessage) {
       message += ": " + additionalMessage;
     }
 

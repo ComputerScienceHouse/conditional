@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export default class MemberUtil {
   static splitFreshmenUpperclassmen(memberIds) {
     let result = {
@@ -6,10 +8,8 @@ export default class MemberUtil {
     };
 
     memberIds.forEach(memberId => {
-      if (typeof memberId !== "undefined" &&
-          memberId !== "" &&
-          memberId !== null) {
-        if (isNaN(memberId)) {
+      if (memberId) {
+        if (_.isNaN(memberId)) {
           // Upperclassman account
           result.upperclassmen.push(memberId);
         } else {

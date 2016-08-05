@@ -16,8 +16,7 @@ export default class HouseMeetingSearch {
     }
 
     // Is the target already a DataTable?
-    if (typeof $.fn.dataTable !== "undefined" &&
-        $.fn.dataTable.isDataTable(this.target)) {
+    if ($.fn.dataTable && $.fn.dataTable.isDataTable(this.target)) {
       // Yes, render
       this.render();
     } else {

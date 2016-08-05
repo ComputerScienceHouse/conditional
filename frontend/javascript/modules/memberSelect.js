@@ -11,11 +11,7 @@ export default class MemberSelect {
     this.element = element;
     this.dataSrc = element.dataset.src;
 
-    if (typeof this.dataSrc === "undefined" ||
-        this.dataSrc === "" ||
-        this.dataSrc === null) {
-      throw new Exception(AttendanceException.NO_SRC_ATTRIBUTE);
-    } else {
+    if (this.dataSrc) {
       fetch('/attendance/' + this.dataSrc, {
         method: 'GET',
         credentials: 'same-origin'
@@ -29,6 +25,8 @@ export default class MemberSelect {
         .catch(error => {
           throw new Exception(FetchException.REQUEST_FAILED, error);
         });
+    } else {
+      throw new Exception(AttendanceException.NO_SRC_ATTRIBUTE);
     }
   }
 

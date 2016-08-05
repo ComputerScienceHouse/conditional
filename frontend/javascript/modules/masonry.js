@@ -25,21 +25,15 @@ export default class Masonry {
 
     try {
       parent.childNodes.forEach(child => {
-        if (typeof child.tagName !== "undefined" &&
-            child.tagName !== null &&
-            child.tagName !== "") {
+        if (child.tagName) {
           selectors.increment(child.tagName);
         }
 
-        if (typeof child.id !== "undefined" &&
-            child.id !== null &&
-            child.id !== "") {
+        if (child.id) {
           selectors.increment("#" + child.id);
         }
 
-        if (typeof child.className !== "undefined" &&
-            child.className !== null &&
-            child.className !== "") {
+        if (child.className) {
           child.className.split(/\s+/).forEach(className => {
             selectors.increment("." + className);
           });

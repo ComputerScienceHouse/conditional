@@ -1,4 +1,5 @@
 /* global $ */
+import _ from "lodash";
 import "datatables.net-bs";
 
 export default class Table {
@@ -7,7 +8,7 @@ export default class Table {
 
     // Set options based on data attributes
     this.paginated = !this.table.dataset.paginated === 'false';
-    this.sortColumn = isNaN(this.table.dataset.sortColumn) ?
+    this.sortColumn = _.isNaN(this.table.dataset.sortColumn) ?
                         1 : this.table.dataset.sortColumn;
     this.sortOrder = this.table.dataset.sortOrder === "asc" ? "asc" : "desc";
     this.lengthChangable = this.table.dataset.lengthChangable === 'true';
