@@ -1,7 +1,9 @@
+import copy
 from functools import wraps
 from functools import lru_cache
 
 import ldap
+import ldap.modlist
 from ldap.ldapobject import ReconnectLDAPObject
 # Global state is gross. I'm sorry.
 ldap_conn = None
@@ -53,10 +55,11 @@ def __ldap_set_field__(username, field, new_val):
     if len(ldap_results) != 1:
         raise HousingLDAPError("Wrong number of results found for username %s."
                 % username)
-    ldap_new_val = ldap_results
-    ldap_new_val[0][1][field] = str(new_val).encode('ascii')
-    ldapModlist = ldap.modlist.modifyModlist(ldap_results, ldap_new_val)
-    userdn = "uid=%s,ou=Users,dc=csh,dc=rit,dc=edu" % username
+    old_result = ldap_results[0][1]
+    new_result = copy.deepcopy(ldap_results[0][1])
+    new_result[field] = [ str(new_val).encode('ascii') ]
+    ldapModlist = ldap.modlist.modifyModlist(old_result, new_result)
+    userdn = "uid=%s,%s" % (username, user_search_ou)
     ldap_conn.modify_s(userdn, ldapModlist)
 
 @ldap_init_required
@@ -71,8 +74,37 @@ def __ldap_is_member_of_group__(username, group):
     if len(ldap_results) != 1:
         raise HousingLDAPError("Wrong number of results found for group %s." %
                 group)
-    return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
+    return "uid=" + username + "," + user_search_ou in \
         [x.decode('ascii') for x in ldap_results[0][1]['member']]
+
+@ldap_init_required
+def __ldap_add_member_to_group__(username, group):
+    ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
+            "(cn=%s)" % group)
+    if len(ldap_results) != 1:
+        raise HousingLDAPError("Wrong number of results found for group %s." %
+                group)
+    old_results = ldap_results[0][1]
+    new_results = copy.deepcopy(ldap_results[0][1])
+    new_entry = "uid=%s,%s" % (username, user_search_ou)
+    new_entry = new_entry.encode('utf-8')
+    new_results['member'].append(new_entry)
+    ldap_modlist = ldap.modlist.modifyModlist(old_results, new_results)
+    groupdn = "cn=%s,%s" % (group, group_search_ou)
+    ldap_conn.modify_s(groupdn, ldap_modlist)
+
+def __ldap_remove_member_from_group__(username, group):
+    ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
+            "(cn=%s)" % group)
+    if len(ldap_results) != 1:
+        raise HousingLDAPError("Wrong number of results found for group %s." %
+                group)
+    old_results = ldap_results[0][1]
+    new_results = copy.deepcopy(ldap_results[0][1])
+    new_results['member'] = [ i for i in old_results['member'] if i.decode('utf-8') != "uid=%s,%s" % (username, user_search_ou) ]
+    ldap_modlist = ldap.modlist.modifyModlist(old_results, new_results)
+    groupdn = "cn=%s,%s" % (group, group_search_ou)
+    ldap_conn.modify_s(groupdn, ldap_modlist)
 
 @ldap_init_required
 def __ldap_is_member_of_committee__(username, committee):
@@ -81,7 +113,7 @@ def __ldap_is_member_of_committee__(username, committee):
     if len(ldap_results) != 1:
         raise HousingLDAPError("Wrong number of results found for committee %s." %
                 committee)
-    return "uid=" + username + ",ou=Users,dc=csh,dc=rit,dc=edu" in \
+    return "uid=" + username + "," + user_search_ou in \
         [x.decode('ascii') for x in ldap_results[0][1]['head']]
 
 @lru_cache(maxsize=1024)
@@ -164,6 +196,7 @@ def ldap_set_roomnumber(username, room_number):
 
 def ldap_set_active(username, is_active):
     __ldap_set_field__(username, 'active', str(int(is_active)).encode('ascii'))
+    # TODO something about active memebers group
 
 @lru_cache(maxsize=1024)
 def ldap_get_name(username):

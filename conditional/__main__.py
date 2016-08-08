@@ -71,6 +71,14 @@ def web_main():
 
     init_db(json_config['db']['url'])
 
+    # if making db for first time make settings pagm
+    from db.models import EvalSettings
+    from db.database import db_session
+    if EvalSettings.query.first() is None:
+        db_session.add(EvalSettings())
+        db_session.flush()
+        db_session.commit()
+
     logger.info('conditonal started')
     app.run(**json_config['flask'])
 

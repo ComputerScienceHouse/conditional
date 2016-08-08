@@ -47,7 +47,8 @@ def get_name(m):
 
 @attendance_bp.route('/attendance/ts_members')
 def get_all_members():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='retrieve techincal seminar attendance list')
 
     members = ldap_get_current_students()
@@ -75,7 +76,8 @@ def get_all_members():
 
 @attendance_bp.route('/attendance/hm_members')
 def get_non_alumni_non_coop(internal=False):
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='retrieve house meeting attendance list')
 
     # Only Members Who Have Paid Dues Are Required to
@@ -113,7 +115,8 @@ def get_non_alumni_non_coop(internal=False):
 
 @attendance_bp.route('/attendance/cm_members')
 def get_non_alumni():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='retrieve committee meeting attendance list')
 
     non_alumni_members = ldap_get_current_students()
@@ -140,11 +143,12 @@ def get_non_alumni():
 
 @attendance_bp.route('/attendance_cm')
 def display_attendance_cm():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display committee meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return redirect("/dashboard")
 
 
@@ -155,11 +159,12 @@ def display_attendance_cm():
 
 @attendance_bp.route('/attendance_ts')
 def display_attendance_ts():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display technical seminar attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return redirect("/dashboard")
 
 
@@ -170,11 +175,12 @@ def display_attendance_ts():
 
 @attendance_bp.route('/attendance_hm')
 def display_attendance_hm():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display house meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name) and user_name != "loothelion":
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -185,14 +191,15 @@ def display_attendance_hm():
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='submit committee meeting attendance')
 
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -210,9 +217,15 @@ def submit_committee_attendance():
     db_session.refresh(meeting)
 
     for m in m_attendees:
+        logger.info('backend',
+            action=("gave attendance to %s for %s" % (m, committee))
+        )
         db_session.add(MemberCommitteeAttendance(m, meeting.id))
 
     for f in f_attendees:
+        logger.info('backend',
+            action=("gave attendance to freshman-%s for %s" % (f, committee))
+        )
         db_session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
     db_session.commit()
@@ -220,14 +233,15 @@ def submit_committee_attendance():
 
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
 def submit_seminar_attendance():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='submit technical seminar attendance')
 
     from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eboard(user_name) and user_name != 'loothelion':
+    if not ldap_is_eboard(user_name):
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -245,9 +259,15 @@ def submit_seminar_attendance():
     db_session.refresh(seminar)
 
     for m in m_attendees:
+        logger.info('backend',
+            action=("gave attendance to %s for %s" % (m, seminar_name))
+        )
         db_session.add(MemberSeminarAttendance(m, seminar.id))
 
     for f in f_attendees:
+        logger.info('backend',
+            action=("gave attendance to freshman-%s for %s" % (f, seminar_name))
+        )
         db_session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db_session.commit()
@@ -255,7 +275,8 @@ def submit_seminar_attendance():
 
 @attendance_bp.route('/attendance/submit/hm', methods=['POST'])
 def submit_house_attendance():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='submit house meeting attendance')
 
     from db.database import db_session
@@ -264,7 +285,7 @@ def submit_house_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return "must be evals", 403
 
     post_data = request.get_json()
@@ -277,21 +298,25 @@ def submit_house_attendance():
     db_session.flush()
     db_session.refresh(meeting)
 
-    if "members" in post_data:
-        for m in post_data['members']:
-            db_session.add(MemberHouseMeetingAttendance(
-                            m['uid'],
-                            meeting.id,
-                            None,
-                            m['status']))
+    for m in m_attendees:
+        logger.info('backend',
+            action=("gave %s (%s) to %s for %s" % (m['status'] m['uid'], timestamp.strftime("%Y-%m-%d")))
+        )
+        db_session.add(MemberHouseMeetingAttendance(
+                        m['uid'],
+                        meeting.id,
+                        None,
+                        m['status']))
 
-    if "freshmen" in post_data:
-        for f in post_data['freshmen']:
-            db_session.add(FreshmanHouseMeetingAttendance(
-                            f['id'],
-                            meeting.id,
-                            None,
-                            f['status']))
+    for f in f_attendees:
+        logger.info('backend',
+            action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
+        )
+        db_session.add(FreshmanHouseMeetingAttendance(
+                        f['id'],
+                        meeting.id,
+                        None,
+                        f['status']))
 
     db_session.commit()
     return jsonify({"success": True}), 200

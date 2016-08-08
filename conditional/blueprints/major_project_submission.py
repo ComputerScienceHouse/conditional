@@ -17,7 +17,8 @@ major_project_bp = Blueprint('major_project_bp', __name__)
 
 @major_project_bp.route('/major_project/')
 def display_major_project():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display major project form')
 
     # get user data
@@ -45,7 +46,8 @@ def display_major_project():
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
 def submit_major_project():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='submit major project')
 
     from db.database import db_session
@@ -63,13 +65,14 @@ def submit_major_project():
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
 def major_project_review():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('api', action='review major project')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name) and user_name != 'loothelion':
+    if not ldap_is_eval_director(user_name):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()

@@ -31,7 +31,8 @@ dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
-    log = logger.new(request_id=str(uuid.uuid4()))
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+            request_id=str(uuid.uuid4()))
     log.info('frontend', action='display dashboard')
 
     # get user data
@@ -49,7 +50,7 @@ def display_dashboard():
     data['voting'] = True # FIXME: unimplemented
 
     # freshman shit
-    if ldap_is_intromember(user_name) or user_name == 'loothelion':
+    if ldap_is_intromember(user_name):
         freshman = {}
         freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
 
