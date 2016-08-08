@@ -1,0 +1,31 @@
+@media(max-width: 767px) {
+  .mobile-hide {
+    display: none;
+  }
+  .dashboard-user {
+    text-align: center;
+
+    .profile-image {
+      margin: default;
+    }
+  }
+  hr {
+    margin-top: 25px;
+  }
+}
+
+@media(min-width: 768px) {
+  .profile-image {
+    float: right;
+  }
+  hr {
+    margin-top: 10px;
+  }
+}
+
+@media(max-width: 767px) {
+  .eval-name,
+  .eval-uid {
+    text-align: center;
+  }
+}

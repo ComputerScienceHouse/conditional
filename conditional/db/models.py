@@ -12,12 +12,14 @@ class FreshmanAccount(Base):
     name = Column(String(64), nullable=False)
     eval_date = Column(Date, nullable=False)
     onfloor_status = Column(Boolean)
+    room_number = Column(Integer)
 
-    def __init__(self, name, onfloor):
+    def __init__(self, name, onfloor, room=None):
         self.name = name
         today = date.fromtimestamp(time.time())
         self.eval_date = today + timedelta(weeks=10)
         self.onfloor_status = onfloor
+        self.room_number = room
 
 class FreshmanEvalData(Base):
     __tablename__ = 'freshman_eval_data'
@@ -80,10 +82,12 @@ class TechnicalSeminar(Base):
     __tablename__ = 'technical_seminars'
     id = Column(Integer, primary_key=True)
     name = Column(String(128), nullable=False)
+    timestamp = Column(DateTime, nullable=False)
     active = Column(Boolean)
 
-    def __init__(self, name):
+    def __init__(self, name, timestamp):
         self.name = name
+        self.timestamp = timestamp
         self.active = True
 
 class MemberSeminarAttendance(Base):

@@ -1,106 +1,52 @@
 {% extends "nav.html" %}
-{% block extraHeader %}
-    <link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{% endblock %}
-{% block extraFooter %}
-    <script src="../static/js/libraries/moment.js"></script>
-    <script src="../static/js/libraries/bootstrap-material-datetimepicker.js"></script>
-    <script src="../static/js/attendance_hm.js"></script>
-{% endblock %}
 {% block body %}
-    <div class="container main">
-        <h3>House Meeting Attendance</h3>
-        <div style="padding-top:20px"></div>
-        <form name="hmAttendanceForm" id="hmAttendanceForm">
-            <!-- Meeting Type -->
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-body" style="padding-top:10px;">
-                            <div class="form-group is-empty">
-                                <label for="date" class=" control-label">Date</label>
-                                <input type="text" name="date" class="form-control" id="date" value="{{ date }}"/>
-                                <span class="material-input"></span>
-                            </div>
-                        </div>
-                    </div>
+<div class="container main">
+    <h3>House Meeting Attendance</h3>
+    <div style="padding-top:20px"></div>
+    <form data-module="hmForm">
+        <!-- Date -->
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding-top:10px;">
+                <div class="form-group is-empty">
+                    <label for="date" class=" control-label">Date</label>
+                    <input type="text" name="date" class="form-control" value="{{ date }}" data-module="datepicker" />
                 </div>
             </div>
-            <!-- Attendees -->
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading" style="padding-top:20px;">
-                            <h3 class="panel-title">Attendees</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid attendees-container" id="attendees">
-                                {% for m in members %}
-                                <div class="row" id="member-{{m['value']}}" data-member="{{m['value']}}">
-                                    <div class="col-xs-12 col-md-7">
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-2">
-                                                <div style="width: 75px; margin: auto;">
-                                                    <img class="eval-user-img" alt="{{ m['value'] }}"
-                                                         src="https://profiles.csh.rit.edu/image/{{ m['value'] }}"
-                                                         width="75" height="75"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-md-10 name-container">
-                                                <h3>
-                                                    {{ m['display'] }}
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-5">
-                                        <div class="btn-group btn-group-justified btn-group-raised attendance-picker"
-                                             data-toggle="buttons">
-                                            <label class="btn attendance-Attended btn-success active">
-                                                <input type="radio" name="attendance-{{ m['value'] }}"
-                                                       autocomplete="off" value="Attended"
-                                                       checked> Attended
-                                            </label>
-                                            <label class="btn attendance-Absent">
-                                                <input type="radio" name="attendance-{{ m['value'] }}"
-                                                       autocomplete="off" value="Absent">
-                                                Absent
-                                            </label>
-                                            <label class="btn attendance-Excused">
-                                                <input type="radio" name="attendance-{{ m['value'] }}"
-                                                       autocomplete="off" value="Excused">
-                                                Excused
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <a role="button" class="comment-trigger pull-right">
-                                                <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-                                                Add a comment
-                                            </a>
-                                            <div class="comment-field" style="display: none;">
-                                                <div class="form-group">
-                                                    <input type="text" class="form-control"
-                                                           id="comment-{{ m['value'] }}"
-                                                           placeholder="Comment">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-bottom: 1em;">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit">
-                                Submit Form
-                            </button>
-                        </div>
-                    </div>
+        </div>
+        <!-- Attendees -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Attendees</h3>
+            </div>
+            <div class="panel-body table-fill">
+                <div class="hm-search">
+                    <input class="form-control" type="text" placeholder="Quick Select" data-module="hmSearch" data-target="table.hm-attendance">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped no-bottom-margin hm-attendance" data-module="table" data-sort-column="0" data-sort-order="asc" data-paginated="false">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Present</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in members %}
+                            <tr>
+                                <td>
+                                    <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{m['value']}}"> {{m['display']}}
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="{{ m['value'] }}" autocomplete="off">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+        <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
+    </form>
+</div>
 {% endblock %}

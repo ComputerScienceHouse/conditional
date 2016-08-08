@@ -1,0 +1,54 @@
+.eval-info-label {
+  margin: 4px auto;
+  border-radius: .25em;
+  padding: .3em .6em .4em;
+  width: 100%;
+  max-width: 400px;
+  vertical-align: baseline;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 90%;
+  font-weight: 700;
+}
+
+.eval-user-img {
+  border-radius: 5px;
+}
+
+.eval-panel {
+  padding: 25px 20px 10px;
+}
+
+.col-sm-2 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.eval-name {
+  margin-bottom: 5px;
+  padding-top: 12px;
+}
+
+.eval-uid {
+  margin-top: 0;
+  color: #808080;
+}
+
+.spring-info {
+  padding-top: 10px;
+}
+
+.btn-expand-panel {
+  &,
+  &:hover,
+  &:focus,
+  &:active {
+    outline: 0;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    text-align: center;
+  }
+}

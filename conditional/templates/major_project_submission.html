@@ -1,116 +1,96 @@
 {% extends "nav.html" %}
-{% block extraFooter %}
-<script src="../static/js/major_project.js"></script>
-{% endblock %}
 {% block body %}
+
 <div class="container main">
-    <h3>Major Project Form</h3>
-    <div style="padding-top:20px"></div>
+    <h3 class="page-title">Major Project Form</h3>
     <form name="evalform" id="evalForm">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group label-floating is-empty">
-                            <label class="control-label" for="name">Project Name</label>
-                            <input class="form-control" id="name" name="name" type="text">
-                            <span class="material-input"></span>
-                        </div>
-                    </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="form-group label-floating is-empty">
+                    <label class="control-label" for="name">Project Name</label>
+                    <input class="form-control" id="name" name="name" type="text">
+                    <span class="material-input"></span>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group label-floating is-empty">
-                            <label class="control-label" for="description">Description</label>
-                            <textarea name="description" class="form-control" rows="3" id="description"></textarea>
-                            <span class="material-input"></span>
-                        </div>
-                    </div>
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding-top:20px;">
+                <div class="form-group label-floating is-empty">
+                    <label class="control-label" for="description">Description</label>
+                    <textarea name="description" class="form-control" rows="3" id="description"></textarea>
+                    <span class="material-input"></span>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <button class= "btn btn-raised btn-primary" style="width:100%;" id="submit" type="submit">Submit Major Project</button>
-            </div>
-        </div>
+        <button class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" id="submit" type="submit">Submit Major Project</button>
     </form>
-    <h3 style="padding-top:30px;">All Pending Major Projects</h3>
-    <div style="padding-top:20px"></div>
-    {% if major_projects_len <= 0 %}
-    <div class="panel panel-default">
+    <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
+    <=0 %} <div class="panel panel-default">
         <div class="panel-body">
             <p class="text-center">No Pending Major Projects</p>
         </div>
-    </div>
-    {% else %}
-    <div class="container-fluid" id="projects">
-        {% for p in major_projects %}
-        <div class="panel panel-default" id="project-{{p['id']}}" project_id="{{p['id']}}">
-            <div class="panel-body" style="padding-top:30px;">
-                <div class="container-fluid">
-                    <div class="col-xs-12 col-sm-12 col-md-12 vcenter">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-3 col-md-3 vcenter">
-                                <div style="margin:auto; width:100px">
-                                    <img class="eval-user-img" alt="{{p['username']}}" src="https://profiles.csh.rit.edu/image/{{p['username']}}" width="100" height="100" />
+</div>
+{% else %}
 
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-6 name-container vcenter">
-                                <div class="row">
-                                    <h3>
-                                        {{p['name']}}
-                                    </h3>
-                                </div>
-                                <div class="row">
-                                    <p>
-                                        {{p['username']}}
-                                    </p>
-                                </div>
-                            </div>
-                            {% if is_eval_director %}
-                            <div class="col-xs-12 col-sm-2 col-md-2 name-container vcenter">
-                                <div style="padding-bottom:15px;" class="row">
-                                    <button role="button" class="btn btn-raised btn-primary btn-success" style="width:100%;" id="pass-{{p['id']}}">
-                                        Pass
-                                    </button>
-                                </div>
-                                <div class="row">
-                                    <button role="button" class="btn btn-raised btn-primary btn-danger" style="width:100%;" id="fail-{{p['id']}}">
-                                        Fail
-                                    </button>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-
-                            <button class="btn btn-expand-panel" role="button"
-                                                                 data-toggle="collapse" href="#evalsCollapse-{{p['id']}}"
-                                                                                        aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
-
-                        </div>
-                    </div> 
-                    <div class="collapse" id="evalsCollapse-{{p['id']}}">
-                                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                                        {{p['description']}}
-                                        </div>
-                    </div>
+    {% for p in major_projects %}
+    <div class="panel panel-default" id="project-{{p['id']}}" project_id="{{p['id']}}">
+        <div class="panel-body">
+                <div class="col-xs-8 col-sm-10">
+                    <h4>{{p['proj_name']}}</h4>
+                    <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
+                    {{p['name']}} ({{p['username']}})
                 </div>
-
-            </div>
-
+                {% if is_eval_director %}
+                <div class="col-xs-4 col-sm-2">
+                    <div class="btn-group">
+                        {% if p['status'] == 'Passed' %}
+                        <a href="#" class="btn btn-success dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
+                        {% elif p['status'] == 'Failed' %}
+                        <a href="#" class="btn btn-danger dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
+                        {% else %}
+                        <a href="#" class="btn btn-warning dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
+                        {% endif %}
+                                {{p['status']}}
+                                <span class="caret"></span>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="dropdown-list-item" id="pass-{{p['id']}}">Passed</div>
+                            </li>
+                            <li>
+                                <div class="dropdown-list-item" id="fail-{{p['id']}}">Failed</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--
+                        <button role="button" class="btn btn-success" id="pass-{{p['id']}}">
+                            Pass
+                        </button>
+                        <button role="button" class="btn btn-danger" id="fail-{{p['id']}}">
+                            Fail
+                        </button>
+                        -->
+                </div>
+                {% else %}
+                <div class="col-xs-4 col-sm-2">
+                    {% if p['status'] == 'Passed' %}
+                        <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-ok green"> </span></h5>
+                        {% elif p['status'] == 'Failed' %}
+                        <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-remove red"> </span></h5>
+                        {% else %}
+                        <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-hourglass yellow"> </span></h5>
+                        {% endif %}
+                </div>
+                {% endif %}
+                <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+                <div class="collapse" id="evalsCollapse-{{p['id']}}">
+                    {{p['description']}}
+                </div>
         </div>
-        {% endfor %}
     </div>
-    {% endif %}
+    {% endfor %}
+
+{% endif %}
 
 </div>
 {% endblock %}

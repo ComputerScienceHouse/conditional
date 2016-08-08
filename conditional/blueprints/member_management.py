@@ -22,6 +22,9 @@ from util.ldap import ldap_set_active
 from util.ldap import ldap_set_housingpoints
 from util.ldap import ldap_get_room_number
 from util.ldap import ldap_get_housing_points
+from util.ldap import ldap_get_active_members
+from util.ldap import ldap_get_current_students
+from util.ldap import ldap_get_name
 from util.ldap import ldap_is_active
 from util.ldap import ldap_is_onfloor
 from util.ldap import __ldap_add_member_to_group__ as ldap_add_member_to_group
@@ -30,6 +33,8 @@ from util.flask import render_template
 
 import structlog
 import uuid
+import csv
+import io
 
 logger = structlog.get_logger()
 
@@ -45,12 +50,45 @@ def display_member_management():
 
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval director", 403
-
+        
+    members = [m['uid'] for m in ldap_get_current_students()]
+    member_list = []
+    
+    for member_uid in members:
+        uid = member_uid[0].decode('utf-8')
+        name = ldap_get_name(uid)
+        active = ldap_is_active(uid)
+        onfloor = ldap_is_onfloor(uid)
+        room_number = ldap_get_room_number(uid)
+        room = room_number if room_number != "N/A" else ""
+        hp = ldap_get_housing_points(uid)
+        member_list.append({
+            "uid": uid,
+            "name": name,
+            "active": active,
+            "onfloor": onfloor,
+            "room": room,
+            "hp": hp
+        })
+        
+    freshmen = FreshmanAccount.query
+    freshmen_list = []
+    
+    for freshman_user in freshmen:
+        name = freshman_user.name
+        onfloor = freshman_user.onfloor_status
+        room = freshman_user.room_number
+        freshmen_list.append({
+            "name": name,
+            "onfloor": onfloor,
+            "room": room
+        })
+        
     settings = EvalSettings.query.first()
     return render_template(request, "member_management.html",
             username=user_name,
-            housing_form_active=settings.housing_form_active,
-            intro_form_active=settings.intro_form_active,
+            active=member_list,
+            freshmen=freshmen_list,
             site_lockdown=settings.site_lockdown)
 
 @member_management_bp.route('/manage/settings', methods=['POST'])
@@ -98,7 +136,7 @@ def member_management_adduser():
             request_id=str(uuid.uuid4()))
     log.info('api', action='add fid user')
 
-    from db.database import db_session
+    from database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -115,6 +153,41 @@ def member_management_adduser():
     db_session.flush()
     db_session.commit()
     return jsonify({"success": True}), 200
+    
+    
+@member_management_bp.route('/manage/uploaduser', methods=['POST'])
+def member_management_uploaduser():
+    from db.database import db_session
+    
+    user_name = request.headers.get('x-webauth-user')
+    
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+        
+    f = request.files['file']
+    if not f:
+        return "No file", 400
+    
+    try:
+        stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
+        csv_input = csv.reader(stream)
+    
+        for new_user in csv_input:
+            name = new_user[0]
+            onfloor_status = new_user[1]
+            
+            if new_user[2]:
+                room_number = new_user[2]
+            else:
+                room_number = None
+            
+            db_session.add(FreshmanAccount(name, onfloor_status, room_number))
+            
+        db_session.flush()
+        db_session.commit()
+        return jsonify({"success": True}), 200
+    except:
+        return "file could not be processed", 400
 
 @member_management_bp.route('/manage/edituser', methods=['POST'])
 def member_management_edituser():
@@ -313,6 +386,9 @@ def member_management_upgrade_user():
 
     if acct.onfloor_status:
         db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
+        
+    if acct.room_number:
+        ldap_set_roomnumber(uid, room_number)
 
     # XXX this might fail horribly #yoloswag
     db_session.delete(acct)

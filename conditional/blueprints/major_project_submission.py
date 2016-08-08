@@ -5,6 +5,7 @@ from flask import jsonify
 from db.models import MajorProject
 
 from util.ldap import ldap_is_eval_director
+from util.ldap import ldap_get_name
 from util.flask import render_template
 
 import structlog
@@ -27,12 +28,13 @@ def display_major_project():
     major_projects = [
             {
                 'username': p.uid,
-                'name': p.name,
+                'name': ldap_get_name(p.uid),
+                'proj_name': p.name,
                 'status': p.status,
                 'description': p.description,
                 'id': p.id
             } for p in
-        MajorProject.query.filter(MajorProject.status == "Pending")]
+        MajorProject.query]
 
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format

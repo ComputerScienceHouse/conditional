@@ -1,182 +1,212 @@
-{% extends "nav.html" %}
-{% block extraHeader %}
-<link href="../static/css/selectize.css" rel="stylesheet">
-<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
-<link href="../static/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{% endblock %}
-{% block extraFooter %}
-<script src="../static/js/libraries/selectize.js"></script>
-<script src="../static/js/member_management.js"></script>
-{% endblock %}
-{% block body %}
+{% extends "nav.html" %} {% block body %}
 <div class="container main">
+    {% if is_eval_director %}
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Site Management</h3>
+            <h3 class="panel-title">Add Users</h3>
         </div>
         <div class="panel-body">
-                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Housing Form
-                                    <input
-                                        type="checkbox"
-                                        style="margin-right:5px"
-                                        name="housing_form_checkbox"
-                                        {% if housing_form_active %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                </label>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 remove-padding">
+                        <form action="/manage/uploaduser" id="upload_user" class="dropzone" data-module="dropzone">
+                            <div class="dz-message">
+                                <img src="../images/user_upload.svg" width="72px">
+                                <div class="upload-title">Mass User Upload</div>
+                                <div class="upload-sub">Drag file here or click to upload.</div>
                             </div>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Introductory Form
-                                    <input
-                                        type="checkbox"
-                                        style="margin-right:5px"
-                                        name="intro_form_checkbox"
-                                        {% if intro_form_active %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                </label>
+                        </form>
+                    </div>
+                    <div class="col-md-6 member-form">
+                        <form>
+                            <div class="form-group">
+                                <label class="control-label" for="name">Member Name</label>
+                                <input class="form-control" id="name" name="name" type="text">
+                                <span class="material-input"></span>
                             </div>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <div class="togglebutton" style="text-align:center">
-                                <label class="togglebutton"> Site Lockdown
-                                    <input
-                                        type="checkbox"
-                                        style="margin-right:5px"
-                                        name="site_lockdown_checkbox"
-                                        {% if site_lockdown %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                </label>
+                            <div class="col-xs-8 remove-padding">
+                                <div class="form-group">
+                                    <label class="control-label" for="room">Room Number</label>
+                                    <input class="form-control" id="roome" name="room" type="text">
+                                    <span class="material-input"></span>
+                                </div>
                             </div>
-                        </div>
+                            <div class="col-xs-4 onfloor-box">
+                                <div class="form-group">
+                                    <label>
+                                    <input id="onfloor" name="onfloor" type="checkbox">
+                                    On-Floor</label>
+                                </div>
+                            </div>
+                            <button class= "btn btn-raised btn-primary user-submit" id="submit" type="submit">Create New User</button>
+                        </form>
                     </div>
                 </div>
-                       <!--
-            <div class="col-xs-12 col-md-4">
-                <h3>Housing Form</h3>
-                <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                        <input type="radio" name="housing_form" autocomplete="off" value="1" {% if housing_form_active %} checked {% endif %}> Unlocked </label>
-                    <label class="btn btn-danger">
-                        <input type="radio" name="housing_form" autocomplete="off" value="0" {% if not housing_form_active %} checked {% endif %}> Locked </label>
-                </div>
             </div>
-            <div class="col-xs-12 col-md-4">
-                <h3>Intro Evals Form</h3>
-                <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                        <input type="radio" name="intro_form" autocomplete="off" value="1" checked {% if intro_form_active %} checked {% endif %}> Unlocked </label>
-                    <label class="btn btn-danger">
-                        <input type="radio" name="intro_form" autocomplete="off" value="0" {% if not intro_form_active %} checked {% endif %}> Locked </label>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-4">
-                <h3>Site Lockdown</h3>
-                <div class="btn-group btn-group-justified btn-group-raised" data-toggle="buttons">
-                    <label class="btn btn-success active">
-                        <input type="radio" name="site_lockdown" autocomplete="off" value="0" checked {% if not site_lockdown %} checked {% endif %}> Unlocked </label>
-                    <label class="btn btn-danger">
-                        <input type="radio" name="site_lockdown" autocomplete="off" value="1" {% if site_lockdown %} checked {% endif %}> Locked </label>
-                </div>
-                </div> 
-            <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-settings">Submit</button>
-            -->
         </div>
     </div>
+    {% endif %}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Member Management</h3>
         </div>
-        <div class="panel-body">
-            <div class="container-fluid">
-            <div class="row">
-                <div class="form-group is-empty">
-                    <label for="likes" class=" control-label" id="userLabel">User</label>
-                    <input type="text" name="user" class="form-control" id="user"/>
-                    <span class="material-input"></span>
-                </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="0" data-sort-order="asc" data-length-changable="true">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Active</th>
+                            <th>On Floor</th>
+                            <th>Room</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in active %}
+                        <tr>
+                            <td>
+                                <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"> {{m['name']}}
+                            </td>
+                            <td>
+                                {% if m['active'] %} &#x2605; {% endif %}
+                            </td>
+                            <td>
+                                {% if m['onfloor'] %} &#10003; {% endif %}
+                            </td>
+                            <td>{{m['room']}}</td>
+                            <td>{{m['hp']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div id="financial-form" class="row">
-                <div class="checkbox">
-                    <label><input type="checkbox" id="dues_checkbox_financial"> Paid Dues</label>
-                </div>
-                <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-financial">Submit</button>
+        </div>
+    </div>
+    {% if is_eval_director %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Freshmen Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="0" data-sort-order="asc" data-length-changable="true">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>On Floor</th>
+                            <th>Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in freshmen %}
+                        <tr>
+                            <td>{{f['name']}}</td>
+                            <td>
+                                {% if f['onfloor'] %} &#10003; {% endif %}
+                            </td>
+                            <td>{{f['room']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div id="eval-form" class="row">
-                <div class="checkbox">
-                    <label><input type="checkbox" id="dues_checkbox_eval"> Paid Dues</label>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Edit User</h4>
                 </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" id="onfloor_checkbox_eval"> Onfloor Status</label>
-                </div>
-                <div class="form-group is-empty">
-                    <label for="likes" class=" control-label" id="roomNum-evalLabel">Room Number</label>
-                    <input type="text" name="roomNum-eval" class="form-control" id="roomNum-eval"/>
-                    <span class="material-input"></span>
-                </div>
-                <div class="form-group is-empty">
-                    <label for="likes" class=" control-label" id="housePts-evalLabel">Housing Points</label>
-                    <input type="text" name="housePts-eval" class="form-control" id="housePts-eval"/>
-                    <span class="material-input"></span>
-                </div>
-            </div>
-            <div id="fid-form" class="row">
-                <div class="form-group is-empty">
-                    <label for="likes" class=" control-label" id="uid-fidLabel">Username</label>
-                    <input type="text" name="uid-fid" class="form-control" id="uid-fid"/>
-                    <span class="material-input"></span>
-                </div>
-                <div class="form-group is-empty">
-                    <label for="likes" class=" control-label" id="sigsMissed-fidLabel">Signatures Missed</label>
-                    <input type="text" name="sigsMissed-fid" class="form-control" id="sigsMissed-fid"/>
-                    <span class="material-input"></span>
-                </div>
-                <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-fid">Submit</button>
-            </div>
-            </div>
-            <div class="container-fluid">
-            <div id="hm_template0" class="row">
-                <div class="row" id="member-0">
-                    <div class="col-md-12">
-                        <h4 id="date-0"></h4>
-                       <div class="checkbox">
-                            <label><input type="checkbox" id="excused-0"> Excused</label>
+                <div class="modal-body">
+                    <div class="row user-edit-row">
+                        <div class="col-xs-8">
+                            <label class="control-label" for="name">Member Name</label>
+                            <input class="form-control" id="name" name="name" type="text">
+                            <span class="material-input"></span>
                         </div>
-                        <div>
-                            <a role="button" class="comment-trigger pull-right">
-                                <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-                                Add a comment
-                            </a>
-                            <div class="comment-field" style="display: none;">
-                                <div class="form-group">
-                                    <input type="text" class="form-control"
-                                           id="comment-0"
-                                           placeholder="Comment">
-                                </div>
-                            </div>
-                            
+                        <div class="col-xs-4">
+                            <label class="control-label" for="name">Room</label>
+                            <input class="form-control" id="name" name="name" type="text">
+                            <span class="material-input"></span>
                         </div>
                     </div>
+
+                    <div class="row user-edit-row">
+                        <div class="col-xs-4">
+                            <div class="form-group align-center">
+                                <label>
+                                    <input id="onfloor" name="onfloor" type="checkbox">
+                                    On-Floor
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group align-center">
+                                <label>
+                                    <input id="onfloor" name="onfloor" type="checkbox">
+                                    Paid Dues
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group align-center">
+                                Points: <input class="form-control input-sm hp-input" id="inputsm" type="number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="lead">Missed House Meetings</p>
+                    <div class="row hm-wrapper">
+                        <div class="col-xs-4">
+                            <h6 class="hm-date">07/31/2016</h6>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group align-center">
+                                <label>
+                                    <input id="onfloor" name="onfloor" type="checkbox">
+                                    Excused
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="">
+                                <button type="button" class="btn btn-outline-secondary btn-sm hm-present-btn">
+                                <span class="glyphicon glyphicon-ok green" style="padding-right:5px"></span>Mark Present
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="form-group align-center">
+                                <input class="form-control hm-reason" placeholder="Reason" id="reason" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>
-        <div id="missed_hms"></div>
-        <button role="button" class="btn btn-raised btn-primary" style="width:100%;" id="submit-eval">Submit</button>
-    </div>
     </div>
 </div>
-</div>
+
 {% endblock %}
+
+<!--
+<div class="material-switch" style="float:right">
+    <div class="switch-label">Site Lockdown</div>
+    <input type="checkbox" id="site_lockdown_checkbox" name="site_lockdown_checkbox" {% if site_lockdown %} checked {% endif %}>
+    <label for="site_lockdown_checkbox" class="label-primary"></label>
+</div>
+-->

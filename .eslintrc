@@ -1,0 +1,16 @@
+{
+    "extends": "google",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true
+        }
+    },
+    "env": {
+        "browser": true,
+        "es6": true,
+        "commonjs": true,
+        "jquery": true
+    }
+}

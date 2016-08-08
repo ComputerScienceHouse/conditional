@@ -1,0 +1,48 @@
+@import '../partials/variables';
+
+.dtp {
+  div {
+    &.dtp-date,
+    &.dtp-time {
+      background: $primary-color;
+    }
+
+    &.dtp-actual-year {
+      color: lighten($primary-color, 50%);
+    }
+  }
+
+  .p10 {
+    > a {
+      color: lighten($primary-color, 50%);
+    }
+  }
+
+  table {
+    &.dtp-picker-days {
+      tr {
+        td {
+          a {
+            &.selected {
+              background: $primary-color;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .dtp-content {
+    .dtp-date-view {
+      header {
+        &.dtp-header {
+          background: darken($primary-color, 5%);
+        }
+      }
+    }
+  }
+
+  .dtp-buttons {
+    background: #fff;
+  }
+}

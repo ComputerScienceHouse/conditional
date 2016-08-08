@@ -15,8 +15,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
@@ -67,6 +65,15 @@ target/
 # OS X
 .DS_Store
 
+# Cloud9 IDE
+/.c9
+
 # Sensitive project files
-config.json
-data.db
+/config.json
+/data.db
+
+# Frontend dependencies
+/node_modules
+
+# Built frontend files
+/conditional/static/*

@@ -170,7 +170,8 @@ def display_attendance_ts():
 
     return render_template(request,
                            'attendance_ts.html',
-                           username = user_name)
+                           username = user_name,
+                           date = datetime.utcnow().strftime("%Y-%m-%d"))
 
 @attendance_bp.route('/attendance_hm')
 def display_attendance_hm():
@@ -240,7 +241,7 @@ def submit_seminar_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eboard(user_name)':
+    if not ldap_is_eboard(user_name):
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -248,8 +249,10 @@ def submit_seminar_attendance():
     seminar_name = post_data['name']
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
+    timestamp = post_data['timestamp']
 
-    seminar = TechnicalSeminar(seminar_name)
+    timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
+    seminar = TechnicalSeminar(seminar_name, timestamp)
 
     db_session.add(seminar)
     db_session.flush()
@@ -287,37 +290,35 @@ def submit_house_attendance():
 
     post_data = request.get_json()
 
-    m_attendees = post_data['members']
-    f_attendees = post_data['freshmen']
-    timestamp = post_data['timestamp']
-
-    timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
+    timestamp = datetime.strptime(post_data['timestamp'], "%Y-%m-%d")
 
     meeting = HouseMeeting(timestamp)
 
     db_session.add(meeting)
     db_session.flush()
     db_session.refresh(meeting)
+    
+    if "members" in post_data:
+        for m in post_data['members']:
+            logger.info('backend',
+                action=("gave %s (%s) to %s for %s" % (m['status'] m['uid'], timestamp.strftime("%Y-%m-%d")))
+            )
+            db_session.add(MemberHouseMeetingAttendance(
+                            m['uid'],
+                            meeting.id,
+                            None,
+                            m['status']))
 
-    for m in m_attendees:
-        logger.info('backend',
-            action=("gave %s (%s) to %s for %s" % (m['status'], m['excuse'], m['uid'], timestamp.strftime("%Y-%m-%d")))
-        )
-        db_session.add(MemberHouseMeetingAttendance(
-                        m['uid'],
-                        meeting.id,
-                        m['excuse'],
-                        m['status']))
-
-    for f in f_attendees:
-        logger.info('backend',
-            action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['excuse'], f['id'], timestamp.strftime("%Y-%m-%d")))
-        )
-        db_session.add(FreshmanHouseMeetingAttendance(
-                        f['id'],
-                        meeting.id,
-                        f['excuse'],
-                        f['status']))
+    if "freshmen" in post_data:
+        for f in post_data['freshmen']:
+            logger.info('backend',
+                action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
+            )
+            db_session.add(FreshmanHouseMeetingAttendance(
+                            f['id'],
+                            meeting.id,
+                            None,
+                            f['status']))
 
     db_session.commit()
     return jsonify({"success": True}), 200

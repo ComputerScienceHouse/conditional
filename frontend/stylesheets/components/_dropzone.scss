@@ -1,0 +1,315 @@
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+@include keyframes(passing-through) {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  30%,
+  70% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}
+
+@include keyframes(slide-in) {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  30% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@include keyframes(pulse) {
+  0% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: scale(1);
+  }
+}
+.dropzone {
+  $image-size: 120px;
+  $image-border-radius: 20px;
+
+  margin: 15px 15px 10px;
+  border: 2px dashed rgba(0, 0, 0, .1);
+  border-radius: 20px;
+  background: #fff;
+  padding: 20px;
+  min-height: 150px;
+
+  box-sizing: border-box;
+
+  * {
+    box-sizing: border-box;
+  }
+  &.dz-clickable {
+    cursor: pointer;
+    * {
+      cursor: default;
+    }
+    .dz-message {
+      &,
+      * {
+        cursor: pointer;
+      }
+    }
+  }
+  &.dz-started {
+    .dz-message {
+      display: none;
+    }
+  }
+  &.dz-drag-hover {
+    border-style: solid;
+    .dz-message {
+      opacity: .5;
+    }
+  }
+  .dz-message {
+    margin: 2em 0;
+    text-align: center;
+  }
+  .dz-preview {
+    display: inline-block;
+    position: relative;
+    margin: 16px;
+    min-height: 100px;
+    vertical-align: top;
+    &:hover {
+      // Making sure that always the hovered preview element is on top
+      z-index: 1000;
+      .dz-details {
+        opacity: 1;
+      }
+
+      .dz-image {
+        // opacity: 0.8;
+        img {
+          transform: scale(1.05, 1.05); // Getting rid of that white bleed-in
+
+          filter: blur(8px); // Getting rid of that white bleed-in
+        }
+      }
+    }
+    &.dz-file-preview {
+      .dz-image {
+        border-radius: $image-border-radius;
+        background: linear-gradient(to bottom, #eee, #ddd);
+        background-color: #999;
+      }
+      .dz-details {
+        opacity: 1;
+      }
+    }
+    &.dz-image-preview {
+      background: #fff;
+      .dz-details {
+        transition: opacity .2s linear;
+      }
+    }
+    .dz-remove {
+      display: block;
+      border: 0;
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    .dz-details {
+      $background-color: #444;
+      $width: 120px;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: 20;
+      padding: 2em 1em;
+      min-width: 100%;
+      max-width: 100%;
+      text-align: center;
+      line-height: 150%;
+      color: rgba(0, 0, 0, .9);
+      font-size: 13px;
+      .dz-size {
+        margin-bottom: 1em;
+        font-size: 16px;
+      }
+      .dz-filename {
+        white-space: nowrap;
+        &:hover {
+          span {
+            border: 1px solid rgba(200, 200, 200, .8);
+            background-color: rgba(255, 255, 255, .8);
+          }
+        }
+        &:not(:hover) {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          span {
+            border: 1px solid transparent;
+          }
+        }
+      }
+      .dz-filename,
+      .dz-size {
+        span {
+          border-radius: 3px;
+          background-color: rgba(255, 255, 255, .4);
+          padding: 0 .4em;
+        }
+      }
+    }
+    .dz-image {
+      display: block;
+      position: relative;
+      z-index: 10;
+      border-radius: $image-border-radius;
+      width: $image-size;
+      height: $image-size;
+      overflow: hidden;
+      img {
+        display: block;
+      }
+    }
+    &.dz-success {
+      .dz-success-mark {
+        animation: passing-through 3s cubic-bezier(.77, 0, .175, 1);
+      }
+    }
+    &.dz-error {
+      .dz-error-mark {
+        animation: slide-in 3s cubic-bezier(.77, 0, .175, 1);
+        opacity: 1;
+      }
+      .dz-error-message {
+        display: block;
+      }
+      &:hover {
+        .dz-error-message {
+          opacity: 1;
+
+          pointer-events: auto;
+        }
+      }
+    }
+    .dz-success-mark,
+    .dz-error-mark {
+      $image-width: 54px;
+      $image-height: 54px;
+
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      opacity: 0;
+      z-index: 500;
+      margin-top: -($image-height / 2);
+      margin-left: -($image-width / 2);
+
+      pointer-events: none;
+      svg {
+        display: block;
+        width: $image-width;
+        height: $image-height;
+      }
+    }
+    &.dz-processing {
+      .dz-progress {
+        transition: opacity .2s linear;
+        opacity: 1;
+      }
+    }
+    &.dz-complete {
+      .dz-progress {
+        transition: opacity .4s ease-in;
+        opacity: 0;
+      }
+    }
+    &:not(.dz-processing) {
+      .dz-progress {
+        animation: pulse 6s ease infinite;
+      }
+    }
+    .dz-progress {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      // Fix for chrome bug: https://code.google.com/p/chromium/issues/detail?id=157218
+      transform: scale(1);
+      opacity: 1;
+      z-index: 1000;
+      margin-top: -8px;
+      margin-left: -40px;
+      border-radius: 8px;
+      // border: 2px solid #333;
+      background: rgba(255, 255, 255, .9);
+      width: 80px;
+      height: 16px;
+      overflow: hidden;
+
+      pointer-events: none;
+      .dz-upload {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        transition: width 300ms ease-in-out;
+        background: linear-gradient(to bottom, #666, #444);
+        background-color: #333;
+        width: 0;
+      }
+    }
+    .dz-error-message {
+      $width: $image-size + 20px;
+      $color: rgb(190, 38, 38);
+
+      display: none;
+      position: absolute;
+      top: $image-size + 10px;
+      left: -10px;
+      transition: opacity .3s ease;
+      opacity: 0;
+      z-index: 1000;
+      border-radius: 8px;
+      background: linear-gradient(to bottom, $color, darken($color, 5%));
+      background-color: $color;
+      padding: .5em 1.2em;
+      width: $width;
+      color: #fff;
+      font-size: 13px;
+
+      pointer-events: none;
+      // The triangle pointing up
+      &::after {
+        position: absolute;
+        top: -6px;
+        left: $width / 2 - 6px;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid $color;
+        border-left: 6px solid transparent;
+        width: 0;
+        height: 0;
+        content: '';
+      }
+    }
+  }
+}

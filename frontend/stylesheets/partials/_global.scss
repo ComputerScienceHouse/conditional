@@ -1,0 +1,56 @@
+.sub-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.table-fill {
+  padding: 0;
+
+  td,
+  th {
+    &:first-of-type {
+      padding-left: 15px !important;
+    }
+    &:last-of-type {
+      padding-right: 15px !important;
+    }
+  }
+}
+
+.no-bottom-margin {
+  margin-bottom: 0;
+}
+
+.glyphicon {
+  &.green {
+    color: #4da74d;
+  }
+
+  &.red {
+    color: #cb4b4b;
+  }
+
+  &.yellow {
+    color: #f1c40f;
+  }
+}
+
+.danger {
+  background-color: #ff262d;
+}
+
+.warning {
+  background-color: #ff3207;
+}
+
+.success {
+  background-color: #00b44a;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.page-title {
+  margin: 20px 0 30px;
+}

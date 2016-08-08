@@ -1,0 +1,27 @@
+.hm-search {
+  margin: 20px;
+}
+
+.hm-attendance {
+  th {
+    :nth-of-type(2) {
+      text-align: center;
+    }
+  }
+
+  td {
+    :first-of-type {
+      font-size: 125%;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+
+    :nth-of-type(2) {
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
+}

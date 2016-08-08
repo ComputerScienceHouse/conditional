@@ -125,7 +125,9 @@ def migrate_models():
 
     i = 0
     for t_sem in tech_sems:
-        sem = models.TechnicalSeminar(t_sem)
+        # TODO FIXME: Is there a timestamp we can migrate for seminars?
+        from datetime import datetime
+        sem = models.TechnicalSeminar(t_sem, datetime.now())
         db_session.add(sem)
         db_session.flush()
         db_session.refresh(sem)

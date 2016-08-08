@@ -1,30 +1,21 @@
-{% extends "nav.html" %}
-{% block extraHeader %}
-<link href="../static/css/selectize.css" rel="stylesheet">
-<link href="../static/css/selectize-bootstrap3.css" rel="stylesheet">
-{% endblock %}
-{% block extraFooter %}
-<script src="../static/js/libraries/selectize.js"></script>
-<script src="../static/js/attendance_ts.js"></script>
-{% endblock %}
-{% block body %}
+{% extends "nav.html" %} {% block body %}
 <div class="container main">
-
-
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Housing Queue</h3>
                 </div>
-                <div class="panel-body table-fill" >
+                <div class="panel-body table-fill">
                     <div class="table-responsive">
-                        <table class="table table-striped no-bottom-margin">
-                            <tbody>
+                        <table class="table table-striped no-bottom-margin" data-module="table" data-paginated="false">
+                            <thead>
                                 <tr>
                                     <th>Member</th>
                                     <th>Housing Points</th>
                                 </tr>
+                            </thead>
+                            <tbody>
                                 {% for m in queue %}
                                 <tr>
                                     <td>{{m['name']}}</td>
@@ -44,29 +35,25 @@
                 </div>
                 <div class="panel-body table-fill">
                     <div class="table-responsive">
-                    <table class="table table-striped no-bottom-margin">
-                        <tr>
-                            <th>Room</th>
-                            <th>Occupants</th>
-                        </tr>
-                        {% for room in room_list %}
-                        <tr>
-                            {% if room != "N/A" %}
-                            <td><h3 style="padding-left:20px">{{room}}</h3></td>
-                            <td>
+                        <table class="table table-striped no-bottom-margin">
+                            <tr>
+                                <th>Room</th>
+                                <th>Occupants</th>
+                            </tr>
+                            {% for room in room_list %}
+                            <tr>
+                                {% if room != "N/A" %}
+                                <td>
+                                    <h3 class="room-number">{{room}}</h3></td>
+                                <td>
                                     {% for m in housing[room] %}
-                                    <p>{{m}}</p>
+                                    <p class="room-name">{{m}}</p>
                                     {% endfor %}
                                 </td>
-                                {% endif %}
-                                {% endfor %}
-
-                    </table>
-                </div>
+                                {% endif %} {% endfor %}
+                        </table>
+                    </div>
                 </div>
             </div>
-
-
-
         </div>
         {% endblock %}

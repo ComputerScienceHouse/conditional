@@ -2,7 +2,6 @@ Flask
 itsdangerous
 Jinja2
 MarkupSafe
-psycopg2
 pyldap
 SQLAlchemy
 Werkzeug
