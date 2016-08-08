@@ -301,7 +301,7 @@ def submit_house_attendance():
     if "members" in post_data:
         for m in post_data['members']:
             logger.info('backend',
-                action=("gave %s (%s) to %s for %s" % (m['status'] m['uid'], timestamp.strftime("%Y-%m-%d")))
+                action=("gave %s to %s for %s house meeting" % (m['status'], m['uid'], timestamp.strftime("%Y-%m-%d")))
             )
             db_session.add(MemberHouseMeetingAttendance(
                             m['uid'],
@@ -312,7 +312,7 @@ def submit_house_attendance():
     if "freshmen" in post_data:
         for f in post_data['freshmen']:
             logger.info('backend',
-                action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
+                action=("gave %s to freshman-%s for %s house meeting" % (f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
             )
             db_session.add(FreshmanHouseMeetingAttendance(
                             f['id'],

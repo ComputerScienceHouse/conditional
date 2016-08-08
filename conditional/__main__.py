@@ -79,7 +79,7 @@ def web_main():
         db_session.flush()
         db_session.commit()
 
-    logger.info('conditonal started')
+    logger.info('conditional started')
     app.run(**json_config['flask'])
 
 if __name__ == '__main__':

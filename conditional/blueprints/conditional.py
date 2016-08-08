@@ -83,7 +83,7 @@ def conditional_review():
     cid = post_data['id']
     status = post_data['status']
 
-    logger.info(action="updated conditonal-%s to %s" % (cid, status))
+    logger.info(action="updated conditional-%s to %s" % (cid, status))
     Conditional.query.filter(
         Conditional.id == cid).\
         update(
