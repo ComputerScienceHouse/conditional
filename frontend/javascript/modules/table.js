@@ -8,14 +8,16 @@ export default class Table {
 
     // Set options based on data attributes
     this.paginated = !this.table.dataset.paginated === 'false';
-    this.sortColumn = _.isNaN(this.table.dataset.sortColumn) ?
+    this.sortColumn = (_.isNil(this.table.dataset.sortColumn) ||
+                        _.isNaN(this.table.dataset.sortColumn)) ?
                         1 : this.table.dataset.sortColumn;
     this.sortOrder = this.table.dataset.sortOrder === "asc" ? "asc" : "desc";
     this.lengthChangable = this.table.dataset.lengthChangable === 'true';
 
     // Just remove the search input from the DOM instead of disabling it
-    if (this.table.dataset.searchable !== 'true') {
-      this.domOptions = "lrtip";
+    this.domOptions = "lrtip";
+    if (this.table.dataset.searchable === 'true') {
+      this.domOptions = "ltrtip";
     }
 
     this.render();
