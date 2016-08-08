@@ -297,26 +297,28 @@ def submit_house_attendance():
     db_session.add(meeting)
     db_session.flush()
     db_session.refresh(meeting)
+    
+    if "members" in post_data:
+        for m in post_data['members']:
+            logger.info('backend',
+                action=("gave %s (%s) to %s for %s" % (m['status'] m['uid'], timestamp.strftime("%Y-%m-%d")))
+            )
+            db_session.add(MemberHouseMeetingAttendance(
+                            m['uid'],
+                            meeting.id,
+                            None,
+                            m['status']))
 
-    for m in m_attendees:
-        logger.info('backend',
-            action=("gave %s (%s) to %s for %s" % (m['status'] m['uid'], timestamp.strftime("%Y-%m-%d")))
-        )
-        db_session.add(MemberHouseMeetingAttendance(
-                        m['uid'],
-                        meeting.id,
-                        None,
-                        m['status']))
-
-    for f in f_attendees:
-        logger.info('backend',
-            action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
-        )
-        db_session.add(FreshmanHouseMeetingAttendance(
-                        f['id'],
-                        meeting.id,
-                        None,
-                        f['status']))
+    if "freshmen" in post_data:
+        for f in post_data['freshmen']:
+            logger.info('backend',
+                action=("gave %s (%s) to freshman-%s for %s" % (f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
+            )
+            db_session.add(FreshmanHouseMeetingAttendance(
+                            f['id'],
+                            meeting.id,
+                            None,
+                            f['status']))
 
     db_session.commit()
     return jsonify({"success": True}), 200
