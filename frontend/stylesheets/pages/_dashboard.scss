@@ -1,29 +1,29 @@
 .dashboard-user {
-    .profile-image {
-        width: 100%;
-        max-width: 200px;
-        border-radius: 2px;
-    }
-    .panel-inner-padding {
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 10px;
-    }
-    .username {
-        margin-top: 15px;
-        margin-bottom: 5px;
-    }
-    .email {
-        margin-top: 5px;
-    }
+  .profile-image {
+    border-radius: 2px;
+    width: 100%;
+    max-width: 200px;
+  }
+  .panel-inner-padding {
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+  }
+  .username {
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+  .email {
+    margin-top: 5px;
+  }
 }
 
 .title {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .dashboard-grid {
-    .masonry-item {
-        width: 49%;
-    }
+  .masonry-item {
+    width: 49%;
+  }
 }

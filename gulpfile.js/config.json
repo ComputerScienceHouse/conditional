@@ -11,7 +11,7 @@
     },
 
     "watch": {
-      "tasks": ["images", "css", "eslint"],
+      "tasks": ["images", "css", "csscomb", "eslint", "sasslint"],
       "paths": ["./conditional/templates"]
     },
 
@@ -41,7 +41,18 @@
 
     "eslint": {
       "src": "javascript",
-      "extensions": ["js"]
+      "extensions": ["js", "json"]
+    },
+    
+    "sasslint": {
+      "src": "stylesheets",
+      "exclude": ["components/sweet-alert/**"],
+      "extensions": ["sass", "scss"]
+    },
+    
+    "csscomb": {
+      "src": "stylesheets",
+      "extensions": ["sass", "scss"]
     },
 
     "css": {

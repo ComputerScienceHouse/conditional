@@ -2,49 +2,52 @@
 // 2014 (c) - Tristan Edwards
 // github.com/t4t5/sweetalert
 
-@import "sweet-alert-animations";
-@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/forms";
-@import "ball-fall";
+@import 'sweet-alert-animations';
+@import './node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/forms';
+@import 'ball-fall';
 
-body.stop-scrolling {
-  height: 100%;
-  overflow: hidden;
+body {
+  .stop-scrolling {
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 .sweet-overlay {
-  background-color: rgba(0, 0, 0, 0.4);
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
   display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: $zindex-modal;
+  background-color: rgba(0, 0, 0, .4);
 }
 
 .sweet-alert {
   $width: 478px;
   $padding: 17px;
-  background-color: $body-bg;
-  width: $width;
-  padding: $padding;
-  border-radius: 5px;
-  outline: none;
-  text-align: center;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  margin-left: -($width / 2+ $padding);
-  margin-top: -200px;
-  overflow: hidden;
+
   display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
   z-index: 2000;
+  margin-top: -200px;
+  margin-left: -($width / 2+ $padding);
+  outline: none;
+  border-radius: 5px;
+  background-color: $body-bg;
+  padding: $padding;
+  width: $width;
+  overflow: hidden;
+  text-align: center;
   @media all and (max-width: $screen-xs-max) {
-    width: auto;
-    margin-left: 0;
-    margin-right: 0;
-    left: ($grid-gutter-width / 2);
     right: ($grid-gutter-width / 2);
+    left: ($grid-gutter-width / 2);
+    margin-right: 0;
+    margin-left: 0;
+    width: auto;
   }
   .form-group {
     display: none;
@@ -70,12 +73,12 @@ body.stop-scrolling {
   }
   .la-ball-fall {
     position: absolute;
-    left: 50%;
     top: 50%;
-    margin-left: -27px;
-    margin-top: -9px;
-    opacity: 0;
+    left: 50%;
     visibility: hidden;
+    opacity: 0;
+    margin-top: -9px;
+    margin-left: -27px;
     width: 55px;
   }
   button {
@@ -86,41 +89,43 @@ body.stop-scrolling {
     &.confirm[disabled] {
       color: transparent;
       ~ .la-ball-fall {
-        opacity: 1;
         visibility: visible;
+        opacity: 1;
+
         transition-delay: 0s;
       }
     }
   }
   .sa-icon {
-    width: 80px;
-    height: 80px;
+    position: relative;
+    margin: 20px auto;
     border: 4px solid gray;
     border-radius: 50%;
-    margin: 20px auto;
-    position: relative;
+    width: 80px;
+    height: 80px;
+
     box-sizing: content-box;
     &.sa-error {
       border-color: $btn-danger-border;
       .sa-x-mark {
-        position: relative;
         display: block;
+        position: relative;
       }
       .sa-line {
-        position: absolute;
-        height: 5px;
-        width: 47px;
-        background-color: $btn-danger-bg;
         display: block;
+        position: absolute;
         top: 37px;
         border-radius: 2px;
+        background-color: $btn-danger-bg;
+        width: 47px;
+        height: 5px;
         &.sa-left {
-          transform: rotate(45deg);
           left: 17px;
+          transform: rotate(45deg);
         }
         &.sa-right {
-          transform: rotate(-45deg);
           right: 16px;
+          transform: rotate(-45deg);
         }
       }
     }
@@ -129,129 +134,132 @@ body.stop-scrolling {
       .sa-body {
         // Exclamation mark body
         position: absolute;
+        top: 10px;
+        left: 50%;
+        margin-left: -2px;
+        border-radius: 2px;
+        background-color: $btn-warning-bg;
         width: 5px;
         height: 47px;
-        left: 50%;
-        top: 10px;
-        border-radius: 2px;
-        margin-left: -2px;
-        background-color: $btn-warning-bg;
       }
       .sa-dot {
         // Exclamation mark dot
         position: absolute;
+        bottom: 10px;
+        left: 50%;
+        margin-left: -3px;
+        border-radius: 50%;
+        background-color: $btn-warning-bg;
         width: 7px;
         height: 7px;
-        border-radius: 50%;
-        margin-left: -3px;
-        left: 50%;
-        bottom: 10px;
-        background-color: $btn-warning-bg;
       }
     }
     &.sa-info {
       border-color: $btn-info-border;
       &::before {
-        // i-letter body
-        content: "";
         position: absolute;
+        bottom: 17px;
+        left: 50%;
+        margin-left: -2px;
+        border-radius: 2px;
+        background-color: $btn-info-bg;
         width: 5px;
         height: 29px;
-        left: 50%;
-        bottom: 17px;
-        border-radius: 2px;
-        margin-left: -2px;
-        background-color: $btn-info-bg;
+        // i-letter body
+        content: '';
       }
       &::after {
-        // i-letter dot
-        content: "";
         position: absolute;
+        top: 19px;
+        margin-left: -3px;
+        border-radius: 50%;
+        background-color: $btn-info-bg;
         width: 7px;
         height: 7px;
-        border-radius: 50%;
-        margin-left: -3px;
-        top: 19px;
-        background-color: $btn-info-bg;
+        // i-letter dot
+        content: '';
       }
     }
     &.sa-success {
       border-color: $btn-success-border;
       &::before,
       &::after {
-        // Emulate moving circular line
-        content: '';
-        border-radius: 50%;
         position: absolute;
+        transform: rotate(45deg);
+        border-radius: 50%;
+        background: $body-bg;
         width: 60px;
         height: 120px;
-        background: $body-bg;
-        transform: rotate(45deg);
+        // Emulate moving circular line
+        content: '';
       }
       &::before {
-        border-radius: 120px 0 0 120px;
         top: -7px;
         left: -33px;
         transform: rotate(-45deg);
+        border-radius: 120px 0 0 120px;
+
         transform-origin: 60px 60px;
       }
       &::after {
-        border-radius: 0 120px 120px 0;
         top: -11px;
         left: 30px;
         transform: rotate(-45deg);
-        transform-origin: 0px 60px;
+        border-radius: 0 120px 120px 0;
+
+        transform-origin: 0 60px;
       }
       .sa-placeholder {
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        z-index: 2;
+        border: 4px solid lighten($brand-success, 20%);
+        border-radius: 50%;
         // Ring
         width: 80px;
         height: 80px;
-        border: 4px solid lighten($brand-success, 20%);
-        border-radius: 50%;
+
         box-sizing: content-box;
-        position: absolute;
-        left: -4px;
-        top: -4px;
-        z-index: 2;
       }
       .sa-fix {
+        position: absolute;
+        top: 8px;
+        left: 28px;
+        transform: rotate(-45deg);
+        z-index: 1;
+        background-color: $body-bg;
         // Hide corners left from animation
         width: 5px;
         height: 90px;
-        background-color: $body-bg;
-        position: absolute;
-        left: 28px;
-        top: 8px;
-        z-index: 1;
-        transform: rotate(-45deg);
       }
       .sa-line {
-        height: 5px;
-        background-color: $btn-success-bg;
         display: block;
-        border-radius: 2px;
         position: absolute;
         z-index: 2;
+        border-radius: 2px;
+        background-color: $btn-success-bg;
+        height: 5px;
         &.sa-tip {
-          width: 25px;
-          left: 14px;
           top: 46px;
+          left: 14px;
           transform: rotate(45deg);
+          width: 25px;
         }
         &.sa-long {
-          width: 47px;
-          right: 8px;
           top: 38px;
+          right: 8px;
           transform: rotate(-45deg);
+          width: 47px;
         }
       }
     }
     &.sa-custom {
-      background-size: contain;
-      border-radius: 0;
       border: none;
-      background-position: center center;
+      border-radius: 0;
       background-repeat: no-repeat;
+      background-position: center center;
+      background-size: contain;
     }
   }
   .btn-default {

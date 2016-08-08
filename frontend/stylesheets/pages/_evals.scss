@@ -1,53 +1,54 @@
 .eval-info-label {
-    width: 100%;
-    max-width: 400px;
-    padding: .3em .6em .4em;
-    font-size: 90%;
-    font-weight: 700;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .25em;
-    margin: 4px auto;
+  margin: 4px auto;
+  border-radius: .25em;
+  padding: .3em .6em .4em;
+  width: 100%;
+  max-width: 400px;
+  vertical-align: baseline;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 90%;
+  font-weight: 700;
 }
 
 .eval-user-img {
-    border-radius: 5px;
+  border-radius: 5px;
 }
 
 .eval-panel {
-    padding: 25px 20px 10px 20px;
+  padding: 25px 20px 10px;
 }
 
 .col-sm-2 {
-    padding-left: 0px;
-    padding-right: 0px;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 .eval-name {
-    padding-top: 12px;
-    margin-bottom: 5px;
+  margin-bottom: 5px;
+  padding-top: 12px;
 }
 
 .eval-uid {
-    margin-top: 0px;
-    color: gray;
+  margin-top: 0;
+  color: #808080;
 }
 
 .spring-info {
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
-.btn-expand-panel,
-.btn-expand-panel:hover,
-.btn-expand-panel:focus,
-.btn-expand-panel:active {
-    background: transparent;
-    border: none;
+.btn-expand-panel {
+  &,
+  &:hover,
+  &:focus,
+  &:active {
     outline: 0;
+    border: 0;
+    background: transparent;
     width: 100%;
     text-align: center;
-
+  }
 }

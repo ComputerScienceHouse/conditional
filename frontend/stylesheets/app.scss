@@ -1,26 +1,25 @@
 // Third Party
-@import "csh-material-bootstrap";
-@import "dataTables.bootstrap";
-@import "bootstrap-material-datetimepicker";
+@import 'csh-material-bootstrap';
+@import 'dataTables.bootstrap';
+@import 'bootstrap-material-datetimepicker';
 
 // External
-@import "https://fonts.googleapis.com/icon?family=Material+Icons";
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 
 // Global
-@import "partials/base";
+@import 'partials/base';
 
 // Components
-@import "components/switches";
-@import "components/flat-buttons";
-@import "components/datatables";
-@import "components/date-picker";
-@import "components/select";
-@import "components/dropzone";
-@import "components/sweet-alert/sweet-alert";
+@import 'components/switches';
+@import 'components/flat-buttons';
+@import 'components/date-picker';
+@import 'components/select';
+@import 'components/dropzone';
+@import 'components/sweet-alert/sweet-alert';
 
 // Pages
-@import "pages/dashboard";
-@import "pages/evals";
-@import "pages/housing";
-@import "pages/management";
-@import "pages/hm-attendance";
+@import 'pages/dashboard';
+@import 'pages/evals';
+@import 'pages/housing';
+@import 'pages/management';
+@import 'pages/hm-attendance';
