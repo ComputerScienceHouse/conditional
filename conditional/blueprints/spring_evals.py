@@ -20,10 +20,11 @@ import uuid
 
 logger = structlog.get_logger()
 
+
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals(internal=False):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display membership evaluations listing')
 
     def get_cm_count(uid):
@@ -59,7 +60,7 @@ def display_spring_evals(internal=False):
                 HousingEvalsSubmission.uid == uid).first()
 
             if HousingEvalsSubmission.query.filter(
-                HousingEvalsSubmission.uid == uid).count() > 0:
+                            HousingEvalsSubmission.uid == uid).count() > 0:
                 evalData = \
                     {
                         'social_attended': evalData.social_attended,
@@ -70,37 +71,37 @@ def display_spring_evals(internal=False):
                         'comments': evalData.comments
                     }
         h_meetings = [m.meeting_id for m in
-            MemberHouseMeetingAttendance.query.filter(
-                MemberHouseMeetingAttendance.uid == uid
-            ).filter(
-                MemberHouseMeetingAttendance.attendance_status == "Absent"
-            )]
+                      MemberHouseMeetingAttendance.query.filter(
+                          MemberHouseMeetingAttendance.uid == uid
+                      ).filter(
+                          MemberHouseMeetingAttendance.attendance_status == "Absent"
+                      )]
         member = {
-                    'name': ldap_get_name(uid),
-                    'uid': uid,
-                    'status': spring_entry.status,
-                    'committee_meetings': get_cm_count(uid),
-                    'house_meetings_missed':
-                        [
-                            {
-                                "date": m.date.strftime("%Y-%m-%d"),
-                                "reason":
-    MemberHouseMeetingAttendance.query.filter(
-        MemberHouseMeetingAttendance.uid == uid).filter(
-            MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
-                            }
-                            for m in HouseMeeting.query.filter(
-                                HouseMeeting.id.in_(h_meetings)
-                            )
-                        ],
-                    'major_projects': [
-                        {
-                            'name': p.name,
-                            'status': p.status,
-                            'description': p.description
-                        } for p in MajorProject.query.filter(
-                            MajorProject.uid == uid)]
-                }
+            'name': ldap_get_name(uid),
+            'uid': uid,
+            'status': spring_entry.status,
+            'committee_meetings': get_cm_count(uid),
+            'house_meetings_missed':
+                [
+                    {
+                        "date": m.date.strftime("%Y-%m-%d"),
+                        "reason":
+                            MemberHouseMeetingAttendance.query.filter(
+                                MemberHouseMeetingAttendance.uid == uid).filter(
+                                MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
+                    }
+                    for m in HouseMeeting.query.filter(
+                    HouseMeeting.id.in_(h_meetings)
+                )
+                    ],
+            'major_projects': [
+                {
+                    'name': p.name,
+                    'status': p.status,
+                    'description': p.description
+                } for p in MajorProject.query.filter(
+                    MajorProject.uid == uid)]
+        }
         member['major_projects_len'] = len(member['major_projects'])
         member['major_project_passed'] = False
         for mp in member['major_projects']:
@@ -112,14 +113,14 @@ def display_spring_evals(internal=False):
             member['housing_evals'] = evalData
         sp_members.append(member)
 
-    sp_members.sort(key = lambda x: x['committee_meetings'], reverse=True)
-    sp_members.sort(key = lambda x: len(x['house_meetings_missed']))
-    sp_members.sort(key = lambda x: len([p for p in x['major_projects'] if p['status'] == "Passed"]), reverse=True)
+    sp_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
+    sp_members.sort(key=lambda x: len(x['house_meetings_missed']))
+    sp_members.sort(key=lambda x: len([p for p in x['major_projects'] if p['status'] == "Passed"]), reverse=True)
     # return names in 'first last (username)' format
     if internal:
         return sp_members
     else:
         return render_template(request,
-                                'spring_evals.html',
-                                username = user_name,
-                                members = sp_members)
+                               'spring_evals.html',
+                               username=user_name,
+                               members=sp_members)

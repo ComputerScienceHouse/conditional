@@ -8,6 +8,7 @@ db_session = None
 
 Base = declarative_base()
 
+
 def init_db(database_url):
     global engine, db_session, Base
     engine = create_engine(database_url, convert_unicode=True)

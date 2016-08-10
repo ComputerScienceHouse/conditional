@@ -29,6 +29,7 @@ base_dir = os.getcwd()
 def app_path(*args):
     return os.path.join(base_dir, *args)
 
+
 logger = structlog.get_logger()
 app = Flask(__name__)
 
@@ -45,14 +46,17 @@ app.register_blueprint(conditionals_bp)
 app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 
+
 @app.route('/<path:path>')
 def static_proxy(path):
     # send_static_file will guess the correct MIME type
     return app.send_static_file(path)
 
+
 @app.route('/')
 def default_route():
     return redirect('/dashboard')
+
 
 def web_main():
     json_config = None
@@ -81,6 +85,7 @@ def web_main():
 
     logger.info('conditional started')
     app.run(**json_config['flask'])
+
 
 if __name__ == '__main__':
     web_main()

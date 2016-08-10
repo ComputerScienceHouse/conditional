@@ -26,10 +26,11 @@ logger = structlog.get_logger()
 
 slideshow_bp = Blueprint('slideshow_bp', __name__)
 
+
 @slideshow_bp.route('/slideshow/intro')
 def slideshow_intro_display():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display intro slideshow')
 
     user_name = request.headers.get('x-webauth-user')
@@ -38,14 +39,15 @@ def slideshow_intro_display():
 
     return render_template(request,
                            'intro_eval_slideshow.html',
-                           username = user_name,
-                           date = datetime.utcnow().strftime("%Y-%m-%d"),
-                           members = display_intro_evals(internal=True))
+                           username=user_name,
+                           date=datetime.utcnow().strftime("%Y-%m-%d"),
+                           members=display_intro_evals(internal=True))
+
 
 @slideshow_bp.route('/slideshow/intro/members')
 def slideshow_intro_members():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='retreive intro members slideshow data')
 
     # can't be jsonify because
@@ -53,10 +55,11 @@ def slideshow_intro_members():
     #   required
     return json.dumps(display_intro_evals(internal=True))
 
+
 @slideshow_bp.route('/slideshow/intro/review', methods=['POST'])
 def slideshow_intro_review():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='submit intro member evaluation')
 
     # get user data
@@ -72,21 +75,22 @@ def slideshow_intro_review():
     logger.info("backend", action="submit intro eval for %s status: %s" % (uid, status))
     FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == uid and
-        FreshmanEvalData.active).\
+        FreshmanEvalData.active). \
         update(
-            {
-                'freshman_eval_result': status
-            })
+        {
+            'freshman_eval_result': status
+        })
 
     from db.database import db_session
     db_session.flush()
     db_session.commit()
     return jsonify({"success": True}), 200
 
+
 @slideshow_bp.route('/slideshow/spring')
 def slideshow_spring_display():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display membership evaluations slideshow')
 
     user_name = request.headers.get('x-webauth-user')
@@ -95,14 +99,15 @@ def slideshow_spring_display():
 
     return render_template(request,
                            'spring_eval_slideshow.html',
-                           username = user_name,
-                           date = datetime.utcnow().strftime("%Y-%m-%d"),
-                           members = display_spring_evals(internal=True))
+                           username=user_name,
+                           date=datetime.utcnow().strftime("%Y-%m-%d"),
+                           members=display_spring_evals(internal=True))
+
 
 @slideshow_bp.route('/slideshow/spring/members')
 def slideshow_spring_members():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='retreive membership evaluations slideshow daat')
 
     # can't be jsonify because
@@ -110,10 +115,11 @@ def slideshow_spring_members():
     #   required
     return json.dumps(display_spring_evals(internal=True))
 
+
 @slideshow_bp.route('/slideshow/spring/review', methods=['POST'])
 def slideshow_spring_review():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='submit membership evaulation')
 
     # get user data
@@ -125,19 +131,19 @@ def slideshow_spring_review():
     post_data = request.get_json()
     uid = post_data['uid']
     status = post_data['status']
-    #points = post_data['points']
+    # points = post_data['points']
     logger.info("backend", action="submit spring eval for %s status: %s" % (uid, status))
 
     SpringEval.query.filter(
         SpringEval.uid == uid and
-        SpringEval.active).\
+        SpringEval.active). \
         update(
-            {
-                'status': status
-            })
+        {
+            'status': status
+        })
 
     # points are handeled automagically through constitutional override
-    #HousingEvalsSubmission.query.filter(
+    # HousingEvalsSubmission.query.filter(
     #    HousingEvalsSubmission.uid == uid and
     #    HousingEvalsSubmission.active).\
     #    update(
@@ -145,8 +151,8 @@ def slideshow_spring_review():
     #            'points': points
     #        })
 
-    #current_points = ldap_get_housing_points(uid)
-    #ldap_set_housingpoints(uid, current_points + points)
+    # current_points = ldap_get_housing_points(uid)
+    # ldap_set_housingpoints(uid, current_points + points)
 
     from db.database import db_session
     db_session.flush()

@@ -15,10 +15,11 @@ logger = structlog.get_logger()
 
 major_project_bp = Blueprint('major_project_bp', __name__)
 
+
 @major_project_bp.route('/major_project/')
 def display_major_project():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display major project form')
 
     # get user data
@@ -26,28 +27,29 @@ def display_major_project():
     user_name = request.headers.get('x-webauth-user')
 
     major_projects = [
-            {
-                'username': p.uid,
-                'name': ldap_get_name(p.uid),
-                'proj_name': p.name,
-                'status': p.status,
-                'description': p.description,
-                'id': p.id
-            } for p in
+        {
+            'username': p.uid,
+            'name': ldap_get_name(p.uid),
+            'proj_name': p.name,
+            'status': p.status,
+            'description': p.description,
+            'id': p.id
+        } for p in
         MajorProject.query]
 
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format
     return render_template(request,
-                            'major_project_submission.html',
-                            major_projects = major_projects,
-                            major_projects_len = major_projects_len,
-                            username = user_name)
+                           'major_project_submission.html',
+                           major_projects=major_projects,
+                           major_projects_len=major_projects_len,
+                           username=user_name)
+
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
 def submit_major_project():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='submit major project')
 
     from db.database import db_session
@@ -63,10 +65,11 @@ def submit_major_project():
     db_session.commit()
     return jsonify({"success": True}), 200
 
+
 @major_project_bp.route('/major_project/review', methods=['POST'])
 def major_project_review():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='review major project')
 
     # get user data
@@ -81,11 +84,11 @@ def major_project_review():
 
     print(post_data)
     MajorProject.query.filter(
-        MajorProject.id == pid).\
+        MajorProject.id == pid). \
         update(
-            {
-                'status': status
-            })
+        {
+            'status': status
+        })
 
     from db.database import db_session
     db_session.flush()

@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
-                       Date, Text, Boolean
+    Date, Text, Boolean
 from db.migrate import old_Base as Base
 import time
 from datetime import date, timedelta
+
 
 class Attendance(Base):
     __tablename__ = 'attendance'
@@ -10,11 +11,13 @@ class Attendance(Base):
     meeting_date = Column(Date, nullable=False, primary_key=True)
     committee_id = Column(Integer, nullable=False, primary_key=True)
 
+
 class Committee(Base):
     __tablename__ = 'committees'
     ID = Column(Integer, primary_key=True, nullable=False)
     committee_name = Column(Text, nullable=False)
     committee_head = Column(Text, nullable=False)
+
 
 class Conditional(Base):
     __tablename__ = 'conditionals'
@@ -22,6 +25,7 @@ class Conditional(Base):
     description = Column(String(2000), nullable=False)
     deadline = Column(Date, nullable=False)
     status = Column(Enum('pending', 'pass', 'fail'), nullable=False)
+
 
 class FreshmanEval(Base):
     __tablename__ = 'freshman_evals'
@@ -40,6 +44,7 @@ class FreshmanEval(Base):
     deadline = Column(Date, nullable=False)
     result = Column(Enum('pending', 'conditional', 'pass', 'fail'), nullable=False)
 
+
 class HouseMeeting(Base):
     __tablename__ = 'house_meetings'
     username = Column(String(100), nullable=False, primary_key=True)
@@ -48,29 +53,33 @@ class HouseMeeting(Base):
     excused = Column(Integer, nullable=False)
     comments = Column(String(2000), nullable=False)
 
+
 class MajorProject(Base):
     __tablename__ = 'major_project'
     username = Column(String(100), nullable=False, primary_key=True)
     timestamp = Column(DateTime, nullable=False)
-    project_committee= Column(Text)
+    project_committee = Column(Text)
     project_name = Column(String(200), nullable=False, primary_key=True)
     project_description = Column(Text)
     status = Column(Enum('pending', 'pass', 'fail'), nullable=False)
 
+
 class Member(Base):
     __tablename__ = 'members'
     username = Column(String(100), nullable=False, primary_key=True)
-    active= Column(Integer, nullable=False)
+    active = Column(Integer, nullable=False)
     on_floor = Column(Integer, nullable=False)
     voting = Column(Integer, nullable=False)
     alumniable = Column(Integer, nullable=False)
     housing_points = Column(Integer, nullable=False)
     committee_mtgs = Column(Integer, nullable=False)
 
+
 class Queue(Base):
     __tablename__ = 'queue'
     username = Column(String(100), nullable=False, primary_key=True)
     timestamp = Column(DateTime, nullable=False)
+
 
 class Roster(Base):
     __tablename__ = 'roster'
@@ -79,12 +88,14 @@ class Roster(Base):
     roomate1 = Column(String(100), nullable=False)
     roomate2 = Column(String(100), nullable=False)
 
+
 class SpringEval(Base):
     __tablename__ = 'spring_evals'
     username = Column(String(100), nullable=False, primary_key=True)
     result = Column(Enum('pending', 'conditional', 'pass', 'fail'), nullable=False)
     comments = Column(String(2000), nullable=False)
     date_added = Column(DateTime, nullable=False)
+
 
 class WinterEval(Base):
     __tablename__ = 'winter_evals'

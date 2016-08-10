@@ -17,36 +17,38 @@ import uuid
 
 logger = structlog.get_logger()
 
+
 @conditionals_bp.route('/conditionals/')
 def display_conditionals():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display conditional listing page')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
 
     conditionals = [
-            {
-                'name': ldap_get_name(c.uid),
-                'date_created': c.date_created,
-                'date_due': c.date_due,
-                'description': c.description,
-                'id': c.id
-            } for c in
+        {
+            'name': ldap_get_name(c.uid),
+            'date_created': c.date_created,
+            'date_due': c.date_due,
+            'description': c.description,
+            'id': c.id
+        } for c in
         Conditional.query.filter(
             Conditional.status == "Pending")]
     # return names in 'first last (username)' format
     return render_template(request,
-                            'conditional.html',
-                            username = user_name,
-                            conditionals=conditionals,
-                            conditionals_len = len(conditionals))
+                           'conditional.html',
+                           username=user_name,
+                           conditionals=conditionals,
+                           conditionals_len=len(conditionals))
+
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
 def create_conditional():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='create new conditional')
 
     from db.database import db_session
@@ -67,10 +69,12 @@ def create_conditional():
     db_session.commit()
 
     return jsonify({"success": True}), 200
+
+
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
 def conditional_review():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='review a conditional')
 
     # get user data
@@ -85,11 +89,11 @@ def conditional_review():
 
     logger.info(action="updated conditional-%s to %s" % (cid, status))
     Conditional.query.filter(
-        Conditional.id == cid).\
+        Conditional.id == cid). \
         update(
-            {
-                'status': status
-            })
+        {
+            'status': status
+        })
 
     from db.database import db_session
     db_session.flush()

@@ -40,20 +40,21 @@ logger = structlog.get_logger()
 
 member_management_bp = Blueprint('member_management_bp', __name__)
 
+
 @member_management_bp.route('/manage')
 def display_member_management():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display member management')
 
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval director", 403
-        
+
     members = [m['uid'] for m in ldap_get_current_students()]
     member_list = []
-    
+
     for member_uid in members:
         uid = member_uid[0].decode('utf-8')
         name = ldap_get_name(uid)
@@ -70,10 +71,10 @@ def display_member_management():
             "room": room,
             "hp": hp
         })
-        
+
     freshmen = FreshmanAccount.query
     freshmen_list = []
-    
+
     for freshman_user in freshmen:
         name = freshman_user.name
         onfloor = freshman_user.onfloor_status
@@ -83,18 +84,19 @@ def display_member_management():
             "onfloor": onfloor,
             "room": room
         })
-        
+
     settings = EvalSettings.query.first()
     return render_template(request, "member_management.html",
-            username=user_name,
-            active=member_list,
-            freshmen=freshmen_list,
-            site_lockdown=settings.site_lockdown)
+                           username=user_name,
+                           active=member_list,
+                           freshmen=freshmen_list,
+                           site_lockdown=settings.site_lockdown)
+
 
 @member_management_bp.route('/manage/settings', methods=['POST'])
 def member_management_eval():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='submit site-settings')
 
     user_name = request.headers.get('x-webauth-user')
@@ -130,10 +132,11 @@ def member_management_eval():
     db_session.commit()
     return jsonify({"success": True}), 200
 
+
 @member_management_bp.route('/manage/adduser', methods=['POST'])
 def member_management_adduser():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='add fid user')
 
     from database import db_session
@@ -153,46 +156,47 @@ def member_management_adduser():
     db_session.flush()
     db_session.commit()
     return jsonify({"success": True}), 200
-    
-    
+
+
 @member_management_bp.route('/manage/uploaduser', methods=['POST'])
 def member_management_uploaduser():
     from db.database import db_session
-    
+
     user_name = request.headers.get('x-webauth-user')
-    
+
     if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
-        
+
     f = request.files['file']
     if not f:
         return "No file", 400
-    
+
     try:
         stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
         csv_input = csv.reader(stream)
-    
+
         for new_user in csv_input:
             name = new_user[0]
             onfloor_status = new_user[1]
-            
+
             if new_user[2]:
                 room_number = new_user[2]
             else:
                 room_number = None
-            
+
             db_session.add(FreshmanAccount(name, onfloor_status, room_number))
-            
+
         db_session.flush()
         db_session.commit()
         return jsonify({"success": True}), 200
     except:
         return "file could not be processed", 400
 
+
 @member_management_bp.route('/manage/edituser', methods=['POST'])
 def member_management_edituser():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='edit uid user')
 
     user_name = request.headers.get('x-webauth-user')
@@ -207,7 +211,8 @@ def member_management_edituser():
 
     if ldap_is_eval_director(user_name):
         logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
-            (uid, post_data['room_number'], post_data['onfloor_status'], post_data['housing_points']))
+                                      (uid, post_data['room_number'], post_data['onfloor_status'],
+                                       post_data['housing_points']))
         room_number = post_data['room_number']
         onfloor_status = post_data['onfloor_status']
         housing_points = post_data['housing_points']
@@ -239,10 +244,11 @@ def member_management_edituser():
 
     return jsonify({"success": True}), 200
 
+
 @member_management_bp.route('/manage/getuserinfo', methods=['POST'])
 def member_management_getuserinfo():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='retreive user info')
 
     user_name = request.headers.get('x-webauth-user')
@@ -255,7 +261,7 @@ def member_management_getuserinfo():
     uid = post_data['uid']
 
     acct = FreshmanAccount.query.filter(
-            FreshmanAccount.id == uid).first()
+        FreshmanAccount.id == uid).first()
 
     # if fid
     if acct:
@@ -269,7 +275,7 @@ def member_management_getuserinfo():
         # missed hm
         def get_hm_date(hm_id):
             return HouseMeeting.query.filter(
-                HouseMeeting.id == hm_id).\
+                HouseMeeting.id == hm_id). \
                 first().date.strftime("%Y-%m-%d")
 
         missed_hm = [
@@ -302,10 +308,11 @@ def member_management_getuserinfo():
                 'user': 'financial'
             })
 
+
 @member_management_bp.route('/manage/edit_hm_excuse', methods=['POST'])
 def member_management_edit_hm_excuse():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='edit house meeting excuse')
 
     user_name = request.headers.get('x-webauth-user')
@@ -319,7 +326,7 @@ def member_management_edit_hm_excuse():
     hm_status = post_data['status']
     hm_excuse = post_data['excuse']
     logger.info('backend', action="edit hm %s status: %s excuse: %s" %
-        (hm_id, hm_status, hm_excuse))
+                                  (hm_id, hm_status, hm_excuse))
 
     MemberHouseMeetingAttendance.query.filter(
         MemberHouseMeetingAttendance.id == hm_id).update(
@@ -340,7 +347,7 @@ def member_management_edit_hm_excuse():
 @member_management_bp.route('/manage/upgrade_user', methods=['POST'])
 def member_management_upgrade_user():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('api', action='convert fid to uid entry')
 
     from db.database import db_session
@@ -357,28 +364,28 @@ def member_management_upgrade_user():
     signatures_missed = post_data['sigsMissed']
 
     logger.info('backend', action="upgrade freshman-%s to %s sigsMissed: %s" %
-        (fid, uid, signatures_missed))
+                                  (fid, uid, signatures_missed))
     acct = FreshmanAccount.query.filter(
-            FreshmanAccount.id == fid).first()
+        FreshmanAccount.id == fid).first()
 
     new_acct = FreshmanEvalData(uid, signatures_missed)
     new_acct.eval_date = acct.eval_date
 
     db_session.add(new_acct)
     for fca in FreshmanCommitteeAttendance.query.filter(
-        FreshmanCommitteeAttendance.fid == fid):
+                    FreshmanCommitteeAttendance.fid == fid):
         db_session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
         # XXX this might fail horribly #yoloswag
         db_session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(
-        FreshmanSeminarAttendance.fid == fid):
+                    FreshmanSeminarAttendance.fid == fid):
         db_session.add(MemberSeminarAttendance(uid, fts.seminar_id))
         # XXX this might fail horribly #yoloswag
         db_session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(
-        FreshmanHouseMeetingAttendance.fid == fid):
+                    FreshmanHouseMeetingAttendance.fid == fid):
         db_session.add(MemberHouseMeetingAttendance(
             uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
         # XXX this might fail horribly #yoloswag
@@ -386,7 +393,7 @@ def member_management_upgrade_user():
 
     if acct.onfloor_status:
         db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
-        
+
     if acct.room_number:
         ldap_set_roomnumber(uid, room_number)
 

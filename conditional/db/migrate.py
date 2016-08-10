@@ -6,29 +6,30 @@ from collections import Counter
 
 from db.database import init_db
 
-
 old_engine = None
 zoo_session = None
 old_Base = declarative_base()
 
+
 # Takes in param of SqlAlchemy Database Connection String
 def free_the_zoo(zoo_url, db_url):
-
     init_zoo_db(zoo_url)
 
     init_db(db_url)
 
     migrate_models()
 
+
 # Connect to Zookeeper
 def init_zoo_db(database_url):
     global old_Base, old_engine, zoo_session
     old_engine = create_engine(database_url, convert_unicode=True)
     zoo_session = scoped_session(sessionmaker(autocommit=False,
-                                             autoflush=False,
-                                             bind=old_engine))
+                                              autoflush=False,
+                                              bind=old_engine))
     import db.old_models
     old_Base.metadata.create_all(bind=old_engine)
+
 
 def idToCommittee(id):
     committees = [
@@ -41,8 +42,9 @@ def idToCommittee(id):
         'Social',
         'Social',
         'Chairman'
-        ]
+    ]
     return committees[id]
+
 
 def getFid(name):
     from db.models import FreshmanAccount
@@ -50,9 +52,9 @@ def getFid(name):
     print(name)
     return FreshmanAccount.query.filter(FreshmanAccount.name == name).first().id
 
+
 # Begin the Great Migration!
 def migrate_models():
-
     import db.old_models as zoo
     import db.models as models
 
@@ -172,10 +174,10 @@ def migrate_models():
     c_meetings = [
         (
             m.username,
-                (
-                    m.meeting_date,
-                    m.committee_id
-                )
+            (
+                m.meeting_date,
+                m.committee_id
+            )
         ) for m in zoo_session.query(zoo.Attendance).all()]
 
     for cm in c_meetings:

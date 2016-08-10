@@ -14,10 +14,11 @@ logger = structlog.get_logger()
 
 housing_bp = Blueprint('housing_bp', __name__)
 
+
 @housing_bp.route('/housing')
 def display_housing():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-            request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4()))
     log.info('frontend', action='display housing')
 
     # get user data
@@ -28,10 +29,10 @@ def display_housing():
     onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
     onfloor_freshmen = FreshmanAccount.query.filter(
         FreshmanAccount.room_number != None
-        )
-    
+    )
+
     room_list = set()
-    
+
     for m in onfloors:
         room = ldap_get_room_number(m)
         if room in housing:
@@ -39,7 +40,7 @@ def display_housing():
         else:
             housing[room] = [ldap_get_name(m)]
         room_list.add(room)
-        
+
     for f in onfloor_freshmen:
         name = f.name
         room = str(f.room_number)
@@ -48,12 +49,11 @@ def display_housing():
         else:
             housing[room] = [name]
         room_list.add(room)
-        
 
     # return names in 'first last (username)' format
     return render_template(request,
                            'housing.html',
-                           username = user_name,
+                           username=user_name,
                            queue=get_queue_with_points(),
                            housing=housing,
                            room_list=sorted(list(room_list)))
