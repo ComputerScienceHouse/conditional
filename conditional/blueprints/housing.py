@@ -28,7 +28,7 @@ def display_housing():
     housing = {}
     onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
     onfloor_freshmen = FreshmanAccount.query.filter(
-        FreshmanAccount.room_number != None
+        FreshmanAccount.room_number is not None
     )
 
     room_list = set()
