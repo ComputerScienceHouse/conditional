@@ -3,7 +3,7 @@ var compact = require('lodash/compact');
 
 // Grouped by what can run in parallel
 var initTasks = ['clean', 'csscomb'];
-var linterTasks = ['eslint', 'sasslint'];
+var linterTasks = ['pylint', 'eslint', 'sasslint'];
 var assetTasks = ['fonts', 'images'];
 var codeTasks = ['css', 'js'];
 

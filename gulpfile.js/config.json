@@ -39,6 +39,11 @@
       "extractSharedJs": false
     },
 
+    "pylint": {
+      "module": "conditional",
+      "extensions": ["py"]
+    },
+
     "eslint": {
       "src": "javascript",
       "extensions": ["js", "json"]
