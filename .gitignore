@@ -69,7 +69,7 @@ target/
 /.c9
 
 # Sensitive project files
-/config.json
+/config.py
 /data.db
 
 # Frontend dependencies

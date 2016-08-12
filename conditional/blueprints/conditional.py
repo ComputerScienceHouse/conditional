@@ -1,19 +1,17 @@
-from flask import Blueprint
-from flask import request
-from flask import jsonify
-
-conditionals_bp = Blueprint('conditionals_bp', __name__)
-
-from util.ldap import ldap_get_name
-from util.ldap import ldap_is_eval_director
-from util.flask import render_template
-
+from flask import Blueprint, request, jsonify, redirect
 from datetime import datetime
-
-from db.models import Conditional
-
 import structlog
 import uuid
+
+from conditional.util.ldap import ldap_get_name
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.flask import render_template
+
+from conditional.models.models import Conditional
+
+from conditional import db
+
+conditionals_bp = Blueprint('conditionals_bp', __name__)
 
 logger = structlog.get_logger()
 
@@ -51,8 +49,6 @@ def create_conditional():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='create new conditional')
 
-    from db.database import db_session
-
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name):
@@ -64,9 +60,9 @@ def create_conditional():
     description = post_data['description']
     due_date = datetime.strptime(post_data['due_date'], "%Y-%m-%d")
 
-    db_session.add(Conditional(uid, description, due_date))
-    db_session.flush()
-    db_session.commit()
+    db.session.add(Conditional(uid, description, due_date))
+    db.session.flush()
+    db.session.commit()
 
     return jsonify({"success": True}), 200
 
@@ -95,7 +91,6 @@ def conditional_review():
             'status': status
         })
 
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200

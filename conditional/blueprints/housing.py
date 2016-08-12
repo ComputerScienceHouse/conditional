@@ -1,14 +1,14 @@
-from flask import Blueprint
-from flask import request
-from db.models import FreshmanAccount
-from util.housing import get_queue_with_points
-from util.ldap import ldap_get_onfloor_members
-from util.ldap import ldap_get_room_number
-from util.ldap import ldap_get_name
-from util.flask import render_template
-
+from flask import Blueprint, request
 import structlog
 import uuid
+
+from conditional.models.models import FreshmanAccount
+from conditional.util.housing import get_queue_with_points
+from conditional.util.ldap import ldap_get_onfloor_members
+from conditional.util.ldap import ldap_get_room_number
+from conditional.util.ldap import ldap_get_name
+from conditional.util.flask import render_template
+
 
 logger = structlog.get_logger()
 

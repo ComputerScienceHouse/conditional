@@ -1,15 +1,15 @@
-from flask import Blueprint
-from flask import request
-from flask import jsonify
-
-from db.models import MajorProject
-
-from util.ldap import ldap_is_eval_director
-from util.ldap import ldap_get_name
-from util.flask import render_template
-
+from flask import Blueprint, request, jsonify, redirect
 import structlog
 import uuid
+
+from conditional.models.models import MajorProject
+
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_get_name
+from conditional.util.flask import render_template
+
+from conditional import db
+
 
 logger = structlog.get_logger()
 
@@ -52,7 +52,6 @@ def submit_major_project():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit major project')
 
-    from db.database import db_session
     user_name = request.headers.get('x-webauth-user')
 
     post_data = request.get_json()
@@ -61,8 +60,8 @@ def submit_major_project():
 
     project = MajorProject(user_name, name, description)
 
-    db_session.add(project)
-    db_session.commit()
+    db.session.add(project)
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -89,8 +88,6 @@ def major_project_review():
         {
             'status': status
         })
-
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200

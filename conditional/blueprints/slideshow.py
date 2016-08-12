@@ -1,26 +1,20 @@
-from flask import Blueprint
-from flask import jsonify
-from flask import redirect
-from flask import request
-
-import json
-
-from util.flask import render_template
-from blueprints.intro_evals import display_intro_evals
-from blueprints.spring_evals import display_spring_evals
-
-from util.ldap import ldap_get_housing_points
-from util.ldap import ldap_set_housingpoints
-from util.ldap import ldap_is_eval_director
-
-from db.models import FreshmanEvalData
-from db.models import SpringEval
-from db.models import HousingEvalsSubmission
-
+from flask import Blueprint, jsonify, redirect, request
 from datetime import datetime
-
 import structlog
 import uuid
+import json
+
+from conditional.util.flask import render_template
+from conditional.blueprints.intro_evals import display_intro_evals
+from conditional.blueprints.spring_evals import display_spring_evals
+
+from conditional.util.ldap import ldap_is_eval_director
+
+from conditional.models.models import FreshmanEvalData
+from conditional.models.models import SpringEval
+
+from conditional import db
+
 
 logger = structlog.get_logger()
 
@@ -48,7 +42,7 @@ def slideshow_intro_display():
 def slideshow_intro_members():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action='retreive intro members slideshow data')
+    log.info('api', action='retrieve intro members slideshow data')
 
     # can't be jsonify because
     #   ValueError: dictionary update sequence element #0 has length 7; 2 is
@@ -81,9 +75,8 @@ def slideshow_intro_review():
             'freshman_eval_result': status
         })
 
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -154,7 +147,6 @@ def slideshow_spring_review():
     # current_points = ldap_get_housing_points(uid)
     # ldap_set_housingpoints(uid, current_points + points)
 
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200

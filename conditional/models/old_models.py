@@ -1,8 +1,6 @@
-from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
-    Date, Text, Boolean
-from db.migrate import old_Base as Base
-import time
-from datetime import date, timedelta
+from sqlalchemy import Column, Integer, String, Enum, DateTime, \
+    Date, Text
+from conditional.models.migrate import old_Base as Base
 
 
 class Attendance(Base):

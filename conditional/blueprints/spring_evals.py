@@ -1,22 +1,22 @@
-from flask import Blueprint
-from flask import request
-
-spring_evals_bp = Blueprint('spring_evals_bp', __name__)
-
-from util.ldap import ldap_get_active_members
-from util.ldap import ldap_get_name
-
-from db.models import MemberCommitteeAttendance
-from db.models import MemberHouseMeetingAttendance
-from db.models import MajorProject
-from db.models import HouseMeeting
-from db.models import SpringEval
-from db.models import HousingEvalsSubmission
-
-from util.flask import render_template
-
+from flask import Blueprint, request
 import structlog
 import uuid
+
+from conditional.util.ldap import ldap_get_active_members
+from conditional.util.ldap import ldap_get_name
+
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MajorProject
+from conditional.models.models import HouseMeeting
+from conditional.models.models import SpringEval
+from conditional.models.models import HousingEvalsSubmission
+
+from conditional.util.flask import render_template
+
+from conditional import db
+
+spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
 logger = structlog.get_logger()
 
@@ -27,9 +27,9 @@ def display_spring_evals(internal=False):
                      request_id=str(uuid.uuid4()))
     log.info('frontend', action='display membership evaluations listing')
 
-    def get_cm_count(uid):
+    def get_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == uid)])
+            MemberCommitteeAttendance.uid == member_id)])
 
     user_name = None
     if not internal:
@@ -46,29 +46,26 @@ def display_spring_evals(internal=False):
             SpringEval.active).first()
 
         if spring_entry is None:
-            from db.database import db_session
-
-            db_session.add(SpringEval(uid))
-            db_session.flush()
-            db_session.commit()
+            db.session.add(SpringEval(uid))
+            db.session.flush()
+            db.session.commit()
             # something bad happened to get here
             print("User did not have existing spring eval data")
 
-        evalData = None
+        eval_data = None
         if internal:
-            evalData = HousingEvalsSubmission.query.filter(
+            eval_data = HousingEvalsSubmission.query.filter(
                 HousingEvalsSubmission.uid == uid).first()
 
-            if HousingEvalsSubmission.query.filter(
-                            HousingEvalsSubmission.uid == uid).count() > 0:
-                evalData = \
+            if HousingEvalsSubmission.query.filter(HousingEvalsSubmission.uid == uid).count() > 0:
+                eval_data = \
                     {
-                        'social_attended': evalData.social_attended,
-                        'social_hosted': evalData.social_hosted,
-                        'seminars_attended': evalData.technical_attended,
-                        'seminars_hosted': evalData.technical_hosted,
-                        'projects': evalData.projects,
-                        'comments': evalData.comments
+                        'social_attended': eval_data.social_attended,
+                        'social_hosted': eval_data.social_hosted,
+                        'seminars_attended': eval_data.technical_attended,
+                        'seminars_hosted': eval_data.technical_hosted,
+                        'projects': eval_data.projects,
+                        'comments': eval_data.comments
                     }
         h_meetings = [m.meeting_id for m in
                       MemberHouseMeetingAttendance.query.filter(
@@ -110,7 +107,7 @@ def display_spring_evals(internal=False):
                 break
 
         if internal:
-            member['housing_evals'] = evalData
+            member['housing_evals'] = eval_data
         sp_members.append(member)
 
     sp_members.sort(key=lambda x: x['committee_meetings'], reverse=True)

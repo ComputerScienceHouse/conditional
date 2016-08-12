@@ -1,29 +1,26 @@
-from flask import Blueprint
-from flask import request
-
-from util.ldap import ldap_get_room_number
-from util.ldap import ldap_is_active
-from util.ldap import ldap_is_onfloor
-from util.ldap import ldap_get_housing_points
-from util.ldap import ldap_is_intromember
-from util.ldap import ldap_get_name
-
-from db.models import FreshmanEvalData
-from db.models import MemberCommitteeAttendance
-from db.models import MemberSeminarAttendance
-from db.models import TechnicalSeminar
-from db.models import MemberHouseMeetingAttendance
-from db.models import MajorProject
-from db.models import Conditional
-from db.models import HouseMeeting
-from db.models import CommitteeMeeting
-
-from util.housing import get_queue_length, get_queue_position
-from util.flask import render_template
-import datetime
-
+from flask import Blueprint, request
 import structlog
 import uuid
+
+from conditional.util.ldap import ldap_get_room_number
+from conditional.util.ldap import ldap_is_active
+from conditional.util.ldap import ldap_is_onfloor
+from conditional.util.ldap import ldap_get_housing_points
+from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_get_name
+
+from conditional.models.models import FreshmanEvalData
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import TechnicalSeminar
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MajorProject
+from conditional.models.models import Conditional
+from conditional.models.models import HouseMeeting
+from conditional.models.models import CommitteeMeeting
+
+from conditional.util.housing import get_queue_length, get_queue_position
+from conditional.util.flask import render_template
 
 logger = structlog.get_logger()
 
@@ -40,7 +37,7 @@ def display_dashboard():
 
     user_name = request.headers.get('x-webauth-user')
 
-    data = {}
+    data = dict()
     data['username'] = user_name
     data['name'] = ldap_get_name(user_name)
     # Member Status
@@ -48,7 +45,7 @@ def display_dashboard():
     # On-Floor Status
     data['onfloor'] = ldap_is_onfloor(user_name)
     # Voting Status
-    data['voting'] = True  # FIXME: unimplemented
+    data['voting'] = ldap_is_active(user_name)  # FIXME: unimplemented
 
     # freshman shit
     if ldap_is_intromember(user_name):
@@ -76,8 +73,7 @@ def display_dashboard():
 
         h_meetings = [(m.meeting_id, m.attendance_status) for m in
                       MemberHouseMeetingAttendance.query.filter(
-                          MemberHouseMeetingAttendance.uid == user_name
-                      )]
+                          MemberHouseMeetingAttendance.uid == user_name)]
         freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
         freshman['social_events'] = freshman_data.social_events
         freshman['general_comments'] = freshman_data.other_notes
@@ -97,10 +93,8 @@ def display_dashboard():
     spring['committee_meetings'] = len(c_meetings)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in
                   MemberHouseMeetingAttendance.query.filter(
-                      MemberHouseMeetingAttendance.uid == user_name
-                  )]
+                      MemberHouseMeetingAttendance.uid == user_name)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
-    h_meetings = [h[0] for h in h_meetings if h[1] != "Absent"]
 
     data['spring'] = spring
 
@@ -108,7 +102,7 @@ def display_dashboard():
 
     # only show housing if member has onfloor status
     if ldap_is_onfloor(user_name):
-        housing = {}
+        housing = dict()
         housing['points'] = ldap_get_housing_points(user_name)
         housing['room'] = ldap_get_room_number(user_name)
         if housing['room'] == "N/A":

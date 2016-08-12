@@ -1,32 +1,28 @@
-from flask import Blueprint
-from flask import jsonify
-from flask import redirect
-from flask import request
-
-from util.ldap import ldap_get_non_alumni_members
-from util.ldap import ldap_get_name
-from util.ldap import ldap_get_current_students
-from util.ldap import ldap_is_eboard
-from util.ldap import ldap_is_eval_director
-from util.ldap import ldap_get_active_members
-
-from db.models import CurrentCoops
-from db.models import CommitteeMeeting
-from db.models import FreshmanCommitteeAttendance
-from db.models import MemberCommitteeAttendance
-from db.models import TechnicalSeminar
-from db.models import FreshmanSeminarAttendance
-from db.models import MemberSeminarAttendance
-from db.models import HouseMeeting
-from db.models import FreshmanHouseMeetingAttendance
-from db.models import MemberHouseMeetingAttendance
-from db.models import FreshmanAccount
+from flask import Blueprint, jsonify, redirect, request
 from datetime import datetime
-
-from util.flask import render_template
-
 import structlog
 import uuid
+
+from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_is_eboard
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_get_active_members
+
+from conditional.models.models import CurrentCoops
+from conditional.models.models import CommitteeMeeting
+from conditional.models.models import FreshmanCommitteeAttendance
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import TechnicalSeminar
+from conditional.models.models import FreshmanSeminarAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import HouseMeeting
+from conditional.models.models import FreshmanHouseMeetingAttendance
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import FreshmanAccount
+
+from conditional.util.flask import render_template
+
+from conditional import db
 
 logger = structlog.get_logger()
 
@@ -34,16 +30,16 @@ attendance_bp = Blueprint('attendance_bp', __name__)
 
 
 def get_name(m):
-    first = None
     if 'givenName' in m:
         first = m['givenName'][0].decode('utf-8')
     else:
         first = ""
-    last = None
+
     if 'sn' in m:
         last = m['sn'][0].decode('utf-8')
     else:
         last = ""
+
     return "{first} {last}".format(first=first, last=last)
 
 
@@ -51,7 +47,7 @@ def get_name(m):
 def get_all_members():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action='retrieve techincal seminar attendance list')
+    log.info('api', action='retrieve technical seminar attendance list')
 
     members = ldap_get_current_students()
 
@@ -200,8 +196,6 @@ def submit_committee_attendance():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit committee meeting attendance')
 
-    from db.database import db_session
-
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eboard(user_name):
@@ -217,23 +211,23 @@ def submit_committee_attendance():
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
     meeting = CommitteeMeeting(committee, timestamp)
 
-    db_session.add(meeting)
-    db_session.flush()
-    db_session.refresh(meeting)
+    db.session.add(meeting)
+    db.session.flush()
+    db.session.refresh(meeting)
 
     for m in m_attendees:
         logger.info('backend',
                     action=("gave attendance to %s for %s" % (m, committee))
                     )
-        db_session.add(MemberCommitteeAttendance(m, meeting.id))
+        db.session.add(MemberCommitteeAttendance(m, meeting.id))
 
     for f in f_attendees:
         logger.info('backend',
                     action=("gave attendance to freshman-%s for %s" % (f, committee))
                     )
-        db_session.add(FreshmanCommitteeAttendance(f, meeting.id))
+        db.session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
-    db_session.commit()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -242,8 +236,6 @@ def submit_seminar_attendance():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit technical seminar attendance')
-
-    from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -260,23 +252,23 @@ def submit_seminar_attendance():
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
     seminar = TechnicalSeminar(seminar_name, timestamp)
 
-    db_session.add(seminar)
-    db_session.flush()
-    db_session.refresh(seminar)
+    db.session.add(seminar)
+    db.session.flush()
+    db.session.refresh(seminar)
 
     for m in m_attendees:
         logger.info('backend',
                     action=("gave attendance to %s for %s" % (m, seminar_name))
                     )
-        db_session.add(MemberSeminarAttendance(m, seminar.id))
+        db.session.add(MemberSeminarAttendance(m, seminar.id))
 
     for f in f_attendees:
         logger.info('backend',
                     action=("gave attendance to freshman-%s for %s" % (f, seminar_name))
                     )
-        db_session.add(FreshmanSeminarAttendance(f, seminar.id))
+        db.session.add(FreshmanSeminarAttendance(f, seminar.id))
 
-    db_session.commit()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -285,8 +277,6 @@ def submit_house_attendance():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit house meeting attendance')
-
-    from db.database import db_session
 
     # status: Attended | Excused | Absent
 
@@ -301,17 +291,18 @@ def submit_house_attendance():
 
     meeting = HouseMeeting(timestamp)
 
-    db_session.add(meeting)
-    db_session.flush()
-    db_session.refresh(meeting)
+    db.session.add(meeting)
+    db.session.flush()
+    db.session.refresh(meeting)
 
     if "members" in post_data:
         for m in post_data['members']:
             logger.info('backend',
                         action=(
-                        "gave %s to %s for %s house meeting" % (m['status'], m['uid'], timestamp.strftime("%Y-%m-%d")))
+                            "gave %s to %s for %s house meeting" % (
+                                m['status'], m['uid'], timestamp.strftime("%Y-%m-%d")))
                         )
-            db_session.add(MemberHouseMeetingAttendance(
+            db.session.add(MemberHouseMeetingAttendance(
                 m['uid'],
                 meeting.id,
                 None,
@@ -321,13 +312,13 @@ def submit_house_attendance():
         for f in post_data['freshmen']:
             logger.info('backend',
                         action=("gave %s to freshman-%s for %s house meeting" % (
-                        f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
+                            f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
                         )
-            db_session.add(FreshmanHouseMeetingAttendance(
+            db.session.add(FreshmanHouseMeetingAttendance(
                 f['id'],
                 meeting.id,
                 None,
                 f['status']))
 
-    db_session.commit()
+    db.session.commit()
     return jsonify({"success": True}), 200

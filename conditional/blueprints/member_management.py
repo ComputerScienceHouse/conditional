@@ -1,44 +1,46 @@
-from flask import Blueprint
-from flask import request
-from flask import jsonify
-
-from db.models import FreshmanAccount
-from db.models import FreshmanEvalData
-from db.models import FreshmanCommitteeAttendance
-from db.models import MemberCommitteeAttendance
-from db.models import FreshmanSeminarAttendance
-from db.models import MemberSeminarAttendance
-from db.models import FreshmanHouseMeetingAttendance
-from db.models import MemberHouseMeetingAttendance
-from db.models import HouseMeeting
-from db.models import EvalSettings
-from db.models import OnFloorStatusAssigned
-from db.models import SpringEval
-
-from util.ldap import ldap_is_eval_director
-from util.ldap import ldap_is_financial_director
-from util.ldap import ldap_set_roomnumber
-from util.ldap import ldap_set_active
-from util.ldap import ldap_set_housingpoints
-from util.ldap import ldap_get_room_number
-from util.ldap import ldap_get_housing_points
-from util.ldap import ldap_get_active_members
-from util.ldap import ldap_get_current_students
-from util.ldap import ldap_get_name
-from util.ldap import ldap_is_active
-from util.ldap import ldap_is_onfloor
-from util.ldap import __ldap_add_member_to_group__ as ldap_add_member_to_group
-from util.ldap import __ldap_remove_member_from_group__ as ldap_remove_member_from_group
-from util.flask import render_template
-
+from flask import Blueprint, request, jsonify
+from datetime import datetime
 import structlog
 import uuid
 import csv
 import io
 
+from conditional.models.models import FreshmanAccount
+from conditional.models.models import FreshmanEvalData
+from conditional.models.models import FreshmanCommitteeAttendance
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import FreshmanSeminarAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import FreshmanHouseMeetingAttendance
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import HouseMeeting
+from conditional.models.models import EvalSettings
+from conditional.models.models import OnFloorStatusAssigned
+from conditional.models.models import SpringEval
+
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_financial_director
+from conditional.util.ldap import ldap_set_roomnumber
+from conditional.util.ldap import ldap_set_active
+from conditional.util.ldap import ldap_set_housingpoints
+from conditional.util.ldap import ldap_get_room_number
+from conditional.util.ldap import ldap_get_housing_points
+from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_get_name
+from conditional.util.ldap import ldap_is_active
+from conditional.util.ldap import ldap_is_onfloor
+from conditional.util.ldap import __ldap_add_member_to_group__ as ldap_add_member_to_group
+from conditional.util.ldap import __ldap_remove_member_from_group__ as ldap_remove_member_from_group
+
+from conditional.util.flask import render_template
+
+from conditional import db
+
 logger = structlog.get_logger()
 
 member_management_bp = Blueprint('member_management_bp', __name__)
+
+from conditional.models.models import attendance_enum
 
 
 @member_management_bp.route('/manage')
@@ -127,9 +129,8 @@ def member_management_eval():
                 'site_lockdown': post_data['site_lockdown']
             })
 
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -138,8 +139,6 @@ def member_management_adduser():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='add fid user')
-
-    from database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -152,16 +151,14 @@ def member_management_adduser():
     onfloor_status = post_data['onfloor']
 
     logger.info('backend', action="add f_%s as onfloor: %s" % (name, onfloor_status))
-    db_session.add(FreshmanAccount(name, onfloor_status))
-    db_session.flush()
-    db_session.commit()
+    db.session.add(FreshmanAccount(name, onfloor_status))
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
 @member_management_bp.route('/manage/uploaduser', methods=['POST'])
 def member_management_uploaduser():
-    from db.database import db_session
-
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name):
@@ -184,12 +181,12 @@ def member_management_uploaduser():
             else:
                 room_number = None
 
-            db_session.add(FreshmanAccount(name, onfloor_status, room_number))
+            db.session.add(FreshmanAccount(name, onfloor_status, room_number))
 
-        db_session.flush()
-        db_session.commit()
+        db.session.flush()
+        db.session.commit()
         return jsonify({"success": True}), 200
-    except:
+    except csv.Error:
         return "file could not be processed", 400
 
 
@@ -229,9 +226,8 @@ def member_management_edituser():
     if ldap_is_active(uid) != active_member:
         ldap_set_active(uid, active_member)
 
-        from db.database import db_session
         if active_member:
-            db_session.add(SpringEval(uid))
+            db.session.add(SpringEval(uid))
         else:
             SpringEval.query.filter(
                 SpringEval.uid == uid and
@@ -239,8 +235,8 @@ def member_management_edituser():
                 {
                     'active': False
                 })
-        db_session.flush()
-        db_session.commit()
+        db.session.flush()
+        db.session.commit()
 
     return jsonify({"success": True}), 200
 
@@ -335,9 +331,8 @@ def member_management_edit_hm_excuse():
             'attendance_status': hm_status
         })
 
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -349,8 +344,6 @@ def member_management_upgrade_user():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='convert fid to uid entry')
-
-    from db.database import db_session
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -371,35 +364,32 @@ def member_management_upgrade_user():
     new_acct = FreshmanEvalData(uid, signatures_missed)
     new_acct.eval_date = acct.eval_date
 
-    db_session.add(new_acct)
-    for fca in FreshmanCommitteeAttendance.query.filter(
-                    FreshmanCommitteeAttendance.fid == fid):
-        db_session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
+    db.session.add(new_acct)
+    for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
+        db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
         # XXX this might fail horribly #yoloswag
-        db_session.delete(fca)
+        db.session.delete(fca)
 
-    for fts in FreshmanSeminarAttendance.query.filter(
-                    FreshmanSeminarAttendance.fid == fid):
-        db_session.add(MemberSeminarAttendance(uid, fts.seminar_id))
+    for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
+        db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
         # XXX this might fail horribly #yoloswag
-        db_session.delete(fts)
+        db.session.delete(fts)
 
-    for fhm in FreshmanHouseMeetingAttendance.query.filter(
-                    FreshmanHouseMeetingAttendance.fid == fid):
-        db_session.add(MemberHouseMeetingAttendance(
+    for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
+        db.session.add(MemberHouseMeetingAttendance(
             uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
         # XXX this might fail horribly #yoloswag
-        db_session.delete(fhm)
+        db.session.delete(fhm)
 
     if acct.onfloor_status:
-        db_session.add(OnFloorStatusAssigned(uid, datetime.now()))
+        db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
 
     if acct.room_number:
-        ldap_set_roomnumber(uid, room_number)
+        ldap_set_roomnumber(uid, acct.room_number)
 
     # XXX this might fail horribly #yoloswag
-    db_session.delete(acct)
+    db.session.delete(acct)
 
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200

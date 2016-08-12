@@ -1,13 +1,13 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
     Date, Text, Boolean
-from db.database import Base
+from conditional import db
 import time
 from datetime import date, timedelta, datetime
 
 attendance_enum = Enum('Attended', 'Excused', 'Absent', name='attendance_enum')
 
 
-class FreshmanAccount(Base):
+class FreshmanAccount(db.Model):
     __tablename__ = 'freshman_accounts'
     id = Column(Integer, primary_key=True)
     name = Column(String(64), nullable=False)
@@ -23,7 +23,7 @@ class FreshmanAccount(Base):
         self.room_number = room
 
 
-class FreshmanEvalData(Base):
+class FreshmanEvalData(db.Model):
     __tablename__ = 'freshman_eval_data'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -47,7 +47,7 @@ class FreshmanEvalData(Base):
         self.active = True
 
 
-class CommitteeMeeting(Base):
+class CommitteeMeeting(db.Model):
     __tablename__ = 'committee_meetings'
     id = Column(Integer, primary_key=True)
     committee = Column(Enum('Evaluations', 'History', 'Social', 'Opcomm',
@@ -62,7 +62,7 @@ class CommitteeMeeting(Base):
         self.active = True
 
 
-class MemberCommitteeAttendance(Base):
+class MemberCommitteeAttendance(db.Model):
     __tablename__ = 'member_committee_attendance'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -73,7 +73,7 @@ class MemberCommitteeAttendance(Base):
         self.meeting_id = meeting_id
 
 
-class FreshmanCommitteeAttendance(Base):
+class FreshmanCommitteeAttendance(db.Model):
     __tablename__ = 'freshman_committee_attendance'
     id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
@@ -84,7 +84,7 @@ class FreshmanCommitteeAttendance(Base):
         self.meeting_id = meeting_id
 
 
-class TechnicalSeminar(Base):
+class TechnicalSeminar(db.Model):
     __tablename__ = 'technical_seminars'
     id = Column(Integer, primary_key=True)
     name = Column(String(128), nullable=False)
@@ -97,7 +97,7 @@ class TechnicalSeminar(Base):
         self.active = True
 
 
-class MemberSeminarAttendance(Base):
+class MemberSeminarAttendance(db.Model):
     __tablename__ = 'member_seminar_attendance'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -108,7 +108,7 @@ class MemberSeminarAttendance(Base):
         self.seminar_id = seminar_id
 
 
-class FreshmanSeminarAttendance(Base):
+class FreshmanSeminarAttendance(db.Model):
     __tablename__ = 'freshman_seminar_attendance'
     id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
@@ -119,7 +119,7 @@ class FreshmanSeminarAttendance(Base):
         self.seminar_id = seminar_id
 
 
-class MajorProject(Base):
+class MajorProject(db.Model):
     __tablename__ = 'major_projects'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -138,18 +138,18 @@ class MajorProject(Base):
         self.active = True
 
 
-class HouseMeeting(Base):
+class HouseMeeting(db.Model):
     __tablename__ = 'house_meetings'
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
     active = Column(Boolean, nullable=False)
 
-    def __init__(self, date):
-        self.date = date
+    def __init__(self, hm_date):
+        self.date = hm_date
         self.active = True
 
 
-class MemberHouseMeetingAttendance(Base):
+class MemberHouseMeetingAttendance(db.Model):
     __tablename__ = 'member_hm_attendance'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -164,7 +164,7 @@ class MemberHouseMeetingAttendance(Base):
         self.attendance_status = status
 
 
-class FreshmanHouseMeetingAttendance(Base):
+class FreshmanHouseMeetingAttendance(db.Model):
     __tablename__ = 'freshman_hm_attendance'
     id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
@@ -179,7 +179,7 @@ class FreshmanHouseMeetingAttendance(Base):
         self.attendance_status = status
 
 
-class CurrentCoops(Base):
+class CurrentCoops(db.Model):
     __tablename__ = 'current_coops'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -192,17 +192,17 @@ class CurrentCoops(Base):
         self.date_created = datetime.now()
 
 
-class OnFloorStatusAssigned(Base):
+class OnFloorStatusAssigned(db.Model):
     __tablename__ = 'onfloor_datetime'
     uid = Column(String(32), primary_key=True)
     onfloor_granted = Column(DateTime, primary_key=True)
 
-    def __init__(self, uid, datetime):
+    def __init__(self, uid, time_granted):
         self.uid = uid
-        self.onfloor_granted = datetime
+        self.onfloor_granted = time_granted
 
 
-class Conditional(Base):
+class Conditional(db.Model):
     __tablename__ = 'conditional'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -223,7 +223,7 @@ class Conditional(Base):
         self.active = True
 
 
-class EvalSettings(Base):
+class EvalSettings(db.Model):
     __tablename__ = 'settings'
     id = Column(Integer, primary_key=True)
     housing_form_active = Column(Boolean)
@@ -236,7 +236,7 @@ class EvalSettings(Base):
         self.site_lockdown = False
 
 
-class SpringEval(Base):
+class SpringEval(db.Model):
     __tablename__ = 'spring_evals'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
@@ -253,7 +253,7 @@ class SpringEval(Base):
         self.status = "Pending"
 
 
-class HousingEvalsSubmission(Base):
+class HousingEvalsSubmission(db.Model):
     __tablename__ = 'housing_evals'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)

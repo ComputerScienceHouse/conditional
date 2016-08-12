@@ -1,14 +1,13 @@
-from flask import Blueprint
-from flask import request
-from flask import redirect
-from flask import jsonify
-from db.models import FreshmanEvalData
-from db.models import EvalSettings
-from util.ldap import ldap_is_intromember
-from util.flask import render_template
-
+from flask import Blueprint, request, redirect, jsonify
 import structlog
 import uuid
+
+from conditional.models.models import FreshmanEvalData
+from conditional.models.models import EvalSettings
+from conditional.util.ldap import ldap_is_intromember
+from conditional.util.flask import render_template
+
+from conditional import db
 
 logger = structlog.get_logger()
 
@@ -26,7 +25,7 @@ def display_intro_evals_form():
 
     if not ldap_is_intromember(user_name):
         return redirect("/dashboard")
-    evalData = FreshmanEvalData.query.filter(
+    eval_data = FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == user_name).first()
 
     is_open = EvalSettings.query.first().intro_form_active
@@ -34,8 +33,8 @@ def display_intro_evals_form():
     return render_template(request,
                            'intro_evals_form.html',
                            username=user_name,
-                           social_events=evalData.social_events,
-                           other_notes=evalData.other_notes,
+                           social_events=eval_data.social_events,
+                           other_notes=eval_data.other_notes,
                            is_open=is_open)
 
 
@@ -45,7 +44,6 @@ def submit_intro_evals():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit intro evals form')
 
-    from db.database import db_session
     user_name = request.headers.get('x-webauth-user')
 
     post_data = request.get_json()
@@ -60,7 +58,6 @@ def submit_intro_evals():
             'other_notes': comments
         })
 
-    from db.database import db_session
-    db_session.flush()
-    db_session.commit()
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200

@@ -1,21 +1,19 @@
-from flask import Blueprint
-from flask import request
-
-intro_evals_bp = Blueprint('intro_evals_bp', __name__)
-
-from util.ldap import ldap_get_intro_members
-from util.ldap import ldap_get_name
-
-from db.models import MemberCommitteeAttendance
-from db.models import FreshmanEvalData
-from db.models import MemberHouseMeetingAttendance
-from db.models import MemberSeminarAttendance
-from db.models import HouseMeeting
-from db.models import TechnicalSeminar
-from util.flask import render_template
-
+from flask import Blueprint, request
 import structlog
 import uuid
+
+from conditional.util.ldap import ldap_get_intro_members
+from conditional.util.ldap import ldap_get_name
+
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import FreshmanEvalData
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import HouseMeeting
+from conditional.models.models import TechnicalSeminar
+from conditional.util.flask import render_template
+
+intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 
 logger = structlog.get_logger()
 
@@ -27,9 +25,9 @@ def display_intro_evals(internal=False):
     log.info('frontend', action='display intro evals listing')
 
     # get user data
-    def get_cm_count(uid):
+    def get_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == uid)])
+            MemberCommitteeAttendance.uid == member_id)])
 
     user_name = None
     if not internal:
@@ -42,7 +40,7 @@ def display_intro_evals(internal=False):
         uid = member_uid[0].decode('utf-8')
         freshman_data = FreshmanEvalData.query.filter(
             FreshmanEvalData.uid == uid).first()
-        ## Add continue for if freshman_data.status != Pending
+        # Add continue for if freshman_data.status != Pending
         h_meetings = [m.meeting_id for m in
                       MemberHouseMeetingAttendance.query.filter(
                           MemberHouseMeetingAttendance.uid == uid
@@ -66,9 +64,9 @@ def display_intro_evals(internal=False):
                                 MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
                     }
                     for m in HouseMeeting.query.filter(
-                    HouseMeeting.id.in_(h_meetings)
-                )
-                    ],
+                        HouseMeeting.id.in_(h_meetings)
+                    )
+                ],
             'technical_seminars':
                 [s.name for s in TechnicalSeminar.query.filter(
                     TechnicalSeminar.id.in_(

@@ -1,17 +1,18 @@
 from flask import render_template as flask_render_template
-from db.models import EvalSettings
+from conditional.models.models import EvalSettings
 
-from util.ldap import ldap_is_active
-from util.ldap import ldap_is_alumni
-from util.ldap import ldap_is_eboard
-from util.ldap import ldap_is_financial_director
-from util.ldap import ldap_is_eval_director
-from util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_is_active
+from conditional.util.ldap import ldap_is_alumni
+from conditional.util.ldap import ldap_is_eboard
+from conditional.util.ldap import ldap_is_financial_director
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_intromember
+
 
 def render_template(request, template_name, **kwargs):
     user_name = request.headers.get('x-webauth-user')
 
-    #TODO maybe use the webauth request decorator
+    # TODO maybe use the webauth request decorator
     lockdown = EvalSettings.query.first().site_lockdown
     is_active = ldap_is_active(user_name)
     is_alumni = ldap_is_alumni(user_name)
@@ -22,10 +23,6 @@ def render_template(request, template_name, **kwargs):
 
     if is_eval:
         lockdown = False
-
-    # TODO FIXME AUTH BREACH
-    if user_name == 'loothelion':
-        is_eboard = True
 
     return flask_render_template(
         template_name,

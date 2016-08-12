@@ -1,6 +1,8 @@
 from functools import lru_cache
-from util.ldap import ldap_get_housing_points, ldap_get_room_number, ldap_get_name, ldap_is_active, ldap_is_current_student
-import db.models as models
+from conditional.util.ldap import ldap_get_housing_points, ldap_get_room_number, ldap_get_name, ldap_is_active, \
+    ldap_is_current_student
+from conditional.models import models
+
 
 @lru_cache(maxsize=1024)
 def get_housing_queue():
@@ -13,12 +15,13 @@ def get_housing_queue():
         if ldap_is_active(m.uid)]
 
     # sort by housing points then by time in queue
-    ofm.sort(key = lambda m: m['time'])
-    ofm.sort(key = lambda m: m['points'], reverse=True)
+    ofm.sort(key=lambda m: m['time'])
+    ofm.sort(key=lambda m: m['points'], reverse=True)
 
     queue = [m['uid'] for m in ofm if ldap_get_room_number(m['uid']) == "N/A" and ldap_is_current_student(m['uid'])]
 
     return queue
+
 
 def get_queue_with_points():
     ofm = [
@@ -30,8 +33,8 @@ def get_queue_with_points():
         if ldap_is_active(m.uid)]
 
     # sort by housing points then by time in queue
-    ofm.sort(key = lambda m: m['time'])
-    ofm.sort(key = lambda m: m['points'], reverse=True)
+    ofm.sort(key=lambda m: m['time'])
+    ofm.sort(key=lambda m: m['points'], reverse=True)
 
     queue = [
         {
@@ -41,11 +44,13 @@ def get_queue_with_points():
 
     return queue
 
+
 def get_queue_length():
     return len(get_housing_queue())
+
 
 def get_queue_position(username):
     try:
         return get_housing_queue().index(username)
-    except:
+    except IndexError:
         return "0"
