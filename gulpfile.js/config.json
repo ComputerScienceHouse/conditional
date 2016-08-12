@@ -17,7 +17,7 @@
 
     "server": {
       "command": "python",
-      "arguments": ["conditional", "config.json"]
+      "arguments": ["app.py"]
     },
 
     "static": {

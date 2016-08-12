@@ -6,3 +6,5 @@ pyldap
 SQLAlchemy
 Werkzeug
 structlog
+flask_sqlalchemy
+flask_migrate
