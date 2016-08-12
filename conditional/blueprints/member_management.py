@@ -1,9 +1,12 @@
-from flask import Blueprint, request, jsonify
-from datetime import datetime
-import structlog
-import uuid
 import csv
 import io
+import uuid
+
+from datetime import datetime
+
+import structlog
+
+from flask import Blueprint, request, jsonify
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -33,6 +36,7 @@ from conditional.util.ldap import __ldap_add_member_to_group__ as ldap_add_membe
 from conditional.util.ldap import __ldap_remove_member_from_group__ as ldap_remove_member_from_group
 
 from conditional.util.flask import render_template
+from conditional.models.models import attendance_enum
 
 from conditional import db
 
@@ -40,21 +44,8 @@ logger = structlog.get_logger()
 
 member_management_bp = Blueprint('member_management_bp', __name__)
 
-from conditional.models.models import attendance_enum
 
-
-@member_management_bp.route('/manage')
-def display_member_management():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display member management')
-
-    user_name = request.headers.get('x-webauth-user')
-
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
-        return "must be eval director", 403
-
-    members = [m['uid'] for m in ldap_get_current_students()]
+def get_members_info(members):
     member_list = []
 
     for member_uid in members:
@@ -73,6 +64,22 @@ def display_member_management():
             "room": room,
             "hp": hp
         })
+
+        return member_list
+
+@member_management_bp.route('/manage')
+def display_member_management():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('frontend', action='display member management')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
+        return "must be eval director", 403
+
+    members = [m['uid'] for m in ldap_get_current_students()]
+    member_list = get_members_info(members)
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -306,7 +313,7 @@ def member_management_getuserinfo():
 
 
 @member_management_bp.route('/manage/edit_hm_excuse', methods=['POST'])
-def member_management_edit_hm_excuse():
+def alter_hm_excuse():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='edit house meeting excuse')

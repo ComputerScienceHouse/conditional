@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, redirect, request
 from datetime import datetime
-import structlog
+
 import uuid
+import structlog
+
+from flask import Blueprint, jsonify, redirect, request
 
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_is_eboard
@@ -234,7 +236,8 @@ def submit_committee_attendance():
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
 def submit_seminar_attendance():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
+                     request_id=str(uuid.uuid4())
+                     )
     log.info('api', action='submit technical seminar attendance')
 
     user_name = request.headers.get('x-webauth-user')

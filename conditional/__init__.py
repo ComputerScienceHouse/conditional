@@ -12,6 +12,8 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 logger = structlog.get_logger()
 
+# pylint: disable=C0413
+
 from conditional.blueprints.dashboard import dashboard_bp
 from conditional.blueprints.attendance import attendance_bp
 from conditional.blueprints.major_project_submission import major_project_bp

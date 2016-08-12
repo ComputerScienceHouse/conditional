@@ -1,8 +1,8 @@
+import time
+from datetime import date, timedelta, datetime
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
     Date, Text, Boolean
 from conditional import db
-import time
-from datetime import date, timedelta, datetime
 
 attendance_enum = Enum('Attended', 'Excused', 'Absent', name='attendance_enum')
 

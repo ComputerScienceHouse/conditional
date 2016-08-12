@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, redirect
-import structlog
 import uuid
+import structlog
+
+from flask import Blueprint, request, jsonify, redirect
 
 from conditional.models.models import MajorProject
 

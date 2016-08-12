@@ -1,6 +1,7 @@
-from flask import Blueprint, request, redirect, jsonify
-import structlog
 import uuid
+import structlog
+
+from flask import Blueprint, request, redirect, jsonify
 
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import EvalSettings

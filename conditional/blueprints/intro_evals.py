@@ -1,6 +1,7 @@
-from flask import Blueprint, request
-import structlog
 import uuid
+import structlog
+
+from flask import Blueprint, request
 
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_name

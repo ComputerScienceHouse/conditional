@@ -1,6 +1,7 @@
-from flask import Blueprint, request
-import structlog
 import uuid
+import structlog
+
+from flask import Blueprint, request
 
 from conditional.models.models import FreshmanAccount
 from conditional.util.housing import get_queue_with_points

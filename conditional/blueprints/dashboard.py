@@ -1,6 +1,7 @@
-from flask import Blueprint, request
-import structlog
 import uuid
+import structlog
+
+from flask import Blueprint, request
 
 from conditional.util.ldap import ldap_get_room_number
 from conditional.util.ldap import ldap_is_active
@@ -27,6 +28,40 @@ logger = structlog.get_logger()
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 
+def get_freshman_data(user_name):
+    freshman = {}
+    freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
+
+    freshman['status'] = freshman_data.freshman_eval_result
+    # number of committee meetings attended
+    c_meetings = [m.meeting_id for m in
+                  MemberCommitteeAttendance.query.filter(
+                      MemberCommitteeAttendance.uid == user_name
+                  )]
+    freshman['committee_meetings'] = len(c_meetings)
+    # technical seminar total
+    t_seminars = [s.seminar_id for s in
+                  MemberSeminarAttendance.query.filter(
+                      MemberSeminarAttendance.uid == user_name
+                  )]
+    freshman['ts_total'] = len(t_seminars)
+    attendance = [m.name for m in TechnicalSeminar.query.filter(
+        TechnicalSeminar.id.in_(t_seminars)
+    )]
+
+    freshman['ts_list'] = attendance
+
+    h_meetings = [(m.meeting_id, m.attendance_status) for m in
+                  MemberHouseMeetingAttendance.query.filter(
+                      MemberHouseMeetingAttendance.uid == user_name)]
+    freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
+    freshman['social_events'] = freshman_data.social_events
+    freshman['general_comments'] = freshman_data.other_notes
+    freshman['fresh_proj'] = freshman_data.freshman_project
+    freshman['sig_missed'] = freshman_data.signatures_missed
+    freshman['eval_date'] = freshman_data.eval_date
+    return freshman
+
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
@@ -49,39 +84,7 @@ def display_dashboard():
 
     # freshman shit
     if ldap_is_intromember(user_name):
-        freshman = {}
-        freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
-
-        freshman['status'] = freshman_data.freshman_eval_result
-        # number of committee meetings attended
-        c_meetings = [m.meeting_id for m in
-                      MemberCommitteeAttendance.query.filter(
-                          MemberCommitteeAttendance.uid == user_name
-                      )]
-        freshman['committee_meetings'] = len(c_meetings)
-        # technical seminar total
-        t_seminars = [s.seminar_id for s in
-                      MemberSeminarAttendance.query.filter(
-                          MemberSeminarAttendance.uid == user_name
-                      )]
-        freshman['ts_total'] = len(t_seminars)
-        attendance = [m.name for m in TechnicalSeminar.query.filter(
-            TechnicalSeminar.id.in_(t_seminars)
-        )]
-
-        freshman['ts_list'] = attendance
-
-        h_meetings = [(m.meeting_id, m.attendance_status) for m in
-                      MemberHouseMeetingAttendance.query.filter(
-                          MemberHouseMeetingAttendance.uid == user_name)]
-        freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
-        freshman['social_events'] = freshman_data.social_events
-        freshman['general_comments'] = freshman_data.other_notes
-        freshman['fresh_proj'] = freshman_data.freshman_project
-        freshman['sig_missed'] = freshman_data.signatures_missed
-        freshman['eval_date'] = freshman_data.eval_date
-
-        data['freshman'] = freshman
+        data['freshman'] = get_freshman_data(user_name)
     else:
         data['freshman'] = False
 
@@ -98,8 +101,6 @@ def display_dashboard():
 
     data['spring'] = spring
 
-    housing = False
-
     # only show housing if member has onfloor status
     if ldap_is_onfloor(user_name):
         housing = dict()
@@ -110,6 +111,8 @@ def display_dashboard():
         else:
             housing['queue_pos'] = "On Floor"
         housing['queue_len'] = get_queue_length()
+    else:
+        housing = None
 
     data['housing'] = housing
 

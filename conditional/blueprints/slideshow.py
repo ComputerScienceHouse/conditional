@@ -1,8 +1,11 @@
-from flask import Blueprint, jsonify, redirect, request
-from datetime import datetime
-import structlog
-import uuid
 import json
+import uuid
+
+from datetime import datetime
+
+import structlog
+
+from flask import Blueprint, jsonify, redirect, request
 
 from conditional.util.flask import render_template
 from conditional.blueprints.intro_evals import display_intro_evals

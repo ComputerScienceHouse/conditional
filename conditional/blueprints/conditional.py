@@ -1,7 +1,10 @@
-from flask import Blueprint, request, jsonify, redirect
-from datetime import datetime
-import structlog
 import uuid
+
+from datetime import datetime
+
+import structlog
+
+from flask import Blueprint, request, jsonify, redirect
 
 from conditional.util.ldap import ldap_get_name
 from conditional.util.ldap import ldap_is_eval_director

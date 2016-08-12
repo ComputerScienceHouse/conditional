@@ -3,12 +3,13 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from conditional import db
 from flask_migrate import upgrade, downgrade
+from conditional.models import models, old_models as zoo
+
+# pylint: skip-file
 
 old_engine = None
 zoo_session = None
 old_Base = declarative_base()
-
-from conditional.models import models, old_models as zoo
 
 
 # Takes in param of SqlAlchemy Database Connection String
@@ -26,7 +27,7 @@ def free_the_zoo(zoo_url):
 
 # Connect to Zookeeper
 def init_zoo_db(database_url):
-    global old_Base, old_engine, zoo_session
+    global old_engine, zoo_session
     old_engine = create_engine(database_url, convert_unicode=True)
     zoo_session = scoped_session(sessionmaker(autocommit=False,
                                               autoflush=False,
