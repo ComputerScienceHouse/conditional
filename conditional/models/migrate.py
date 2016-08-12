@@ -1,15 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from conditional import db
-from flask_migrate import upgrade, downgrade
 from conditional.models import models, old_models as zoo
+import flask_migrate
 
 # pylint: skip-file
 
 old_engine = None
 zoo_session = None
-old_Base = declarative_base()
 
 
 # Takes in param of SqlAlchemy Database Connection String
@@ -18,9 +16,11 @@ def free_the_zoo(zoo_url):
     confirm = str(input('Are you sure you want to clear and re-migrate the database? (y/N): ')).strip()
     if confirm == 'y':
         init_zoo_db(zoo_url)
-
-        downgrade(tag='base')
-        upgrade()
+        
+        if flask_migrate.current() is not None:
+            flask_migrate.downgrade(tag='base')
+            
+        flask_migrate.upgrade()
 
         migrate_models()
 
@@ -32,7 +32,7 @@ def init_zoo_db(database_url):
     zoo_session = scoped_session(sessionmaker(autocommit=False,
                                               autoflush=False,
                                               bind=old_engine))
-    old_Base.metadata.create_all(bind=old_engine)
+    zoo.Base.metadata.create_all(bind=old_engine)
 
 
 def id_to_committee(comm_id):

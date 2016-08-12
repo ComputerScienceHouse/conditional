@@ -1,3 +1,5 @@
+import os
+
 # Flask config
 DEBUG = True
 HOST_NAME = 'localhost'
@@ -15,5 +17,5 @@ LDAP_GROUP_OU = 'ou=Groups,dc=csh,dc=rit,dc=edu'
 LDAP_COMMITTEE_OU = 'ou=Committees,dc=csh,dc=rit,dc=edu'
 
 # Database config
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(os.getcwd(), "data.db"))
 ZOO_DATABASE_URI = 'mysql+pymysql://user:pass@host/database'

@@ -1,7 +1,8 @@
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Enum, DateTime, \
     Date, Text
-from conditional.models.migrate import old_Base as Base
 
+Base = declarative_base()
 
 class Attendance(Base):
     __tablename__ = 'attendance'
