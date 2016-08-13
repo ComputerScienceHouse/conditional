@@ -65,7 +65,8 @@ def get_members_info(members):
             "hp": hp
         })
 
-        return member_list
+    return member_list
+
 
 @member_management_bp.route('/manage')
 def display_member_management():
@@ -79,6 +80,7 @@ def display_member_management():
         return "must be eval director", 403
 
     members = [m['uid'] for m in ldap_get_current_students()]
+    print(members)
     member_list = get_members_info(members)
 
     freshmen = FreshmanAccount.query

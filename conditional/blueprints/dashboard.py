@@ -62,6 +62,7 @@ def get_freshman_data(user_name):
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
 
+
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
