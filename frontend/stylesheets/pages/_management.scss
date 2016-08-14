@@ -1,6 +1,7 @@
 .switch-label {
-  display: inline;
-  padding-right: 10px;
+  display: inline-block;
+  padding: 30px 10px;
+  text-align: center;
 }
 
 .upload-title {
@@ -124,4 +125,15 @@
 
 .btn-mp {
   margin-top: 20px;
+}
+
+.stat-number {
+  margin: 0;
+  text-align: center;
+  font-size: 40px;
+}
+
+.stat-title {
+  text-align: center;
+  font-size: 10px;
 }

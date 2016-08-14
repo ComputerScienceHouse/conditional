@@ -29,6 +29,7 @@ from conditional.util.ldap import ldap_set_housingpoints
 from conditional.util.ldap import ldap_get_room_number
 from conditional.util.ldap import ldap_get_housing_points
 from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_name
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
@@ -47,6 +48,7 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 
 def get_members_info(members):
     member_list = []
+    number_onfloor = 0
 
     for member_uid in members:
         uid = member_uid[0].decode('utf-8')
@@ -65,7 +67,10 @@ def get_members_info(members):
             "hp": hp
         })
 
-    return member_list
+        if onfloor:
+            number_onfloor += 1
+
+    return member_list, number_onfloor
 
 
 @member_management_bp.route('/manage')
@@ -80,8 +85,7 @@ def display_member_management():
         return "must be eval director", 403
 
     members = [m['uid'] for m in ldap_get_current_students()]
-    print(members)
-    member_list = get_members_info(members)
+    member_list, onfloor_number = get_members_info(members)
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -100,6 +104,10 @@ def display_member_management():
     return render_template(request, "member_management.html",
                            username=user_name,
                            active=member_list,
+                           num_current=len(member_list),
+                           num_active=len(ldap_get_active_members()),
+                           num_fresh=len(freshmen_list),
+                           num_onfloor=onfloor_number,
                            freshmen=freshmen_list,
                            site_lockdown=settings.site_lockdown)
 
