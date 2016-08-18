@@ -32,11 +32,11 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Freshman Evaluations
                         {% if freshman['status'] == "Passed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign white"></span> Passed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
                         {% elif freshman['status'] == "Pending" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass white"></span> Pending</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
                         {% else %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign white"></span> Failed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
                         {% endif %}
                     </h3>
                 </div>
@@ -82,7 +82,7 @@
                                 {% elif freshman['fresh_proj'] == "Pending" %}
                                 <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
                                 {% else %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-remove-sign white"></span> Failed</span>
+                                <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -113,7 +113,7 @@
                         {% if spring['status'] == "Passed" %}
                         <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
                         {% elif spring['status'] == "Failed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign white"></span> Failed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
                         {% else %}
                         <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
                         {% endif %}
