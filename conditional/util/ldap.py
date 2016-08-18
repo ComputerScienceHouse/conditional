@@ -176,10 +176,7 @@ def ldap_get_current_students():
 
 @lru_cache(maxsize=1024)
 def ldap_is_active(username):
-    # When active members become a group rather than an attribute this will
-    # change to use __ldap_is_member_of_group__.
-    active_status = __ldap_get_field__(username, 'active')
-    return active_status is not None and active_status.decode('utf-8') == '1'
+    return __ldap_is_member_of_group__(username, 'active')
 
 
 def ldap_is_alumni(username):
@@ -225,9 +222,8 @@ def ldap_set_roomnumber(username, room_number):
     __ldap_set_field__(username, 'roomNumber', room_number)
 
 
-def ldap_set_active(username, is_active):
-    __ldap_set_field__(username, 'active', str(int(is_active)).encode('ascii'))
-    # TODO something about active memebers group
+def ldap_set_active(username):
+    __ldap_add_member_to_group__(username, 'active')
 
 
 @lru_cache(maxsize=1024)
