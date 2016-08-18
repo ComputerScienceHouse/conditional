@@ -107,9 +107,9 @@ export default class FetchUtil {
     });
   }
 
-  static get(endpoint, settings, callback) {
+  static fetch(endpoint, settings, callback) {
     fetch(endpoint, {
-      method: 'GET',
+      method: settings.method,
       headers: {
         Accept: 'application/json'
       }
@@ -144,7 +144,7 @@ export default class FetchUtil {
         });
   }
 
-  static getWithWarning(endpoint, settings, callback) {
+  static fetchWithWarning(endpoint, settings, callback) {
     sweetAlert({
       title: "Are you sure?",
       text: settings.warningText,
@@ -154,7 +154,7 @@ export default class FetchUtil {
       showLoaderOnConfirm: true
     }, () => {
       fetch(endpoint, {
-        method: 'GET',
+        method: settings.method,
         headers: {
           Accept: 'application/json'
         }

@@ -340,6 +340,29 @@ def member_management_getuserinfo(uid):
             }), 200
 
 
+@member_management_bp.route('/manage/user/<uid>', methods=['DELETE'])
+def member_management_deleteuser(uid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='edit uid user')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+
+    if not uid.isdigit():
+        return "can only delete freshman accounts", 400
+
+    logger.info('backend', action="delete freshman account %s" % (uid))
+
+    FreshmanAccount.query.filter(FreshmanAccount.id == uid).delete()
+
+    db.session.flush()
+    db.session.commit()
+    return jsonify({"success": True}), 200
+
+
 # TODO FIXME XXX Maybe change this to an endpoint where it can be called by our
 # user creation script. There's no reason that the evals director should ever
 # manually need to do this

@@ -151,8 +151,9 @@ export default class EditUser {
   }
 
   _markMissedHmAsPresent(id) {
-    FetchUtil.getWithWarning(
+    FetchUtil.fetchWithWarning(
         this.endpoints.alterHmAttendance + this.uid + "/" + id, {
+          method: 'GET',
           warningText: "You will not be able to re-mark this user as absent " +
           "once they have been marked as present.",
           successText: "User has been marked as present."
@@ -227,9 +228,19 @@ export default class EditUser {
     }
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e => {
-      this._submitForm("#" + this.modal.getAttribute("id") + "-" + this.uid);
-    });
+    modal.querySelector('button.save-btn').addEventListener('click', e =>
+      this._submitForm()
+    );
+
+    // Delete button
+    modal.querySelector('button.delete-btn').addEventListener('click', e =>
+      this._deleteFreshman()
+    );
+
+    // Upgrade button
+    modal.querySelector('button.upgrade-btn').addEventListener('click', e =>
+      this._upgradeFreshman()
+    );
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName("body")[0].appendChild(modal);
@@ -240,11 +251,13 @@ export default class EditUser {
         .modal('show');
   }
 
-  _submitForm(modalSelector) {
-    let modal = document.querySelector(modalSelector);
-    let uid = modalSelector.split('-')[1];
+  _submitForm() {
+    let modal = document.querySelector("#" + this.modal.getAttribute("id") +
+        "-" + this.uid);
 
-    modal.querySelector('button').disabled = true;
+    modal.querySelectorAll('button').forEach(btn => {
+      btn.disabled = true;
+    });
 
     if (this.type === "financial") {
       // Save user details
@@ -252,7 +265,7 @@ export default class EditUser {
         activeMember: modal.querySelector('input[name=dues]').checked
       };
 
-      FetchUtil.post(this.endpoints.userDetails + uid, payload, {
+      FetchUtil.post(this.endpoints.userDetails + this.uid, payload, {
         successText: "User details have been updated."
       }, () => {
         $(modal).modal('hide');
@@ -313,11 +326,30 @@ export default class EditUser {
         payload.roomNumber = roomNumber;
       }
 
-      FetchUtil.post(this.endpoints.userDetails + uid, payload, {
+      FetchUtil.post(this.endpoints.userDetails + this.uid, payload, {
         successText: "User details have been updated."
       }, () => {
         $(modal).modal('hide');
       });
     }
+  }
+
+  _deleteFreshman() {
+    let modal = document.querySelector("#" + this.modal.getAttribute("id") +
+        "-" + this.uid);
+
+    FetchUtil.fetchWithWarning(this.endpoints.userDetails + this.uid, {
+      method: 'DELETE',
+      warningText: 'This account\'s data will be permanently deleted.',
+      successText: 'Freshman account has been deleted.'
+    }, () => {
+      $(modal).modal('hide');
+      window.location.reload();
+    });
+  }
+
+  _upgradeFreshman() {
+    let modal = document.querySelector("#" + this.modal.getAttribute("id") +
+        "-" + this.uid);
   }
 }
