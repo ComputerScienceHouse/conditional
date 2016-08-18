@@ -18,8 +18,7 @@ var sasslintTask = function () {
 
     return gulp.src(globs)
         .pipe(sassLint())
-        .pipe(sassLint.format())
-        .pipe(sassLint.failOnError())
+        .pipe(sassLint.format());
 };
 
 gulp.task('sasslint', sasslintTask);

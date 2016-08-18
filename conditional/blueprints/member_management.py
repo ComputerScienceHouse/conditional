@@ -91,13 +91,12 @@ def display_member_management():
     freshmen_list = []
 
     for freshman_user in freshmen:
-        name = freshman_user.name
-        onfloor = freshman_user.onfloor_status
-        room = freshman_user.room_number
         freshmen_list.append({
-            "name": name,
-            "onfloor": onfloor,
-            "room": room
+            "id": freshman_user.id,
+            "name": freshman_user.name,
+            "onfloor": freshman_user.onfloor_status,
+            "room": "" if freshman_user.room_number is None else freshman_user.room_number,
+            "eval_date": freshman_user.eval_date
         })
 
     settings = EvalSettings.query.first()
@@ -206,40 +205,57 @@ def member_management_edituser(uid):
 
     post_data = request.get_json()
 
-    active_member = post_data['activeMember']
+    if not uid.isdigit():
+        active_member = post_data['activeMember']
 
-    if ldap_is_eval_director(user_name):
-        logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
-                                      (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-                                       post_data['housingPoints']))
+        if ldap_is_eval_director(user_name):
+            logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
+                                          (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+                                           post_data['housingPoints']))
+            room_number = post_data['roomNumber']
+            onfloor_status = post_data['onfloorStatus']
+            housing_points = post_data['housingPoints']
+
+            ldap_set_roomnumber(uid, room_number)
+            if onfloor_status:
+                ldap_add_member_to_group(uid, "onfloor")
+            else:
+                ldap_remove_member_from_group(uid, "onfloor")
+            ldap_set_housingpoints(uid, housing_points)
+
+        # Only update if there's a diff
+        logger.info('backend', action="edit %s active: %s" % (uid, active_member))
+        if ldap_is_active(uid) != active_member:
+            ldap_set_active(uid)
+
+            if active_member:
+                db.session.add(SpringEval(uid))
+            else:
+                SpringEval.query.filter(
+                    SpringEval.uid == uid and
+                    SpringEval.active).update(
+                    {
+                        'active': False
+                    })
+    else:
+        logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s" %
+            (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+            post_data['evalDate']))
+
+        name = post_data['name']
         room_number = post_data['roomNumber']
         onfloor_status = post_data['onfloorStatus']
-        housing_points = post_data['housingPoints']
+        eval_date = post_data['evalDate']
 
-        ldap_set_roomnumber(uid, room_number)
-        if onfloor_status:
-            ldap_add_member_to_group(uid, "onfloor")
-        else:
-            ldap_remove_member_from_group(uid, "onfloor")
-        ldap_set_housingpoints(uid, housing_points)
+        FreshmanAccount.query.filter(FreshmanAccount.id == uid).update({
+            'name': name,
+            'eval_date': datetime.strptime(eval_date, "%Y-%m-%d"),
+            'onfloor_status': onfloor_status,
+            'room_number': room_number
+        })
 
-    # Only update if there's a diff
-    logger.info('backend', action="edit %s active: %s" % (uid, active_member))
-    if ldap_is_active(uid) != active_member:
-        ldap_set_active(uid)
-
-        if active_member:
-            db.session.add(SpringEval(uid))
-        else:
-            SpringEval.query.filter(
-                SpringEval.uid == uid and
-                SpringEval.active).update(
-                {
-                    'active': False
-                })
-        db.session.flush()
-        db.session.commit()
-
+    db.session.flush()
+    db.session.commit()
     return jsonify({"success": True}), 200
 
 
@@ -257,21 +273,40 @@ def member_management_getuserinfo(uid):
     acct = FreshmanAccount.query.filter(
         FreshmanAccount.id == uid).first()
 
+    # missed hm
+    def get_hm_date(hm_id):
+        return HouseMeeting.query.filter(
+            HouseMeeting.id == hm_id). \
+            first().date.strftime("%Y-%m-%d")
+
     # if fid
     if acct:
+        missed_hm = [
+            {
+                'date': get_hm_date(hma.meeting_id),
+                'id': hma.meeting_id,
+                'excuse': hma.excuse,
+                'status': hma.attendance_status
+            } for hma in FreshmanHouseMeetingAttendance.query.filter(
+                FreshmanHouseMeetingAttendance.fid == acct.id and
+                (FreshmanHouseMeetingAttendance.attendance_status != attendance_enum.Attended))]
+
+        hms_missed = []
+        for hm in missed_hm:
+            if hm['status'] != "Attended":
+                hms_missed.append(hm)
+
         return jsonify(
             {
-                'user': 'fid'
-            })
+                'id': acct.id,
+                'name': acct.name,
+                'eval_date': acct.eval_date.strftime("%Y-%m-%d"),
+                'missed_hm': hms_missed,
+                'onfloor_status': acct.onfloor_status,
+                'room_number': acct.room_number
+            }), 200
 
     if ldap_is_eval_director(user_name):
-
-        # missed hm
-        def get_hm_date(hm_id):
-            return HouseMeeting.query.filter(
-                HouseMeeting.id == hm_id). \
-                first().date.strftime("%Y-%m-%d")
-
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -295,13 +330,14 @@ def member_management_getuserinfo(uid):
                 'active_member': ldap_is_active(uid),
                 'missed_hm': hms_missed,
                 'user': 'eval'
-            })
+            }), 200
     else:
         return jsonify(
             {
+                'name': ldap_get_name(uid),
                 'active_member': ldap_is_active(uid),
                 'user': 'financial'
-            })
+            }), 200
 
 
 # TODO FIXME XXX Maybe change this to an endpoint where it can be called by our

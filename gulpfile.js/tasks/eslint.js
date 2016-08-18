@@ -18,8 +18,7 @@ var eslintTask = function () {
     
     return gulp.src(globs)
         .pipe(eslint(config.tasks.eslint.options))
-        .pipe(eslint.format())
-        .pipe(eslint.failAfterError());
+        .pipe(eslint.format());
 };
 
 gulp.task('eslint', eslintTask);

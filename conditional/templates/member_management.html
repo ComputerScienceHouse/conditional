@@ -1,13 +1,12 @@
 {% extends "nav.html" %} {% block body %}
 <div class="container main">
-    {% if is_eval_director %}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Administration</h3>
         </div>
         <div class="panel-body">
             <div class="container-fluid">
-                <div class="col-xs-6 col-sm-2">
+                <div class="col-xs-6 col-sm-2{% if not is_eval_director %} col-sm-offset-2{% endif %}">
                     <div class="stat-number">{{num_current}}</div>
                     <div class="stat-title">Current Students</div>
                 </div>
@@ -23,6 +22,7 @@
                     <div class="stat-number">{{num_fresh}}</div>
                     <div class="stat-title">Intro Accounts</div>
                 </div>
+                {% if is_eval_director %}
                 <div class="col-xs-12 col-sm-4 align-center">
                     <div class="material-switch">
                         <div class="switch-label">Site Lockdown</div>
@@ -33,10 +33,10 @@
                         <label for="site-lockdown-checkbox" class="label-primary"></label>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
-    {% endif %}
 
     {% if is_eval_director %}
     <div class="panel panel-default">
@@ -58,7 +58,7 @@
                     <div class="col-md-6 member-form">
                         <form>
                             <div class="form-group">
-                                <label class="control-label" for="name">Member Name</label>
+                                <label class="control-label" for="name">Freshman Name</label>
                                 <input class="form-control" id="name" name="name" type="text">
                                 <span class="material-input"></span>
                             </div>
@@ -101,16 +101,20 @@
                         <th>Name</th>
                         <th>On Floor</th>
                         <th>Room</th>
+                        <th>Evaluation Date</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for f in freshmen %}
                     <tr>
-                        <td>{{f['name']}}</td>
+                        <td>
+                            <a href="#" data-module="editUser" data-modal="editFreshmanModal" data-uid="{{f['id']}}">{{f['name']}}</a>
+                        </td>
                         <td>
                             {% if f['onfloor'] %} &#10003; {% endif %}
                         </td>
                         <td>{{f['room']}}</td>
+                        <td>{{f['eval_date']}}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -160,15 +164,13 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserTitle" aria-hidden="true">
+{% if is_eval_director %}
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserTitle" aria-hidden="true" data-type="member">
     <div class="vertical-alignment-helper">
         <div class="modal-dialog vertical-align-center">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-
-                    </button>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <h4 class="modal-title" id="editUserTitle">Edit User</h4>
                 </div>
                 <div class="modal-body">
@@ -176,12 +178,10 @@
                         <div class="col-xs-8">
                             <label class="control-label" for="memberName">Member Name</label>
                             <input class="form-control" id="memberName" name="name" type="text">
-                            <span class="material-input"></span>
                         </div>
                         <div class="col-xs-4">
                             <label class="control-label" for="room">Room</label>
                             <input class="form-control" id="room" name="room" type="text">
-                            <span class="material-input"></span>
                         </div>
                     </div>
 
@@ -204,14 +204,14 @@
                         </div>
                         <div class="col-xs-4">
                             <div class="form-group align-center">
-                                <label for="points">Points:</label> <input class="form-control input-sm hp-input" id="points" type="number">
+                                <label for="points">Points:</label> <input class="form-control input-sm hp-input" id="points" name="points" type="number">
                             </div>
                         </div>
                     </div>
 
                     <p class="lead">Missed House Meetings</p>
-                    <div class="alert alert-info" role="alert" id="noMissedHmAlert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"> </span> This member has not missed any house meetings.</div>
-                    <div class="row hm-wrapper" id="missedHmTpl">
+                    <div class="alert alert-info no-missed-hm-alert" role="alert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"> </span> This member has not missed any house meetings.</div>
+                    <div class="row hm-wrapper missed-hm-tpl">
                         <div class="col-xs-4">
                             <h6 class="hm-date">07/31/2016</h6>
                         </div>
@@ -224,24 +224,125 @@
                             </div>
                         </div>
                         <div class="col-xs-4">
-                            <button type="button" class="btn btn-outline-secondary btn-sm hm-present-btn" id="markPresentBtn">
+                            <button type="button" class="btn btn-outline-secondary btn-sm hm-present-btn">
                             <span class="glyphicon glyphicon-ok green" style="padding-right:5px"></span>Mark Present
                             </button>
                         </div>
                         <div class="col-xs-12">
                             <div class="form-group align-center">
-                                <input class="form-control hm-reason" placeholder="Reason" id="reason" type="text">
+                                <input class="form-control hm-reason" placeholder="Reason" name="reason" type="text">
                             </div>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="editSaveBtn">Save</button>
+                    <button type="button" class="btn btn-primary save-btn">Save</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div class="modal fade" id="editFreshmanModal" tabindex="-1" role="dialog" aria-labelledby="editFreshmanTitle" aria-hidden="true" data-type="freshman">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editFreshmanTitle">Edit Freshman Account</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row user-edit-row">
+                        <div class="col-xs-8">
+                            <label class="control-label" for="freshmanName">Freshman Name</label>
+                            <input class="form-control" id="freshmanName" name="name" type="text">
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label" for="freshmanRoom">Room</label>
+                            <input class="form-control" id="freshmanRoom" name="room" type="text">
+                        </div>
+                    </div>
+
+                    <div class="row user-edit-row">
+                        <div class="col-xs-4">
+                            <div class="form-group align-center">
+                                <label>
+                                    <input name="onfloor" type="checkbox">
+                                    On-Floor
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xs-8">
+                            <label class="control-label" for="evalDate">Evaluation Date</label>
+                            <input class="form-control" id="evalDate" name="evalDate" type="text">
+                        </div>
+                    </div>
+
+                    <p class="lead">Missed House Meetings</p>
+                    <div class="alert alert-info no-missed-hm-alert" role="alert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"></span> This member has not missed any house meetings.</div>
+                    <div class="row hm-wrapper missed-hm-tpl">
+                        <div class="col-xs-4">
+                            <h6 class="hm-date">07/31/2016</h6>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group align-center">
+                                <label>
+                                    <input name="hm-excused" type="checkbox">
+                                    Excused
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <button type="button" class="btn btn-outline-secondary btn-sm hm-present-btn">
+                                <span class="glyphicon glyphicon-ok green" style="padding-right:5px"></span>Mark Present
+                            </button>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="form-group align-center">
+                                <input class="form-control hm-reason" placeholder="Reason" name="reason" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary save-btn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserTitle" aria-hidden="true" data-type="financial">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editUserTitle">Edit User</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row user-edit-row">
+                        <label class="control-label" for="memberName">Member Name</label>
+                        <input class="form-control" id="memberName" name="name" type="text">
+                    </div>
+
+                    <div class="row user-edit-row">
+                        <div class="form-group">
+                            <label>
+                                <input name="dues" type="checkbox">
+                                Paid Dues
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
