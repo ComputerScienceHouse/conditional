@@ -16,7 +16,8 @@ export default class EditUser {
 
     this.endpoints = {
       userDetails: '/manage/user/',
-      alterHmAttendance: '/attendance/alter/hm/'
+      alterHmAttendance: '/attendance/alter/hm/',
+      userUpgrade: '/manage/upgrade_user'
     };
 
     this.render();
@@ -351,5 +352,20 @@ export default class EditUser {
   _upgradeFreshman() {
     let modal = document.querySelector("#" + this.modal.getAttribute("id") +
         "-" + this.uid);
+
+    let payload = {
+      fid: this.uid,
+      uid: modal.querySelector('input[name=upgradeUid]').value,
+      sigsMissed: modal.querySelector('input[name=upgradeSigsMissed]').value
+    };
+
+    FetchUtil.postWithWarning(this.endpoints.userUpgrade, payload, {
+      warningText: 'This will irreversibly migrate all of this ' +
+      'freshman\'s data to the specified member account.',
+      successText: 'Account has been upgraded.'
+    }, () => {
+      $(modal).modal('hide');
+      window.location.reload();
+    });
   }
 }
