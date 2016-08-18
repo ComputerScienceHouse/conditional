@@ -372,7 +372,7 @@ def alter_house_excuse(uid, hid):
                                   (hid, hm_status, hm_excuse))
 
     if not uid.isdigit():
-        member_meeting = MemberHouseMeetingAttendance.query.filter(
+        MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
         ).update({
@@ -380,7 +380,7 @@ def alter_house_excuse(uid, hid):
             'attendance_status': hm_status
         })
     else:
-        freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
+        FreshmanHouseMeetingAttendance.query.filter(
             FreshmanHouseMeetingAttendance.fid == uid,
             FreshmanHouseMeetingAttendance.meeting_id == hid
         ).update({

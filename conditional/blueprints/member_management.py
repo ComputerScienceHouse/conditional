@@ -226,7 +226,7 @@ def member_management_edituser(uid):
     # Only update if there's a diff
     logger.info('backend', action="edit %s active: %s" % (uid, active_member))
     if ldap_is_active(uid) != active_member:
-        ldap_set_active(uid, active_member)
+        ldap_set_active(uid)
 
         if active_member:
             db.session.add(SpringEval(uid))
