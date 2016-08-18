@@ -325,3 +325,30 @@ def submit_house_attendance():
 
     db.session.commit()
     return jsonify({"success": True}), 200
+
+
+@attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['GET'])
+def alter_house_attendance(uid, hid):
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be evals", 403
+
+    if not uid.isdigit():
+        member_meeting = MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.uid == uid,
+            MemberHouseMeetingAttendance.meeting_id == hid
+        ).first()
+        member_meeting.attendance_status = "Attended"
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    else:
+        freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
+            FreshmanHouseMeetingAttendance.fid == uid,
+            FreshmanHouseMeetingAttendance.meeting_id == hid
+        ).first()
+
+        freshman_meeting.attendance_status = "Attended"
+        db.session.commit()
+        return jsonify({"success": True}), 200
+
