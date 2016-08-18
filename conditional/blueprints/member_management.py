@@ -112,11 +112,11 @@ def display_member_management():
                            site_lockdown=settings.site_lockdown)
 
 
-@member_management_bp.route('/manage/settings', methods=['POST'])
+@member_management_bp.route('/manage/settings', methods=['PUT'])
 def member_management_eval():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action='submit site-settings')
+    log.info('api', action='submit site settings')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -193,8 +193,8 @@ def member_management_uploaduser():
         return "file could not be processed", 400
 
 
-@member_management_bp.route('/manage/edituser', methods=['POST'])
-def member_management_edituser():
+@member_management_bp.route('/manage/user/<uid>', methods=['POST'])
+def member_management_edituser(uid):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='edit uid user')
@@ -206,16 +206,15 @@ def member_management_edituser():
 
     post_data = request.get_json()
 
-    uid = post_data['uid']
-    active_member = post_data['active_member']
+    active_member = post_data['activeMember']
 
     if ldap_is_eval_director(user_name):
         logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
-                                      (uid, post_data['room_number'], post_data['onfloor_status'],
-                                       post_data['housing_points']))
-        room_number = post_data['room_number']
-        onfloor_status = post_data['onfloor_status']
-        housing_points = post_data['housing_points']
+                                      (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+                                       post_data['housingPoints']))
+        room_number = post_data['roomNumber']
+        onfloor_status = post_data['onfloorStatus']
+        housing_points = post_data['housingPoints']
 
         ldap_set_roomnumber(uid, room_number)
         if onfloor_status:
@@ -303,37 +302,6 @@ def member_management_getuserinfo(uid):
                 'active_member': ldap_is_active(uid),
                 'user': 'financial'
             })
-
-
-@member_management_bp.route('/manage/edit_hm_excuse', methods=['POST'])
-def alter_hm_excuse():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='edit house meeting excuse')
-
-    user_name = request.headers.get('x-webauth-user')
-
-    if not ldap_is_eval_director(user_name):
-        return "must be eval director", 403
-
-    post_data = request.get_json()
-
-    hm_id = post_data['id']
-    hm_status = post_data['status']
-    hm_excuse = post_data['excuse']
-    logger.info('backend', action="edit hm %s status: %s excuse: %s" %
-                                  (hm_id, hm_status, hm_excuse))
-
-    MemberHouseMeetingAttendance.query.filter(
-        MemberHouseMeetingAttendance.id == hm_id).update(
-        {
-            'excuse': hm_excuse,
-            'attendance_status': hm_status
-        })
-
-    db.session.flush()
-    db.session.commit()
-    return jsonify({"success": True}), 200
 
 
 # TODO FIXME XXX Maybe change this to an endpoint where it can be called by our

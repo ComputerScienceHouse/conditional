@@ -23,7 +23,9 @@
             {% block body %}
             {% endblock %}
         {% else %}
-            SITE LOCKDOWN: ONLY FOR EVALS DIRECTORS EYES
+        <div class="container main">
+            <div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove-sign"></span> Site Lockdown: Evaluations in progress. Please check back later.</div>
+        </div>
         {% endif %}
 
         <script src="/static/js/app.js"></script>

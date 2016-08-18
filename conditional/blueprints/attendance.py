@@ -352,3 +352,42 @@ def alter_house_attendance(uid, hid):
         db.session.commit()
         return jsonify({"success": True}), 200
 
+
+@attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['POST'])
+def alter_house_excuse(uid, hid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='edit house meeting excuse')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+
+    post_data = request.get_json()
+    hm_status = post_data['status']
+    hm_excuse = post_data['excuse']
+
+    logger.info('backend', action="edit hm %s status: %s excuse: %s" %
+                                  (hid, hm_status, hm_excuse))
+
+    if not uid.isdigit():
+        member_meeting = MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.uid == uid,
+            MemberHouseMeetingAttendance.meeting_id == hid
+        ).update({
+            'excuse': hm_excuse,
+            'attendance_status': hm_status
+        })
+    else:
+        freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
+            FreshmanHouseMeetingAttendance.fid == uid,
+            FreshmanHouseMeetingAttendance.meeting_id == hid
+        ).update({
+            'excuse': hm_excuse,
+            'attendance_status': hm_status
+        })
+
+    db.session.flush()
+    db.session.commit()
+    return jsonify({"success": True}), 200

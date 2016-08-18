@@ -1,6 +1,10 @@
 /* global fetch */
 import "whatwg-fetch";
 import FetchUtil from "../utils/fetchUtil";
+import Exception from "../exceptions/exception";
+import FetchException from "../exceptions/fetchException";
+import sweetAlert from "../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js"; // eslint-disable-line max-len
+import _ from "lodash";
 
 export default class EditUser {
   constructor(link) {
@@ -42,12 +46,10 @@ export default class EditUser {
 
     // Room Number
     modal.querySelector('#room').value = this.data.room_number;
-    if (this.data.room_number === "N/A") {
-      modal.querySelector('#room').disabled = true;
-      modal.querySelector('input[name=onfloor]').checked = false;
-    } else {
-      modal.querySelector('input[name=onfloor]').checked = true;
-    }
+
+    // On-floor Status
+    modal.querySelector('input[name=onfloor]').checked =
+        this.data.onfloor_status;
 
     // Dues
     modal.querySelector('input[name=dues]').checked =
@@ -74,8 +76,9 @@ export default class EditUser {
 
         if (hm.status === "Excused") {
           node.querySelector("input[name=hm-excused]").checked = true;
-          node.querySelector("#reason").value = hm.excuse;
         }
+
+        node.querySelector("#reason").value = hm.excuse;
 
         node.querySelector("input[name=hm-excused]").addEventListener(
             'click', e => e.target.classList.add('status-changed')
@@ -125,7 +128,62 @@ export default class EditUser {
 
   _submitForm(modalSelector) {
     let modal = document.querySelector(modalSelector);
-    console.log("Coming soon...");
-    console.log(modal);
+    let uid = modalSelector.split('-')[1];
+
+    modal.querySelector('#editSaveBtn').disabled = true;
+
+    // Save missed house meetings
+    let missedHms = modal.querySelectorAll('.hm-wrapper');
+    missedHms.forEach(hm => {
+      let payload = {
+        id: hm.dataset.id,
+        status: hm.querySelector("input[name=hm-excused]").checked ?
+            'Excused' : 'Absent',
+        excuse: hm.querySelector("#reason").value
+      };
+
+      fetch(this.endpoints.alterHmAttendance + this.uid + "/" + hm.dataset.id, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+          .then(FetchUtil.checkStatus)
+          .then(FetchUtil.parseJSON)
+          .then(response => {
+            if (!response.hasOwnProperty('success') ||
+                !response.success) {
+              sweetAlert("Uh oh...", "We're having trouble submitting this " +
+                  "form right now. Please try again later.", "error");
+              throw new Exception(FetchException.REQUEST_FAILED, response);
+            }
+          })
+          .catch(error => {
+            sweetAlert("Uh oh...", "We're having trouble submitting this " +
+                "form right now. Please try again later.", "error");
+            throw new Exception(FetchException.REQUEST_FAILED, error);
+          });
+    });
+
+    // Save user details
+    let payload = {
+      roomNumber: null,
+      onfloorStatus: modal.querySelector('input[name=onfloor]').checked,
+      activeMember: modal.querySelector('input[name=dues]').checked,
+      housingPoints: modal.querySelector('#points').value
+    };
+
+    let roomNumber = modal.querySelector('#room').value;
+    if (roomNumber !== "N/A" && _.notNil(roomNumber)) {
+      payload.roomNumber = roomNumber;
+    }
+
+    FetchUtil.post(this.endpoints.userDetails + uid, payload, {
+      successText: "User details have been updated."
+    }, () => {
+      $(modal).modal('hide');
+    });
   }
 }
