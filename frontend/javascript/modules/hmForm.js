@@ -41,7 +41,7 @@ export default class HouseMeetingForm {
           const uid = checkbox.name;
           const status = checkbox.checked ? "Attended" : "Absent";
 
-          if (_.isNaN(uid)) {
+          if (_.isNaN(_.toNumber(uid))) {
             upperclassmen.push({
               uid: uid,
               status: status

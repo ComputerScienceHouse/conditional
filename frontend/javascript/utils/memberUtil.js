@@ -9,7 +9,7 @@ export default class MemberUtil {
 
     memberIds.forEach(memberId => {
       if (memberId) {
-        if (_.isNaN(memberId)) {
+        if (_.isNaN(_.toNumber(memberId))) {
           // Upperclassman account
           result.upperclassmen.push(memberId);
         } else {
