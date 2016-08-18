@@ -125,20 +125,6 @@ def member_management_eval():
 
     post_data = request.get_json()
 
-    if 'housing' in post_data:
-        logger.info('backend', action="changed housing form activity to %s" % post_data['housing'])
-        EvalSettings.query.update(
-            {
-                'housing_form_active': post_data['housing']
-            })
-
-    if 'intro' in post_data:
-        logger.info('backend', action="changed intro form activity to %s" % post_data['intro'])
-        EvalSettings.query.update(
-            {
-                'intro_form_active': post_data['intro']
-            })
-
     if 'site_lockdown' in post_data:
         logger.info('backend', action="changed site lockdown to %s" % post_data['site_lockdown'])
         EvalSettings.query.update(
@@ -258,20 +244,16 @@ def member_management_edituser():
     return jsonify({"success": True}), 200
 
 
-@member_management_bp.route('/manage/getuserinfo', methods=['POST'])
-def member_management_getuserinfo():
+@member_management_bp.route('/manage/user/<uid>', methods=['GET'])
+def member_management_getuserinfo(uid):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action='retreive user info')
+    log.info('api', action='retrieve user info')
 
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval or financial director", 403
-
-    post_data = request.get_json()
-
-    uid = post_data['uid']
 
     acct = FreshmanAccount.query.filter(
         FreshmanAccount.id == uid).first()
@@ -299,7 +281,7 @@ def member_management_getuserinfo():
                 'status': hma.attendance_status
             } for hma in MemberHouseMeetingAttendance.query.filter(
                 MemberHouseMeetingAttendance.uid == uid and
-                (MemberHouseMeetingAttendance.attendance_status != attendance_enum.Attenaded))]
+                (MemberHouseMeetingAttendance.attendance_status != attendance_enum.Attended))]
 
         hms_missed = []
         for hm in missed_hm:
@@ -307,6 +289,7 @@ def member_management_getuserinfo():
                 hms_missed.append(hm)
         return jsonify(
             {
+                'name': ldap_get_name(uid),
                 'room_number': ldap_get_room_number(uid),
                 'onfloor_status': ldap_is_onfloor(uid),
                 'housing_points': ldap_get_housing_points(uid),
