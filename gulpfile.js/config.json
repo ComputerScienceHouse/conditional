@@ -11,7 +11,7 @@
     },
 
     "watch": {
-      "tasks": ["images", "css", "csscomb", "eslint", "sasslint"],
+      "tasks": ["images", "css", "eslint", "sasslint"],
       "paths": ["./conditional/templates"]
     },
 
@@ -51,7 +51,7 @@
     
     "sasslint": {
       "src": "stylesheets",
-      "exclude": ["components/sweet-alert/**"],
+      "exclude": ["components/sweet-alert/**", "components/_datatables.scss"],
       "extensions": ["sass", "scss"]
     },
     

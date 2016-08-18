@@ -1,6 +1,6 @@
 {% extends "nav.html" %} {% block body %}
 <div class="container main">
-{% if is_eval_director %}
+    {% if is_eval_director %}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Administration</h3>
@@ -9,19 +9,19 @@
             <div class="container-fluid">
                 <div class="col-xs-6 col-sm-2">
                     <div class="stat-number">{{num_current}}</div>
-                    <div class="stat-title">CURRENT STUDENTS</div>
+                    <div class="stat-title">Current Students</div>
                 </div>
                  <div class="col-xs-6 col-sm-2">
                     <div class="stat-number">{{num_active}}</div>
-                    <div class="stat-title">ACTIVE MEMBERS</div>
+                    <div class="stat-title">Active Members</div>
                 </div>
                  <div class="col-xs-6 col-sm-2">
                     <div class="stat-number">{{num_onfloor}}</div>
-                    <div class="stat-title">ON-FLOOR STATUS</div>
+                    <div class="stat-title">On-Floor Members</div>
                 </div>
                  <div class="col-xs-6 col-sm-2">
                     <div class="stat-number">{{num_fresh}}</div>
-                    <div class="stat-title">INTRO ACCOUNTS</div>
+                    <div class="stat-title">Intro Accounts</div>
                 </div>
                 <div class="col-xs-12 col-sm-4 align-center">
                     <div class="material-switch">
@@ -37,6 +37,7 @@
         </div>
     </div>
     {% endif %}
+
     {% if is_eval_director %}
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -83,6 +84,43 @@
         </div>
     </div>
     {% endif %}
+
+    {% if is_eval_director %}
+    {% if freshmen|length == 0 %}
+    <div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"> </span> There are currently no freshmen accounts.</div>
+    {% else %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Freshmen Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="0" data-sort-order="asc" data-length-changable="true"{% if freshmen|length < 11 %} data-paginated="false" {% endif %}>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>On Floor</th>
+                        <th>Room</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for f in freshmen %}
+                    <tr>
+                        <td>{{f['name']}}</td>
+                        <td>
+                            {% if f['onfloor'] %} &#10003; {% endif %}
+                        </td>
+                        <td>{{f['room']}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Member Management</h3>
@@ -120,37 +158,6 @@
             </div>
         </div>
     </div>
-    {% if is_eval_director %}
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Freshmen Management</h3>
-        </div>
-        <div class="panel-body table-fill">
-            <div class="table-responsive">
-                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="0" data-sort-order="asc" data-length-changable="true">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>On Floor</th>
-                            <th>Room</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for f in freshmen %}
-                        <tr>
-                            <td>{{f['name']}}</td>
-                            <td>
-                                {% if f['onfloor'] %} &#10003; {% endif %}
-                            </td>
-                            <td>{{f['room']}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 <!-- Modal -->
@@ -239,7 +246,3 @@
 </div>
 
 {% endblock %}
-
-<!--
-
--->

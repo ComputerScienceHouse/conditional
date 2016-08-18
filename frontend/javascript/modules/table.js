@@ -7,7 +7,7 @@ export default class Table {
     this.table = table;
 
     // Set options based on data attributes
-    this.paginated = !this.table.dataset.paginated === 'false';
+    this.paginated = !(this.table.dataset.paginated === 'false');
     this.sortColumn = (_.isNil(this.table.dataset.sortColumn) ||
                         _.isNaN(this.table.dataset.sortColumn)) ?
                         1 : this.table.dataset.sortColumn;
