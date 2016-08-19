@@ -133,11 +133,11 @@ def member_management_eval():
             })
 
     if 'introForm' in post_data:
-            logger.info('backend', action="changed intro form setting to %s" % post_data['introForm'])
-            EvalSettings.query.update(
-                {
-                    'intro_form_active': post_data['introForm']
-                })
+        logger.info('backend', action="changed intro form setting to %s" % post_data['introForm'])
+        EvalSettings.query.update(
+            {
+                'intro_form_active': post_data['introForm']
+            })
 
     db.session.flush()
     db.session.commit()
