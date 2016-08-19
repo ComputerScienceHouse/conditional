@@ -52,5 +52,5 @@ def get_queue_length():
 def get_queue_position(username):
     try:
         return get_housing_queue().index(username)
-    except IndexError:
+    except (IndexError, ValueError):
         return "0"
