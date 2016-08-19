@@ -26,11 +26,13 @@
                 <div class="col-xs-12 col-sm-4 align-center">
                     <div class="material-switch">
                         <div class="switch-label">Site Lockdown</div>
-                        <input type="checkbox" id="site-lockdown-checkbox" name="site-lockdown-checkbox" data-module="siteSettings" data-setting="site_lockdown"
-                        {% if site_lockdown %} 
-                            checked 
-                        {% endif %}>
-                        <label for="site-lockdown-checkbox" class="label-primary"></label>
+                        <input type="checkbox" id="siteLockdownSwitch" name="siteLockdownSwitch" data-module="siteSettings" data-setting="siteLockdown"{% if site_lockdown %} checked{% endif %}>
+                        <label for="siteLockdownSwitch" class="label-primary"></label>
+                    </div>
+                    <div class="material-switch">
+                        <div class="switch-label">Intro Evals Form</div>
+                        <input type="checkbox" id="introFormSwitch" name="introEvalsSwitch" data-module="siteSettings" data-setting="introForm"{% if intro_form %} checked{% endif %}>
+                        <label for="introFormSwitch" class="label-primary"></label>
                     </div>
                 </div>
                 {% endif %}

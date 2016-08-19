@@ -108,7 +108,8 @@ def display_member_management():
                            num_fresh=len(freshmen_list),
                            num_onfloor=onfloor_number,
                            freshmen=freshmen_list,
-                           site_lockdown=settings.site_lockdown)
+                           site_lockdown=settings.site_lockdown,
+                           intro_form=settings.intro_form_active)
 
 
 @member_management_bp.route('/manage/settings', methods=['PUT'])
@@ -124,12 +125,19 @@ def member_management_eval():
 
     post_data = request.get_json()
 
-    if 'site_lockdown' in post_data:
-        logger.info('backend', action="changed site lockdown to %s" % post_data['site_lockdown'])
+    if 'siteLockdown' in post_data:
+        logger.info('backend', action="changed site lockdown setting to %s" % post_data['siteLockdown'])
         EvalSettings.query.update(
             {
-                'site_lockdown': post_data['site_lockdown']
+                'site_lockdown': post_data['siteLockdown']
             })
+
+    if 'introForm' in post_data:
+            logger.info('backend', action="changed intro form setting to %s" % post_data['introForm'])
+            EvalSettings.query.update(
+                {
+                    'intro_form_active': post_data['introForm']
+                })
 
     db.session.flush()
     db.session.commit()
