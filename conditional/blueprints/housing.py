@@ -45,11 +45,12 @@ def display_housing():
     for f in onfloor_freshmen:
         name = f.name
         room = str(f.room_number)
-        if room in housing:
+        if room in housing and room != "None":
             housing[room].append(name)
-        else:
+            room_list.add(room)
+        elif room != "None":
             housing[room] = [name]
-        room_list.add(room)
+            room_list.add(room)
 
     # return names in 'first last (username)' format
     return render_template(request,
