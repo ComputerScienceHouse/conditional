@@ -35,6 +35,7 @@ export default class MajorProjectStatus {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
+      credentials: "same-origin",
       body: JSON.stringify(payload)
     })
       .then(FetchUtil.checkStatus)

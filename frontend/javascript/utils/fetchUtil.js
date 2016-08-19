@@ -29,6 +29,7 @@ export default class FetchUtil {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
+      credentials: "same-origin",
       body: JSON.stringify(payload)
     })
         .then(FetchUtil.checkStatus)
@@ -75,6 +76,7 @@ export default class FetchUtil {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
+        credentials: "same-origin",
         body: JSON.stringify(payload)
       })
         .then(FetchUtil.checkStatus)
@@ -112,7 +114,8 @@ export default class FetchUtil {
       method: settings.method,
       headers: {
         Accept: 'application/json'
-      }
+      },
+      credentials: "same-origin"
     })
         .then(FetchUtil.checkStatus)
         .then(FetchUtil.parseJSON)
@@ -157,7 +160,8 @@ export default class FetchUtil {
         method: settings.method,
         headers: {
           Accept: 'application/json'
-        }
+        },
+        credentials: "same-origin"
       })
           .then(FetchUtil.checkStatus)
           .then(FetchUtil.parseJSON)

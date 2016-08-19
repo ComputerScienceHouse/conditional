@@ -27,7 +27,13 @@ export default class EditUser {
     this.link.addEventListener("click", e => {
       e.preventDefault();
 
-      fetch(this.endpoints.userDetails + this.uid)
+      fetch(this.endpoints.userDetails + this.uid, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        },
+        credentials: "same-origin"
+      })
           .then(FetchUtil.checkStatus)
           .then(FetchUtil.parseJSON)
           .then(data => {
@@ -289,6 +295,7 @@ export default class EditUser {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
               },
+              credentials: "same-origin",
               body: JSON.stringify(payload)
             })
             .then(FetchUtil.checkStatus)

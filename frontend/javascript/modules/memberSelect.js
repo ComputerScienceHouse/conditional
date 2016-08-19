@@ -14,6 +14,10 @@ export default class MemberSelect {
     if (this.dataSrc) {
       fetch('/attendance/' + this.dataSrc, {
         method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
         credentials: 'same-origin'
       })
         .then(FetchUtil.checkResponse)
