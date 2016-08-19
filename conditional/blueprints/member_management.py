@@ -136,7 +136,7 @@ def member_management_eval():
     return jsonify({"success": True}), 200
 
 
-@member_management_bp.route('/manage/adduser', methods=['POST'])
+@member_management_bp.route('/manage/user', methods=['POST'])
 def member_management_adduser():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
@@ -151,15 +151,16 @@ def member_management_adduser():
 
     name = post_data['name']
     onfloor_status = post_data['onfloor']
+    room_number = post_data['roomNumber']
 
-    logger.info('backend', action="add f_%s as onfloor: %s" % (name, onfloor_status))
-    db.session.add(FreshmanAccount(name, onfloor_status))
+    logger.info('backend', action="add f_%s as onfloor: %s with room_number: %s" % (name, onfloor_status, room_number))
+    db.session.add(FreshmanAccount(name, onfloor_status, room_number))
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
 
 
-@member_management_bp.route('/manage/uploaduser', methods=['POST'])
+@member_management_bp.route('/manage/user/upload', methods=['POST'])
 def member_management_uploaduser():
     user_name = request.headers.get('x-webauth-user')
 

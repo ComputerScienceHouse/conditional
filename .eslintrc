@@ -12,5 +12,8 @@
         "es6": true,
         "commonjs": true,
         "jquery": true
+    },
+    "rules": {
+        "no-new": 0
     }
 }

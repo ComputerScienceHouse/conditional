@@ -47,7 +47,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6 remove-padding">
-                        <form action="/manage/uploaduser" id="upload_user" class="dropzone" data-module="dropzone">
+                        <form action="/manage/user/upload" id="upload_user" class="dropzone" data-module="dropzone">
                             <div class="dz-message">
                                 <img src="../images/user_upload.svg" width="72px">
                                 <div class="upload-title">Mass User Upload</div>
@@ -56,17 +56,15 @@
                         </form>
                     </div>
                     <div class="col-md-6 member-form">
-                        <form>
+                        <form data-module="addUser">
                             <div class="form-group">
-                                <label class="control-label" for="name">Freshman Name</label>
-                                <input class="form-control" id="name" name="name" type="text">
-                                <span class="material-input"></span>
+                                <label class="control-label" for="addUserName">Freshman Name</label>
+                                <input class="form-control" id="addUserName" name="name" type="text">
                             </div>
                             <div class="col-xs-8 remove-padding">
                                 <div class="form-group">
-                                    <label class="control-label" for="room">Room Number</label>
-                                    <input class="form-control" id="roome" name="room" type="text">
-                                    <span class="material-input"></span>
+                                    <label class="control-label" for="addUserRoom">Room Number</label>
+                                    <input class="form-control" id="addUserRoom" name="room" type="text">
                                 </div>
                             </div>
                             <div class="col-xs-4 onfloor-box">
@@ -76,7 +74,7 @@
                                     On-Floor</label>
                                 </div>
                             </div>
-                            <button class= "btn btn-raised btn-primary user-submit" id="submit" type="submit">Create New User</button>
+                            <input class="btn btn-raised btn-primary user-submit" type="submit" value="Create New User">
                         </form>
                     </div>
                 </div>

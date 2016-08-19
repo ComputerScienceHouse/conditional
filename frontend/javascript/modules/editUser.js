@@ -184,7 +184,7 @@ export default class EditUser {
     // Evaluation Date
     modal.querySelector('input[name=evalDate]').value =
         this.data.eval_date;
-    new DatePicker(modal.querySelector('input[name=evalDate]')); // eslint-disable-line no-new
+    new DatePicker(modal.querySelector('input[name=evalDate]'));
 
     // Missed House Meetings
     if (this.data.missed_hm.length > 0) {
