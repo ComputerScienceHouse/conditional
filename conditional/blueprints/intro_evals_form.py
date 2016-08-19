@@ -48,7 +48,7 @@ def submit_intro_evals():
     user_name = request.headers.get('x-webauth-user')
 
     post_data = request.get_json()
-    social_events = post_data['social_events']
+    social_events = post_data['socialEvents']
     comments = post_data['comments']
 
     FreshmanEvalData.query.filter(

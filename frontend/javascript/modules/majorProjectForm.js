@@ -21,7 +21,6 @@ export default class MajorProjectForm {
         this.form.querySelector('textarea[name=description]').value
     };
 
-    console.log(this.endpoint);
     FetchUtil.postWithWarning(this.endpoint, payload, {
       warningText: "You will not be able to edit your " +
         "project once it has been submitted.",

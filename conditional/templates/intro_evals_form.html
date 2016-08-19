@@ -1,49 +1,30 @@
 {% extends "nav.html" %}
-{% block extraFooter %}
-<script src="../static/js/intro_form.js"></script>
-{% endblock %}
 {% block body %}
 <div class="container main">
-    <h3>Intro Evals Form</h3>
+    <h3>Introductory Evaluations Form</h3>
     {% if is_open %}
     <div style="padding-top:20px"></div>
-    <form name="evalform" id="evalForm">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group label-floating is-empty">
-                            <label class="control-label" for="social_events">Social Events</label>
-                            <textarea name="social_events" class="form-control" rows="3" id="social_events">{{social_events}}</textarea>
-                            <span class="material-input"></span>
-                        </div>
-                    </div>
+    <form data-module="introEvalsForm">
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding-top:20px;">
+                <div class="form-group label-floating is-empty">
+                    <label class="control-label" for="social_events">Social Events</label>
+                    <textarea name="social_events" class="form-control" rows="6" id="social_events">{{social_events}}</textarea>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group label-floating is-empty">
-                            <label class="control-label" for="comments">Comments</label>
-                            <textarea name="comments" class="form-control" rows="3" id="comments">{{other_notes}}</textarea>
-                            <span class="material-input"></span>
-                        </div>
-                    </div>
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding-top:20px;">
+                <div class="form-group label-floating is-empty">
+                    <label class="control-label" for="comments">Comments</label>
+                    <textarea name="comments" class="form-control" rows="6" id="comments">{{other_notes}}</textarea>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <button class= "btn btn-raised btn-primary" style="width:100%;" id="submit" type="submit">Submit Intro Evaluation</button>
-            </div>
-        </div>
-
-
+        <input class= "btn btn-raised btn-primary" style="width:100%;" type="submit" value="Submit Introductory Evaluation">
     </form>
     {% else %}
-    INTRO EVALS FORM CLOSED
+    <div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove-sign"></span> The submission period for this form has ended.</div>
     {% endif %}
 </div>
 {% endblock %}
