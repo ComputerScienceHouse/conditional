@@ -100,6 +100,13 @@ def display_member_management():
         })
 
     settings = EvalSettings.query.first()
+    if settings:
+        lockdown = settings.site_lockdown
+        intro_form = settings.intro_form_active
+    else:
+        lockdown = False
+        intro_form = False
+
     return render_template(request, "member_management.html",
                            username=user_name,
                            active=member_list,
@@ -108,8 +115,8 @@ def display_member_management():
                            num_fresh=len(freshmen_list),
                            num_onfloor=onfloor_number,
                            freshmen=freshmen_list,
-                           site_lockdown=settings.site_lockdown,
-                           intro_form=settings.intro_form_active)
+                           site_lockdown=lockdown,
+                           intro_form=intro_form)
 
 
 @member_management_bp.route('/manage/settings', methods=['PUT'])
