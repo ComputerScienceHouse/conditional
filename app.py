@@ -14,3 +14,5 @@ ldap_init(app.config['LDAP_RO'],
 
 if __name__ == "__main__":
     app.run(host=app.config['IP'], port=app.config['PORT'])
+
+application = app
