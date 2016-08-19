@@ -47,7 +47,8 @@ def display_spring_evals(internal=False):
             SpringEval.active).first()
 
         if spring_entry is None:
-            db.session.add(SpringEval(uid))
+            spring_entry = SpringEval(uid)
+            db.session.add(spring_entry)
             db.session.flush()
             db.session.commit()
             # something bad happened to get here
