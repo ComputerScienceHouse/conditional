@@ -38,6 +38,7 @@ def display_major_project():
         } for p in
         MajorProject.query]
 
+    major_projects.reverse()
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format
     return render_template(request,
@@ -56,8 +57,8 @@ def submit_major_project():
     user_name = request.headers.get('x-webauth-user')
 
     post_data = request.get_json()
-    name = post_data['project_name']
-    description = post_data['project_description']
+    name = post_data['projectName']
+    description = post_data['projectDescription']
 
     project = MajorProject(user_name, name, description)
 

@@ -9,7 +9,7 @@ export default class AddUser {
 
   render() {
     this.form.querySelector('input[type=submit]')
-      .addEventListener('click', this._submitForm);
+      .addEventListener('click', e => this._submitForm(e));
   }
 
   _submitForm(e) {

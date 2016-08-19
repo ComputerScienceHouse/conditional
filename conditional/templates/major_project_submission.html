@@ -3,13 +3,12 @@
 
 <div class="container main">
     <h3 class="page-title">Major Project Form</h3>
-    <form name="evalform" id="evalForm">
+    <form data-module="majorProjectForm">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="form-group label-floating is-empty">
                     <label class="control-label" for="name">Project Name</label>
                     <input class="form-control" id="name" name="name" type="text">
-                    <span class="material-input"></span>
                 </div>
             </div>
         </div>
@@ -18,11 +17,10 @@
                 <div class="form-group label-floating is-empty">
                     <label class="control-label" for="description">Description</label>
                     <textarea name="description" class="form-control" rows="3" id="description"></textarea>
-                    <span class="material-input"></span>
                 </div>
             </div>
         </div>
-        <button class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" id="submit" type="submit">Submit Major Project</button>
+        <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit" value="Submit Major Project">
     </form>
     <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
     <=0 %} <div class="panel panel-default">
@@ -33,59 +31,48 @@
 {% else %}
 
     {% for p in major_projects %}
-    <div class="panel panel-default" id="project-{{p['id']}}" project_id="{{p['id']}}">
+    <div class="panel panel-default">
         <div class="panel-body">
-                <div class="col-xs-8 col-sm-10">
-                    <h4>{{p['proj_name']}}</h4>
-                    <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
-                    {{p['name']}} ({{p['username']}})
+            <div class="col-xs-8 col-sm-10">
+                <h4>{{p['proj_name']}}</h4>
+                <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
+                {{p['name']}} ({{p['username']}})
+            </div>
+            {% if is_eval_director %}
+            <div class="col-xs-4 col-sm-2">
+                <div class="btn-group" data-module="majorProjectStatus" data-id="{{p['id']}}">
+                    <a href="#" class="btn {% if p['status'] == 'Passed' %}btn-success{% elif p['status'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
+                        {{p['status']}}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" data-option="Passed"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</a>
+                        </li>
+                        <li>
+                            <a href="#" data-option="Pending"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</a>
+                        </li>
+                        <li>
+                            <a href="#" data-option="Failed"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</a>
+                        </li>
+                    </ul>
                 </div>
-                {% if is_eval_director %}
-                <div class="col-xs-4 col-sm-2">
-                    <div class="btn-group">
-                        {% if p['status'] == 'Passed' %}
-                        <a href="#" class="btn btn-success dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
-                        {% elif p['status'] == 'Failed' %}
-                        <a href="#" class="btn btn-danger dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
-                        {% else %}
-                        <a href="#" class="btn btn-warning dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
-                        {% endif %}
-                                {{p['status']}}
-                                <span class="caret"></span>
-                            </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <div class="dropdown-list-item" id="pass-{{p['id']}}">Passed</div>
-                            </li>
-                            <li>
-                                <div class="dropdown-list-item" id="fail-{{p['id']}}">Failed</div>
-                            </li>
-                        </ul>
-                    </div>
-                    <!--
-                        <button role="button" class="btn btn-success" id="pass-{{p['id']}}">
-                            Pass
-                        </button>
-                        <button role="button" class="btn btn-danger" id="fail-{{p['id']}}">
-                            Fail
-                        </button>
-                        -->
-                </div>
+            </div>
+            {% else %}
+            <div class="col-xs-4 col-sm-2">
+                {% if p['status'] == 'Passed' %}
+                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-ok green"></span></h5>
+                {% elif p['status'] == 'Failed' %}
+                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-remove red"></span></h5>
                 {% else %}
-                <div class="col-xs-4 col-sm-2">
-                    {% if p['status'] == 'Passed' %}
-                        <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-ok green"> </span></h5>
-                        {% elif p['status'] == 'Failed' %}
-                        <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-remove red"> </span></h5>
-                        {% else %}
-                        <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-hourglass yellow"> </span></h5>
-                        {% endif %}
-                </div>
+                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-hourglass yellow"></span></h5>
                 {% endif %}
-                <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
-                <div class="collapse" id="evalsCollapse-{{p['id']}}">
-                    {{p['description']}}
-                </div>
+            </div>
+            {% endif %}
+            <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+            <div class="collapse" id="evalsCollapse-{{p['id']}}">
+                {{p['description']}}
+            </div>
         </div>
     </div>
     {% endfor %}
