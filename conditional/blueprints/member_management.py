@@ -25,6 +25,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
+from conditional.util.ldap import ldap_set_inactive
 from conditional.util.ldap import ldap_set_housingpoints
 from conditional.util.ldap import ldap_get_room_number
 from conditional.util.ldap import ldap_get_housing_points
@@ -242,7 +243,10 @@ def member_management_edituser(uid):
         # Only update if there's a diff
         logger.info('backend', action="edit %s active: %s" % (uid, active_member))
         if ldap_is_active(uid) != active_member:
-            ldap_set_active(uid)
+            if active_member:
+                ldap_set_active(uid)
+            else:
+                ldap_set_inactive(uid)
 
             if active_member:
                 db.session.add(SpringEval(uid))

@@ -119,7 +119,7 @@ def __ldap_remove_member_from_group__(username, group):
     ldap_conn.modify_s(groupdn, ldap_modlist)
 
 
-@ldap_init_required
+# @ldap_init_required
 def __ldap_is_member_of_committee__(username, committee):
     ldap_results = ldap_conn.search_s(committee_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % committee)
@@ -130,12 +130,12 @@ def __ldap_is_member_of_committee__(username, committee):
            [x.decode('ascii') for x in ldap_results[0][1]['head']]
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_housing_points(username):
     return int(__ldap_get_field__(username, 'housingPoints'))
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_room_number(username):
     roomno = __ldap_get_field__(username, 'roomNumber')
     if roomno is None:
@@ -143,38 +143,38 @@ def ldap_get_room_number(username):
     return roomno.decode('utf-8')
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_active_members():
     return [x for x in ldap_get_current_students()
             if ldap_is_active(x['uid'][0].decode('utf-8'))]
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_intro_members():
     return [x for x in ldap_get_current_students()
             if ldap_is_intromember(x['uid'][0].decode('utf-8'))]
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_non_alumni_members():
     return [x for x in ldap_get_current_students()
             if ldap_is_alumni(x['uid'][0].decode('utf-8'))]
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_onfloor_members():
     return [x for x in ldap_get_current_students()
             if ldap_is_onfloor(x['uid'][0].decode('utf-8'))]
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_get_current_students():
     return [x[1]
             for x in __ldap_get_members__()[1:]
             if ldap_is_current_student(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 
-@lru_cache(maxsize=1024)
+# @lru_cache(maxsize=1024)
 def ldap_is_active(username):
     return __ldap_is_member_of_group__(username, 'active')
 
@@ -224,6 +224,10 @@ def ldap_set_roomnumber(username, room_number):
 
 def ldap_set_active(username):
     __ldap_add_member_to_group__(username, 'active')
+
+
+def ldap_set_inactive(username):
+    __ldap_remove_member_from_group__(username, 'active')
 
 
 @lru_cache(maxsize=1024)
