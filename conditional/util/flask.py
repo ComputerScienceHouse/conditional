@@ -13,11 +13,7 @@ def render_template(request, template_name, **kwargs):
     user_name = request.headers.get('x-webauth-user')
 
     # TODO maybe use the webauth request decorator
-    lockdown_query = EvalSettings.query.first()
-    if lockdown_query:
-        lockdown = lockdown_query.site_lockdown
-    else:
-        lockdown = False
+    lockdown = EvalSettings.query.first().site_lockdown
     is_active = ldap_is_active(user_name)
     is_alumni = ldap_is_alumni(user_name)
     is_eboard = ldap_is_eboard(user_name)
