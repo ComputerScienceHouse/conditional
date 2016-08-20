@@ -38,6 +38,16 @@ app.register_blueprint(slideshow_bp)
 
 logger.info('conditional started')
 
+# pylint: disable=C0413
+
+from db.models import EvalSettings
+
+if EvalSettings.query.first() is None:
+    logger.info("Generating Initial Site Settings")
+    db.add(EvalSettings())
+    db.flush()
+    db.commit()
+
 
 @app.route('/<path:path>')
 def static_proxy(path):
