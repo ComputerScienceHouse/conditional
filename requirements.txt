@@ -9,3 +9,4 @@ structlog
 flask_sqlalchemy
 flask_migrate
 pylint
+psycopg2
