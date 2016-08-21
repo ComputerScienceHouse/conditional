@@ -45,7 +45,7 @@ def upgrade():
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('eval_date', sa.Date(), nullable=False),
     sa.Column('onfloor_status', sa.Boolean(), nullable=True),
-    sa.Column('room_number', sa.Integer(), nullable=True),
+    sa.Column('room_number', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('freshman_eval_data',
