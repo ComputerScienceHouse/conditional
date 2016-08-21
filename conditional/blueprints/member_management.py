@@ -290,8 +290,10 @@ def member_management_getuserinfo(uid):
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval or financial director", 403
 
-    acct = FreshmanAccount.query.filter(
-        FreshmanAccount.id == uid).first()
+    acct = None
+    if uid.isnumeric():
+        acct = FreshmanAccount.query.filter(
+            FreshmanAccount.id == uid).first()
 
     # missed hm
     def get_hm_date(hm_id):
