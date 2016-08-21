@@ -13,7 +13,7 @@ class FreshmanAccount(db.Model):
     name = Column(String(64), nullable=False)
     eval_date = Column(Date, nullable=False)
     onfloor_status = Column(Boolean)
-    room_number = Column(Integer)
+    room_number = Column(String)
 
     def __init__(self, name, onfloor, room=None):
         self.name = name
