@@ -14,6 +14,7 @@ logger = structlog.get_logger()
 
 # pylint: disable=C0413
 
+from conditional.models.models import EvalSettings
 from conditional.blueprints.dashboard import dashboard_bp
 from conditional.blueprints.attendance import attendance_bp
 from conditional.blueprints.major_project_submission import major_project_bp
@@ -37,10 +38,6 @@ app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 
 logger.info('conditional started')
-
-# pylint: disable=C0413
-
-from db.models import EvalSettings
 
 if EvalSettings.query.first() is None:
     logger.info("Generating Initial Site Settings")
