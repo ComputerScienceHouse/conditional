@@ -17,7 +17,7 @@ export default class Table {
     // Just remove the search input from the DOM instead of disabling it
     this.domOptions = "lrtip";
     if (this.table.dataset.searchable === 'true') {
-      this.domOptions = "ltrtip";
+      this.domOptions = "lfrtip";
     }
 
     this.render();
@@ -25,7 +25,7 @@ export default class Table {
 
   render() {
     this.table = $(this.table).DataTable({ // eslint-disable-line new-cap
-      sDom: this.domOptions,
+      //dom: this.domOptions,
       lengthChange: this.lengthChangable,
       info: false,
       paging: this.paginated,
