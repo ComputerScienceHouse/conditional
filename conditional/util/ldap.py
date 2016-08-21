@@ -89,6 +89,11 @@ def __ldap_is_member_of_group__(username, group):
 
 @ldap_init_required
 def __ldap_add_member_to_group__(username, group):
+    if read_only:
+        print("LDAP: Adding user %s to group %s" % (username, group))
+        return
+    if __ldap_is_member_of_group__(username, group):
+        return
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % group)
     if len(ldap_results) != 1:
@@ -105,6 +110,11 @@ def __ldap_add_member_to_group__(username, group):
 
 
 def __ldap_remove_member_from_group__(username, group):
+    if read_only:
+        print("LDAP: Removing user %s from group %s" % (username, group))
+        return
+    if not __ldap_is_member_of_group__(username, group):
+        return
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % group)
     if len(ldap_results) != 1:
