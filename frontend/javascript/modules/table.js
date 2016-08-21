@@ -25,7 +25,7 @@ export default class Table {
 
   render() {
     this.table = $(this.table).DataTable({ // eslint-disable-line new-cap
-      //dom: this.domOptions,
+      // dom: this.domOptions,
       lengthChange: this.lengthChangable,
       info: false,
       paging: this.paginated,
