@@ -7,12 +7,19 @@ from conditional.util.ldap import ldap_is_eboard
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_intromember
+from conditional import db
 
 
 def render_template(request, template_name, **kwargs):
     user_name = request.headers.get('x-webauth-user')
 
     # TODO maybe use the webauth request decorator
+
+    if EvalSettings.query.first() is None:
+        db.session.add(EvalSettings())
+        db.session.flush()
+        db.session.commit()
+
     lockdown = EvalSettings.query.first().site_lockdown
     is_active = ldap_is_active(user_name)
     is_alumni = ldap_is_alumni(user_name)
