@@ -332,8 +332,6 @@ export default class EditUser {
       let roomNumber = modal.querySelector('input[name=room]').value;
       if (roomNumber !== "N/A" && !_.isNil(roomNumber)) {
         payload.roomNumber = roomNumber;
-      } else {
-        payload.roomNumber = "N/A";
       }
 
       FetchUtil.post(this.endpoints.userDetails + this.uid, payload, {
