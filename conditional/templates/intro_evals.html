@@ -1,5 +1,6 @@
 {% extends "nav.html" %} {% block body %}
 <div class="container main">
+    {% if members|length > 0 %}
     {% for m in members %}
     <div class="panel panel-default">
         <div class="panel-body eval-panel">
@@ -113,8 +114,9 @@
     </div>
 
 </div>
-
-
 {% endfor %}
+{% else %}
+    <div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"></span> There are currently no active intro members.</div>
+{% endif %}
 </div>
 {% endblock %}
