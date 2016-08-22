@@ -178,7 +178,6 @@ export default class EditUser {
 
     // Freshman Name
     modal.querySelector('input[name=name]').value = this.data.name;
-    modal.querySelector('input[name=name]').disabled = true;
 
     // Room Number
     modal.querySelector('input[name=room]').value = this.data.room_number;
