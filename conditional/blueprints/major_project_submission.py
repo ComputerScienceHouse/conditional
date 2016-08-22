@@ -60,6 +60,8 @@ def submit_major_project():
     name = post_data['projectName']
     description = post_data['projectDescription']
 
+    if name == "" or description == "":
+        return jsonify({"success": False}), 400
     project = MajorProject(user_name, name, description)
 
     db.session.add(project)
