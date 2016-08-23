@@ -1,4 +1,8 @@
-{% extends "nav.html" %} {% block body %}
+{% extends "nav.html" %}
+{% block title %}
+Introductory Evaluations
+{% endblock %}
+{% block body %}
 <div class="container main">
     {% if members|length > 0 %}
     {% for m in members %}
