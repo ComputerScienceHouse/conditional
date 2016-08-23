@@ -108,10 +108,9 @@ def display_dashboard():
         housing['points'] = ldap_get_housing_points(user_name)
         housing['room'] = ldap_get_room_number(user_name)
         if housing['room'] == "N/A":
-            housing['queue_pos'] = get_queue_position(user_name)
+            housing['queue_pos'] = "%s / %s" % (get_queue_position(user_name), get_queue_length())
         else:
-            housing['queue_pos'] = "On Floor"
-        housing['queue_len'] = get_queue_length()
+            housing['queue_pos'] = "N/A"
     else:
         housing = None
 
