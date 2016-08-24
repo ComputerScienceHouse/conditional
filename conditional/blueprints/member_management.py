@@ -362,23 +362,32 @@ def member_management_getuserinfo(uid):
             }), 200
 
 
-@member_management_bp.route('/manage/user/<uid>', methods=['DELETE'])
-def member_management_deleteuser(uid):
+@member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])
+def member_management_deleteuser(fid):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action='edit uid user')
+    log.info('api', action='edit fid user')
 
     user_name = request.headers.get('x-webauth-user')
 
     if not ldap_is_eval_director(user_name):
         return "must be eval director", 403
 
-    if not uid.isdigit():
+    if not fid.isdigit():
         return "can only delete freshman accounts", 400
 
-    logger.info('backend', action="delete freshman account %s" % (uid))
+    logger.info('backend', action="delete freshman account %s" % (fid))
 
-    FreshmanAccount.query.filter(FreshmanAccount.id == uid).delete()
+    for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
+        db.session.delete(fca)
+
+    for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
+        db.session.delete(fts)
+
+    for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
+        db.session.delete(fhm)
+
+    FreshmanAccount.query.filter(FreshmanAccount.id == fid).delete()
 
     db.session.flush()
     db.session.commit()
