@@ -169,6 +169,10 @@ def member_management_adduser():
     onfloor_status = post_data['onfloor']
     room_number = post_data['roomNumber']
 
+    # empty room numbers should be NULL
+    if room_number == "":
+        room_number = None
+
     logger.info('backend', action="add f_%s as onfloor: %s with room_number: %s" % (name, onfloor_status, room_number))
     db.session.add(FreshmanAccount(name, onfloor_status, room_number))
     db.session.flush()
