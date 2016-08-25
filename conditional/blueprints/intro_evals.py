@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 import structlog
 
@@ -6,8 +7,12 @@ from flask import Blueprint, request
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_name
 
+from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
+from conditional.models.models import FreshmanHouseMeetingAttendance
+from conditional.models.models import FreshmanSeminarAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import HouseMeeting
@@ -26,9 +31,13 @@ def display_intro_evals(internal=False):
     log.info('frontend', action='display intro evals listing')
 
     # get user data
-    def get_cm_count(member_id):
+    def get_uid_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == member_id)])
+
+    def get_fid_cm_count(member_id):
+        return len([a for a in FreshmanCommitteeAttendance.query.filter(
+            FreshmanCommitteeAttendance.fid == member_id)])
 
     user_name = None
     if not internal:
@@ -37,6 +46,53 @@ def display_intro_evals(internal=False):
     members = [m['uid'] for m in ldap_get_intro_members()]
 
     ie_members = []
+
+    # freshmen who don't have accounts
+    fids = [f for f in FreshmanAccount.query.filter(
+        FreshmanAccount.eval_date > datetime.now())]
+
+    for fid in fids:
+        h_meetings = [m.meeting_id for m in
+                      FreshmanHouseMeetingAttendance.query.filter(
+                          FreshmanHouseMeetingAttendance.fid == fid.id
+                      ).filter(
+                          FreshmanHouseMeetingAttendance.attendance_status == "Absent"
+                      )]
+        freshman = {
+            'name': fid.name,
+            'uid': fid.id,
+            'eval_date': fid.eval_date.strftime("%Y-%m-%d"),
+            'signatures_missed': 65535,
+            'committee_meetings': get_fid_cm_count(fid.id),
+            'committee_meetings_passed': get_fid_cm_count(fid.id) >= 10,
+            'house_meetings_missed':
+                [
+                    {
+                        "date": m.date.strftime("%Y-%m-%d"),
+                        "reason":
+                            FreshmanHouseMeetingAttendance.query.filter(
+                                FreshmanHouseMeetingAttendance.fid == fid.id).filter(
+                                FreshmanHouseMeetingAttendance.meeting_id == m.id).first().excuse
+                    }
+                    for m in HouseMeeting.query.filter(
+                        HouseMeeting.id.in_(h_meetings)
+                    )
+                ],
+            'technical_seminars':
+                [s.name for s in TechnicalSeminar.query.filter(
+                    TechnicalSeminar.id.in_(
+                        [a.seminar_id for a in FreshmanSeminarAttendance.query.filter(
+                            FreshmanSeminarAttendance.fid == fid.id)]
+                    ))
+                 ],
+            'social_events': '',
+            'freshman_project': "Pending",
+            'comments': 'Does not have account yet',
+            'status': "Pending"
+        }
+        ie_members.append(freshman)
+
+    # freshmen who have accounts
     for member_uid in members:
         uid = member_uid[0].decode('utf-8')
         freshman_data = FreshmanEvalData.query.filter(
@@ -57,8 +113,8 @@ def display_intro_evals(internal=False):
             'uid': uid,
             'eval_date': freshman_data.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': freshman_data.signatures_missed,
-            'committee_meetings': get_cm_count(uid),
-            'committee_meetings_passed': get_cm_count(uid) >= 10,
+            'committee_meetings': get_uid_cm_count(uid),
+            'committee_meetings_passed': get_uid_cm_count(uid) >= 10,
             'house_meetings_missed':
                 [
                     {
