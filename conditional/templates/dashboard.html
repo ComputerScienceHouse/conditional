@@ -1,15 +1,17 @@
 {% extends "nav.html" %}
-
+{% block title %}
+Dashboard
+{% endblock %}
 {% block body %}
 <div class="container main">
     <div class="panel panel-default">
         <div class="panel-body dashboard-user">
             <div class="row">
-                <div class="col-md-2 col-sm-3 col-xs-12 vcenter">
+                <div class="col-md-2 col-sm-3 col-xs-12 vcenter profile-container">
                     <img class="profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div>
-                <div class="col-xs-12 col-sm-9 col-md-9 vcenter" style="padding-bottom:10px">
-                    <h2 class="username">{{name}}</h2>
+                <div class="col-xs-12 col-sm-9 col-md-9 vcenter profile-container">
+                    <h3 class="username">{{name}}</h3>
                     <h5 class="email">{{username}}@csh.rit.edu</h5>
                     <div class="profile-badges">
                         {% if active %}
@@ -57,7 +59,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Committee Meetings</td>
+                            <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if freshman['committee_meetings'] >= 10 %}
                                 <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
@@ -109,7 +111,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Spring Evaluations
+                    <h3 class="panel-title">Membership Evaluations
                         {% if spring['status'] == "Passed" %}
                         <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
                         {% elif spring['status'] == "Failed" %}
@@ -123,7 +125,7 @@
                     <table class="table table-striped table-responsive no-bottom-margin">
                         <tbody>
                         <tr>
-                            <td class="title">Committee Meetings</td>
+                            <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if spring['committee_meetings'] >= 25 %}
                                 <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
@@ -240,7 +242,7 @@
                         </tr>
                         <tr>
                             <td class="title">Housing Queue Position</td>
-                            <td><span class="pull-right">{{housing['queue_pos']}} / {{housing['queue_len']}}</span></td>
+                            <td><span class="pull-right">{{housing['queue_pos']}}</span></td>
                         </tr>
                         </tbody>
                     </table>
@@ -277,11 +279,11 @@
             {% endif %}
 
             {% if cm_attendance_len == 0 %}
-            <div class="alert alert-warning"><span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"></span> You have not attended any committee meetings.</div>
+            <div class="alert alert-warning"><span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"></span> You have not attended any directorship meetings.</div>
             {% else %}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Committee Meeting Attendance</h3>
+                    <h3 class="panel-title">Directorship Meeting Attendance</h3>
                 </div>
 
                 <div class="panel-body table-fill">

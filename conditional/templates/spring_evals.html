@@ -1,4 +1,8 @@
-{% extends "nav.html" %} {% block body %}
+{% extends "nav.html" %}
+{% block title %}
+Membership Evaluations
+{% endblock %}
+{% block body %}
 <div class="container main">
     {% for m in members %}
     <div class="panel panel-default">
@@ -22,9 +26,9 @@
                         <div class="spring-info row">
                             <div class="text-center">
                                         {% if m['committee_meetings'] < 25 %}
-                                        <div class="eval-info-label danger">Committee Meetings: {{m['committee_meetings']}}</div>
+                                        <div class="eval-info-label danger">Directorship Meetings: {{m['committee_meetings']}}</div>
                                         {% else %}
-                                        <div class="eval-info-label success">Committee Meetings: {{m['committee_meetings']}}</div>
+                                        <div class="eval-info-label success">Directorship Meetings: {{m['committee_meetings']}}</div>
                                         {% endif %}
 
                                     </div>

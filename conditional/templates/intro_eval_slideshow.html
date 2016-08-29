@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block title %}
+Introductory Evaluations Slideshow
+{% endblock %}
 {% block extraHeader %}
         <script src="../static/js/libraries/jquery.min.js"></script>
         <link rel="stylesheet" href="/css/reveal.css">
@@ -28,7 +31,7 @@
                         <h2>{{m['name']}}</h2>
                         <h4>Eval Date:</h4>
                         <p>{{m['eval_date']}}</p>
-                        <h4>Committee Meetings Passed:</h4>
+                        <h4>Directorship Meetings Passed:</h4>
                         <p>{{m['committee_meetings_passed']}}</p>
                         <h4>House Meetings Missed:</h4>
                         <p>{{m['house_meetings_missed']|length}}</p>

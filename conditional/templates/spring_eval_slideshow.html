@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block title %}
+Membership Evaluations Slideshow
+{% endblock %}
 {% block extraHeader %}
         <script src="../static/js/libraries/jquery.min.js"></script>
         <link rel="stylesheet" href="/css/reveal.css">
@@ -26,7 +29,7 @@
                 <section id="slide-{{m['uid']}}">
                     <section>
                         <h2>{{m['name']}}</h2>
-                        <h4>Committee Meetings Attended:</h4>
+                        <h4>Directorship Meetings Attended:</h4>
                         <p>{{m['committee_meetings']}}</p>
                         <h4>House Meetings Missed:</h4>
                         <p>{{m['house_meetings_missed']|length}}</p>
