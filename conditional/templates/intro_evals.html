@@ -28,6 +28,8 @@ Introductory Evaluations
                             <div class="text-center">
                                 {% if m['signatures_missed'] > 0 %}
                                 <div class="eval-info-label danger">Signatures Missed: {{m['signatures_missed']}}</div>
+                                {% elif m['signatures_missed'] == 65535 %}
+                                <div class="eval-info-label warning">Packet Not Yet Complete</div>
                                 {% else %}
                                 <div class="eval-info-label success">Signatures Missed: {{m['signatures_missed']}}</div>
                                 {% endif %}
