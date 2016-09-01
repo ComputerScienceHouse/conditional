@@ -41,8 +41,10 @@ Major Project Form
                 <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
                 {{p['name']}} ({{p['username']}})
             </div>
-            {% if is_eval_director %}
             <div class="col-xs-4 col-sm-2">
+
+            {% if is_eval_director %}
+
                 <div class="btn-group" data-module="majorProjectStatus" data-id="{{p['id']}}">
                     <a href="#" class="btn {% if p['status'] == 'Passed' %}btn-success{% elif p['status'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
                         {{p['status']}}
@@ -58,11 +60,12 @@ Major Project Form
                         <li>
                             <a href="#" data-option="Failed"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</a>
                         </li>
+                        <li>
+                            <a href="#" data-option="Delete"><span class="glyphicon glyphicon-trash red"></span> Delete</a>
+                        </li>
                     </ul>
                 </div>
-            </div>
             {% else %}
-            <div class="col-xs-4 col-sm-2">
                 {% if p['status'] == 'Passed' %}
                 <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-ok green"></span></h5>
                 {% elif p['status'] == 'Failed' %}
@@ -70,8 +73,11 @@ Major Project Form
                 {% else %}
                 <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-hourglass yellow"></span></h5>
                 {% endif %}
-            </div>
+                {% if p.is_owner and p['status'] == 'Pending' %}
+                <button class="btn btn-danger btn-mp"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                {% endif %}
             {% endif %}
+            </div>
             <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
             <div class="collapse" id="evalsCollapse-{{p['id']}}">
                 {{p['description']}}

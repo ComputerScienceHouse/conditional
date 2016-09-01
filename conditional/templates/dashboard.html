@@ -209,6 +209,7 @@ Dashboard
                     </span>
                         {% elif p['status'] == "Pending" %}
                         <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-hourglass yellow"></span> {{p['name']}}
+                        <button class="btn-xs btn-danger btn-mp"><span class="glyphicon glyphicon-trash"></span> Delete</button>
                     </span>
                         {% else %}
                         <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-minus-sign red"></span> {{p['name']}}
