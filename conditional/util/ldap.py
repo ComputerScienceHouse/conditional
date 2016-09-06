@@ -240,14 +240,4 @@ def ldap_set_inactive(username):
 
 @lru_cache(maxsize=1024)
 def ldap_get_name(username):
-    first = __ldap_get_field__(username, 'givenName')
-    if first is None:
-        first = ""
-    else:
-        first = first.decode('utf-8')
-    last = __ldap_get_field__(username, 'sn')
-    if last is None:
-        last = ""
-    else:
-        last = last.decode('utf-8')
-    return "{first} {last}".format(first=first, last=last)
+    return __ldap_get_field__(username, 'cn').decode('utf-8')
