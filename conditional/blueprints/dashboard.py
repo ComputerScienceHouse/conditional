@@ -9,6 +9,8 @@ from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_get_housing_points
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_name
+from conditional.util.ldap import ldap_get_active_members
+from conditional.util.ldap import ldap_get_intro_members
 
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import MemberCommitteeAttendance
@@ -63,6 +65,26 @@ def get_freshman_data(user_name):
     return freshman
 
 
+def get_voting_members():
+    voting_list = []
+    active_members = [x['uid'][0].decode('utf-8') for x
+                      in ldap_get_active_members()]
+    intro_members = [x['uid'][0].decode('utf-8') for x
+                     in ldap_get_intro_members()]
+    passed_fall = FreshmanEvalData.query.filter(
+        FreshmanEvalData.freshman_eval_result == "Passed"
+    ).distinct()
+
+    for intro_member in passed_fall:
+        voting_list.append(intro_member.uid)
+
+    for active_member in active_members:
+        if active_member not in intro_members:
+            voting_list.append(active_member)
+
+    return voting_list
+
+
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
@@ -73,6 +95,8 @@ def display_dashboard():
 
     user_name = request.headers.get('x-webauth-user')
 
+    can_vote = get_voting_members()
+    logger.info('backend', action=can_vote)
     data = dict()
     data['username'] = user_name
     data['name'] = ldap_get_name(user_name)
@@ -81,7 +105,7 @@ def display_dashboard():
     # On-Floor Status
     data['onfloor'] = ldap_is_onfloor(user_name)
     # Voting Status
-    data['voting'] = ldap_is_active(user_name)  # FIXME: unimplemented
+    data['voting'] = bool(user_name in can_vote)
 
     # freshman shit
     if ldap_is_intromember(user_name):
