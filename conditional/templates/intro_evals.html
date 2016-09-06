@@ -68,7 +68,7 @@ Introductory Evaluations
                     </div>
                 </div>
             </div>
-            {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 %}
+            {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['comments'] != "" %}
                 <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
             {% endif %}
             <div class="collapse" id="evalsCollapse-{{m['uid']}}">
@@ -108,10 +108,17 @@ Introductory Evaluations
                         {% endfor %}
                     </tbody>
                 </table>
-                {% endif %} {% if m['social_events'] != "" %}
+                {% endif %}
+                {% if m['social_events'] != "" %}
 
                 <h4>Social Events</h4>
                 <p>{{m['social_events']}}</p>
+                {% endif %}
+
+                {% if m['comments'] != "" %}
+
+                <h4>Other Comments</h4>
+                <p>{{m['comments']}}</p>
                 {% endif %}
             </div>
         </div>
