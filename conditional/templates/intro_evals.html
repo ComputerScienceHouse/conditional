@@ -31,10 +31,10 @@ Introductory Evaluations
                     <div class="col-sm-5 col-md-6 col-lg-5 vcenter">
                         <div class="row">
                             <div class="text-center">
-                                {% if m['signatures_missed'] > 0 %}
+                                {% if m['signatures_missed'] == 65535 %}
+                                <div class="eval-info-label warning"><span class="glyphicon glyphicon-hourglass white"></span> Packet in Progress</div>
+                                {% elif m['signatures_missed'] > 0 %}
                                 <div class="eval-info-label danger">Signatures Missed: {{m['signatures_missed']}}</div>
-                                {% elif m['signatures_missed'] == 65535 %}
-                                <div class="eval-info-label warning">Packet Not Yet Complete</div>
                                 {% else %}
                                 <div class="eval-info-label success">Signatures Missed: {{m['signatures_missed']}}</div>
                                 {% endif %}
@@ -49,7 +49,7 @@ Introductory Evaluations
                         </div>
                         <div class="text-center">
                             {% if m['freshman_project'] == "Pending" %}
-                            <div class="eval-info-label warning">Freshman Project: <span class="glyphicon glyphicon-hourglass white"></span></div>
+                            <div class="eval-info-label warning"><span class="glyphicon glyphicon-hourglass white"></span> Project Results Pending</div>
                             {% elif m['freshman_project'] == "Passed" %}
                             <div class="eval-info-label success">Freshman Project: <span class="glyphicon glyphicon-ok-sign white"></span></div>
                             {% else %}
