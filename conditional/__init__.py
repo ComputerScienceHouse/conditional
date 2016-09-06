@@ -24,14 +24,7 @@ from conditional.blueprints.spring_evals import spring_evals_bp
 from conditional.blueprints.conditional import conditionals_bp
 from conditional.blueprints.member_management import member_management_bp
 from conditional.blueprints.slideshow import slideshow_bp
-
-from conditional.util.ldap import ldap_get_housing_points
-from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_intro_members
-from conditional.util.ldap import ldap_get_non_alumni_members
-from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_get_name
+from conditional.blueprints.cache_management import cache_bp
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(attendance_bp)
@@ -43,6 +36,7 @@ app.register_blueprint(spring_evals_bp)
 app.register_blueprint(conditionals_bp)
 app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
+app.register_blueprint(cache_bp)
 
 logger.info('conditional started')
 
@@ -57,15 +51,6 @@ def static_proxy(path):
 def default_route():
     return redirect('/dashboard')
 
-@app.route('/clearcache')
-def clear_cache():
-    ldap_get_housing_points.cache_clear()
-    ldap_get_active_members.cache_clear()
-    ldap_get_intro_members.cache_clear()
-    ldap_get_non_alumni_members.cache_clear()
-    ldap_get_onfloor_members.cache_clear()
-    ldap_get_current_students.cache_clear()
-    ldap_get_name.cache_clear()
 
 @app.cli.command()
 def zoo():

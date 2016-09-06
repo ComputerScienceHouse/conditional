@@ -85,7 +85,6 @@ def get_voting_members():
     return voting_list
 
 
-# pylint: disable=too-many-statements
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),

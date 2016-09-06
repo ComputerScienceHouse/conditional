@@ -21,6 +21,9 @@ from conditional.models.models import EvalSettings
 from conditional.models.models import OnFloorStatusAssigned
 from conditional.models.models import SpringEval
 
+from conditional.blueprints.cache_management import clear_active_members_cache
+from conditional.blueprints.cache_management import clear_onfloor_members_cache
+
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_set_roomnumber
@@ -261,6 +264,7 @@ def member_management_edituser(uid):
                     {
                         'active': False
                     })
+            clear_active_members_cache()
     else:
         logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s" %
             (uid, post_data['roomNumber'], post_data['onfloorStatus'],
@@ -454,4 +458,7 @@ def member_management_upgrade_user():
 
     db.session.flush()
     db.session.commit()
+
+    clear_onfloor_members_cache()
+
     return jsonify({"success": True}), 200
