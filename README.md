@@ -1,6 +1,8 @@
 Conditional
 ===========
 
+[![Build Status](https://travis-ci.org/ComputerScienceHouse/conditional.svg?branch=travis-ci)](https://travis-ci.org/ComputerScienceHouse/conditional)
+
 A comprehensive membership evaluations solution for Computer Science House.
 
 Development
