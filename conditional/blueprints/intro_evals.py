@@ -62,7 +62,7 @@ def display_intro_evals(internal=False):
             'name': fid.name,
             'uid': fid.id,
             'eval_date': fid.eval_date.strftime("%Y-%m-%d"),
-            'signatures_missed': 65535,
+            'signatures_missed': -1,
             'committee_meetings': get_fid_cm_count(fid.id),
             'committee_meetings_passed': get_fid_cm_count(fid.id) >= 10,
             'house_meetings_missed':
