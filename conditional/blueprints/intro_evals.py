@@ -87,7 +87,7 @@ def display_intro_evals(internal=False):
                  ],
             'social_events': '',
             'freshman_project': "Pending",
-            'comments': 'Does not have account yet',
+            'ldap_account': False,
             'status': "Pending"
         }
         ie_members.append(freshman)
@@ -137,7 +137,7 @@ def display_intro_evals(internal=False):
                  ],
             'social_events': freshman_data.social_events,
             'freshman_project': freshman_data.freshman_project,
-            'comments': freshman_data.other_notes,
+            'ldap_account': True,
             'status': freshman_data.freshman_eval_result
         }
         ie_members.append(member)
