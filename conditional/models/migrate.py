@@ -307,7 +307,7 @@ def migrate_models():
     from datetime import datetime
     members = [m['uid'][0].decode('utf-8') for m in ldap.ldap_get_onfloor_members()]
     for m in members:
-        db.session.add(models.OnFloorStatusAssigned(m, datetime.utcnow()))
+        db.session.add(models.OnFloorStatusAssigned(m, datetime.now()))
     print("END: ON FLOOR")
 
     print("BEGIN: SPRING EVALS")
