@@ -62,7 +62,7 @@ def display_intro_evals(internal=False):
             'name': fid.name,
             'uid': fid.id,
             'eval_date': fid.eval_date.strftime("%Y-%m-%d"),
-            'signatures_missed': 65535,
+            'signatures_missed': -1,
             'committee_meetings': get_fid_cm_count(fid.id),
             'committee_meetings_passed': get_fid_cm_count(fid.id) >= 10,
             'house_meetings_missed':
@@ -87,7 +87,8 @@ def display_intro_evals(internal=False):
                  ],
             'social_events': '',
             'freshman_project': "Pending",
-            'comments': 'Does not have account yet',
+            'comments': "",
+            'ldap_account': False,
             'status': "Pending"
         }
         ie_members.append(freshman)
@@ -138,6 +139,7 @@ def display_intro_evals(internal=False):
             'social_events': freshman_data.social_events,
             'freshman_project': freshman_data.freshman_project,
             'comments': freshman_data.other_notes,
+            'ldap_account': True,
             'status': freshman_data.freshman_eval_result
         }
         ie_members.append(member)
