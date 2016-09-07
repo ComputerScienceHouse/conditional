@@ -32,17 +32,7 @@ attendance_bp = Blueprint('attendance_bp', __name__)
 
 
 def get_name(m):
-    if 'givenName' in m:
-        first = m['givenName'][0].decode('utf-8')
-    else:
-        first = ""
-
-    if 'sn' in m:
-        last = m['sn'][0].decode('utf-8')
-    else:
-        last = ""
-
-    return "{first} {last}".format(first=first, last=last)
+    return m['cn'][0].decode('utf-8')
 
 
 @attendance_bp.route('/attendance/ts_members')
