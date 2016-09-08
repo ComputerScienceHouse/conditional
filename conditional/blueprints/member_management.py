@@ -271,7 +271,12 @@ def member_management_edituser(uid):
             post_data['evalDate'], post_data['sigMissed']))
 
         name = post_data['name']
-        room_number = post_data['roomNumber']
+
+        if post_data['roomNumber'] == "":
+            room_number = None
+        else:
+            room_number = post_data['roomNumber']
+
         onfloor_status = post_data['onfloorStatus']
         eval_date = post_data['evalDate']
 
