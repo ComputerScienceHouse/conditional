@@ -266,20 +266,26 @@ def member_management_edituser(uid):
                     })
             clear_active_members_cache()
     else:
-        logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s" %
+        logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s sig_missed %s" %
             (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-            post_data['evalDate']))
+            post_data['evalDate'], post_data['sigMissed']))
 
         name = post_data['name']
         room_number = post_data['roomNumber']
         onfloor_status = post_data['onfloorStatus']
         eval_date = post_data['evalDate']
 
+        if post_data['sigMissed'] == "":
+            sig_missed = None
+        else:
+            sig_missed = post_data['sigMissed']
+
         FreshmanAccount.query.filter(FreshmanAccount.id == uid).update({
             'name': name,
             'eval_date': datetime.strptime(eval_date, "%Y-%m-%d"),
             'onfloor_status': onfloor_status,
-            'room_number': room_number
+            'room_number': room_number,
+            'signatures_missed': sig_missed
         })
 
     db.session.flush()
@@ -333,7 +339,8 @@ def member_management_getuserinfo(uid):
                 'eval_date': acct.eval_date.strftime("%Y-%m-%d"),
                 'missed_hm': hms_missed,
                 'onfloor_status': acct.onfloor_status,
-                'room_number': acct.room_number
+                'room_number': acct.room_number,
+                'sig_missed': acct.signatures_missed
             }), 200
 
     if ldap_is_eval_director(user_name):

@@ -14,13 +14,15 @@ class FreshmanAccount(db.Model):
     eval_date = Column(Date, nullable=False)
     onfloor_status = Column(Boolean)
     room_number = Column(String)
+    signatures_missed = Column(Integer)
 
-    def __init__(self, name, onfloor, room=None):
+    def __init__(self, name, onfloor, room=None, missed=None):
         self.name = name
         today = date.fromtimestamp(time.time())
         self.eval_date = today + timedelta(weeks=10)
         self.onfloor_status = onfloor
         self.room_number = room
+        self.signatures_missed = missed
 
 
 class FreshmanEvalData(db.Model):
