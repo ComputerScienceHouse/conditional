@@ -58,11 +58,17 @@ def display_intro_evals(internal=False):
                       ).filter(
                           FreshmanHouseMeetingAttendance.attendance_status == "Absent"
                       )]
+
+        if fid.signatures_missed is None:
+            signatures_missed = -1
+        else:
+            signatures_missed = fid.signatures_missed
+
         freshman = {
             'name': fid.name,
             'uid': fid.id,
             'eval_date': fid.eval_date.strftime("%Y-%m-%d"),
-            'signatures_missed': -1,
+            'signatures_missed': signatures_missed,
             'committee_meetings': get_fid_cm_count(fid.id),
             'committee_meetings_passed': get_fid_cm_count(fid.id) >= 10,
             'house_meetings_missed':
