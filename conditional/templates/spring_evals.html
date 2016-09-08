@@ -34,11 +34,11 @@ Membership Evaluations
                                     </div>
                                     <div class="text-center">
                                         {% if m['major_project_passed'] %}
-                                        <div class="eval-info-label success">Major Project: <span class="glyphicon glyphicon-ok-sign white"></span></div>
+                                        <div class="eval-info-label success">Major Project: <span class="glyphicon glyphicon-ok-sign icon-space-l white"></span></div>
                                         {% elif m['major_project_passed'] %}
-                                        <div class="eval-info-label warning">Major Project: <span class="glyphicon glyphicon-hourglass white"></span></div>
+                                        <div class="eval-info-label warning">Major Project: <span class="glyphicon glyphicon-hourglass icon-space-l white"></span></div>
                                         {% else %}
-                                        <div class="eval-info-label danger">Major Project: <span class="glyphicon glyphicon-remove-sign white"></span></div>
+                                        <div class="eval-info-label danger">Major Project: <span class="glyphicon glyphicon-remove-sign icon-space-l white"></span></div>
                                         {% endif %}
 
                                     </div>
@@ -116,11 +116,11 @@ Membership Evaluations
                             <tr>
                                 <td>{{p['name']}}</td>
                                 {% if p['status'] == "Passed" %}
-                                <td><span class="glyphicon glyphicon-ok-sign green"></span> Passed</td>
+                                <td><span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> Passed</td>
                                 {% elif p['status'] == "Pending" %}
-                                <td><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</td>
+                                <td><span class="glyphicon glyphicon-hourglass icon-space-r yellow"></span> Pending</td>
                                 {% else %}
-                                <td><span class="glyphicon glyphicon-remove-sign red"></span> Failed</td>
+                                <td><span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> Failed</td>
                                 {% endif %}
                                 <td>{{p['description']}}</td>
                             </tr>

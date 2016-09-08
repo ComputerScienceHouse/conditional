@@ -14,45 +14,45 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-stats"></span> Evals <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-stats icon-space-r"></span> Evals <span class="caret icon-space-l"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/intro_evals"><span class="glyphicon glyphicon-star"></span> Introductory Evaluations</a></li>
-                        <li><a href="/spring_evals"><span class="glyphicon glyphicon-tree-deciduous"></span> Membership Evaluations</a></li>
-                        <li><a href="/conditionals"><span class="glyphicon glyphicon-exclamation-sign"></span> Current Conditionals</a></li>
+                        <li><a href="/intro_evals"><span class="glyphicon glyphicon-star icon-space-r"></span> Introductory Evaluations</a></li>
+                        <li><a href="/spring_evals"><span class="glyphicon glyphicon-tree-deciduous icon-space-r"></span> Membership Evaluations</a></li>
+                        <li><a href="/conditionals"><span class="glyphicon glyphicon-exclamation-sign icon-space-r"></span> Current Conditionals</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-list-alt"></span> Forms <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-list-alt icon-space-r"></span> Forms <span class="caret icon-space-l"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/major_project"><span class="glyphicon glyphicon-star"></span> Major Project</a></li>
+                        <li><a href="/major_project"><span class="glyphicon glyphicon-star icon-space-r"></span> Major Project</a></li>
                         {% if is_intromember %}
-                        <li><a href="/intro_evals_form"><span class="glyphicon glyphicon-blackboard"></span> Introductory Evaluations</a></li>
+                        <li><a href="/intro_evals_form"><span class="glyphicon glyphicon-blackboard icon-space-r"></span> Introductory Evaluations</a></li>
                         {% endif %}
                     </ul>
                 </li>
 
-                <li><a href="/housing"><span class="glyphicon glyphicon-home"></span> Housing</a></li>
+                <li><a href="/housing"><span class="glyphicon glyphicon-home icon-space-r"></span> Housing</a></li>
                 {% if is_eboard %}
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-ok"></span> Attendance <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-ok icon-space-r"></span> Attendance <span class="caret icon-space-l"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/attendance_cm"><span class="glyphicon glyphicon-briefcase"></span> Directorship Meeting </a></li>
-                        <li><a href="/attendance_ts"><span class="glyphicon glyphicon-blackboard"></span> Technical Seminar</a></li>
+                        <li><a href="/attendance_cm"><span class="glyphicon glyphicon-briefcase icon-space-r"></span> Directorship Meeting </a></li>
+                        <li><a href="/attendance_ts"><span class="glyphicon glyphicon-blackboard icon-space-r"></span> Technical Seminar</a></li>
                         {% if is_eval_director %}
-                        <li><a href="/attendance_hm"><span class="glyphicon glyphicon-home"></span> House Meeting</a></li>
+                        <li><a href="/attendance_hm"><span class="glyphicon glyphicon-home icon-space-r"></span> House Meeting</a></li>
                         {% endif %}
                     </ul>
                 </li>
                 {% endif %}
                 {% if is_eval_director or is_financial_director %}
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> Admin<span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-wrench icon-space-r"></span> Admin<span class="caret icon-space-l"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/manage"><span class="glyphicon glyphicon-user"></span> Member Management</a></li>
+                        <li><a href="/manage"><span class="glyphicon glyphicon-user icon-space-r"></span> Member Management</a></li>
                         {% if is_eval_director %}
 
-                        <li><a href="/slideshow/intro"><span class="glyphicon glyphicon-eye-open"></span> Introductory Evaluations Presentation</a></li>
-                        <li><a href="/slideshow/spring"><span class="glyphicon glyphicon-eye-open"></span> Membership Evaluations Presentation</a></li>
+                        <li><a href="/slideshow/intro"><span class="glyphicon glyphicon-eye-open icon-space-r"></span> Introductory Evaluations Presentation</a></li>
+                        <li><a href="/slideshow/spring"><span class="glyphicon glyphicon-eye-open icon-space-r"></span> Membership Evaluations Presentation</a></li>
 
                         {% endif %}
                     </ul>
@@ -67,15 +67,15 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <img src="https://profiles.csh.rit.edu/image/{{username}}">
                         {{username}}
-                        <span class="caret"></span>
+                        <span class="caret icon-space-l"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a></li>
-                        <li><a href="https://profiles.csh.rit.edu/user/{{username}}"><span class="glyphicon glyphicon-user"></span> Profiles</a></li>
+                        <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard icon-space-r"></span> Dashboard</a></li>
+                        <li><a href="https://profiles.csh.rit.edu/user/{{username}}"><span class="glyphicon glyphicon-user icon-space-r"></span> Profiles</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="https://members.csh.rit.edu/"><span class="glyphicon glyphicon-globe"></span> Members Portal</a></li>
-                        <li><a href="https://github.com/ComputerScienceHouse/conditional/issues"><span class="glyphicon glyphicon-exclamation-sign"></span> Report an Issue</a></li>
-                        <li><a href="https://webauth.csh.rit.edu/logout"><span class="glyphicon glyphicon-log-out"></span> Webauth Logout</a></li>
+                        <li><a href="https://members.csh.rit.edu/"><span class="glyphicon glyphicon-globe icon-space-r"></span> Members Portal</a></li>
+                        <li><a href="https://github.com/ComputerScienceHouse/conditional/issues"><span class="glyphicon glyphicon-exclamation-sign icon-space-r"></span> Report an Issue</a></li>
+                        <li><a href="https://webauth.csh.rit.edu/logout"><span class="glyphicon glyphicon-log-out icon-space-r"></span> Webauth Logout</a></li>
                     </ul>
                 </li>
             </ul>
