@@ -56,7 +56,7 @@ docs/_build/
 # PyBuilder
 target/
 
-#Ipython Notebook
+# Ipython Notebook
 .ipynb_checkpoints
 
 # JetBrains IDEs
@@ -78,3 +78,6 @@ target/
 
 # Built frontend files
 /conditional/static/*
+
+# virtualenv
+/.conditionalenv
