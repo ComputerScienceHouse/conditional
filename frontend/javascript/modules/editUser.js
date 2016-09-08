@@ -191,6 +191,10 @@ export default class EditUser {
         this.data.eval_date;
     new DatePicker(modal.querySelector('input[name=evalDate]'));
 
+    // Freshmen Signatures Missed
+    modal.querySelector('input[name=sigMissed]').value =
+        this.data.sig_missed;
+
     // Missed House Meetings
     if (this.data.missed_hm.length > 0) {
       modal.querySelector('.modal-body')
@@ -326,6 +330,7 @@ export default class EditUser {
       } else if (this.type === "freshman") {
         payload.name = modal.querySelector('input[name=name]').value;
         payload.evalDate = modal.querySelector('input[name=evalDate]').value;
+        payload.sigMissed = modal.querySelector('input[name=sigMissed]').value;
       }
 
       let roomNumber = modal.querySelector('input[name=room]').value;
