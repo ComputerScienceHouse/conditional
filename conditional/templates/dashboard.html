@@ -34,11 +34,11 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Freshman Evaluations
                         {% if freshman['status'] == "Passed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> Passed</span>
                         {% elif freshman['status'] == "Pending" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass icon-space-r yellow"></span> Pending</span>
                         {% else %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> Failed</span>
                         {% endif %}
                     </h3>
                 </div>
@@ -53,8 +53,8 @@ Dashboard
                             <td class="title">Signatures Missed</td>
                             <td><span class="pull-right">
                                 {% if freshman['sig_missed'] == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> None {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {{freshman['sig_missed']}} {% endif %}
+                                <span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> None {% else %}
+                                <span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> {{freshman['sig_missed']}} {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -62,8 +62,8 @@ Dashboard
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if freshman['committee_meetings'] >= 10 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{freshman['committee_meetings']}} / 10
+                                <span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> {% else %}
+                                <span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> {% endif %} {{freshman['committee_meetings']}} / 10
                                 </span>
                             </td>
                         </tr>
@@ -71,8 +71,8 @@ Dashboard
                             <td class="title">House Meetings Missed</td>
                             <td><span class="pull-right">
                                 {% if freshman['hm_missed'] == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> None {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {{ freshman['hm_missed'] }} {% endif %}
+                                <span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> None {% else %}
+                                <span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> {{ freshman['hm_missed'] }} {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -80,11 +80,11 @@ Dashboard
                             <td class="title">Freshman Project</td>
                             <td>
                                 {% if freshman['fresh_proj'] == "Passed" %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> Passed</span>
                                 {% elif freshman['fresh_proj'] == "Pending" %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass icon-space-r yellow"></span> Pending</span>
                                 {% else %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
+                                <span class="pull-right"><span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> Failed</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -113,11 +113,11 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Membership Evaluations
                         {% if spring['status'] == "Passed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign icon-space-r green"></span>Passed</span>
                         {% elif spring['status'] == "Failed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign icon-space-r red"></span>Failed</span>
                         {% else %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass icon-space-r yellow"></span>Pending</span>
                         {% endif %}
                     </h3>
                 </div>
@@ -128,16 +128,16 @@ Dashboard
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if spring['committee_meetings'] >= 25 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{ spring['committee_meetings'] }} / 25</span>
+                                <span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> {% else %}
+                                <span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> {% endif %} {{ spring['committee_meetings'] }} / 25</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="title">House Meetings Missed</td>
                             <td><span class="pull-right">
                                 {% if spring['hm_missed'] == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> None {% else %}
-                                <span><span class="glyphicon glyphicon-remove-sign red"></span> {{spring['hm_missed']}}</span>
+                                <span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> None {% else %}
+                                <span><span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> {{spring['hm_missed']}}</span>
                                 {% endif %}
                                 </span>
                             </td>
@@ -147,9 +147,9 @@ Dashboard
                             <td>
                                 <span class="pull-right">
                                 {% if spring['mp_status'] == "Passed" %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> Passed {% elif spring['mp_status'] == "Pending" %}
-                                <span class="glyphicon glyphicon-hourglass yellow"></span> Pending {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> None {% endif %}
+                                <span class="glyphicon glyphicon-ok-sign icon-space-r green"></span> Passed {% elif spring['mp_status'] == "Pending" %}
+                                <span class="glyphicon glyphicon-hourglass icon-space-r yellow"></span> Pending {% else %}
+                                <span class="glyphicon glyphicon-remove-sign icon-space-r red"></span> None {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -180,9 +180,9 @@ Dashboard
                                 <td>{{c['description']}}</td>
                                 <td>
                                     {% if c['status'] == "Passed" %}
-                                    <span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign green"></span> {% elif c['status'] == "Pending" %}
-                                    <span class="glyphicon glyphicon-hourglass yellow"></span> <span class="mobile-hide">Pending</span> {% else %}
-                                    <span class="glyphicon glyphicon-minus-sign red"></span> <span class="mobile-hide">Failed</span> {% endif %}
+                                    <span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign icon-space-r green"></span> {% elif c['status'] == "Pending" %}
+                                    <span class="glyphicon glyphicon-hourglass icon-space-r yellow"></span> <span class="mobile-hide">Pending</span> {% else %}
+                                    <span class="glyphicon glyphicon-minus-sign icon-space-r red"></span> <span class="mobile-hide">Failed</span> {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -195,7 +195,7 @@ Dashboard
             {% endif %}
 
             {% if major_projects_count == 0 %}
-            <div class="alert alert-warning" role="alert"> <span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"> </span> You have no major projects.</div>
+            <div class="alert alert-warning" role="alert"> <span class="glyphicon glyphicon-exclamation-sign icon-space-r white"> </span> You have no major projects.</div>
             {% else %}
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -205,13 +205,13 @@ Dashboard
                     {% for p in major_projects %}
                     <tr>
                         {% if p['status'] == "Passed" %}
-                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign green"></span> {{p['name']}}
+                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign icon-space-r green"></span> {{p['name']}}
                     </span>
                         {% elif p['status'] == "Pending" %}
-                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-hourglass yellow"></span> {{p['name']}}
+                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-hourglass icon-space-r yellow"></span> {{p['name']}}
                     </span>
                         {% else %}
-                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-minus-sign red"></span> {{p['name']}}
+                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-minus-sign icon-space-r red"></span> {{p['name']}}
                     </span>
                         {% endif %}
                         <div class="panel-body" style="word-wrap:break-word">{{p['description']}}</div>
@@ -229,7 +229,7 @@ Dashboard
                     <h3 class="panel-title">Housing Status</h3>
                 </div>
                 <div class="panel-body table-fill">
-                    
+
                     <table class="table table-striped table-responsive no-bottom-margin">
                         <tbody>
                         <tr>
@@ -252,7 +252,7 @@ Dashboard
 
             {% if hm_attendance_len == 0 %}
             <div class="alert alert-success">
-                <span class="glyphicon glyphicon-ok-sign white" style="padding-right:5px"> </span> You haven't missed any house meetings.
+                <span class="glyphicon glyphicon-ok-sign icon-space-r white"> </span> You haven't missed any house meetings.
             </div>
             {% else %}
             <div class="panel panel-default">
@@ -279,7 +279,7 @@ Dashboard
             {% endif %}
 
             {% if cm_attendance_len == 0 %}
-            <div class="alert alert-warning"><span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"></span> You have not attended any directorship meetings.</div>
+            <div class="alert alert-warning"><span class="glyphicon glyphicon-exclamation-sign icon-space-r white"></span> You have not attended any directorship meetings.</div>
             {% else %}
             <div class="panel panel-default">
                 <div class="panel-heading">
