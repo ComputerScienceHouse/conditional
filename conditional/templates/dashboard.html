@@ -201,23 +201,24 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Major Projects</h3>
                 </div>
-                <table>
-                    {% for p in major_projects %}
-                    <tr>
+                <div class="panel-body">
+                {% for p in major_projects %}
+                    <div class="mp-container">
                         {% if p['status'] == "Passed" %}
-                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign green"></span> {{p['name']}}
-                    </span>
+                        <div class="title"><span class="glyphicon glyphicon-ok-sign green"></span> {{p['name']}}</div>
                         {% elif p['status'] == "Pending" %}
-                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-hourglass yellow"></span> {{p['name']}}
-                    </span>
+                        <div class="title">
+                            <span class="glyphicon glyphicon-hourglass yellow"></span> {{p['name']}}
+                            <button class="btn-xs btn-danger pull-right" data-module="majorProjectStatus" data-id="{{p['id']}}"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                        </div>
                         {% else %}
-                        <span class="title"><span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-minus-sign red"></span> {{p['name']}}
-                    </span>
+                        <div class="title"><span class="glyphicon glyphicon-minus-sign red"></span> {{p['name']}}</div>
                         {% endif %}
-                        <div class="panel-body" style="word-wrap:break-word">{{p['description']}}</div>
-                    </tr>
-                    {% endfor %}
-                </table>
+                        <div class="mp-description">{{p['description']}}</div>
+                    </div>
+                </tr>
+                {% endfor %}
+                </div>
             </div>
             {% endif %}
 

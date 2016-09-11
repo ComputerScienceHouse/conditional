@@ -58,7 +58,7 @@ export default class HouseMeetingForm {
         payload.members = upperclassmen;
 
         FetchUtil.postWithWarning(this.endpoint, payload, {
-          warningText: "You will not be able to unmark a member as present" +
+          warningText: "You will not be able to unmark a member as present " +
                         "once attendance has been recorded.",
           successText: "Attendance has been submitted."
         });
