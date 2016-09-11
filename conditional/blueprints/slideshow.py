@@ -37,7 +37,7 @@ def slideshow_intro_display():
     return render_template(request,
                            'intro_eval_slideshow.html',
                            username=user_name,
-                           date=datetime.utcnow().strftime("%Y-%m-%d"),
+                           date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_intro_evals(internal=True))
 
 
@@ -96,7 +96,7 @@ def slideshow_spring_display():
     return render_template(request,
                            'spring_eval_slideshow.html',
                            username=user_name,
-                           date=datetime.utcnow().strftime("%Y-%m-%d"),
+                           date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_spring_evals(internal=True))
 
 

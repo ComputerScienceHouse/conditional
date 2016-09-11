@@ -146,7 +146,7 @@ def display_attendance_cm():
     return render_template(request,
                            'attendance_cm.html',
                            username=user_name,
-                           date=datetime.utcnow().strftime("%Y-%m-%d"))
+                           date=datetime.now().strftime("%Y-%m-%d"))
 
 
 @attendance_bp.route('/attendance_ts')
@@ -162,7 +162,7 @@ def display_attendance_ts():
     return render_template(request,
                            'attendance_ts.html',
                            username=user_name,
-                           date=datetime.utcnow().strftime("%Y-%m-%d"))
+                           date=datetime.now().strftime("%Y-%m-%d"))
 
 
 @attendance_bp.route('/attendance_hm')
@@ -178,7 +178,7 @@ def display_attendance_hm():
     return render_template(request,
                            'attendance_hm.html',
                            username=user_name,
-                           date=datetime.utcnow().strftime("%Y-%m-%d"),
+                           date=datetime.now().strftime("%Y-%m-%d"),
                            members=get_non_alumni_non_coop(internal=True))
 
 
