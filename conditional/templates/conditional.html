@@ -1,58 +1,90 @@
 {% extends "nav.html" %}
 {% block title %}
-Conditionals
-{% endblock %}
-{% block extraFooter %}
-<script src="../static/js/conditional.js"></script>
+    Conditionals
 {% endblock %}
 {% block body %}
-<div class="container main">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Conditionals</h3>
-        </div>
-        <div class="panel-body table-fill">
-            <div class="table-responsive">
-                {% if conditionals_len == 0 %}
-                <div class="alert alert-info" style="margin:15px;">No conditionals.</div>
-                {% else %}
-                <table class="table table-striped no-bottom-margin">
-                    <tbody id="conditionals">
-                        <tr>
-                            <th>Name</th>
-                            <th>Date Created</th>
-                            <th>Date Due</th>
-                            <th>Description</th>
-                            {% if is_eval_director %}
-                            <th>Controls</th>
-                            {% endif %}
-                        </tr>
-                        <!-- ng-repeat="conditional in conditionals.data"-->
-                        {% for c in conditionals %}
-                        <tr id="conditional-{{c['id']}}" conditional_id="{{c['id']}}">
-                            <td>{{c['name']}}</td> <!-- If showing all users -->
-                            <td>{{c['date_created']}}</td>
-                            <td>{{c['date_due']}}</td>
-                            <td>{{c['description']}}</td>
-                            {% if is_eval_director %}
-                            <th>
-                                    <button role="button" class="btn btn-raised btn-primary btn-success" style="width:100%;" id="pass-{{c['id']}}">
-                                        Pass
-                                    </button>
-                                    <button role="button" class="btn btn-raised btn-primary btn-danger" style="width:100%;" id="fail-{{c['id']}}">
-                                        Fail
-                                    </button>
-
-                            </th>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% endif %}
+    <div class="container main">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Conditionals
+                    {% if is_eval_director %}
+                        <button type="button" class="btn btn-primary btn-sm btn-conditional pull-right" data-toggle="modal" data-target="#createConditional">
+                            <span class="glyphicon glyphicon-plus"></span> Add
+                        </button>
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="panel-body table-fill">
+                <div class="table-responsive">
+                    {% if conditionals_len == 0 %}
+                        <div class="alert alert-info" style="margin:15px;">No conditionals.</div>
+                    {% else %}
+                        <table class="table table-striped no-bottom-margin" data-module="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date Created</th>
+                                    <th>Date Due</th>
+                                    <th>Description</th>
+                                    {% if is_eval_director %}
+                                    <th>Actions</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for c in conditionals %}
+                                <tr id="conditional-{{ c['id'] }}" conditional_id="{{ c['id'] }}">
+                                    <td>{{ c['name'] }}</td>
+                                    <td>{{ c['date_created'] }}</td>
+                                    <td>{{ c['date_due'] }}</td>
+                                    <td>{{ c['description'] }}</td>
+                                    {% if is_eval_director %}
+                                    <td data-module="conditionalActions" data-id="{{ c['id'] }}">
+                                        <button role="button" class="btn btn-sm btn-success" data-action="pass">Pass</button>
+                                        <button role="button" class="btn btn-sm btn-danger" data-action="fail">Fail</button>
+                                        <button role="button" class="btn btn-sm btn-default" data-action="delete"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-    <div >
+    <div class="modal fade" id="createConditional" tabindex="-1">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editUserTitle">Conditional</h4>
+                </div>
+                <form data-module="conditionalForm" method="post">
+                    <div class="modal-body">
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="memberName">Member Name</label>
+                            <select name="uid" id="memberName" class="form-control" data-module="memberSelect" data-src="cm_members"></select>
+                        </div>
+
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="due_date">Due Date</label>
+                            <input type="text" id="due_date" name="due_date" class="form-control" data-module="datepicker" />
+                        </div>
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="requirement">Requirement</label>
+                            <input type="text" class="form-control" id="requirement" name="description">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="Create">
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-        {% endblock %}
+</div>
+{% endblock %}

@@ -61,7 +61,7 @@ def create_conditional():
 
     uid = post_data['uid']
     description = post_data['description']
-    due_date = datetime.strptime(post_data['due_date'], "%Y-%m-%d")
+    due_date = datetime.strptime(post_data['dueDate'], "%Y-%m-%d")
 
     db.session.add(Conditional(uid, description, due_date))
     db.session.flush()
@@ -97,3 +97,21 @@ def conditional_review():
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
+
+
+@conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
+def conditional_delete(cid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='delete conditional')
+
+    user_name = request.headers.get('x-webauth-user')
+    if ldap_is_eval_director(user_name):
+        Conditional.query.filter(
+            Conditional.id == cid
+        ).delete()
+        db.session.flush()
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    else:
+        return "Must be evals director to delete!", 401
