@@ -10,7 +10,7 @@ export default class MajorProjectStatus {
     this.control = control;
     this.id = this.control.dataset.id;
     this.endpoint = '/major_project/review';
-    this.deleteEndpoint = '/major_project/delete/';
+    this.deleteEndpoint = '/major_project/delete/' + this.id;
     this.render();
   }
 
@@ -33,7 +33,7 @@ export default class MajorProjectStatus {
 
   _changeStatus(option) {
     if (option === "Delete") {
-      FetchUtil.fetchWithWarning(this.deleteEndpoint + this.id, {
+      FetchUtil.fetchWithWarning(this.deleteEndpoint, {
         method: 'DELETE',
         warningText: 'This action cannot be undone.',
         successText: 'Major project deleted.'
