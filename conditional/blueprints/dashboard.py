@@ -173,7 +173,7 @@ def display_dashboard():
     cm_attendance = [
         {
             'type': m.committee,
-            'datetime': m.timestamp
+            'datetime': m.timestamp.date()
         } for m in CommitteeMeeting.query.filter(
             CommitteeMeeting.id.in_(c_meetings)
         )]
