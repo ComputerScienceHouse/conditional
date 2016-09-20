@@ -242,8 +242,14 @@ def member_management_edituser(uid):
 
             ldap_set_roomnumber(uid, room_number)
             if onfloor_status:
+                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
                 ldap_add_member_to_group(uid, "onfloor")
             else:
+                for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
+                    db.session.delete(ofs)
+                db.session.flush()
+                db.session.commit()
+
                 ldap_remove_member_from_group(uid, "onfloor")
             ldap_set_housingpoints(uid, housing_points)
 
