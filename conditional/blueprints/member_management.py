@@ -230,78 +230,85 @@ def member_management_edituser(uid):
     post_data = request.get_json()
 
     if not uid.isdigit():
-        active_member = post_data['activeMember']
-
-        if ldap_is_eval_director(user_name):
-            logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
-                                          (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-                                           post_data['housingPoints']))
-            room_number = post_data['roomNumber']
-            onfloor_status = post_data['onfloorStatus']
-            housing_points = post_data['housingPoints']
-
-            ldap_set_roomnumber(uid, room_number)
-            if onfloor_status:
-                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-                ldap_add_member_to_group(uid, "onfloor")
-            else:
-                for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
-                    db.session.delete(ofs)
-                db.session.flush()
-                db.session.commit()
-
-                ldap_remove_member_from_group(uid, "onfloor")
-            ldap_set_housingpoints(uid, housing_points)
-
-        # Only update if there's a diff
-        logger.info('backend', action="edit %s active: %s" % (uid, active_member))
-        if ldap_is_active(uid) != active_member:
-            if active_member:
-                ldap_set_active(uid)
-            else:
-                ldap_set_inactive(uid)
-
-            if active_member:
-                db.session.add(SpringEval(uid))
-            else:
-                SpringEval.query.filter(
-                    SpringEval.uid == uid and
-                    SpringEval.active).update(
-                    {
-                        'active': False
-                    })
-            clear_active_members_cache()
+        edit_uid(uid, user_name, post_data)
     else:
-        logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s sig_missed %s" %
-            (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-            post_data['evalDate'], post_data['sigMissed']))
-
-        name = post_data['name']
-
-        if post_data['roomNumber'] == "":
-            room_number = None
-        else:
-            room_number = post_data['roomNumber']
-
-        onfloor_status = post_data['onfloorStatus']
-        eval_date = post_data['evalDate']
-
-        if post_data['sigMissed'] == "":
-            sig_missed = None
-        else:
-            sig_missed = post_data['sigMissed']
-
-        FreshmanAccount.query.filter(FreshmanAccount.id == uid).update({
-            'name': name,
-            'eval_date': datetime.strptime(eval_date, "%Y-%m-%d"),
-            'onfloor_status': onfloor_status,
-            'room_number': room_number,
-            'signatures_missed': sig_missed
-        })
+        edit_fid(uid, post_data)
 
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
+
+def edit_uid(uid, user_name, post_data):
+    active_member = post_data['activeMember']
+
+    if ldap_is_eval_director(user_name):
+        logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
+                                      (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+                                       post_data['housingPoints']))
+        room_number = post_data['roomNumber']
+        onfloor_status = post_data['onfloorStatus']
+        housing_points = post_data['housingPoints']
+
+        ldap_set_roomnumber(uid, room_number)
+        if onfloor_status:
+            db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+            ldap_add_member_to_group(uid, "onfloor")
+        else:
+            for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
+                db.session.delete(ofs)
+            db.session.flush()
+            db.session.commit()
+
+            ldap_remove_member_from_group(uid, "onfloor")
+        ldap_set_housingpoints(uid, housing_points)
+
+    # Only update if there's a diff
+    logger.info('backend', action="edit %s active: %s" % (uid, active_member))
+    if ldap_is_active(uid) != active_member:
+        if active_member:
+            ldap_set_active(uid)
+        else:
+            ldap_set_inactive(uid)
+
+        if active_member:
+            db.session.add(SpringEval(uid))
+        else:
+            SpringEval.query.filter(
+                SpringEval.uid == uid and
+                SpringEval.active).update(
+                {
+                    'active': False
+                })
+        clear_active_members_cache()
+
+
+def edit_fid(uid, post_data):
+    logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s sig_missed %s" %
+        (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+        post_data['evalDate'], post_data['sigMissed']))
+
+    name = post_data['name']
+
+    if post_data['roomNumber'] == "":
+        room_number = None
+    else:
+        room_number = post_data['roomNumber']
+
+    onfloor_status = post_data['onfloorStatus']
+    eval_date = post_data['evalDate']
+
+    if post_data['sigMissed'] == "":
+        sig_missed = None
+    else:
+        sig_missed = post_data['sigMissed']
+
+    FreshmanAccount.query.filter(FreshmanAccount.id == uid).update({
+        'name': name,
+        'eval_date': datetime.strptime(eval_date, "%Y-%m-%d"),
+        'onfloor_status': onfloor_status,
+        'room_number': room_number,
+        'signatures_missed': sig_missed
+    })
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['GET'])
