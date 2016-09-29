@@ -64,7 +64,10 @@ def __ldap_set_field__(username, field, new_val):
                                % username)
     old_result = ldap_results[0][1]
     new_result = copy.deepcopy(ldap_results[0][1])
-    new_result[field] = [str(new_val).encode('ascii')]
+    if new_val is not None:
+        new_result[field] = [str(new_val).encode('ascii')]
+    else:
+        new_result[field] = [None]
     ldap_mod_list = ldap.modlist.modifyModlist(old_result, new_result)
     userdn = "uid=%s,%s" % (username, user_search_ou)
     ldap_conn.modify_s(userdn, ldap_mod_list)
