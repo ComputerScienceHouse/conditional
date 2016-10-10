@@ -7,6 +7,7 @@ from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_is_current_student
 
+from conditional.models.models import CurrentCoops
 from conditional.models.models import OnFloorStatusAssigned
 
 from conditional import db
@@ -29,7 +30,10 @@ def __get_ofm__():
             'time': m.onfloor_granted,
             'points': ldap_get_housing_points(m.uid)
         } for m in OnFloorStatusAssigned.query.all()
-        if ldap_is_active(m.uid)]
+        if ldap_is_active(m.uid)
+        or CurrentCoops.query.filter(
+                CurrentCoops.uid == m.uid and CurrentCoops.active
+            ).first() is not None]
 
     # sort by housing points then by time in queue
     ofm.sort(key=lambda m: m['time'])
