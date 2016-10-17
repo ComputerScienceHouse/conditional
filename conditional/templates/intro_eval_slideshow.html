@@ -3,162 +3,107 @@
 Introductory Evaluations Slideshow
 {% endblock %}
 {% block extraHeader %}
-        <script src="../static/js/libraries/jquery.min.js"></script>
-        <link rel="stylesheet" href="/css/reveal.css">
-        <link rel="stylesheet" href="/css/white.css">
-{% endblock %}
-{% block extraFooter %}
-        <script src="/js/reveal.js"></script>
-        <script>
-            Reveal.initialize();
-            $('.popover-markup>.trigger').popover({
-                html: true,
-                title: function () {
-                    return $(this).parent().find('.head').html();
-                },
-                content: function () {
-                    return $(this).parent().find('.content').html();
-                }
-            });
-        </script>
+<link href="/static/css/presentations.css" rel="stylesheet">
 {% endblock %}
 {% block body %}
-        <div class="reveal">
-            <div class="slides">
-                {% for m in members %}
-                <section id="slide-{{m['uid']}}">
-                    <section>
-                        <h2>{{m['name']}}</h2>
-                        <h4>Eval Date:</h4>
-                        <p>{{m['eval_date']}}</p>
-                        <h4>Directorship Meetings Passed:</h4>
-                        <p>{{m['committee_meetings_passed']}}</p>
-                        <h4>House Meetings Missed:</h4>
-                        <p>{{m['house_meetings_missed']|length}}</p>
-                        <h4>Freshman Project Passed:</h4>
-                        <p>{{m['freshman_project']}}</p>
-                        <h4>Technical Seminars:</h4>
-                        <ul>
-                        {% for ts in m['technical_seminars'] %}
-                            <li>{{ts}}</li>
-                        {% endfor %}
-                        </ul>
-                        <h4>Signatures Missed</h4>
-                        <p>{{m['signatures_missed']}}</p>
-                        <h4>Social Events</h4>
-                        <p>{{m['social_events']}}</p>
-                        <h4>Comments</h4>
-                        <p>{{m['comments']}}</p>
-                        <button id="pass-{{m['uid']}}" type="button">Pass</button>
-                        <div class="popover-markup">
-                            <a href="#" class="trigger btn btn-default">Fail</a>
-                            <div class="head hide">Conditional Form</div>
-                            <div class="content hide">
-                                <input class="form-control" id="reason-{{m['uid']}}" type="text">
-                                <button id="conditional-{{m['uid']}}" type="button">Conditional</button>
-                                <button id="fail-{{m['uid']}}" type="button">Fail</button>
-                            <script>
-                            $("#fail-{{m['uid']}}").click(function (e) {
-                                e.preventDefault();
 
-                                $.ajax({
-                                    url: '/slideshow/intro/review',
-                                    type: 'POST',
-                                    contentType: "application/json; charset=utf-8",
-                                    dataType: 'json',
-                                    data: JSON.stringify({
-                                        'uid': "{{m['uid']}}",
-                                        'status': "Failed"
-                                    }),
-                                    success: function (res) {
-                                        Reveal.next()
-                                        alertify.success("Evaluation submitted successfully.");
-                                        $("#slide-{{m['uid']}}").remove()
-                                        Reveal.initialize();
-                                    }
-                                });
-                            });
-                            $("#conditional-{{m['uid']}}").click(function (e) {
-                                e.preventDefault();
+<div class="reveal" data-module="presentation">
+  <div class="slides">
+    {% for m in members %}
+    <section id="slide-{{m['uid']}}">
+      <section>
+        <h1>{{m['name']}}</h1>
+        <div class="row">
+          <div class="col-xs-12 col-md-4">
+            {% set committee_meetings_passed = m['committee_meetings'] >= 10 %}
+            <div class="item{% if committee_meetings_passed %} passed{% endif %}" >
+              <span class="icon glyphicon glyphicon-{% if committee_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+              <h3>{{m['committee_meetings']}}</h3>
+              <p>Meetings</p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-4">
+            {% set house_meetings_passed = m['house_meetings_missed']|length == 0 %}
+            <div class="item{% if house_meetings_passed %} passed{% endif %}">
+              <span class="icon glyphicon glyphicon-{% if house_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+              <h3>{{m['house_meetings_missed']|length}}</h3>
+              <p>Absences</p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-4">
+            {% set technical_seminars_passed = m['technical_seminars']|length >= 2 %}
+            <div class="item{% if technical_seminars_passed %} passed{% endif %}">
+              <span class="icon glyphicon glyphicon-{% if technical_seminars_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+              <h3>{{m['technical_seminars']|length}}</h3>
+              <p>Seminars</p>
+            </div>
+          </div>
+        </div>
+        {% set freshman_project_passed = m['freshman_project'] == 'Passed' %}
+        <h4><span class="icon glyphicon glyphicon-{% if freshmen_project_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span> Freshman Project</h4>
+        
+        <div class="actions" data-uid="{{m['uid']}}" data-cn="{{m['name']}}">
+          <button class="pass" type="button">Pass</button>
+          <button class="fail" type="button">Fail</button>
+        </div>
+        
+      </section>
+      <section>
+        {% if m['house_meetings_missed']|length > 0 %}
+      <section>
+        <h2>House Meetings Missed</h2>
+          <table>
+            {% for hm in m['house_meetings_missed'] %}
+            <tr>
+              <td class="date">{{hm['date']}}</td>
+              <td class="reason">{{hm['reason']}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+      </section>
+      {% endif %}
+        <div class="row">
+          <div class="col-xs-12 col-md-6 more" id="social">
+            <h3>Social Events</h3>
+            <p>{{m['social_events']}}</p>
+          </div>
+          <div class="col-xs-12 col-md-6 more" id="comments">
+            <h3>Comments</h3>
+            <p>{{m['comments']}}</p>
+          </div>
+        </div>
+      </section>
+    </section>
+    {% endfor %}
+  </div>
+</div>
 
-                                $.ajax({
-                                    url: '/slideshow/intro/review',
-                                    type: 'POST',
-                                    contentType: "application/json; charset=utf-8",
-                                    dataType: 'json',
-                                    data: JSON.stringify({
-                                        'uid': "{{m['uid']}}",
-                                        'status': "Failed"
-                                    }),
-                                    success: function (res) {
-                                        Reveal.next()
-                                        alertify.success("Evaluation submitted successfully.");
-                                        $.ajax({
-                                            url: '/conditionals/create',
-                                            type: 'POST',
-                                            contentType: "application/json; charset=utf-8",
-                                            dataType: 'json',
-                                            data: JSON.stringify({
-                                                "uid": "{{m['uid']}}",
-                                                "description": $("#reason-{{m['uid']}}").val(),
-                                                "due_date": "2016-09-15"
-                                            }),
-                                            error: function () {
-                                                alertify.error("Error adding conditional.");
-                                            },
-                                            success: function (res) {
-                                                alertify.success("Conditional added successfully.");
-                                            }
-                                        });
-                                        $("#slide-{{m['uid']}}").remove()
-                                        Reveal.initialize();
-                                    }
-                                });
-                            });
-                            </script>
-                            </div>
-                        <script>
-                            $("#pass-{{m['uid']}}").click(function (e) {
-                                e.preventDefault();
-
-                                $.ajax({
-                                    url: '/slideshow/intro/review',
-                                    type: 'POST',
-                                    contentType: "application/json; charset=utf-8",
-                                    dataType: 'json',
-                                    data: JSON.stringify({
-                                        'uid': "{{m['uid']}}",
-                                        'status': "Passed"
-                                    }),
-                                    success: function (res) {
-                                        Reveal.next()
-                                        alertify.success("Evaluation submitted successfully.");
-                                        $("#slide-{{m['uid']}}").remove()
-                                        Reveal.initialize();
-                                    }
-                                });
-                            });
-                        </script>
-                    </section>
-                    {% if m['house_meetings_missed']|length > 0 %}
-                    <section>
-                        <h2>Missed House Meetings</h2>
-                        <table>
-                        <tr>
-                            <th>Date</th>
-                            <th>Reason</th>
-                        </tr>
-                        {% for hm in m['house_meetings_missed'] %}
-                        <tr>
-                            <td>{{hm['date']}}</td>
-                            <td>{{hm['reason']}}</td>
-                        </tr>
-                        {% endfor %}
-                        </table>
-                    </section>
-                    {% endif %}
-                </section>
-                {% endfor %}
+<div class="modal fade" id="createConditional" tabindex="-1">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editUserTitle">Conditional</h4>
+                </div>
+                <form data-module="conditionalForm" method="post" autocomplete="off">
+                    <div class="modal-body">
+                        <input type="hidden" name="uid">
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="due_date">Due Date</label>
+                            <input type="text" id="due_date" name="due_date" class="form-control" data-module="datepicker" />
+                        </div>
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="requirement">Requirement</label>
+                            <input type="text" class="form-control" id="requirement" name="description">
+                        </div>
+                    </div>
+                    <div class="modal-footer">  
+                        <input type="submit" class="btn btn-primary" value="Create">
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
 {% endblock %}

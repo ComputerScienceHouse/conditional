@@ -4,6 +4,8 @@ files:
   include: 'frontend/stylesheets/**/*.s+(a|c)ss'
   ignore:
     - 'frontend/stylesheets/components/sweet-alert/**'
+    - 'frontend/stylesheets/components/reveal/**'
+    - 'frontend/stylesheets/presentations.scss'
 rules:
   # Extends
   extends-before-mixins: 1

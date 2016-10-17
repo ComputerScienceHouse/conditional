@@ -73,7 +73,8 @@
           "./node_modules/datatables.net-bs/css",
           "./node_modules/bootstrap-material-datetimepicker/css",
           "./node_modules/selectize-scss/src",
-          "./node_modules/load-awesome/css"
+          "./node_modules/load-awesome/css",
+          "./node_modules/reveal.js/css"
         ]
       },
       "extensions": ["sass", "scss", "css"]
