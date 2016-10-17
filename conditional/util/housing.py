@@ -10,20 +10,12 @@ from conditional.util.ldap import ldap_is_current_student
 from conditional.models.models import CurrentCoops
 from conditional.models.models import OnFloorStatusAssigned
 
-from conditional import db
 @lru_cache(maxsize=1024)
 def __get_ofm__():
 
     # check that everyone in onfloor has onfloorstatus
     onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
 
-    # this is bad and we shouldn't do this every time
-    for member in onfloors:
-        if OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == member).first() is None:
-            db.session.add(OnFloorStatusAssigned(member, datetime.min))
-
-    db.session.flush()
-    db.session.commit()
     ofm = [
         {
             'uid': m.uid,
@@ -34,6 +26,22 @@ def __get_ofm__():
         or CurrentCoops.query.filter(
                 CurrentCoops.uid == m.uid and CurrentCoops.active
             ).first() is not None]
+
+    # Add everyone who has a discrepancy in LDAP and OnFloorStatusAssigned
+    for member in onfloors:
+        if OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == member).first() is None:
+            ofsa = OnFloorStatusAssigned(member, datetime.min)
+            active = ldap_is_active(ofsa.uid)
+            coop = CurrentCoops.query.filter(CurrentCoops.uid == ofsa.uid).first()
+            coop = coop != None and coop.active
+
+            if active or coop:
+                ofm.append(
+                    {
+                        'uid': ofsa.uid,
+                        'time': ofsa.onfloor_granted,
+                        'points': ldap_get_housing_points(ofsa.uid)
+                    })
 
     # sort by housing points then by time in queue
     ofm.sort(key=lambda m: m['time'])
