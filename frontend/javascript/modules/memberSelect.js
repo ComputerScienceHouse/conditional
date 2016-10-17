@@ -35,7 +35,7 @@ export default class MemberSelect {
   }
 
   render() {
-    window.$(this.element).selectize({
+    $(this.element).selectize({
       persist: false,
       openOnFocus: false,
       closeAfterSelect: true,

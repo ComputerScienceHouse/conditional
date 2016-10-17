@@ -14,11 +14,21 @@
 }
 
 .eval-user-img {
-  border-radius: 200px;
+  border-radius: 50%;
 }
 
 .eval-panel {
   padding: 25px 20px;
+}
+
+.eval-user-status {
+  display: block;
+  float: right;
+  margin: -25px 5px;
+  border-radius: 50%;
+  padding: 5.5px;
+  width: 25px;
+  height: 25px;
 }
 
 .col-sm-2 {
@@ -52,4 +62,11 @@
     height: 0;
     text-align: center;
   }
+}
+
+.btn-conditional {
+  float: right;
+  margin-top: -4px;
+  box-shadow: none;
+  padding: 3px 7px;
 }

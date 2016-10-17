@@ -34,7 +34,8 @@ def display_major_project():
             'proj_name': p.name,
             'status': p.status,
             'description': p.description,
-            'id': p.id
+            'id': p.id,
+            'is_owner': bool(user_name == p.uid)
         } for p in
         MajorProject.query]
 
@@ -95,3 +96,27 @@ def major_project_review():
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
+
+
+@major_project_bp.route('/major_project/delete/<pid>', methods=['DELETE'])
+def major_project_delete(pid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='review major project')
+
+    # get user data
+    user_name = request.headers.get('x-webauth-user')
+    major_project = MajorProject.query.filter(
+        MajorProject.id == pid
+    ).first()
+    creator = major_project.uid
+
+    if creator == user_name or ldap_is_eval_director(user_name):
+        MajorProject.query.filter(
+            MajorProject.id == pid
+        ).delete()
+        db.session.flush()
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    else:
+        return "Must be project owner to delete!", 401

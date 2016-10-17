@@ -53,7 +53,7 @@ export default class AttendanceForm {
         });
 
         FetchUtil.postWithWarning(this.endpoint, payload, {
-          warningText: "You will not be able to edit this event once" +
+          warningText: "You will not be able to edit this event once " +
                         "attendance has been recorded.",
           successText: "Attendance has been submitted."
         });

@@ -352,8 +352,8 @@ export default class EditUser {
 
     FetchUtil.fetchWithWarning(this.endpoints.userDetails + this.uid, {
       method: 'DELETE',
-      warningText: 'This account\'s data will be permanently deleted.',
-      successText: 'Freshman account has been deleted.'
+      warningText: "This account's data will be permanently deleted.",
+      successText: "Freshman account has been deleted."
     }, () => {
       $(modal).modal('hide');
       window.location.reload();
@@ -371,9 +371,9 @@ export default class EditUser {
     };
 
     FetchUtil.postWithWarning(this.endpoints.userUpgrade, payload, {
-      warningText: 'This will irreversibly migrate all of this ' +
-      'freshman\'s data to the specified member account.',
-      successText: 'Account has been upgraded.'
+      warningText: "This will irreversibly migrate all of this " +
+      "freshman's data to the specified member account.",
+      successText: "Account has been upgraded."
     }, () => {
       $(modal).modal('hide');
       window.location.reload();

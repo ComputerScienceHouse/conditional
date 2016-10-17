@@ -18,5 +18,6 @@ $btn-flat-hover-bg: rgba(153, 153, 153, .2);
     box-shadow: 2px 2px 4px rgba(0, 0, 0, .4);
     background: darken($btn-flat-hover-bg, 20%) radial-gradient(circle, #7a1158 10%, #b0197e 11%) no-repeat;
     background-size: 1000% 1000%;
+    color: #fff;
   }
 }

@@ -15,6 +15,18 @@ Introductory Evaluations
                     <div class="col-sm-2 col-md-2 col-lg-2 vcenter">
                         <div style="margin:auto; width:100px">
                             <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
+                            {% if m['ldap_account'] %}
+                                {% if m['status'] == "Passed" %}
+                                <span class="glyphicon glyphicon-ok white success eval-user-status"></span>
+                                {% elif m['status'] == "Pending" %}
+                                <span class="glyphicon glyphicon-hourglass white warning eval-user-status"></span>
+                                {% else %}
+                                <span class="glyphicon glyphicon-remove white danger eval-user-status"></span>
+                                {% endif %}
+                            {% else %}
+                            <span class="glyphicon glyphicon-hourglass white warning eval-user-status"></span>
+                            {%  endif %}
+
                         </div>
                         <!---->
                     </div>

@@ -96,7 +96,6 @@ def display_dashboard():
     user_name = request.headers.get('x-webauth-user')
 
     can_vote = get_voting_members()
-    logger.info('backend', action=can_vote)
     data = dict()
     data['username'] = user_name
     data['name'] = ldap_get_name(user_name)
@@ -142,6 +141,7 @@ def display_dashboard():
 
     data['major_projects'] = [
         {
+            'id': p.id,
             'name': p.name,
             'status': p.status,
             'description': p.description
@@ -173,7 +173,7 @@ def display_dashboard():
     cm_attendance = [
         {
             'type': m.committee,
-            'datetime': m.timestamp
+            'datetime': m.timestamp.date()
         } for m in CommitteeMeeting.query.filter(
             CommitteeMeeting.id.in_(c_meetings)
         )]

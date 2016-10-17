@@ -220,7 +220,7 @@ class Conditional(db.Model):
         self.uid = uid
         self.description = description
         self.date_due = due
-        self.date_created = datetime.utcnow()
+        self.date_created = datetime.now()
         self.status = "Pending"
         self.active = True
 
