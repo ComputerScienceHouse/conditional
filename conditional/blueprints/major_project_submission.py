@@ -10,6 +10,7 @@ from conditional.util.ldap import ldap_get_name
 from conditional.util.flask import render_template
 
 from conditional import db
+from sqlalchemy import desc
 
 
 logger = structlog.get_logger()
@@ -37,9 +38,8 @@ def display_major_project():
             'id': p.id,
             'is_owner': bool(user_name == p.uid)
         } for p in
-        MajorProject.query]
+        MajorProject.query.order_by(desc(MajorProject.id))]
 
-    major_projects.reverse()
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format
     return render_template(request,
