@@ -26,3 +26,12 @@
     text-align: center;
   }
 }
+
+@media(min-width: 991px) {
+  .intro-info {
+    padding: 0 50px 0 0;
+  }
+  .spring-info {
+    padding: 10px 50px 0 0;
+  }
+}
