@@ -253,32 +253,3 @@ class SpringEval(db.Model):
         self.active = True
         self.date_created = datetime.now()
         self.status = "Pending"
-
-
-class HousingEvalsSubmission(db.Model):
-    __tablename__ = 'housing_evals'
-    id = Column(Integer, primary_key=True)
-    uid = Column(String(32), nullable=False)
-    social_attended = Column(Text, nullable=False)
-    social_hosted = Column(Text, nullable=False)
-    technical_attended = Column(Text, nullable=False)
-    technical_hosted = Column(Text, nullable=False)
-    projects = Column(Text, nullable=False)
-    comments = Column(Text, nullable=False)
-    points = Column(Integer, nullable=False)
-    active = Column(Boolean, nullable=False)
-    date_created = Column(Date, nullable=False)
-
-    def __init__(self, uid, social_attended,
-                 social_hosted, technical_attended,
-                 technical_hosted, projects, comments):
-        self.uid = uid
-        self.social_attended = social_attended
-        self.social_hosted = social_hosted
-        self.technical_attended = technical_attended
-        self.technical_hosted = technical_hosted
-        self.projects = projects
-        self.comments = comments
-        self.points = 0
-        self.active = True
-        self.date_created = datetime.now()

@@ -11,7 +11,6 @@ from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MajorProject
 from conditional.models.models import HouseMeeting
 from conditional.models.models import SpringEval
-from conditional.models.models import HousingEvalsSubmission
 
 from conditional.util.flask import render_template
 
@@ -55,20 +54,7 @@ def display_spring_evals(internal=False):
             print("User did not have existing spring eval data")
 
         eval_data = None
-        if internal:
-            eval_data = HousingEvalsSubmission.query.filter(
-                HousingEvalsSubmission.uid == uid).first()
 
-            if HousingEvalsSubmission.query.filter(HousingEvalsSubmission.uid == uid).count() > 0:
-                eval_data = \
-                    {
-                        'social_attended': eval_data.social_attended,
-                        'social_hosted': eval_data.social_hosted,
-                        'seminars_attended': eval_data.technical_attended,
-                        'seminars_hosted': eval_data.technical_hosted,
-                        'projects': eval_data.projects,
-                        'comments': eval_data.comments
-                    }
         h_meetings = [m.meeting_id for m in
                       MemberHouseMeetingAttendance.query.filter(
                           MemberHouseMeetingAttendance.uid == uid
