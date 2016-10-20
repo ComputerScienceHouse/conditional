@@ -3,7 +3,11 @@ import reveal from 'reveal.js';
 export default class Presentation {
   constructor(element) {
     this.element = element;
-    this.endpoint = '/slideshow/intro/review';
+    if (location.pathname.split('/')[2] === "intro") {
+      this.endpoint = '/slideshow/intro/review';
+    } else {
+      this.endpoint = '/slideshow/spring/review';
+    }
     this.render();
   }
   render() {
