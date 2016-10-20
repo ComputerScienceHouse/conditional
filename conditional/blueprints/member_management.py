@@ -464,18 +464,15 @@ def member_management_upgrade_user():
     db.session.add(new_acct)
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
         db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
-        # XXX this might fail horribly #yoloswag
         db.session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
         db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
-        # XXX this might fail horribly #yoloswag
         db.session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         db.session.add(MemberHouseMeetingAttendance(
             uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
-        # XXX this might fail horribly #yoloswag
         db.session.delete(fhm)
 
     if acct.onfloor_status:
@@ -484,7 +481,6 @@ def member_management_upgrade_user():
     if acct.room_number:
         ldap_set_roomnumber(uid, acct.room_number)
 
-    # XXX this might fail horribly #yoloswag
     db.session.delete(acct)
 
     db.session.flush()
