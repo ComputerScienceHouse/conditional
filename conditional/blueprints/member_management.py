@@ -262,7 +262,8 @@ def edit_uid(uid, user_name, post_data):
             db.session.flush()
             db.session.commit()
 
-            ldap_remove_member_from_group(uid, "onfloor")
+            if ldap_is_member_of_group(uid, "onfloor"):
+                ldap_remove_member_from_group(uid, "onfloor")
         ldap_set_housingpoints(uid, housing_points)
 
     # Only update if there's a diff
