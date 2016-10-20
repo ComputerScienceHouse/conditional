@@ -39,7 +39,7 @@ def ldap_init_required(func):
 
 
 @ldap_init_required
-def __ldap_get_field__(username, field):
+def _ldap_get_field(username, field):
     ldap_results = ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE, "(uid=%s)"
                                       % username)
     if len(ldap_results) != 1:
@@ -51,7 +51,7 @@ def __ldap_get_field__(username, field):
 
 
 @ldap_init_required
-def __ldap_set_field__(username, field, new_val):
+def _ldap_set_field(username, field, new_val):
     if read_only:
         print('LDAP modification: setting %s on %s to %s' % (field,
                                                              username,
@@ -74,13 +74,13 @@ def __ldap_set_field__(username, field, new_val):
 
 
 @ldap_init_required
-def __ldap_get_members__():
+def _ldap_get_members():
     return ldap_conn.search_s(user_search_ou, ldap.SCOPE_SUBTREE,
                               "objectClass=houseMember")
 
 
 @ldap_init_required
-def __ldap_is_member_of_group__(username, group):
+def _ldap_is_member_of_group(username, group):
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % group)
     if len(ldap_results) != 1:
@@ -91,11 +91,11 @@ def __ldap_is_member_of_group__(username, group):
 
 
 @ldap_init_required
-def __ldap_add_member_to_group__(username, group):
+def _ldap_add_member_to_group(username, group):
     if read_only:
         print("LDAP: Adding user %s to group %s" % (username, group))
         return
-    if __ldap_is_member_of_group__(username, group):
+    if _ldap_is_member_of_group(username, group):
         return
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % group)
@@ -112,11 +112,11 @@ def __ldap_add_member_to_group__(username, group):
     ldap_conn.modify_s(groupdn, ldap_modlist)
 
 
-def __ldap_remove_member_from_group__(username, group):
+def _ldap_remove_member_from_group(username, group):
     if read_only:
         print("LDAP: Removing user %s from group %s" % (username, group))
         return
-    if not __ldap_is_member_of_group__(username, group):
+    if not _ldap_is_member_of_group(username, group):
         return
     ldap_results = ldap_conn.search_s(group_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % group)
@@ -133,7 +133,7 @@ def __ldap_remove_member_from_group__(username, group):
 
 
 @ldap_init_required
-def __ldap_is_member_of_committee__(username, committee):
+def _ldap_is_member_of_committee(username, committee):
     ldap_results = ldap_conn.search_s(committee_search_ou, ldap.SCOPE_SUBTREE,
                                       "(cn=%s)" % committee)
     if len(ldap_results) != 1:
@@ -145,11 +145,11 @@ def __ldap_is_member_of_committee__(username, committee):
 
 @lru_cache(maxsize=1024)
 def ldap_get_housing_points(username):
-    return int(__ldap_get_field__(username, 'housingPoints'))
+    return int(_ldap_get_field(username, 'housingPoints'))
 
 
 def ldap_get_room_number(username):
-    roomno = __ldap_get_field__(username, 'roomNumber')
+    roomno = _ldap_get_field(username, 'roomNumber')
     if roomno is None:
         return "N/A"
     return roomno.decode('utf-8')
@@ -182,65 +182,65 @@ def ldap_get_onfloor_members():
 @lru_cache(maxsize=1024)
 def ldap_get_current_students():
     return [x[1]
-            for x in __ldap_get_members__()[1:]
+            for x in _ldap_get_members()[1:]
             if ldap_is_current_student(str(str(x[0]).split(",")[0]).split("=")[1])]
 
 
 def ldap_is_active(username):
-    return __ldap_is_member_of_group__(username, 'active')
+    return _ldap_is_member_of_group(username, 'active')
 
 
 def ldap_is_alumni(username):
     # When alumni status becomes a group rather than an attribute this will
-    # change to use __ldap_is_member_of_group__.
-    alum_status = __ldap_get_field__(username, 'alumni')
+    # change to use _ldap_is_member_of_group.
+    alum_status = _ldap_get_field(username, 'alumni')
     return alum_status is not None and alum_status.decode('utf-8') == '1'
 
 
 def ldap_is_eboard(username):
-    return __ldap_is_member_of_group__(username, 'eboard')
+    return _ldap_is_member_of_group(username, 'eboard')
 
 
 def ldap_is_intromember(username):
-    return __ldap_is_member_of_group__(username, 'intromembers')
+    return _ldap_is_member_of_group(username, 'intromembers')
 
 
 def ldap_is_onfloor(username):
     # april 3rd created onfloor group
-    # onfloor_status = __ldap_get_field__(username, 'onfloor')
+    # onfloor_status = _ldap_get_field(username, 'onfloor')
     # return onfloor_status != None and onfloor_status.decode('utf-8') == '1'
-    return __ldap_is_member_of_group__(username, 'onfloor')
+    return _ldap_is_member_of_group(username, 'onfloor')
 
 
 def ldap_is_financial_director(username):
-    return __ldap_is_member_of_committee__(username, 'Financial')
+    return _ldap_is_member_of_committee(username, 'Financial')
 
 
 def ldap_is_eval_director(username):
     # TODO FIXME Evaulations -> Evaluations
-    return __ldap_is_member_of_committee__(username, 'Evaulations')
+    return _ldap_is_member_of_committee(username, 'Evaulations')
 
 
 def ldap_is_current_student(username):
-    return __ldap_is_member_of_group__(username, 'current_student')
+    return _ldap_is_member_of_group(username, 'current_student')
 
 
 def ldap_set_housingpoints(username, housing_points):
-    __ldap_set_field__(username, 'housingPoints', housing_points)
+    _ldap_set_field(username, 'housingPoints', housing_points)
 
 
 def ldap_set_roomnumber(username, room_number):
-    __ldap_set_field__(username, 'roomNumber', room_number)
+    _ldap_set_field(username, 'roomNumber', room_number)
 
 
 def ldap_set_active(username):
-    __ldap_add_member_to_group__(username, 'active')
+    _ldap_add_member_to_group(username, 'active')
 
 
 def ldap_set_inactive(username):
-    __ldap_remove_member_from_group__(username, 'active')
+    _ldap_remove_member_from_group(username, 'active')
 
 
 @lru_cache(maxsize=1024)
 def ldap_get_name(username):
-    return __ldap_get_field__(username, 'cn').decode('utf-8')
+    return _ldap_get_field(username, 'cn').decode('utf-8')

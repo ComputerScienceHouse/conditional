@@ -38,8 +38,9 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_name
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.ldap import __ldap_add_member_to_group__ as ldap_add_member_to_group
-from conditional.util.ldap import __ldap_remove_member_from_group__ as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
+from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
@@ -253,15 +254,18 @@ def edit_uid(uid, user_name, post_data):
 
         ldap_set_roomnumber(uid, room_number)
         if onfloor_status:
-            db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-            ldap_add_member_to_group(uid, "onfloor")
+            # If a OnFloorStatusAssigned object exists, don't make another
+            if not ldap_is_member_of_group(uid, "onfloor"):
+                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+                ldap_add_member_to_group(uid, "onfloor")
         else:
             for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
                 db.session.delete(ofs)
             db.session.flush()
             db.session.commit()
 
-            ldap_remove_member_from_group(uid, "onfloor")
+            if ldap_is_member_of_group(uid, "onfloor"):
+                ldap_remove_member_from_group(uid, "onfloor")
         ldap_set_housingpoints(uid, housing_points)
 
     # Only update if there's a diff
