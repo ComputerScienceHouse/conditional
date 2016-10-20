@@ -37,9 +37,9 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_name
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.ldap import ldap_add_member_to_group
-from conditional.util.ldap import ldap_remove_member_from_group
-from conditional.util.ldap import ldap_is_member_of_group
+from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
+from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
