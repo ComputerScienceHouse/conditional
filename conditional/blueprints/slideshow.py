@@ -127,7 +127,7 @@ def slideshow_spring_review():
     post_data = request.get_json()
     uid = post_data['uid']
     status = post_data['status']
-    # points = post_data['points']
+
     logger.info("backend", action="submit spring eval for %s status: %s" % (uid, status))
 
     SpringEval.query.filter(
@@ -137,18 +137,6 @@ def slideshow_spring_review():
         {
             'status': status
         })
-
-    # points are handeled automagically through constitutional override
-    # HousingEvalsSubmission.query.filter(
-    #    HousingEvalsSubmission.uid == uid and
-    #    HousingEvalsSubmission.active).\
-    #    update(
-    #        {
-    #            'points': points
-    #        })
-
-    # current_points = ldap_get_housing_points(uid)
-    # ldap_set_housingpoints(uid, current_points + points)
 
     db.session.flush()
     db.session.commit()
