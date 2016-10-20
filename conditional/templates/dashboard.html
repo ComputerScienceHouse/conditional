@@ -194,6 +194,35 @@ Dashboard
             </div>
             {% endif %}
 
+
+            {% if is_eboard %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Member Statistics</h3>
+                </div>
+                <div class="panel-body table-fill">
+                    <div class="table-responsive">
+                        <table class="table table-striped no-bottom-margin">
+                            <tbody>
+                            <tr>
+                                <th>Category</th>
+                                <th><span class="pull-right">Members</span></th>
+                            </tr>
+                            {% for title in voting_count %}
+                            <tr>
+                                <td>{{ title }}</td>
+                                <td><span class="pull-right">{{ voting_count[title] }}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
             {% if major_projects_count == 0 and not active%}
             <div class="alert alert-warning" role="alert"> <span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"> </span> You have no major projects.</div>
             {% elif major_projects_count > 0 %}

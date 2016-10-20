@@ -3,6 +3,7 @@ import io
 import uuid
 
 from datetime import datetime
+from functools import lru_cache
 
 import structlog
 
@@ -50,7 +51,9 @@ logger = structlog.get_logger()
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 
-def get_members_info(members):
+@lru_cache(maxsize=1024)
+def get_members_info():
+    members = [m['uid'] for m in ldap_get_current_students()]
     member_list = []
     number_onfloor = 0
 
@@ -88,8 +91,7 @@ def display_member_management():
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval director", 403
 
-    members = [m['uid'] for m in ldap_get_current_students()]
-    member_list, onfloor_number = get_members_info(members)
+    member_list, onfloor_number = get_members_info()
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
