@@ -471,8 +471,15 @@ def member_management_upgrade_user():
         db.session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
-        db.session.add(MemberHouseMeetingAttendance(
-            uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
+        # Don't duplicate HM attendance records
+        mhm = MemberHouseMeetingAttendance.query.filter(
+                  MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
+        if mhm is None:
+            db.session.add(MemberHouseMeetingAttendance(
+                uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
+        else:
+            logger.info('backend', action="duplicate house meeting attendance! fid: %s, uid: %s, id: %s" %
+					  (fid, uid, fhm.meeting_id))
         db.session.delete(fhm)
 
     if acct.onfloor_status:
