@@ -74,7 +74,7 @@ def get_non_alumni_non_coop(internal=False):
     # Only Members Who Have Paid Dues Are Required to
     # go to house meetings
     non_alumni_members = ldap_get_active_members()
-    coop_members = [u.username for u in CurrentCoops.query.all()]
+    coop_members = [u.uid for u in CurrentCoops.query.all()]
 
     named_members = [
         {
