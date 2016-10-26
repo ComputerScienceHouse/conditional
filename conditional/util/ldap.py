@@ -201,6 +201,10 @@ def ldap_is_eboard(username):
     return _ldap_is_member_of_group(username, 'eboard')
 
 
+def ldap_is_rtp(username):
+    return _ldap_is_member_of_group(username, 'rtp')
+
+
 def ldap_is_intromember(username):
     return _ldap_is_member_of_group(username, 'intromembers')
 
