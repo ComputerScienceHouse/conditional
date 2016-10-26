@@ -1,4 +1,5 @@
 import os
+import subprocess
 from flask import Flask
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,10 @@ config = os.path.join(os.getcwd(), "config.py")
 app.config.from_pyfile(config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+app.config["GIT_REVISION"] = subprocess.check_output(['git',
+                                                      'rev-parse',
+                                                      '--short',
+                                                      'HEAD']).decode('utf-8').rstrip()
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 logger = structlog.get_logger()
