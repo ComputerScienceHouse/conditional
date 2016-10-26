@@ -39,8 +39,7 @@ Introductory Evaluations Slideshow
             </div>
           </div>
         </div>
-        {% set freshman_project_passed = m['freshman_project'] == 'Passed' %}
-        <h4><span class="icon glyphicon glyphicon-{% if freshmen_project_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span> Freshman Project</h4>
+        <h4><span class="icon glyphicon glyphicon-{% if m['freshman_project'] == 'Passed' %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span> Freshman Project</h4>
         
         <div class="actions" data-uid="{{m['uid']}}" data-cn="{{m['name']}}">
           <button class="pass" type="button">Pass</button>

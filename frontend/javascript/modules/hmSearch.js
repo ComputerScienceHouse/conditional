@@ -49,9 +49,7 @@ export default class HouseMeetingSearch {
       // Yes, prevent form submission
       event.preventDefault();
 
-      // Check the first visible table row's checkbox
-      this.api.table().body().firstElementChild
-        .querySelector("input[type=checkbox]").checked = true;
+      this._handleKeyAction();
 
       // Reset the table
       this.api.search('').draw();
@@ -63,6 +61,12 @@ export default class HouseMeetingSearch {
       // No, search and redraw the table
       this.api.search(this.input.value).draw();
     }
+  }
+
+  _handleKeyAction() {
+    // Check the first visible table row's checkbox
+    this.api.table().body().firstElementChild
+      .querySelector("input[type=checkbox]").checked = true;
   }
 
   /*
