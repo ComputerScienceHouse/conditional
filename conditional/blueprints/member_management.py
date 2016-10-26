@@ -7,7 +7,7 @@ from functools import lru_cache
 
 import structlog
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -24,6 +24,7 @@ from conditional.models.models import SpringEval
 
 from conditional.blueprints.cache_management import clear_active_members_cache
 from conditional.blueprints.cache_management import clear_onfloor_members_cache
+from conditional.blueprints.intro_evals import display_intro_evals
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
@@ -241,6 +242,7 @@ def member_management_edituser(uid):
     db.session.commit()
     return jsonify({"success": True}), 200
 
+
 def edit_uid(uid, user_name, post_data):
     active_member = post_data['activeMember']
 
@@ -290,8 +292,8 @@ def edit_uid(uid, user_name, post_data):
 
 def edit_fid(uid, post_data):
     logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s sig_missed %s" %
-        (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-        post_data['evalDate'], post_data['sigMissed']))
+                                  (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+                                   post_data['evalDate'], post_data['sigMissed']))
 
     name = post_data['name']
 
@@ -473,13 +475,13 @@ def member_management_upgrade_user():
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         # Don't duplicate HM attendance records
         mhm = MemberHouseMeetingAttendance.query.filter(
-                  MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
+            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
         if mhm is None:
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
         else:
             logger.info('backend', action="duplicate house meeting attendance! fid: %s, uid: %s, id: %s" %
-					  (fid, uid, fhm.meeting_id))
+                                          (fid, uid, fhm.meeting_id))
         db.session.delete(fhm)
 
     if acct.onfloor_status:
@@ -494,5 +496,60 @@ def member_management_upgrade_user():
     db.session.commit()
 
     clear_onfloor_members_cache()
+
+    return jsonify({"success": True}), 200
+
+
+@member_management_bp.route('/manage/intro_project', methods=['GET'])
+def introductory_project():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='show introductory project management')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+
+    return render_template(request,
+                           'introductory_project.html',
+                           username=user_name,
+                           intro_members=display_intro_evals(internal=True))
+
+
+@member_management_bp.route('/manage/intro_project', methods=['POST'])
+def introductory_project_submit():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='submit introductory project results')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+
+    post_data = request.get_json()
+
+    if not isinstance(post_data, list):
+        abort(400)
+
+    for intro_member in post_data:
+        if not isinstance(intro_member, dict):
+            abort(400)
+
+        if 'uid' not in intro_member or 'status' not in intro_member:
+            abort(400)
+
+        if intro_member['status'] not in ['Passed', 'Pending', 'Failed']:
+            abort(400)
+
+        log.info('debug', action='setting status "' + intro_member['status'] + '" for ' + intro_member['uid'])
+
+        FreshmanEvalData.query.filter(FreshmanEvalData.uid == intro_member['uid']).update({
+            'freshman_project': intro_member['status']
+        })
+
+    db.session.flush()
+    db.session.commit()
 
     return jsonify({"success": True}), 200
