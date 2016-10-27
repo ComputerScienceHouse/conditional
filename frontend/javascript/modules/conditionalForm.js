@@ -15,8 +15,9 @@ export default class ConditionalForm {
 
   _submitForm(e) {
     e.preventDefault();
+    let uid = this.form.uid.value;
     let payload = {
-      uid: this.form.uid.value,
+      uid: uid,
       description: this.form.querySelector('input[name=description]').value,
       dueDate: this.form.querySelector('input[name=due_date]').value
     };
@@ -26,6 +27,12 @@ export default class ConditionalForm {
     }, () => {
       $(this.form.closest('.modal')).modal('hide');
       if (location.pathname.split('/')[1] === "slideshow") {
+        $('#createConditional').on('hidden.bs.modal', function() {
+          var condBtn = $('div[data-uid="' + uid + '"] button')
+          .first();
+          $(condBtn).text("Conditionaled").off("click").addClass("disabled");
+          $(condBtn).next().hide();
+        });
         reveal.right();
       } else {
         location.reload();
