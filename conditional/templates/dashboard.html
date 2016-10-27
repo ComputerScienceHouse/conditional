@@ -116,7 +116,7 @@ Dashboard
                         <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
                         {% elif spring['status'] == "Failed" %}
                         <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
-                        {% else %}
+                        {% elif active %}
                         <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
                         {% endif %}
                     </h3>
@@ -194,9 +194,38 @@ Dashboard
             </div>
             {% endif %}
 
-            {% if major_projects_count == 0 %}
+
+            {% if is_eboard %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Member Statistics</h3>
+                </div>
+                <div class="panel-body table-fill">
+                    <div class="table-responsive">
+                        <table class="table table-striped no-bottom-margin">
+                            <tbody>
+                            <tr>
+                                <th>Category</th>
+                                <th><span class="pull-right">Members</span></th>
+                            </tr>
+                            {% for title in voting_count %}
+                            <tr>
+                                <td>{{ title }}</td>
+                                <td><span class="pull-right">{{ voting_count[title] }}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% if major_projects_count == 0 and not active%}
             <div class="alert alert-warning" role="alert"> <span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"> </span> You have no major projects.</div>
-            {% else %}
+            {% elif major_projects_count > 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Major Projects</h3>
@@ -237,6 +266,7 @@ Dashboard
                             <td class="title">Housing Points</td>
                             <td><span class="pull-right">{{housing['points']}}</span></td>
                         </tr>
+                        {% if active %}
                         <tr>
                             <td class="title">Room Number</td>
                             <td><span class="pull-right">{{housing['room']}}</span></td>
@@ -245,17 +275,18 @@ Dashboard
                             <td class="title">Housing Queue Position</td>
                             <td><span class="pull-right">{{housing['queue_pos']}}</span></td>
                         </tr>
+                        {% endif %}
                         </tbody>
                     </table>
                     {% endif %}
                 </div>
             </div>
 
-            {% if hm_attendance_len == 0 %}
+            {% if hm_attendance_len == 0 and active%}
             <div class="alert alert-success">
                 <span class="glyphicon glyphicon-ok-sign white" style="padding-right:5px"> </span> You haven't missed any house meetings.
             </div>
-            {% else %}
+            {% elif hm_attendance_len > 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Missed House Meetings</h3>
@@ -279,9 +310,9 @@ Dashboard
             </div>
             {% endif %}
 
-            {% if cm_attendance_len == 0 %}
+            {% if cm_attendance_len == 0 and active%}
             <div class="alert alert-warning"><span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"></span> You have not attended any directorship meetings.</div>
-            {% else %}
+            {% elif cm_attendance_len > 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Directorship Meeting Attendance</h3>

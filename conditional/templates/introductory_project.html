@@ -1,0 +1,62 @@
+{% extends "nav.html" %}
+{% block title %}
+Introductory Project Results
+{% endblock %}
+{% block body %}
+<div class="container main">
+    <h3>Introductory Project Results</h3>
+    <div style="padding-top:20px"></div>
+    <form data-module="introductoryProject">
+        <!-- Intro Members -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Introductory Members</h3>
+            </div>
+            <div class="panel-body table-fill">
+                <div class="hm-search">
+                    <input class="form-control" type="text" placeholder="Quick Select" data-module="ipSearch" data-target="table.intro-project">
+                </div>
+                <div class="table-responsive intro-project-container">
+                    <table class="table table-striped no-bottom-margin intro-project" data-module="table" data-sort-column="0" data-sort-order="asc" data-paginated="false">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in intro_members %}
+                            <tr data-uid="{{f['uid']}}">
+                                <td>
+                                    <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{f['uid']}}"> {{f['name']}}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#" class="btn {% if f['freshman_project'] == 'Passed' %}btn-success{% elif f['freshman_project'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp" data-toggle="dropdown" data-selected="{{f['freshman_project']}}" aria-expanded="false">
+                                            {{f['freshman_project']}}
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="#" data-option="Passed"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-option="Pending"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-option="Failed"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Save Results"/>
+    </form>
+</div>
+{% endblock %}

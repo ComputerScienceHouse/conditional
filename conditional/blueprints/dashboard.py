@@ -22,6 +22,8 @@ from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
 from conditional.models.models import CommitteeMeeting
 
+from conditional.blueprints.member_management import get_members_info
+
 from conditional.util.housing import get_queue_length, get_queue_position
 from conditional.util.flask import render_template
 
@@ -106,6 +108,9 @@ def display_dashboard():
     # Voting Status
     data['voting'] = bool(user_name in can_vote)
 
+    active_list = get_members_info()[0]
+    data['voting_count'] = {"Voting Members": len(can_vote),
+                            "Active Members": len(active_list)}
     # freshman shit
     if ldap_is_intromember(user_name):
         data['freshman'] = get_freshman_data(user_name)

@@ -1,16 +1,18 @@
 .eval-info-label {
-  margin: 4px auto;
-  border-radius: .25em;
   padding: .3em .6em .4em;
-  width: 100%;
-  max-width: 400px;
-  vertical-align: baseline;
-  text-align: center;
+  text-align: left;
   line-height: 1;
-  white-space: nowrap;
-  color: #fff;
-  font-size: 90%;
-  font-weight: 700;
+  color: #444;
+  font-weight: 500;
+}
+
+.eval-info-status {
+  margin: 2px 0 0;
+  padding: 0 5px 0 0;
+}
+
+.eval-info-number {
+  float: right;
 }
 
 .eval-user-img {
@@ -26,7 +28,7 @@
   float: right;
   margin: -25px 5px;
   border-radius: 50%;
-  padding: 5.5px;
+  padding: 6px;
   width: 25px;
   height: 25px;
 }

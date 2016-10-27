@@ -140,3 +140,14 @@
   text-transform: uppercase;
   font-size: 10px;
 }
+
+.intro-project-container {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.intro-project {
+  .btn-group {
+    margin-top: -22px;
+  }
+}

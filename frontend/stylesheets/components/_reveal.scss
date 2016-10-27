@@ -1,0 +1,146 @@
+$green: #60a415;
+$red: #c62020;
+$yellow: #f1c40f;
+.reveal {
+  & .slides {
+    top: 0;
+    margin-top: 0;
+    height: 100%;
+    & .slides > section {
+      min-height: 90%;
+      & > section {
+        min-height: 100%;
+      }
+    }
+    & button {
+      display: inline-block;
+      transition: .3s all;
+      margin: 0 auto;
+      outline: none;
+      border: 5px solid $red;
+      border-radius: 40px;
+      box-shadow: none;
+      background: transparent;
+      padding: 5px 20px;
+      min-width: 200px;
+      text-transform: uppercase;
+      color: $red;
+      font-size: 30px;
+      &.conditional {
+        border-color: $yellow;
+        color: $yellow;
+        &:hover {
+          border-color: darken($yellow, 10%);
+          background: rgba($yellow, .1);
+          color: darken($yellow, 10%);
+        }
+        &.disabled {
+          opacity: .5;
+          cursor: not-allowed;
+          &:hover {
+            border-color: $yellow;
+            background: transparent;
+            color: $yellow;
+          }
+        }
+      }
+      &:hover {
+        border-color: darken($red, 10%);
+        background: rgba($red, .1);
+        color: darken($red, 10%);
+      }
+      &.pass {
+        border-color: $green;
+        color: $green;
+        &:hover {
+          border-color: darken($green, 10%);
+          background: rgba($green, .1);
+          color: darken($green, 10%);
+        }
+        &.disabled {
+          opacity: .5;
+          cursor: not-allowed;
+          &:hover {
+            border-color: $green;
+            background: transparent;
+            color: $green;
+          }
+        }
+      }
+      &.disabled {
+        opacity: .5;
+        cursor: not-allowed;
+        &:hover {
+          border-color: $red;
+          background: transparent;
+          color: $red;
+        }
+      }
+    }
+  }
+  & h1 {
+    margin-top: 0;
+    margin-bottom: 60px;
+    text-transform: none;
+    color: #555;
+  }
+  & h3 {
+    padding: 0;
+    line-height: 1;
+    color: #555;
+  }
+  & h4 {
+    margin-bottom: 40px;
+    text-transform: none;
+    font-weight: lighter;
+    & .icon {
+      position: relative;
+      top: auto;
+      left: auto;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 20px;
+    }
+  }
+  & .item {
+    position: relative;
+    border: 6px solid $red;
+    border-radius: 20px;
+    padding: 60px 0 0;
+    width: 95%;
+    height: 100%;
+    color: #555;
+    &.passed {
+      border-color: $green;
+    }
+    & h3 {
+      font-size: 3em;
+      font-weight: bolder;
+    }
+    & p {
+      font-weight: lighter;
+    }
+  }
+  & .icon {
+    position: absolute;
+    top: -40px;
+    left: calc(50% - 40px);
+    border-radius: 50%;
+    background: $red;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    color: #fff;
+    font-family: 'Glyphicons Halflings';
+    font-size: 40px;
+    &.passed {
+      background: $green;
+    }
+  }
+  & .more {
+    padding: 10px;
+    text-align: left;
+    font-size: .6em;
+  }
+}

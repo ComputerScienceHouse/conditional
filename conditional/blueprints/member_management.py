@@ -3,10 +3,11 @@ import io
 import uuid
 
 from datetime import datetime
+from functools import lru_cache
 
 import structlog
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -23,6 +24,7 @@ from conditional.models.models import SpringEval
 
 from conditional.blueprints.cache_management import clear_active_members_cache
 from conditional.blueprints.cache_management import clear_onfloor_members_cache
+from conditional.blueprints.intro_evals import display_intro_evals
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
@@ -37,8 +39,9 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_name
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.ldap import __ldap_add_member_to_group__ as ldap_add_member_to_group
-from conditional.util.ldap import __ldap_remove_member_from_group__ as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
+from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
@@ -50,7 +53,9 @@ logger = structlog.get_logger()
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 
-def get_members_info(members):
+@lru_cache(maxsize=1024)
+def get_members_info():
+    members = [m['uid'] for m in ldap_get_current_students()]
     member_list = []
     number_onfloor = 0
 
@@ -88,8 +93,7 @@ def display_member_management():
     if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
         return "must be eval director", 403
 
-    members = [m['uid'] for m in ldap_get_current_students()]
-    member_list, onfloor_number = get_members_info(members)
+    member_list, onfloor_number = get_members_info()
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -238,6 +242,7 @@ def member_management_edituser(uid):
     db.session.commit()
     return jsonify({"success": True}), 200
 
+
 def edit_uid(uid, user_name, post_data):
     active_member = post_data['activeMember']
 
@@ -251,15 +256,18 @@ def edit_uid(uid, user_name, post_data):
 
         ldap_set_roomnumber(uid, room_number)
         if onfloor_status:
-            db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-            ldap_add_member_to_group(uid, "onfloor")
+            # If a OnFloorStatusAssigned object exists, don't make another
+            if not ldap_is_member_of_group(uid, "onfloor"):
+                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+                ldap_add_member_to_group(uid, "onfloor")
         else:
             for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
                 db.session.delete(ofs)
             db.session.flush()
             db.session.commit()
 
-            ldap_remove_member_from_group(uid, "onfloor")
+            if ldap_is_member_of_group(uid, "onfloor"):
+                ldap_remove_member_from_group(uid, "onfloor")
         ldap_set_housingpoints(uid, housing_points)
 
     # Only update if there's a diff
@@ -284,8 +292,8 @@ def edit_uid(uid, user_name, post_data):
 
 def edit_fid(uid, post_data):
     logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s sig_missed %s" %
-        (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-        post_data['evalDate'], post_data['sigMissed']))
+                                  (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+                                   post_data['evalDate'], post_data['sigMissed']))
 
     name = post_data['name']
 
@@ -458,18 +466,22 @@ def member_management_upgrade_user():
     db.session.add(new_acct)
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
         db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
-        # XXX this might fail horribly #yoloswag
         db.session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
         db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
-        # XXX this might fail horribly #yoloswag
         db.session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
-        db.session.add(MemberHouseMeetingAttendance(
-            uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
-        # XXX this might fail horribly #yoloswag
+        # Don't duplicate HM attendance records
+        mhm = MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
+        if mhm is None:
+            db.session.add(MemberHouseMeetingAttendance(
+                uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
+        else:
+            logger.info('backend', action="duplicate house meeting attendance! fid: %s, uid: %s, id: %s" %
+                                          (fid, uid, fhm.meeting_id))
         db.session.delete(fhm)
 
     if acct.onfloor_status:
@@ -478,12 +490,66 @@ def member_management_upgrade_user():
     if acct.room_number:
         ldap_set_roomnumber(uid, acct.room_number)
 
-    # XXX this might fail horribly #yoloswag
     db.session.delete(acct)
 
     db.session.flush()
     db.session.commit()
 
     clear_onfloor_members_cache()
+
+    return jsonify({"success": True}), 200
+
+
+@member_management_bp.route('/manage/intro_project', methods=['GET'])
+def introductory_project():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='show introductory project management')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+
+    return render_template(request,
+                           'introductory_project.html',
+                           username=user_name,
+                           intro_members=display_intro_evals(internal=True))
+
+
+@member_management_bp.route('/manage/intro_project', methods=['POST'])
+def introductory_project_submit():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='submit introductory project results')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_eval_director(user_name):
+        return "must be eval director", 403
+
+    post_data = request.get_json()
+
+    if not isinstance(post_data, list):
+        abort(400)
+
+    for intro_member in post_data:
+        if not isinstance(intro_member, dict):
+            abort(400)
+
+        if 'uid' not in intro_member or 'status' not in intro_member:
+            abort(400)
+
+        if intro_member['status'] not in ['Passed', 'Pending', 'Failed']:
+            abort(400)
+
+        log.info('debug', action='setting status "' + intro_member['status'] + '" for ' + intro_member['uid'])
+
+        FreshmanEvalData.query.filter(FreshmanEvalData.uid == intro_member['uid']).update({
+            'freshman_project': intro_member['status']
+        })
+
+    db.session.flush()
+    db.session.commit()
 
     return jsonify({"success": True}), 200

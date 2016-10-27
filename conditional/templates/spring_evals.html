@@ -26,36 +26,52 @@ Membership Evaluations
                         </div>
                         <!---->
                     </div>
-                    <div class="col-sm-5 col-md-4 col-lg-5">
+                    <div class="col-sm-5 col-md-4 col-lg-6">
                         <h4 class="eval-name">{{m['name']}}</h4>
                         <h6 class="eval-uid">{{m['uid']}}</h6>
                     </div>
                     <!---->
-                    <div class="col-sm-5 col-md-6 col-lg-5 vcenter">
+                    <div class="col-sm-5 col-md-6 col-lg-4 vcenter">
                         <div class="spring-info row">
                             <div class="text-center">
                                         {% if m['committee_meetings'] < 25 %}
-                                        <div class="eval-info-label danger">Directorship Meetings: {{m['committee_meetings']}}</div>
+                                        <div class="eval-info-label">
+                                            <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Directorship Meetings
+                                            <span class="eval-info-number">{{m['committee_meetings']}} / 25</span>
+                                        </div>
                                         {% else %}
-                                        <div class="eval-info-label success">Directorship Meetings: {{m['committee_meetings']}}</div>
+                                        <div class="eval-info-label">
+                                            <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Directorship Meetings
+                                            <span class="eval-info-number">{{m['committee_meetings']}} / 25</span>
+                                        </div>
                                         {% endif %}
 
                                     </div>
                                     <div class="text-center">
                                         {% if m['major_project_passed'] %}
-                                        <div class="eval-info-label success">Major Project: <span class="glyphicon glyphicon-ok-sign white"></span></div>
-                                        {% elif m['major_project_passed'] %}
-                                        <div class="eval-info-label warning">Major Project: <span class="glyphicon glyphicon-hourglass white"></span></div>
+                                        <div class="eval-info-label">
+                                            <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Major Project
+                                            <span class="eval-info-number">Passed</span>
+                                        </div>
                                         {% else %}
-                                        <div class="eval-info-label danger">Major Project: <span class="glyphicon glyphicon-remove-sign white"></span></div>
+                                        <div class="eval-info-label">
+                                            <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Major Project
+                                            <span class="eval-info-number">None</span>
+                                        </div>
                                         {% endif %}
 
                                     </div>
                                     <div class="text-center">
                                         {% if m['house_meetings_missed']|length > 0 %}
-                                        <div class="eval-info-label danger">House Meetings Missed: {{m['house_meetings_missed']|length}}</div>
+                                        <div class="eval-info-label">
+                                            <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>House Meetings Missed
+                                            <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
+                                        </div>
                                         {% else %}
-                                        <div class="eval-info-label success">House Meetings Missed: {{m['house_meetings_missed']|length}}</div>
+                                        <div class="eval-info-label">
+                                            <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>House Meetings Missed
+                                            <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
+                                        </div>
                                         {% endif %}
                                     </div>
 
