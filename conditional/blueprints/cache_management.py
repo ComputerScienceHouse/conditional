@@ -33,7 +33,7 @@ def restart_app():
 def clear_cache():
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(user_name) or ldap_is_rtp(user_name):
         return redirect("/dashboard")
 
     logger.info('api', action='purge system cache')

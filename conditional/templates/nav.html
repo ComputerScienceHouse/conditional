@@ -44,17 +44,27 @@
                     </ul>
                 </li>
                 {% endif %}
-                {% if is_eval_director or is_financial_director %}
+                {% if is_eval_director or is_financial_director or is_rtp%}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> Admin<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/manage"><span class="glyphicon glyphicon-user"></span> Member Management</a></li>
+
+                        {% if is_financial_director or is_eval_director %}
+                            <li><a href="/manage"><span class="glyphicon glyphicon-user"></span> Member Management</a></li>
+                        {% endif %}
+
                         {% if is_eval_director %}
+                            <li><a href="/manage/intro_project"><span class="glyphicon glyphicon-tower"></span> Introductory Project Results</a></li>
+                            <li><a href="/slideshow/intro"><span class="glyphicon glyphicon-eye-open"></span> Introductory Evaluations Presentation</a></li>
+                            <li><a href="/slideshow/spring"><span class="glyphicon glyphicon-eye-open"></span> Membership Evaluations Presentation</a></li>
+                        {% endif %}
 
-                        <li><a href="/manage/intro_project"><span class="glyphicon glyphicon-tower"></span> Introductory Project Results</a></li>
-                        <li><a href="/slideshow/intro"><span class="glyphicon glyphicon-eye-open"></span> Introductory Evaluations Presentation</a></li>
-                        <li><a href="/slideshow/spring"><span class="glyphicon glyphicon-eye-open"></span> Membership Evaluations Presentation</a></li>
+                        {% if is_eval_director or is_rtp %}
+                            <li><a href="/clearcache"><span class="glyphicon glyphicon-floppy-remove"></span> Clear Cache</a></li>
+                        {% endif %}
 
+                        {% if is_rtp %}
+                            <li><a href="/restart"><span class="glyphicon glyphicon-refresh"></span> Restart Conditional</a></li>
                         {% endif %}
                     </ul>
                 </li>

@@ -7,6 +7,7 @@ from conditional.util.ldap import ldap_is_eboard
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_is_rtp
 from conditional import db
 
 
@@ -27,6 +28,7 @@ def render_template(request, template_name, **kwargs):
     is_financial = ldap_is_financial_director(user_name)
     is_eval = ldap_is_eval_director(user_name)
     is_intromember = ldap_is_intromember(user_name)
+    is_rtp = ldap_is_rtp(user_name)
 
     if is_eval:
         lockdown = False
@@ -40,4 +42,5 @@ def render_template(request, template_name, **kwargs):
         is_eval_director=is_eval,
         is_financial_director=is_financial,
         is_intromember=is_intromember,
+        is_rtp=is_rtp,
         **kwargs)
