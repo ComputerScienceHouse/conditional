@@ -42,10 +42,6 @@ export default class Presentation {
           $('#createConditional').modal();
           $('#createConditional input[type="text"]').val('');
           $('#createConditional input[name="uid"]').val(uid);
-          $('#createConditional').on('hidden.bs.modal', function() {
-            $(e.target).text("Conditionaled").off("click").addClass("disabled");
-            $(e.target).next().hide();
-          });
         });
       $(e.target).click(e => {
         e.preventDefault();

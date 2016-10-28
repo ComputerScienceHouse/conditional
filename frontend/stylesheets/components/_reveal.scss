@@ -105,10 +105,11 @@ $yellow: #f1c40f;
   }
   & .item {
     position: relative;
+    margin: 0 auto;
     border: 6px solid $red;
     border-radius: 20px;
     padding: 60px 0 0;
-    width: 95%;
+    width: 92%;
     height: 100%;
     color: #555;
     &.passed {
