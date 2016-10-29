@@ -1,6 +1,9 @@
+import os
+import signal
 import structlog
 
 from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_rtp
 from conditional.util.ldap import ldap_get_housing_points
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_intro_members
@@ -14,12 +17,23 @@ from flask import Blueprint, request, redirect
 logger = structlog.get_logger()
 cache_bp = Blueprint('cache_bp', __name__)
 
+@cache_bp.route('/restart')
+def restart_app():
+    user_name = request.headers.get('x-webauth-user')
+
+    if not ldap_is_rtp(user_name):
+        return redirect("/dashboard")
+
+    logger.info('api', action='restart conditional')
+    os.kill(os.getpid(), signal.SIGINT)
+    return "application restarted", 200
+
 
 @cache_bp.route('/clearcache')
 def clear_cache():
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(user_name) or ldap_is_rtp(user_name):
         return redirect("/dashboard")
 
     logger.info('api', action='purge system cache')
