@@ -155,6 +155,7 @@ def display_intro_evals(internal=False):
     ie_members.sort(key=lambda x: len(x['house_meetings_missed']))
     ie_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
     ie_members.sort(key=lambda x: x['signatures_missed'])
+    ie_members.sort(key=lambda x: x['status'] == "Passed")
 
     if internal:
         return ie_members
