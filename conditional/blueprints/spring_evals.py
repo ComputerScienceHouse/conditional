@@ -52,7 +52,7 @@ def display_spring_evals(internal=False):
             db.session.commit()
             # something bad happened to get here
             print("User did not have existing spring eval data")
-        elif spring_entry.status != "Pending":
+        elif spring_entry.status != "Pending" and internal:
             continue
 
         eval_data = None

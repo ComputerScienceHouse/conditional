@@ -107,7 +107,7 @@ def display_intro_evals(internal=False):
 
         if freshman_data is None:
             continue
-        elif freshman_data.freshman_eval_result != "Pending" and internal is True:
+        elif freshman_data.freshman_eval_result != "Pending" and internal:
             continue
 
         h_meetings = [m.meeting_id for m in
