@@ -14,6 +14,9 @@ from conditional.blueprints.spring_evals import display_spring_evals
 from conditional.util.ldap import ldap_is_eval_director, ldap_get_member
 
 from conditional.models.models import FreshmanEvalData
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import SpringEval
 
 from conditional import db
@@ -78,8 +81,34 @@ def slideshow_intro_review():
         FreshmanEvalData.active). \
         update(
         {
-            'freshman_eval_result': status
+            'freshman_eval_result': status,
+            'active': status != "Failed"
         })
+
+    if status == "Failed":
+        MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.uid == uid and
+            MemberCommitteeAttendance.active). \
+            update(
+            {
+                'active': False
+            })
+
+        MemberSeminarAttendance.query.filter(
+            MemberSeminarAttendance.uid == uid and
+            MemberSeminarAttendance.active). \
+            update(
+            {
+                'active': False
+            })
+
+        MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.uid == uid and
+            MemberHouseMeetingAttendance.active). \
+            update(
+            {
+                'active': False
+            })
 
     db.session.flush()
     db.session.commit()

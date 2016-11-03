@@ -26,9 +26,10 @@ def display_spring_evals(internal=False):
                      request_id=str(uuid.uuid4()))
     log.info('frontend', action='display membership evaluations listing')
 
-    def get_cm_count(member_id):
+    def get_uid_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == member_id)])
+            MemberCommitteeAttendance.uid == member_id and
+            MemberCommitteeAttendance.active)])
 
     user_name = None
     if not internal:
@@ -56,7 +57,8 @@ def display_spring_evals(internal=False):
 
         h_meetings = [m.meeting_id for m in
                       MemberHouseMeetingAttendance.query.filter(
-                          MemberHouseMeetingAttendance.uid == uid
+                          MemberHouseMeetingAttendance.uid == uid and
+                          MemberHouseMeetingAttendance.active
                       ).filter(
                           MemberHouseMeetingAttendance.attendance_status == "Absent"
                       )]
@@ -64,14 +66,15 @@ def display_spring_evals(internal=False):
             'name': account.cn,
             'uid': uid,
             'status': spring_entry.status,
-            'committee_meetings': get_cm_count(uid),
+            'committee_meetings': get_uid_cm_count(uid),
             'house_meetings_missed':
                 [
                     {
                         "date": m.date.strftime("%Y-%m-%d"),
                         "reason":
                             MemberHouseMeetingAttendance.query.filter(
-                                MemberHouseMeetingAttendance.uid == uid).filter(
+                                MemberHouseMeetingAttendance.uid == uid and
+                                MemberHouseMeetingAttendance.active).filter(
                                 MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
                     }
                     for m in HouseMeeting.query.filter(
