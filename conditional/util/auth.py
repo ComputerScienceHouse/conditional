@@ -2,18 +2,19 @@ from functools import wraps
 from flask import request
 from conditional.util.ldap import ldap_is_active, ldap_is_alumni, \
     ldap_is_eboard, ldap_is_eval_director, \
-    ldap_is_financial_director
+    ldap_is_financial_director, ldap_get_member
 
 
 def webauth_request(func):
     @wraps(func)
     def wrapped_func(*args, **kwargs):
         user_name = request.headers.get('x-webauth-user')
-        is_active = ldap_is_active(user_name)
-        is_alumni = ldap_is_alumni(user_name)
-        is_eboard = ldap_is_eboard(user_name)
-        is_financial = ldap_is_financial_director(user_name)
-        is_eval = ldap_is_eval_director(user_name)
+        account = ldap_get_member(user_name)
+        is_active = ldap_is_active(account)
+        is_alumni = ldap_is_alumni(account)
+        is_eboard = ldap_is_eboard(account)
+        is_financial = ldap_is_financial_director(account)
+        is_eval = ldap_is_eval_director(account)
 
         return func({"user_name": user_name,
                      "is_active": is_active,

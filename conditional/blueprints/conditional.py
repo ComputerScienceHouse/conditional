@@ -6,7 +6,7 @@ import structlog
 
 from flask import Blueprint, request, jsonify, redirect
 
-from conditional.util.ldap import ldap_get_name
+from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.flask import render_template
 
@@ -30,7 +30,7 @@ def display_conditionals():
 
     conditionals = [
         {
-            'name': ldap_get_name(c.uid),
+            'name': ldap_get_member(c.uid).cn,
             'date_created': c.date_created,
             'date_due': c.date_due,
             'description': c.description,

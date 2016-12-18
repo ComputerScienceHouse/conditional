@@ -5,7 +5,7 @@ import structlog
 from flask import Blueprint, request
 
 from conditional.util.ldap import ldap_get_intro_members
-from conditional.util.ldap import ldap_get_name
+
 
 from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import MemberCommitteeAttendance
@@ -43,7 +43,7 @@ def display_intro_evals(internal=False):
     if not internal:
         user_name = request.headers.get('x-webauth-user')
 
-    members = [m['uid'] for m in ldap_get_intro_members()]
+    members = [account for account in ldap_get_intro_members()]
 
     ie_members = []
 
@@ -100,8 +100,9 @@ def display_intro_evals(internal=False):
         ie_members.append(freshman)
 
     # freshmen who have accounts
-    for member_uid in members:
-        uid = member_uid[0].decode('utf-8')
+    for member in members:
+        uid = member.uid
+        name = member.cn
         freshman_data = FreshmanEvalData.query.filter(
             FreshmanEvalData.uid == uid).first()
 
@@ -117,7 +118,7 @@ def display_intro_evals(internal=False):
                           MemberHouseMeetingAttendance.attendance_status == "Absent"
                       )]
         member = {
-            'name': ldap_get_name(uid),
+            'name': name,
             'uid': uid,
             'eval_date': freshman_data.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': freshman_data.signatures_missed,

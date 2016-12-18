@@ -6,9 +6,9 @@ from flask import Blueprint, request
 from conditional.models.models import FreshmanAccount
 from conditional.util.housing import get_queue_with_points
 from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_get_room_number
-from conditional.util.ldap import ldap_get_name
 from conditional.util.flask import render_template
+
+from conditional.util.ldap import ldap_get_roomnumber
 
 
 logger = structlog.get_logger()
@@ -27,28 +27,29 @@ def display_housing():
     user_name = request.headers.get('x-webauth-user')
 
     housing = {}
-    onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
+    onfloors = [account for account in ldap_get_onfloor_members()]
     onfloor_freshmen = FreshmanAccount.query.filter(
         FreshmanAccount.room_number is not None
     )
 
     room_list = set()
 
-    for m in onfloors:
-        room = ldap_get_room_number(m)
-        if room in housing:
-            housing[room].append(ldap_get_name(m))
-        else:
-            housing[room] = [ldap_get_name(m)]
-        room_list.add(room)
+    for member in onfloors:
+        room = ldap_get_roomnumber(member)
+        if room in housing and room is not None:
+            housing[room].append(member.cn)
+            room_list.add(room)
+        elif room is not None:
+            housing[room] = [member.cn]
+            room_list.add(room)
 
     for f in onfloor_freshmen:
         name = f.name
-        room = str(f.room_number)
-        if room in housing and room != "None":
+        room = f.room_number
+        if room in housing and room is not None:
             housing[room].append(name)
             room_list.add(room)
-        elif room != "None":
+        elif room is not None:
             housing[room] = [name]
             room_list.add(room)
 
