@@ -1,154 +1,173 @@
 # DB Models #
 
-## FreshmanAccount table ##
-This table stores the basic metadata associated with a freshman before they pass
-their 10-week evaluation.
+## FreshmanAccounts table ##
+This table stores the basic metadata associated with a freshman before they pass their 10-week evaluation.
 
-* `id`: Autoincrementing primary key.
-* `name`: The freshman's name
-* `eval_date`: The date of the freshman's 10-week evaluation
-* `onfloor_status`: Tracks whether they have been granted on-floor status.
-* `signatures_missed`: Allows for members who do not get an account to have their missed signatures tracked.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `name`  | `VARCHAR(64)`  | The freshman's name.
+| `eval_date` | `DATE` | The date of the freshman's 10-week evaluation.
+| `onfloor_status` | `BOOLEAN` | Tracks whether they have been granted on-floor status.
+| `signatures_missed` | `INTEGER` | Allows for members who do not get an account to have their missed signatures tracked.
 
 ## FreshmanEvalData table ##
-This table stores the evaluations data for freshmen before they pass their
-10-week evaluations.
+This table stores the evaluations data for freshmen before they pass their 10-week evaluations.
 
-* `id`: Autoincrementing primary key.
-* `uid`: The freshman's LDAP uid (if they pass their packet)
-* `freshman_project`: Their status on the freshman project (pending, passed,
-  failed)
-* `signatures_missed`: The number of signatures the freshman missed.
-* `social_events`: The social events the freshman attended (part of the fall
-  evals form)
-* `other_notes`: Any other notes the freshman has attended (part of the fall
-  evals form)
-* `freshmen_eval_result`: The result of introductory evaluations.
-* `active`: Determines whether the freshman account is currently active / displayed.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | The freshman's LDAP uid (if they pass their packet).
+| `freshman_project` | `ENUM` | Their status on the freshman project (`Pending`, `Passed`, `Failed`)
+| `signatures_missed` | `INTEGER` | The number of signatures the freshman missed.
+| `social_events` | `TEXT` | The social events the freshman attended.
+| `other_notes` | `TEXT` | Any other notes the freshman entered into the form.
+| `freshman_eval_result` | `ENUM` | The result of introductory evaluations. (`Pending`, `Passed`, `Failed`)
+| `active` | `BOOLEAN` | Determines whether the freshman account is currently active / displayed.
 
-## CommitteeMeeting table ##
+
+## CommitteeMeetings table ##
 This table stores a list of committee meetings.
 
-* `id`: Autoincrementing primary key.
-* `committee`: The committee the meeting belongs to.
-* `timestamp`: The date and time of the meeting.
-* `active`: Whether the meeting applies to the current year or not.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `committee` | `ENUM` | The committee the meeting belongs to.
+| `timestamp` | `TIMESTAMP` | The date and time of the meeting.
+| `active` | `BOOLEAN` | Whether the meeting applies to the current year or not.
 
-## MmeberCommitteeAttendance table ##
+## MemberCommitteeAttendance table ##
 This table stores attendance for committee meetings for full members (i.e.
 non-freshmen).
 
-* `id`: Autoincrementing primary key.
-* `uid`: The LDAP uid (i.e. username) of the member who attended the meeting
-* `meeting_id`: Foreign key referencing the meeting that was attended
-  (`committee_meetings.id`)
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | The LDAP uid (i.e. username) of the member who attended the meeting.
+| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`committee_meetings.id`).
 
 ## FreshmanCommitteeAttendance table ##
 This table stores attendance for committee meetings for freshmen.
 
-* `id`: Autoincrementing primary key.
-* `fid`: Foreign key referencing the freshman account for the freshman who
-  attended (`freshman_accounts.id`).
-* `meeting_id`: Foreign key referencing the meeting that was attended
-  (`committee_meetings.id`)
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `fid` | `INTEGER` | Foreign key referencing the freshman account for the freshman who attended (`freshman_accounts.id`).
+| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`committee_meetings.id`).
+
 
 ## TechnicalSeminar table ##
 This table stores a list of technical seminars.
 
-* `id`: Autoincrementing primary key.
-* `name`: The name of the seminar
-* `active`: Whether or not the seminar applies to the current year.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `name` | `VARCHAR(128)` | The name of the technical seminar.
+| `active` | `BOOLEAN` | Whether or not the seminar applies to the current year.
 
 ## MemberSeminarAttendance table ##
 Stores seminar attendance for full members.
 
-* `id`: Autoincrementing primary key.
-* `uid`: The LDAP uid of the member who atended the seminar
-* `seminar_id`: Foreign key referencing the seminar attended
-  (`technical_seminars.id`)
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | The LDAP uid of the member who attended the seminar.
+| `seminar_id` | `INTEGER` | Foreign key referencing the seminar attended (`technical_seminars.id`).
 
 ## FreshmanSeminarAttendance table ##
 Stores seminar attendance for freshmen.
 
-* `id`: Autoincrementing primary key.
-* `fid`: Foreign key referencing the freshman who attended the seminar
-  (`freshman_accounts.id`)
-* `meeting_id`: Foreign key referencing the seminar attended
-  (`technical_seminars.id`)
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `fid` | `INTEGER` | Foreign key referencing the freshman who attended the seminar (`freshman_accounts.id`).
+| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`committee_meetings.id`).
 
 ## MajorProject table ##
 Stores major projects through their entire lifetime.
 
-* `id`: Autoincrementing primary key.
-* `uid`: LDAP uid of the member the project belongs to
-* `name`: Name of the major project
-* `description`: Description of the project
-* `status`: Status of the project (pending, passed, failed)
-* `active`: Determines if the project is relevent to the current evaluations period.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | LDAP uid of the member the project belongs to.
+| `name` | `VARCHAR(64)` | Name of the major project.
+| `description` | `TEXT` |  Description of the project.
+| `status` | `ENUM` | Status of the project (`Pending`, `Passed`, `Failed`).
+| `active` | `BOOLEAN` | Determines if the project is relevent to the current evaluations period.
 
 ## HouseMeeting table ##
 Stores occurrences of house meeting.
 
-* `id`: Autoincrementing primary key.
-* `date`: Date the meeting occurred
-* `active`: Whether or not the meeting applies to the current year
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `date` | `DATE` | Date the meeting occurred.
+| `active` | `BOOLEAN` | Whether or not the meeting applies to the current year.
 
 ## MemberHouseMeetingAttendance table ##
-Stores house meeting attendance data for full members. If a member does not have
-an entry for a given house meeting, that means they were not required to attend
+Stores house meeting attendance data for full members. If a member does not have an entry for a given house meeting, that means they were not required to attend
 that house meeting.
 
-* `id`: Autoincrementing primary key.
-* `uid`: LDAP uid of the member the attendance record is for
-* `meeting_id`: Foreign key referencing the house meeting attended
-  (`house_meetings.id`)
-* `excuse`: Reason for not attending.
-* `attendance_status`: Differenciates between storing an absent, excused, or present status.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | LDAP uid of the member the attendance record is for.
+| `meeting_id` | `INTEGER` | Foreign key referencing the house meeting attended (`house_meetings.id`).
+| `excuse` | `TEXT` | Reason for not attending.
+| `attendance_status` | `ENUM` | Differenciates between storing an `Absent`, `Excused`, or `Present` status.
 
 ## FreshmanHouseMeetingAttendance table ##
 Stores house meeting attendance data for freshmen.
 
-* `id`: Autoincrementing primary key.
-* `fid`: Foreign key referencing the freshman the attendance record is for
-  (`freshman_accounts.id`)
-* `meeting_id`: Foreign key referencing the house meeting attended
-  (`house_meetings.id`)
-* `excuse`: Reason for not attending.
-* `attendance_status`: Differenciates between storing an absent, excused, or present status.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `fid` | `INTEGER` | Foreign key referencing the freshman the attendance record is for (`freshman_accounts.id`).
+| `meeting_id` | `INTEGER` | Foreign key referencing the house meeting attended (`house_meetings.id`).
+| `excuse` | `TEXT` | Reason for not attending.
+| `attendance_status` | `ENUM` | Differenciates between storing an `Absent`, `Excused`, or `Present` status.
 
 ## CurrentCoops table ##
-Used to store members who are inactive and on co-op, to distinguish them from
-members who are inactive but could potentially become active later in the
-semester/year.
+Used to store members who are inactive and on co-op, to distinguish them from members who are inactive but could potentially become active later in the semester/year.
 
-* `id`: Autoincrementing primary key.
-* `username`: LDAP uid of the member on coop.
-* `active`: Is the co-op still in progress?
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id`  | `INTEGER`  | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | LDAP uid of the member on coop.
+| `active` | `BOOLEAN` | Is the co-op still in progress?
 
 ## OnFloorStatusAssigned table ##
 When members are granted on-floor status plays a role in how they are ranked in the housing queue, making it important to store this information.
 
-* `uid`: LDAP uid of the member.
-* `onfloor_granted`: Date of on-floor vote.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `uid` | `VARCHAR(32)` | LDAP uid of the member.
+| `onfloor_granted` | `TIMESTAMP` | Date of on-floor vote.
+
 
 ## Conditional table ##
 Conditional, so we can store conditionals on Conditional.
 
-* `id`: Autoincrementing primary key.
-* `uid`: LDAP uid of the member in the conditional
-* `date_created`: Date conditional assigned.
-* `date_due`: Date conditional has to be completed by.
-* `active`: Whether or not the conditional is currently relevent. 
-* `status`: Current completion status of the task assigned.
+
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id` | `INTEGER` | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | LDAP uid of the member in the conditional.
+| `date_created` | `TIMESTAMP` | Date conditional assigned.
+| `date_due` | `TIMESTAMP` | Date conditional has to be completed by.
+| `active` | `BOOLEAN` | Whether or not the conditional is currently relevent. 
+| `status` | `ENUM` | Current completion status of the task assigned.
 
 ## SpringEval table ##
 Records the yearly results of member's spring evaluations.
 
-* `id`: Autoincrementing primary key.
-* `uid`: LDAP uid of the member being evaluated.
-* `active`: Is this evaluation for the current year?
-* `date_created`: The date of the evaluation.
-* `status`: Result of the evaluation.
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `id` | `INTEGER` | Autoincrementing primary key.
+| `uid` | `VARCHAR(32)` | LDAP uid of the member being evaluated.
+| `active` | `BOOLEAN` | Is this evaluation for the current year?
+| `date_created` | `TIMESTAMP` | The date of the evaluation.
+| `status` | `ENUM` | Result of the evaluation.
 
 
 
