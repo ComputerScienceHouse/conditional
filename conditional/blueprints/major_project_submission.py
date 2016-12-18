@@ -6,7 +6,7 @@ from flask import Blueprint, request, jsonify, redirect
 from conditional.models.models import MajorProject
 
 from conditional.util.ldap import ldap_is_eval_director
-from conditional.util.ldap import ldap_get_name
+from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
 
 from conditional import db
@@ -31,7 +31,7 @@ def display_major_project():
     major_projects = [
         {
             'username': p.uid,
-            'name': ldap_get_name(p.uid),
+            'name': ldap_get_member(p.uid).cn,
             'proj_name': p.name,
             'status': p.status,
             'description': p.description,

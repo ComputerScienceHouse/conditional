@@ -2,7 +2,7 @@ Flask
 itsdangerous
 Jinja2
 MarkupSafe
-pyldap
+csh_ldap
 SQLAlchemy
 Werkzeug
 structlog

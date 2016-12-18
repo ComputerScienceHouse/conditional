@@ -8,6 +8,7 @@ from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_is_rtp
+from conditional.util.ldap import ldap_get_member
 from conditional import db
 
 
@@ -20,15 +21,15 @@ def render_template(request, template_name, **kwargs):
         db.session.add(EvalSettings())
         db.session.flush()
         db.session.commit()
-
+    account = ldap_get_member(user_name)
     lockdown = EvalSettings.query.first().site_lockdown
-    is_active = ldap_is_active(user_name)
-    is_alumni = ldap_is_alumni(user_name)
-    is_eboard = ldap_is_eboard(user_name)
-    is_financial = ldap_is_financial_director(user_name)
-    is_eval = ldap_is_eval_director(user_name)
-    is_intromember = ldap_is_intromember(user_name)
-    is_rtp = ldap_is_rtp(user_name)
+    is_active = ldap_is_active(account)
+    is_alumni = ldap_is_alumni(account)
+    is_eboard = ldap_is_eboard(account)
+    is_financial = ldap_is_financial_director(account)
+    is_eval = ldap_is_eval_director(account)
+    is_intromember = ldap_is_intromember(account)
+    is_rtp = ldap_is_rtp(account)
 
     if is_eval:
         lockdown = False
