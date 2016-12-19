@@ -4,7 +4,7 @@ import structlog
 from flask import Blueprint, request
 
 from conditional.models.models import FreshmanAccount
-from conditional.util.housing import get_queue_with_points
+from conditional.util.housing import get_housing_queue
 from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.flask import render_template
 
@@ -23,7 +23,7 @@ def display_housing():
     log.info('frontend', action='display housing')
 
     # get user data
-
+    log.info('output', action=get_housing_queue())
     user_name = request.headers.get('x-webauth-user')
 
     housing = {}
@@ -57,6 +57,6 @@ def display_housing():
     return render_template(request,
                            'housing.html',
                            username=user_name,
-                           queue=get_queue_with_points(),
+                           queue=get_housing_queue(),
                            housing=housing,
                            room_list=sorted(list(room_list)))
