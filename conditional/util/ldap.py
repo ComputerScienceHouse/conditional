@@ -27,8 +27,8 @@ def _ldap_remove_member_from_group(account, group):
 @lru_cache(maxsize=1024)
 def _ldap_is_member_of_directorship(account, directorship):
     directors = ldap.get_directorship_heads(directorship)
-    for account in directors:
-        if account.uid == account.uid:
+    for director in directors:
+        if director.uid == account.uid:
             return True
 
 

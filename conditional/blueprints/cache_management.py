@@ -38,8 +38,9 @@ def restart_app():
 @cache_bp.route('/clearcache')
 def clear_cache():
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(user_name) or not ldap_is_rtp(user_name):
+    if not ldap_is_eval_director(account) or not ldap_is_rtp(account):
         return redirect("/dashboard")
 
     logger.info('api', action='purge system cache')

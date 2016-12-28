@@ -53,8 +53,9 @@ def create_conditional():
     log.info('api', action='create new conditional')
 
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -78,8 +79,9 @@ def conditional_review():
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -106,7 +108,9 @@ def conditional_delete(cid):
     log.info('api', action='delete conditional')
 
     user_name = request.headers.get('x-webauth-user')
-    if ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+
+    if ldap_is_eval_director(account):
         Conditional.query.filter(
             Conditional.id == cid
         ).delete()

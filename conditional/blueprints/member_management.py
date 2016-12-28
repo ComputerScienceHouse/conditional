@@ -56,8 +56,9 @@ def display_member_management():
     log.info('frontend', action='display member management')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username) and not ldap_is_financial_director(username):
+    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval director", 403
 
     member_list = get_members_info()
@@ -102,8 +103,9 @@ def member_management_eval():
     log.info('api', action='submit site settings')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -134,8 +136,9 @@ def member_management_adduser():
     log.info('api', action='add fid user')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -158,8 +161,9 @@ def member_management_adduser():
 @member_management_bp.route('/manage/user/upload', methods=['POST'])
 def member_management_uploaduser():
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     f = request.files['file']
@@ -195,8 +199,9 @@ def member_management_edituser(uid):
     log.info('api', action='edit uid user')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username) and not ldap_is_financial_director(username):
+    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -219,7 +224,8 @@ def edit_uid(uid, username, post_data):
     onfloor_status = post_data['onfloorStatus']
     housing_points = post_data['housingPoints']
 
-    if ldap_is_eval_director(username):
+    current_account = ldap_get_member(username)
+    if ldap_is_eval_director(current_account):
         logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
                                       (uid, post_data['roomNumber'], post_data['onfloorStatus'],
                                        post_data['housingPoints']))
@@ -296,8 +302,9 @@ def member_management_getuserinfo(uid):
     log.info('api', action='retrieve user info')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username) and not ldap_is_financial_director(username):
+    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval or financial director", 403
 
     acct = None
@@ -341,7 +348,7 @@ def member_management_getuserinfo(uid):
 
     account = ldap_get_member(uid)
 
-    if ldap_is_eval_director(username):
+    if ldap_is_eval_director(ldap_get_member(username)):
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -382,8 +389,9 @@ def member_management_deleteuser(fid):
     log.info('api', action='edit fid user')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     if not fid.isdigit():
@@ -417,8 +425,9 @@ def member_management_upgrade_user():
     log.info('api', action='convert fid to uid entry')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -479,8 +488,9 @@ def introductory_project():
     log.info('api', action='show introductory project management')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     return render_template(request,
@@ -496,8 +506,9 @@ def introductory_project_submit():
     log.info('api', action='submit introductory project results')
 
     username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(username):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()

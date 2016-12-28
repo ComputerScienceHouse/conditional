@@ -78,8 +78,9 @@ def major_project_review():
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -106,12 +107,14 @@ def major_project_delete(pid):
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
+
     major_project = MajorProject.query.filter(
         MajorProject.id == pid
     ).first()
     creator = major_project.uid
 
-    if creator == user_name or ldap_is_eval_director(user_name):
+    if creator == user_name or ldap_is_eval_director(account):
         MajorProject.query.filter(
             MajorProject.id == pid
         ).delete()
