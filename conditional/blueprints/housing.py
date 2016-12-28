@@ -81,7 +81,7 @@ def change_queue_state():
     uid = post_data.get('uid', False)
 
     if uid:
-        if post_data.get('in_queue', False):
+        if post_data.get('inQueue', False):
             queue_obj = InHousingQueue(uid=uid)
             db.session.add(queue_obj)
         else:

@@ -6,7 +6,7 @@ from conditional.util.ldap import ldap_is_onfloor
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
 
-def get_housing_queue():
+def get_housing_queue(is_eval_director=False):
 
     # Generate a dictionary of dictionaries where the UID is the key
     # and {'time': <datetime obj>} is the value. We are doing a left
@@ -24,9 +24,10 @@ def get_housing_queue():
     queue = [{"uid": account.uid,
               "name": account.cn,
               "points": account.housingPoints,
-              "time": (in_queue[account.uid]['time'] or datetime.now())}
+              "time": in_queue.get(account.uid, {}).get('time', datetime.now()) or datetime.now(),
+              "in_queue": account.uid in in_queue}
              for account in ldap_get_current_students()
-             if ldap_is_onfloor(account) and account.uid in in_queue.keys()
+             if ldap_is_onfloor(account) and (is_eval_director or account.uid in in_queue)
              and account.roomNumber is None]
 
     # Sort based on time (ascending) and then points (decending).

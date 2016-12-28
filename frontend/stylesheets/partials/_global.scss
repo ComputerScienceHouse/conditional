@@ -58,3 +58,9 @@
 .page-title {
   margin: 20px 0 30px;
 }
+
+tr {
+  &.disabled {
+    opacity: .5;
+  }
+}

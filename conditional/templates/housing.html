@@ -6,24 +6,36 @@ Housing
 <div class="container main">
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-6">
-            <div class="panel panel-default">
+            <div class="panel panel-default"{% if is_eval_director %} data-module="housingQueue"{% endif %}>
                 <div class="panel-heading">
-                    <h3 class="panel-title">Housing Queue</h3>
+                    <h3 class="panel-title">Housing Queue
+                    {% if is_eval_director %}
+                        <button id="queueFilterToggle" type="button" class="btn btn-primary btn-sm btn-conditional pull-right">
+                            <span class="glyphicon glyphicon-filter"></span> Show Current Queue
+                        </button>
+                    {% endif %}
+                    </h3>
                 </div>
                 <div class="panel-body table-fill">
                     <div class="table-responsive">
-                        <table class="table table-striped no-bottom-margin" data-module="table" data-paginated="false">
+                        <table class="table table-striped no-bottom-margin" data-module="table" data-paginated="false" data-ordering="false"{% if is_eval_director %} data-searchable="true" data-show="all"{% endif %}>
                             <thead>
                                 <tr>
                                     <th>Member</th>
                                     <th>Housing Points</th>
+                                    {% if is_eval_director %}
+                                    <th class="col-in-queue">In Queue?</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for m in queue %}
-                                <tr>
+                                <tr{% if not m['in_queue'] %} class="disabled"{% endif %}>
                                     <td>{{m['name']}}</td>
                                     <td>{{m['points']}}</td>
+                                    {% if is_eval_director %}
+                                    <td class="col-in-queue"><input type="checkbox" data-uid="{{m['uid']}}"{% if m['in_queue'] %} checked="checked"{% endif %}></td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                             </tbody>
