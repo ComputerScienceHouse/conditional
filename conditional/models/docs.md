@@ -169,7 +169,12 @@ Records the yearly results of member's spring evaluations.
 | `date_created` | `TIMESTAMP` | The date of the evaluation.
 | `status` | `ENUM` | Result of the evaluation.
 
+## InHousingQueue table ##
+Records the yearly results of member's spring evaluations.
 
+|     Field     |      Type     |     Description     |
+| ------------- | ------------- | ------------------- |
+| `uid` | `VARCHAR(32)` | LDAP uid of the member in the housing queue.
 
 
 ### Member state ###

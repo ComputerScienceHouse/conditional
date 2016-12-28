@@ -11,7 +11,7 @@ from conditional.util.flask import render_template
 from conditional.blueprints.intro_evals import display_intro_evals
 from conditional.blueprints.spring_evals import display_spring_evals
 
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_eval_director, ldap_get_member
 
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import SpringEval
@@ -31,7 +31,9 @@ def slideshow_intro_display():
     log.info('frontend', action='display intro slideshow')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -61,8 +63,9 @@ def slideshow_intro_review():
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -90,7 +93,9 @@ def slideshow_spring_display():
     log.info('frontend', action='display membership evaluations slideshow')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -120,8 +125,9 @@ def slideshow_spring_review():
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()

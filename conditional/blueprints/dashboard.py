@@ -17,7 +17,7 @@ from conditional.models.models import CommitteeMeeting
 
 from conditional.blueprints.member_management import get_members_info
 
-from conditional.util.housing import get_queue_length, get_queue_position
+from conditional.util.housing import get_queue_position
 from conditional.util.flask import render_template
 from conditional.util.member import get_freshman_data, get_voting_members
 
@@ -73,8 +73,8 @@ def display_dashboard():
         housing = dict()
         housing['points'] = member.housingPoints
         housing['room'] = member.roomNumber
-        if housing['room'] == "":
-            housing['queue_pos'] = "%s / %s" % (get_queue_position(member.uid), get_queue_length())
+        if housing['room'] is None:
+            housing['queue_pos'] = "%s / %s" % get_queue_position(member.uid)
         else:
             housing['queue_pos'] = "N/A"
     else:
