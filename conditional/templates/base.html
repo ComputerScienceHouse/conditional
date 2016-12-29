@@ -28,8 +28,9 @@
         </div>
         {% endif %}
 
+        <footer>
+            <a class="footer-version" href="https://github.com/ComputerScienceHouse/conditional/tree/{{config["GIT_REVISION"]}}">Conditional ({{config["GIT_REVISION"]}})</a>
+        </footer>
         <script src="/static/js/app.js"></script>
-        {% block extraFooter %}
-        {% endblock %}
     </body>
 </html>
