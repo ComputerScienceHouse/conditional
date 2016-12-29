@@ -64,3 +64,16 @@ tr {
     opacity: .5;
   }
 }
+
+.footer-version {
+  display: block;
+  opacity: .3;
+  margin: 10px auto 20px;
+  text-align: center;
+  color: #000;
+  font-size: .9em;
+  &:hover {
+    text-decoration: none;
+    color: #000;
+  }
+}
