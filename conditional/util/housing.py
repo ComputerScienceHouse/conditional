@@ -6,6 +6,7 @@ from conditional.util.ldap import ldap_is_onfloor
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
 
+
 def get_housing_queue(is_eval_director=False):
 
     # Generate a dictionary of dictionaries where the UID is the key
