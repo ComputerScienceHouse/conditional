@@ -7,6 +7,7 @@ from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
+from conditional.util.ldap import ldap_get_active_members
 
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
@@ -14,8 +15,6 @@ from conditional.models.models import MajorProject
 from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
 from conditional.models.models import CommitteeMeeting
-
-from conditional.blueprints.member_management import get_members_info
 
 from conditional.util.housing import get_queue_position
 from conditional.util.flask import render_template
@@ -46,9 +45,8 @@ def display_dashboard():
     data['onfloor'] = ldap_is_onfloor(member)
     data['voting'] = bool(member.uid in can_vote)
 
-    active_list = get_members_info()[0]
     data['voting_count'] = {"Voting Members": len(can_vote),
-                            "Active Members": len(active_list)}
+                            "Active Members": len(ldap_get_active_members())}
     # freshman shit
     if ldap_is_intromember(member):
         data['freshman'] = get_freshman_data(member.uid)
