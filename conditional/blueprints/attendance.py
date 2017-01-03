@@ -377,3 +377,102 @@ def alter_house_excuse(uid, hid):
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
+
+
+@attendance_bp.route('/attendance/history/<page>', methods=['GET'])
+def attendance_history(page):
+
+
+    def get_meeting_attendees(meeting_id):
+        attendees = [ldap_get_member(a.uid).displayName for a in
+                     MemberCommitteeAttendance.query.filter(
+                     MemberCommitteeAttendance.meeting_id == meeting_id).all()]
+
+        for freshman in [a.fid for a in
+                         FreshmanCommitteeAttendance.query.filter(
+                         FreshmanCommitteeAttendance.meeting_id == meeting_id).all()]:
+            attendees.append(FreshmanAccount.query.filter(
+                             FreshmanAccount.id == freshman).first().name)
+        return attendees
+
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+
+    user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    if request.method == 'GET':
+        log.info('api', action='view past attendance submitions')
+        offset = 0 if int(page) == 1 else ((int(page)-1)*10)
+        limit = int(page)*10
+        c_meetings = [{"id": m.id,
+                       "directorship": m.committee,
+                       "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                       "attendees": get_meeting_attendees(m.id)
+                      } for m in CommitteeMeeting.query.limit(limit).offset(offset)]
+        all_cm = [{"meeting_id": m.id,
+                   "directorship": m.committee,
+                   "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                   "attendees": get_meeting_attendees(m.id)
+                   } for m in CommitteeMeeting.query.all()]
+        if len(all_cm) % 10 != 0:
+            total_pages = (int(len(all_cm) / 10) + 1)
+        else:
+            total_pages = (int(len(all_cm) / 10))
+        return render_template(request,
+                           'attendance_history.html',
+                           username=user_name,
+                           history=c_meetings,
+                           num_pages=total_pages,
+                           current_page=int(page))
+
+@attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
+def alter_committee_attendance(cid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='edit committee meeting attendance')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    post_data = request.get_json()
+    meeting_id = cid
+    m_attendees = post_data['members']
+    f_attendees = post_data['freshmen']
+
+    FreshmanCommitteeAttendance.query.filter(
+        FreshmanCommitteeAttendance.meeting_id == meeting_id).delete()
+
+    MemberCommitteeAttendance.query.filter(
+        MemberCommitteeAttendance.meeting_id == meeting_id).delete()
+
+    for m in m_attendees:
+        db.session.add(MemberCommitteeAttendance(m, meeting_id))
+
+    for f in f_attendees:
+        db.session.add(FreshmanCommitteeAttendance(f, meeting_id))
+
+    db.session.flush()
+    db.session.commit()
+    return jsonify({"success": True}), 200
+
+@attendance_bp.route('/attendance/cm/<cid>', methods=['GET'])
+def get_cm_attendees(cid):
+
+    attendees = [{"value": a.uid,
+                  "display": ldap_get_member(a.uid).displayName
+                 } for a in
+                 MemberCommitteeAttendance.query.filter(
+                 MemberCommitteeAttendance.meeting_id == cid).all()]
+
+    for freshman in [{"value": a.fid,
+                      "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
+                     } for a in FreshmanCommitteeAttendance.query.filter(
+                     FreshmanCommitteeAttendance.meeting_id == cid).all()]:
+        attendees.append(freshman)
+    return jsonify({"attendees": attendees}), 200
