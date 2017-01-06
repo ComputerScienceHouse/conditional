@@ -33,24 +33,24 @@ Attendance History
     </div>
     {% endfor %}
     {% if num_pages > 1 or current_page > 1%}
-    
+
     <nav aria-label="Page navigation" class="align-center">
 	  <ul class="pagination">
 	    <li {%if current_page == 1 %}class="disabled"{% endif %}>
 	        {%if current_page != 1 %}
-	        	<a href="./{{ current_page - 1 }}" aria-label="Previous">
+                <a href="?page={{ current_page - 1 }}" aria-label="Previous">
 	      	{% endif %}
 	        <span aria-hidden="true">&laquo;</span>
 	      </a>
 	    </li>
 	    {% for number in range(1, num_pages+1) %}
     		<li {% if number == current_page %} class="active" {% endif %}>
-    			<a href="./{{ number }}">{{ number }}</a>
+                <a href="?page={{ number }}">{{ number }}</a>
     		</li>
     	{% endfor %}
 	    <li {%if current_page == num_pages %}class="disabled"{% endif %}>
 	        {%if current_page != num_pages %}
-	      <a href="./{{ current_page + 1 }}" aria-label="Next">
+                <a href="?page={{ current_page + 1 }}" aria-label="Next">
 	      	{% endif %}
 	        <span aria-hidden="true">&raquo;</span>
 	      </a>

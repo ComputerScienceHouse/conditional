@@ -379,8 +379,8 @@ def alter_house_excuse(uid, hid):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/history/<page>', methods=['GET'])
-def attendance_history(page):
+@attendance_bp.route('/attendance/history', methods=['GET'])
+def attendance_history():
 
 
     def get_meeting_attendees(meeting_id):
@@ -404,6 +404,7 @@ def attendance_history(page):
         return "must be eboard", 403
 
     if request.method == 'GET':
+        page = request.args.get('page', 1)
         log.info('api', action='view past attendance submitions')
         offset = 0 if int(page) == 1 else ((int(page)-1)*10)
         limit = int(page)*10
