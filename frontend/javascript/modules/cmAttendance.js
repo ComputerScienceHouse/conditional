@@ -2,6 +2,7 @@
 import 'whatwg-fetch';
 import FetchUtil from '../utils/fetchUtil';
 import MemberUtil from '../utils/memberUtil';
+import MemberSelect from './memberSelect';
 
 export default class EditMeeting {
   constructor(link) {
@@ -50,6 +51,18 @@ export default class EditMeeting {
       this._submitForm('#' + this.modal.getAttribute('id') + '-' + this.cid);
     });
 
+    // Attendees
+    const attendeesInput = modal.querySelector('input[name="attendees"]');
+    let attendeesStr = "";
+    this.data.attendees.forEach(attendee => {
+      attendeesStr += attendee.value + ",";
+    });
+    attendeesInput.value = attendeesStr;
+
+    // Initialize selector control
+    attendeesInput.dataset.src = "cm_members";
+    new MemberSelect(attendeesInput); // eslint-disable-line no-new
+
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(modal);
     $('#' + this.modal.getAttribute('id') + '-' + this.cid)
@@ -57,12 +70,6 @@ export default class EditMeeting {
           document.getElementsByTagName('body')[0].removeChild(e.target);
         })
         .modal('show');
-
-    // Attendees
-    let selectize = modal.querySelector('input[name=attendees]').selectize;
-    // selectize.addOption(this.data.attendees);
-    selectize.addItem('mbillow');
-    // modal.querySelector('input[name=attendees]').value = this.data.attendees;
   }
 
   _submitForm() {
