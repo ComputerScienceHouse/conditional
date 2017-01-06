@@ -1,14 +1,17 @@
 /* global fetch */
 import 'whatwg-fetch';
-import FetchUtil from '../utils/fetchUtil';
-import MemberUtil from '../utils/memberUtil';
-import MemberSelect from './memberSelect';
+import Exception from "../exceptions/exception";
+import CmAttendanceException from "../exceptions/cmAttendanceException";
+import FetchUtil from "../utils/fetchUtil";
+import MemberUtil from "../utils/memberUtil";
+import MemberSelect from "./memberSelect";
 
 export default class EditMeeting {
   constructor(link) {
     this.link = link;
-    this.modal = document.querySelector('#' + this.link.dataset.modal);
-    this.type = this.modal.dataset.type;
+    this.modal = null;
+    this.modalTpl = document.querySelector('#' + this.link.dataset.modal);
+    this.type = this.modalTpl.dataset.type;
     this.cid = this.link.dataset.cid;
 
     this.endpoints = {
@@ -41,18 +44,19 @@ export default class EditMeeting {
 
   _renderModal() {
     // Clone template modal
-    let modal = this.modal.cloneNode(true);
-    modal.setAttribute('id',
+    this.modal = this.modalTpl.cloneNode(true);
+    this.modal.setAttribute('id',
         this.modal.getAttribute('id') + '-' + this.cid);
 
     // Submit button
-    modal.querySelector('input[type="submit"]').addEventListener('click',
-    e => {
-      this._submitForm('#' + this.modal.getAttribute('id') + '-' + this.cid);
-    });
+    this.modal.querySelector('input[type="submit"]').addEventListener('click',
+      e => {
+        e.preventDefault();
+        this._submitForm();
+      });
 
     // Attendees
-    const attendeesInput = modal.querySelector('input[name="attendees"]');
+    const attendeesInput = this.modal.querySelector('input[name="attendees"]');
     let attendeesStr = "";
     this.data.attendees.forEach(attendee => {
       attendeesStr += attendee.value + ",";
@@ -64,8 +68,8 @@ export default class EditMeeting {
     new MemberSelect(attendeesInput); // eslint-disable-line no-new
 
     // Add to DOM and show, then remove on hide
-    document.getElementsByTagName('body')[0].appendChild(modal);
-    $('#' + this.modal.getAttribute('id') + '-' + this.cid)
+    document.getElementsByTagName('body')[0].appendChild(this.modal);
+    $(this.modal)
         .on('hidden.bs.modal', e => {
           document.getElementsByTagName('body')[0].removeChild(e.target);
         })
@@ -73,26 +77,27 @@ export default class EditMeeting {
   }
 
   _submitForm() {
-    let modal = document.querySelector('#' + this.modal.getAttribute('id') +
-        '-' + this.cid);
+    if (this.modal) {
+      this.modal.querySelectorAll('button').forEach(btn => {
+        btn.disabled = true;
+      });
 
-    modal.querySelectorAll('button').forEach(btn => {
-      btn.disabled = true;
-    });
+      // Save details
+      let payload = {};
+      let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
+        this.modal.querySelector('input[name="attendees"]').value.split(',')
+      );
+      payload.freshmen = membersSplit.freshmen;
+      payload.members = membersSplit.upperclassmen;
 
-    // Save details
-    let payload = {};
-    let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
-      this.fields.attendees.value.split(',')
-    );
-    payload.freshmen = membersSplit.freshmen;
-    payload.members = membersSplit.upperclassmen;
-
-    FetchUtil.post(this.endpoints.alterCmAttendance + this.cid, payload, {
-      successText: 'Meeting attendance has been updated.'
-    }, () => {
-      $(modal).modal('hide');
-    });
+      FetchUtil.post(this.endpoints.alterCmAttendance + this.cid, payload, {
+        successText: 'Meeting attendance has been updated.'
+      }, () => {
+        $(this.modal).modal('hide');
+      });
+    } else {
+      throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
+    }
   }
 
 }
