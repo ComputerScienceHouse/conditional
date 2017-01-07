@@ -1,6 +1,6 @@
 import uuid
-import structlog
 import datetime
+import structlog
 
 from flask import Blueprint, request
 

@@ -43,6 +43,6 @@ def get_queue_position(username):
     try:
         index = next(index for (index, d) in enumerate(get_housing_queue())
              if d["uid"] == username) + 1
-    except KeyError:
-        index = 0
+    except (KeyError, StopIteration):
+        index = None
     return (index, len(queue))

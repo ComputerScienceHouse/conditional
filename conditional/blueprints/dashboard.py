@@ -64,8 +64,12 @@ def display_dashboard():
                   MemberHouseMeetingAttendance.query.filter(
                       MemberHouseMeetingAttendance.uid == member.uid)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
-    spring['status'] = SpringEval.query.filter(SpringEval.uid == member.uid
-                                               and SpringEval.active).first().status
+    eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid
+                                         and SpringEval.active).first()
+    if eval_entry is not None:
+        spring['status'] = eval_entry.status
+    else:
+        spring['status'] = None
 
     data['spring'] = spring
 
@@ -74,10 +78,7 @@ def display_dashboard():
         housing = dict()
         housing['points'] = member.housingPoints
         housing['room'] = member.roomNumber
-        if housing['room'] is None:
-            housing['queue_pos'] = "%s / %s" % get_queue_position(member.uid)
-        else:
-            housing['queue_pos'] = "N/A"
+        housing['queue_pos'] = get_queue_position(member.uid)
     else:
         housing = None
 

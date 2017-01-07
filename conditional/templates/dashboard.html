@@ -108,7 +108,7 @@ Dashboard
                 </div>
             </div>
             {% endif %}
-
+            {% if spring['status'] != None %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Membership Evaluations
@@ -157,7 +157,7 @@ Dashboard
                     </table>
                 </div>
             </div>
-
+            {% endif %}
             {% if conditionals_len != 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -266,14 +266,21 @@ Dashboard
                             <td class="title">Housing Points</td>
                             <td><span class="pull-right">{{housing['points']}}</span></td>
                         </tr>
-                        {% if active %}
+
+                        {% if housing['room'] != None %}
                         <tr>
                             <td class="title">Room Number</td>
                             <td><span class="pull-right">{{housing['room']}}</span></td>
                         </tr>
+                        {% endif %}
+                        {% if housing['queue_pos'][0] != None and housing['room'] == None %}
                         <tr>
                             <td class="title">Housing Queue Position</td>
-                            <td><span class="pull-right">{{housing['queue_pos']}}</span></td>
+                            <td>
+                                <span class="pull-right">
+                                    {{housing['queue_pos'][0]}} / {{housing['queue_pos'][1]}}
+                                </span>
+                            </td>
                         </tr>
                         {% endif %}
                         </tbody>
