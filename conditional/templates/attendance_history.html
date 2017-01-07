@@ -9,23 +9,20 @@ Attendance History
     <div class="panel panel-default">
         <div class="panel-body eval-panel">
             <div class="container-fluid">
-            	<div class="col-xs-12 col-sm-3">
+            	<div class="col-xs-12 col-sm-3 vcenter">
             		<h5>{{meeting["directorship"]}}</h5>
             		<p>{{meeting["date"]}}<p>
-            	</div>
-            	<div class="com-xs-12 col-sm-7">
+            	</div><!--
+                --><div class="com-xs-12 col-sm-7 vcenter">
             		<p class="attend-list" id="attendees-{{meeting["id"]}}">
             			{% for name in meeting["attendees"] %}
             			{{name}}{% if not loop.last %}, {% endif %}
             			{% endfor %}
             		</p>
-            	</div>
-            	<div class="col-xs-12 col-sm-2">
-            		<button type="button" class="btn btn-default navbar-btn attend-edit-btn" id="edit-{{meeting["id"]}}" data-module="cmAttendance" data-modal="editMeeting" data-cid="{{meeting["id"]}}">
+            	</div><!--
+                --><div class="col-xs-12 col-sm-2 vcenter text-center">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmAttendance" data-modal="editMeeting" data-cid="{{meeting["id"]}}">
             		<span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
-            		</button>
-            		<button type="button" class="btn btn-default navbar-btn attend-edit-btn" id="del-{{meeting["id"]}}">
-            		<span class="glyphicon glyphicon-trash attend-edit-icon"></span> Delete
             		</button>
             	</div>
             </div>
@@ -76,6 +73,7 @@ Attendance History
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-danger delete-btn pull-left">Delete</button>
                         <input type="submit" class="btn btn-primary" value="Submit">
                     </div>
                 </form>

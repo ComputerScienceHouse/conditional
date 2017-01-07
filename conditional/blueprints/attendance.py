@@ -408,16 +408,13 @@ def attendance_history():
         log.info('api', action='view past attendance submitions')
         offset = 0 if int(page) == 1 else ((int(page)-1)*10)
         limit = int(page)*10
-        c_meetings = [{"id": m.id,
-                       "directorship": m.committee,
-                       "date": m.timestamp.strftime("%a %m/%d/%Y"),
-                       "attendees": get_meeting_attendees(m.id)
-                      } for m in CommitteeMeeting.query.limit(limit).offset(offset)]
         all_cm = [{"meeting_id": m.id,
                    "directorship": m.committee,
+                   "dt_obj": m.timestamp,
                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
                    "attendees": get_meeting_attendees(m.id)
                    } for m in CommitteeMeeting.query.all()]
+        c_meetings = sorted(all_cm, key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
         if len(all_cm) % 10 != 0:
             total_pages = (int(len(all_cm) / 10) + 1)
         else:
@@ -462,18 +459,31 @@ def alter_committee_attendance(cid):
     db.session.commit()
     return jsonify({"success": True}), 200
 
-@attendance_bp.route('/attendance/cm/<cid>', methods=['GET'])
+@attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
 def get_cm_attendees(cid):
+    if request.method == 'GET':
+        attendees = [{"value": a.uid,
+                      "display": ldap_get_member(a.uid).displayName
+                     } for a in
+                     MemberCommitteeAttendance.query.filter(
+                     MemberCommitteeAttendance.meeting_id == cid).all()]
 
-    attendees = [{"value": a.uid,
-                  "display": ldap_get_member(a.uid).displayName
-                 } for a in
-                 MemberCommitteeAttendance.query.filter(
-                 MemberCommitteeAttendance.meeting_id == cid).all()]
+        for freshman in [{"value": a.fid,
+                          "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
+                         } for a in FreshmanCommitteeAttendance.query.filter(
+                         FreshmanCommitteeAttendance.meeting_id == cid).all()]:
+            attendees.append(freshman)
+        return jsonify({"attendees": attendees}), 200
 
-    for freshman in [{"value": a.fid,
-                      "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
-                     } for a in FreshmanCommitteeAttendance.query.filter(
-                     FreshmanCommitteeAttendance.meeting_id == cid).all()]:
-        attendees.append(freshman)
-    return jsonify({"attendees": attendees}), 200
+    elif request.method == 'DELETE':
+        FreshmanCommitteeAttendance.query.filter(
+            FreshmanCommitteeAttendance.meeting_id == cid).delete()
+        MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.meeting_id == cid).delete()
+        CommitteeMeeting.query.filter(
+            CommitteeMeeting.id == cid).delete()
+
+        db.session.flush()
+        db.session.commit()
+
+        return jsonify({"success": True}), 200

@@ -55,6 +55,11 @@ export default class EditMeeting {
         this._submitForm();
       });
 
+    // Delete Button
+    this.modal.querySelector('button.delete-btn').addEventListener('click', e =>
+      this._deleteMeeting()
+    );
+
     // Attendees
     const attendeesInput = this.modal.querySelector('input[name="attendees"]');
     let attendeesStr = "";
@@ -94,6 +99,27 @@ export default class EditMeeting {
         successText: 'Meeting attendance has been updated.'
       }, () => {
         $(this.modal).modal('hide');
+        window.location.reload();
+      });
+    } else {
+      throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
+    }
+  }
+
+  _deleteMeeting() {
+    if (this.modal) {
+      this.modal.querySelectorAll('button').forEach(btn => {
+        btn.disabled = true;
+      });
+
+      // Delete details
+      FetchUtil.fetchWithWarning(this.endpoints.meetingDetails + this.cid, {
+        method: 'DELETE',
+        warningText: "This meeting will be permanently deleted.",
+        successText: "Meeting has been deleted."
+      }, () => {
+        $(this.modal).modal('hide');
+        window.location.reload();
       });
     } else {
       throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
