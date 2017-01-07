@@ -1,0 +1,84 @@
+{% extends "nav.html" %}
+{% block title %}
+Attendance History
+{% endblock %}
+{% block body %}
+<div class="container main">
+    <h3 class="page-title">Attendance History</h3>
+    {% for meeting in history %}
+    <div class="panel panel-default">
+        <div class="panel-body eval-panel">
+            <div class="container-fluid">
+            	<div class="col-xs-12 col-sm-3 vcenter">
+            		<h5>{{meeting["directorship"]}}</h5>
+            		<p>{{meeting["date"]}}<p>
+            	</div><!--
+                --><div class="com-xs-12 col-sm-7 vcenter">
+            		<p class="attend-list" id="attendees-{{meeting["id"]}}">
+            			{% for name in meeting["attendees"] %}
+            			{{name}}{% if not loop.last %}, {% endif %}
+            			{% endfor %}
+            		</p>
+            	</div><!--
+                --><div class="col-xs-12 col-sm-2 vcenter text-center">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmAttendance" data-modal="editMeeting" data-cid="{{meeting["id"]}}">
+            		<span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
+            		</button>
+            	</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if num_pages > 1 or current_page > 1%}
+
+    <nav aria-label="Page navigation" class="align-center">
+	  <ul class="pagination">
+	    <li {%if current_page == 1 %}class="disabled"{% endif %}>
+	        {%if current_page != 1 %}
+                <a href="?page={{ current_page - 1 }}" aria-label="Previous">
+	      	{% endif %}
+	        <span aria-hidden="true">&laquo;</span>
+	      </a>
+	    </li>
+	    {% for number in range(1, num_pages+1) %}
+    		<li {% if number == current_page %} class="active" {% endif %}>
+                <a href="?page={{ number }}">{{ number }}</a>
+    		</li>
+    	{% endfor %}
+	    <li {%if current_page == num_pages %}class="disabled"{% endif %}>
+	        {%if current_page != num_pages %}
+                <a href="?page={{ current_page + 1 }}" aria-label="Next">
+	      	{% endif %}
+	        <span aria-hidden="true">&raquo;</span>
+	      </a>
+	    </li>
+	  </ul>
+	</nav>
+	{% endif %}
+</div>
+
+<div class="modal fade" id="editMeeting" tabindex="-1">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editMeetingTitle">Edit Meeting</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="attendees">Attendees</label>
+                            <input type="text" name="attendees" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger delete-btn pull-left">Delete</button>
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
