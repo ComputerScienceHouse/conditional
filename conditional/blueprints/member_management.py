@@ -220,12 +220,12 @@ def edit_uid(uid, username, post_data):
 
     account = ldap_get_member(uid)
     active_member = post_data['activeMember']
-    room_number = post_data['roomNumber']
-    onfloor_status = post_data['onfloorStatus']
-    housing_points = post_data['housingPoints']
 
     current_account = ldap_get_member(username)
     if ldap_is_eval_director(current_account):
+        room_number = post_data['roomNumber']
+        onfloor_status = post_data['onfloorStatus']
+        housing_points = post_data['housingPoints']
         logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
                                       (uid, post_data['roomNumber'], post_data['onfloorStatus'],
                                        post_data['housingPoints']))

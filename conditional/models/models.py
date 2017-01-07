@@ -248,12 +248,13 @@ class SpringEval(db.Model):
                          name="spring_eval_enum"),
                     nullable=False)
 
-class InHousingQueue(db.Model):
-    __tablename__ = 'in_housing_queue'
-    uid = Column(String(32), primary_key=True)
-
     def __init__(self, uid):
         self.uid = uid
         self.active = True
         self.date_created = datetime.now()
         self.status = "Pending"
+
+
+class InHousingQueue(db.Model):
+    __tablename__ = 'in_housing_queue'
+    uid = Column(String(32), primary_key=True)
