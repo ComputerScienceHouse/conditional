@@ -14,6 +14,7 @@ from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MajorProject
 from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
+from conditional.models.models import SpringEval
 from conditional.models.models import CommitteeMeeting
 
 from conditional.util.housing import get_queue_position
@@ -63,6 +64,8 @@ def display_dashboard():
                   MemberHouseMeetingAttendance.query.filter(
                       MemberHouseMeetingAttendance.uid == member.uid)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
+    spring['status'] = SpringEval.query.filter(SpringEval.uid == member.uid
+                                               and SpringEval.active).first().status
 
     data['spring'] = spring
 

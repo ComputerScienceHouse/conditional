@@ -1,5 +1,6 @@
 import uuid
 import structlog
+import datetime
 
 from flask import Blueprint, request
 
@@ -44,7 +45,10 @@ def display_spring_evals(internal=False):
             SpringEval.active).first()
 
         if spring_entry is None:
-            spring_entry = SpringEval(uid)
+            spring_entry = SpringEval(uid=uid,
+                                      active=True,
+                                      date_created=datetime.datetime.now(),
+                                      status="Pending")
             db.session.add(spring_entry)
             db.session.flush()
             db.session.commit()
