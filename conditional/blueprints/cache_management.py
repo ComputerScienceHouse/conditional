@@ -26,8 +26,8 @@ cache_bp = Blueprint('cache_bp', __name__)
 @cache_bp.route('/restart')
 def restart_app():
     user_name = request.headers.get('x-webauth-user')
-
-    if not ldap_is_rtp(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_rtp(account):
         return redirect("/dashboard")
 
     logger.info('api', action='restart conditional')

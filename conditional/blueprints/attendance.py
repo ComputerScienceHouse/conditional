@@ -408,7 +408,7 @@ def attendance_history():
         log.info('api', action='view past attendance submitions')
         offset = 0 if int(page) == 1 else ((int(page)-1)*10)
         limit = int(page)*10
-        all_cm = [{"meeting_id": m.id,
+        all_cm = [{"id": m.id,
                    "directorship": m.committee,
                    "dt_obj": m.timestamp,
                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
