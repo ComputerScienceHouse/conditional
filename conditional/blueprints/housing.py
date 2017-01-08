@@ -94,15 +94,16 @@ def change_queue_state():
     db.session.commit()
     return jsonify({"success": True}), 200
 
-@housing_bp.route('/housing/update', methods=['PUT'])
-def change_room_numbers():
+
+@housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
+def change_room_numbers(rmnumber):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('api', action='mass housing update')
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
-    update_list = request.get_json()
+    update = request.get_json()
 
     if not ldap_is_eval_director(account):
         return "must be eval director", 403
@@ -111,14 +112,29 @@ def change_room_numbers():
     current_students = ldap_get_current_students()
 
     # Set the new room number for each person in the list.
-    for room in update_list:
-        for occupant in room["occupants"]:
+
+    for occupant in update["occupants"]:
+        if occupant != "":
             account = ldap_get_member(occupant)
-            account.roomNumber = str(room["room_number"])
+            account.roomNumber = rmnumber
+            log.info('api', action='%s assigned to room %s' % (occupant, rmnumber))
     # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students
-                             if ldap_get_roomnumber(account) == str(room["room_number"])
-                             and account.uid not in room["occupants"]]:
+                             if ldap_get_roomnumber(account) == str(rmnumber)
+                             and account.uid not in update["occupants"]]:
             old_occupant.roomNumber = None
+            log.info('api', action='%s removed from room' % old_occupant.uid)
 
     return jsonify({"success": True}), 200
+
+
+@housing_bp.route('/housing/room/<rmnumber>', methods=['GET'])
+def get_occupants(rmnumber):
+
+    # Get the current list of people living on-floor.
+    current_students = ldap_get_current_students()
+
+    # Find the current occupants of the specified room.
+    occupants = [account.uid for account in current_students
+                 if ldap_get_roomnumber(account) == str(rmnumber)]
+    return jsonify({"room": rmnumber, "occupants": occupants}), 200
