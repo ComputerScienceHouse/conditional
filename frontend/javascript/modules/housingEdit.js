@@ -105,24 +105,73 @@ export default class EditHousing {
 
         // Update the DOM to reflect the new occupants.
         var occupantList = document.getElementById(room);
-        occupantList.innerHTML = '';
-        payload.occupants.forEach(occupant => {
-          fetch(this.endpoints.memberDetails + occupant, {
-            method: 'GET',
-            headers: {
-              Accept: 'application/json'
-            },
-            credentials: 'same-origin'
-          })
-              .then(FetchUtil.checkStatus)
-              .then(FetchUtil.parseJSON)
-              .then(data => {
-                var newName = document.createElement("li");
-                newName.appendChild(document.createTextNode(data.name));
-                newName.setAttribute("class", "room-name");
-                occupantList.appendChild(newName);
-              });
-        });
+        if (occupantList) {
+          // The room already exists in the list, update it.
+          occupantList.innerHTML = '';
+          payload.occupants.forEach(occupant => {
+            fetch(this.endpoints.memberDetails + occupant, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json'
+              },
+              credentials: 'same-origin'
+            })
+                .then(FetchUtil.checkStatus)
+                .then(FetchUtil.parseJSON)
+                .then(data => {
+                  var newName = document.createElement("li");
+                  newName.appendChild(document.createTextNode(data.name));
+                  newName.setAttribute("class", "room-name");
+                  occupantList.appendChild(newName);
+                });
+          });
+        } else {
+          // The room is new and needs to be created.
+          var roomTable = document.getElementById("housing-table");
+          var newRoom = document.createElement("tr");
+          var newRoomNbrCol = document.createElement("td");
+          var newRoomNbr = document.createElement("h3");
+          newRoomNbr.appendChild(document.createTextNode(room));
+          newRoomNbr.setAttribute("class", "room-number");
+          newRoomNbrCol.appendChild(newRoomNbr);
+          newRoomNbrCol.setAttribute("class", "new-table-col");
+          newRoom.appendChild(newRoomNbrCol);
+          // Add new occupants to room.
+          var newOccupantCol = document.createElement("td");
+          var newOccupantList = document.createElement("ul");
+          newOccupantList.setAttribute("id", room);
+          newOccupantList.setAttribute("class", "occupant-list");
+          payload.occupants.forEach(occupant => {
+            fetch(this.endpoints.memberDetails + occupant, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json'
+              },
+              credentials: 'same-origin'
+            })
+                .then(FetchUtil.checkStatus)
+                .then(FetchUtil.parseJSON)
+                .then(data => {
+                  var newName = document.createElement("li");
+                  newName.appendChild(document.createTextNode(data.name));
+                  newName.setAttribute("class", "room-name");
+                  newOccupantList.appendChild(newName);
+                });
+          });
+          newOccupantCol.appendChild(newOccupantList);
+          newOccupantCol.setAttribute("class", "new-table-col");
+          newRoom.appendChild(newOccupantCol);
+          // Add edit button for new room.
+          var newEditCol = document.createElement("td");
+          var editBtn = document.getElementById("rm-edit-btn");
+          var newEditBtn = editBtn.cloneNode(true);
+          newEditBtn.setAttribute("data-rmnumber", room);
+          new EditHousing(newEditBtn); // eslint-disable-no-new
+          newEditCol.appendChild(newEditBtn);
+          newEditCol.setAttribute("class", "new-table-col");
+          newRoom.appendChild(newEditCol);
+          roomTable.appendChild(newRoom);
+        }
       });
     } else {
       throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);

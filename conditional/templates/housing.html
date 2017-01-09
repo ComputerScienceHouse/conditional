@@ -57,7 +57,7 @@ Housing
                 </div>
                 <div class="panel-body table-fill">
                     <div class="table-responsive">
-                        <table class="table table-striped no-bottom-margin">
+                        <table class="table table-striped no-bottom-margin" id="housing-table">
                             <tr>
                                 <th>Room</th>
                                 <th>Occupants</th>
@@ -79,7 +79,7 @@ Housing
                                 </td>
                                 {% if is_eval_director %}
                                 <td>
-                                    <button type="button" class="btn btn-default navbar-btn" data-module="housingEdit" data-modal="editHousing" data-rmnumber="{{room}}">
+                                    <button type="button" class="btn btn-default navbar-btn" data-module="housingEdit" data-modal="editHousing" data-rmnumber="{{room}}" id="rm-edit-btn">
             		                <span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
             		                </button>
                                 </td>
