@@ -26,7 +26,11 @@ export default class EditHousing {
     this.link.addEventListener('click', e => {
       e.preventDefault();
 
-      if (this.rmnumber !== "") { // eslint-disable-line no-negated-condition
+      if (this.rmnumber === "") {
+        this.data = {};
+        this.data.occupants = [];
+        this._renderModal();
+      } else {
         fetch(this.endpoints.roomDetails + this.rmnumber, {
           method: 'GET',
           headers: {
@@ -40,10 +44,6 @@ export default class EditHousing {
               this.data = data;
               this._renderModal();
             });
-      } else {
-        this.data = {};
-        this.data.occupants = [];
-        this._renderModal();
       }
     });
   }
