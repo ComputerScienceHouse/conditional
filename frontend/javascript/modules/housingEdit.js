@@ -1,7 +1,7 @@
 /* global fetch */
 import 'whatwg-fetch';
 import Exception from "../exceptions/exception";
-import CmAttendanceException from "../exceptions/cmAttendanceException";
+import HousingException from "../exceptions/housingException";
 import FetchUtil from "../utils/fetchUtil";
 import MemberSelect from "./memberSelect";
 
@@ -174,7 +174,7 @@ export default class EditHousing {
         }
       });
     } else {
-      throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
+      throw new Exception(HousingException.SUBMIT_BEFORE_RENDER);
     }
   }
 }
