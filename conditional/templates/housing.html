@@ -71,9 +71,11 @@ Housing
                                 <td>
                                     <h3 class="room-number">{{room}}</h3></td>
                                 <td>
-                                    {% for m in housing[room] %}
-                                    <p class="room-name">{{m}}</p>
-                                    {% endfor %}
+                                    <ul id="{{room}}" class="occupant-list">
+                                        {% for m in housing[room] %}
+                                        <li class="room-name">{{m}}</li>
+                                        {% endfor %}
+                                    </ul>
                                 </td>
                                 {% if is_eval_director %}
                                 <td>

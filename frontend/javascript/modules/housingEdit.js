@@ -15,7 +15,8 @@ export default class EditHousing {
 
     this.endpoints = {
       roomDetails: '/housing/room/',
-      alterRoom: '/housing/update/'
+      alterRoom: '/housing/update/',
+      memberDetails: '/member/'
     };
 
     this.render();
@@ -25,7 +26,7 @@ export default class EditHousing {
     this.link.addEventListener('click', e => {
       e.preventDefault();
 
-      if (this.rmnumber !== "") {
+      if (this.rmnumber !== "") { // eslint-disable-line no-negated-condition
         fetch(this.endpoints.roomDetails + this.rmnumber, {
           method: 'GET',
           headers: {
@@ -99,8 +100,29 @@ export default class EditHousing {
       FetchUtil.post(this.endpoints.alterRoom + room, payload, {
         successText: 'Occupants have been updated.'
       }, () => {
+        // Hide the modal.
         $(this.modal).modal('hide');
-        window.location.reload();
+
+        // Update the DOM to reflect the new occupants.
+        var occupantList = document.getElementById(room);
+        occupantList.innerHTML = '';
+        payload.occupants.forEach(occupant => {
+          fetch(this.endpoints.memberDetails + occupant, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json'
+            },
+            credentials: 'same-origin'
+          })
+              .then(FetchUtil.checkStatus)
+              .then(FetchUtil.parseJSON)
+              .then(data => {
+                var newName = document.createElement("li");
+                newName.appendChild(document.createTextNode(data.name));
+                newName.setAttribute("class", "room-name");
+                occupantList.appendChild(newName);
+              });
+        });
       });
     } else {
       throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
