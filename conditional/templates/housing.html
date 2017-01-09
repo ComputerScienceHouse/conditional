@@ -47,14 +47,23 @@ Housing
         <div class="col-xs-12 col-sm-6 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Current Room Numbers</h3>
+                    <h3 class="panel-title">Current Room Numbers
+                    {% if is_eval_director %}
+                        <button type="button" class="btn btn-primary btn-sm btn-conditional pull-right" data-module="housingEdit" data-modal="editHousing" data-rmnumber="">
+                            <span class="glyphicon glyphicon-plus"></span> Add Room
+                        </button>
+                    {% endif %}
+                    </h3>
                 </div>
                 <div class="panel-body table-fill">
                     <div class="table-responsive">
-                        <table class="table table-striped no-bottom-margin">
+                        <table class="table table-striped no-bottom-margin" id="housing-table">
                             <tr>
                                 <th>Room</th>
                                 <th>Occupants</th>
+                                {% if is_eval_director %}
+                                <th>Edit</th>
+                                {% endif %}
                             </tr>
                             {% for room in room_list %}
                             <tr>
@@ -62,14 +71,54 @@ Housing
                                 <td>
                                     <h3 class="room-number">{{room}}</h3></td>
                                 <td>
-                                    {% for m in housing[room] %}
-                                    <p class="room-name">{{m}}</p>
-                                    {% endfor %}
+                                    <ul id="{{room}}" class="occupant-list">
+                                        {% for m in housing[room] %}
+                                        <li class="room-name">{{m}}</li>
+                                        {% endfor %}
+                                    </ul>
                                 </td>
-                                {% endif %} {% endfor %}
+                                {% if is_eval_director %}
+                                <td>
+                                    <button type="button" class="btn btn-default navbar-btn" data-module="housingEdit" data-modal="editHousing" data-rmnumber="{{room}}" id="rm-edit-btn">
+            		                <span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
+            		                </button>
+                                </td>
+                                {% endif %}
+                                {% endif %} 
+                                
+                            </tr>
+                            {% endfor %}
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editHousing" tabindex="-1">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editHousingTitle">Edit Room</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="rmnumber">Room Number</label>
+                            <input type="text" name="rmnumber" class="form-control" />
+                        </div>
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="occupants">Occupants</label>
+                            <input type="text" name="occupants" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </div>
+                </form>
             </div>
         </div>
     </div>

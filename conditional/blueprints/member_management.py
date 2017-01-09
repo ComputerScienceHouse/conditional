@@ -536,3 +536,24 @@ def introductory_project_submit():
     db.session.commit()
 
     return jsonify({"success": True}), 200
+
+@member_management_bp.route('/member/<uid>', methods=['GET'])
+def get_member(uid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='submit introductory project results')
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+
+    member = ldap_get_member(uid)
+    account_dict = {
+        "uid": member.uid,
+        "name": member.cn,
+        "display": member.displayName
+    }
+
+    return jsonify(account_dict), 200
