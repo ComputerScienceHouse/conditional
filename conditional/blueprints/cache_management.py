@@ -68,3 +68,7 @@ def clear_members_cache():
 
 def clear_committee_cache():
     _ldap_is_member_of_directorship.clear_cache()
+
+
+def clear_current_students_cache():
+    ldap.get_current_students.cache_clear()

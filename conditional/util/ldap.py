@@ -1,6 +1,8 @@
 from functools import lru_cache
 
 from conditional import ldap
+from conditional.blueprints.cache_management import clear_current_students_cache
+from conditional.blueprints.cache_management import clear_members_cache
 
 
 def _ldap_get_group_members(group):
@@ -97,18 +99,22 @@ def ldap_is_current_student(account):
 
 def ldap_set_housingpoints(account, housing_points):
     account.housingPoints = housing_points
+    clear_current_students_cache()
 
 
 def ldap_set_roomnumber(account, room_number):
     account.roomNumber = room_number
+    clear_current_students_cache()
 
 
 def ldap_set_active(account):
     _ldap_add_member_to_group(account, 'active')
+    clear_members_cache()
 
 
 def ldap_set_inactive(account):
     _ldap_remove_member_from_group(account, 'active')
+    clear_members_cache()
 
 
 def ldap_get_roomnumber(account):
