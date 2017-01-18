@@ -71,4 +71,4 @@ def clear_committee_cache():
 
 
 def clear_current_students_cache():
-    ldap.get_current_students.cache_clear()
+    ldap_get_current_students.cache_clear()
