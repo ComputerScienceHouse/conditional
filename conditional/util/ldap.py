@@ -97,18 +97,26 @@ def ldap_is_current_student(account):
 
 def ldap_set_housingpoints(account, housing_points):
     account.housingPoints = housing_points
+    ldap_get_current_students.cache_clear()
+    ldap_get_member.cache_clear()
 
 
 def ldap_set_roomnumber(account, room_number):
     account.roomNumber = room_number
+    ldap_get_current_students.cache_clear()
+    ldap_get_member.cache_clear()
 
 
 def ldap_set_active(account):
     _ldap_add_member_to_group(account, 'active')
+    ldap_get_active_members.cache_clear()
+    ldap_get_member.cache_clear()
 
 
 def ldap_set_inactive(account):
     _ldap_remove_member_from_group(account, 'active')
+    ldap_get_active_members.cache_clear()
+    ldap_get_member.cache_clear()
 
 
 def ldap_get_roomnumber(account):
