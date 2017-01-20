@@ -3,88 +3,27 @@ import structlog
 
 from flask import Blueprint, request
 
-from conditional.util.ldap import ldap_get_room_number
-from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.ldap import ldap_get_housing_points
+from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
-from conditional.util.ldap import ldap_get_name
+from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_intro_members
 
-from conditional.models.models import FreshmanEvalData
 from conditional.models.models import MemberCommitteeAttendance
-from conditional.models.models import MemberSeminarAttendance
-from conditional.models.models import TechnicalSeminar
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MajorProject
 from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
+from conditional.models.models import SpringEval
 from conditional.models.models import CommitteeMeeting
 
-from conditional.blueprints.member_management import get_members_info
-
-from conditional.util.housing import get_queue_length, get_queue_position
+from conditional.util.housing import get_queue_position
 from conditional.util.flask import render_template
+from conditional.util.member import get_freshman_data, get_voting_members
 
 logger = structlog.get_logger()
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
-
-
-def get_freshman_data(user_name):
-    freshman = {}
-    freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
-
-    freshman['status'] = freshman_data.freshman_eval_result
-    # number of committee meetings attended
-    c_meetings = [m.meeting_id for m in
-                  MemberCommitteeAttendance.query.filter(
-                      MemberCommitteeAttendance.uid == user_name
-                  )]
-    freshman['committee_meetings'] = len(c_meetings)
-    # technical seminar total
-    t_seminars = [s.seminar_id for s in
-                  MemberSeminarAttendance.query.filter(
-                      MemberSeminarAttendance.uid == user_name
-                  )]
-    freshman['ts_total'] = len(t_seminars)
-    attendance = [m.name for m in TechnicalSeminar.query.filter(
-        TechnicalSeminar.id.in_(t_seminars)
-    )]
-
-    freshman['ts_list'] = attendance
-
-    h_meetings = [(m.meeting_id, m.attendance_status) for m in
-                  MemberHouseMeetingAttendance.query.filter(
-                      MemberHouseMeetingAttendance.uid == user_name)]
-    freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
-    freshman['social_events'] = freshman_data.social_events
-    freshman['general_comments'] = freshman_data.other_notes
-    freshman['fresh_proj'] = freshman_data.freshman_project
-    freshman['sig_missed'] = freshman_data.signatures_missed
-    freshman['eval_date'] = freshman_data.eval_date
-    return freshman
-
-
-def get_voting_members():
-    voting_list = []
-    active_members = [x['uid'][0].decode('utf-8') for x
-                      in ldap_get_active_members()]
-    intro_members = [x['uid'][0].decode('utf-8') for x
-                     in ldap_get_intro_members()]
-    passed_fall = FreshmanEvalData.query.filter(
-        FreshmanEvalData.freshman_eval_result == "Passed"
-    ).distinct()
-
-    for intro_member in passed_fall:
-        voting_list.append(intro_member.uid)
-
-    for active_member in active_members:
-        if active_member not in intro_members:
-            voting_list.append(active_member)
-
-    return voting_list
 
 
 @dashboard_bp.route('/dashboard/')
@@ -93,52 +32,53 @@ def display_dashboard():
                      request_id=str(uuid.uuid4()))
     log.info('frontend', action='display dashboard')
 
-    # get user data
+    # Get username from headers.
+    username = request.headers.get('x-webauth-user')
 
-    user_name = request.headers.get('x-webauth-user')
-
+    # Get the list of voting members.
     can_vote = get_voting_members()
-    data = dict()
-    data['username'] = user_name
-    data['name'] = ldap_get_name(user_name)
-    # Member Status
-    data['active'] = ldap_is_active(user_name)
-    # On-Floor Status
-    data['onfloor'] = ldap_is_onfloor(user_name)
-    # Voting Status
-    data['voting'] = bool(user_name in can_vote)
 
-    active_list = get_members_info()[0]
+    member = ldap_get_member(username)
+    data = dict()
+    data['username'] = member.uid
+    data['name'] = member.cn
+    data['active'] = ldap_is_active(member)
+    data['onfloor'] = ldap_is_onfloor(member)
+    data['voting'] = bool(member.uid in can_vote)
+
     data['voting_count'] = {"Voting Members": len(can_vote),
-                            "Active Members": len(active_list)}
+                            "Active Members": len(ldap_get_active_members())}
     # freshman shit
-    if ldap_is_intromember(user_name):
-        data['freshman'] = get_freshman_data(user_name)
+    if ldap_is_intromember(member):
+        data['freshman'] = get_freshman_data(member.uid)
     else:
         data['freshman'] = False
 
     spring = {}
     c_meetings = [m.meeting_id for m in
                   MemberCommitteeAttendance.query.filter(
-                      MemberCommitteeAttendance.uid == user_name
+                      MemberCommitteeAttendance.uid == member.uid
                   )]
     spring['committee_meetings'] = len(c_meetings)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in
                   MemberHouseMeetingAttendance.query.filter(
-                      MemberHouseMeetingAttendance.uid == user_name)]
+                      MemberHouseMeetingAttendance.uid == member.uid)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
+    eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid
+                                         and SpringEval.active).first()
+    if eval_entry is not None:
+        spring['status'] = eval_entry.status
+    else:
+        spring['status'] = None
 
     data['spring'] = spring
 
     # only show housing if member has onfloor status
-    if ldap_is_onfloor(user_name):
+    if ldap_is_onfloor(member):
         housing = dict()
-        housing['points'] = ldap_get_housing_points(user_name)
-        housing['room'] = ldap_get_room_number(user_name)
-        if housing['room'] == "N/A":
-            housing['queue_pos'] = "%s / %s" % (get_queue_position(user_name), get_queue_length())
-        else:
-            housing['queue_pos'] = "N/A"
+        housing['points'] = member.housingPoints
+        housing['room'] = member.roomNumber
+        housing['queue_pos'] = get_queue_position(member.uid)
     else:
         housing = None
 
@@ -151,7 +91,7 @@ def display_dashboard():
             'status': p.status,
             'description': p.description
         } for p in
-        MajorProject.query.filter(MajorProject.uid == user_name)]
+        MajorProject.query.filter(MajorProject.uid == member.uid)]
 
     data['major_projects_count'] = len(data['major_projects'])
 
@@ -171,7 +111,7 @@ def display_dashboard():
             'description': c.description,
             'status': c.status
         } for c in
-        Conditional.query.filter(Conditional.uid == user_name)]
+        Conditional.query.filter(Conditional.uid == member.uid)]
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
@@ -190,7 +130,7 @@ def display_dashboard():
                 HouseMeeting.id == m.meeting_id).first().date
         } for m in
         MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.uid == user_name
+            MemberHouseMeetingAttendance.uid == member.uid
         ).filter(MemberHouseMeetingAttendance.attendance_status == "Absent")]
 
     data['cm_attendance'] = cm_attendance

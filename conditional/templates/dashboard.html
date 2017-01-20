@@ -7,10 +7,10 @@ Dashboard
     <div class="panel panel-default">
         <div class="panel-body dashboard-user">
             <div class="row">
-                <div class="col-md-2 col-sm-3 col-xs-12 vcenter profile-container">
+                <div class="col-md-2 col-sm-3 col-xs-12 profile-container">
                     <img class="profile-image" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div>
-                <div class="col-xs-12 col-sm-9 col-md-9 vcenter profile-container">
+                <div class="col-xs-12 col-sm-9 col-md-9 profile-container">
                     <h3 class="username">{{name}}</h3>
                     <h5 class="email">{{username}}@csh.rit.edu</h5>
                     <div class="profile-badges">
@@ -108,7 +108,7 @@ Dashboard
                 </div>
             </div>
             {% endif %}
-
+            {% if spring['status'] != None %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Membership Evaluations
@@ -157,7 +157,7 @@ Dashboard
                     </table>
                 </div>
             </div>
-
+            {% endif %}
             {% if conditionals_len != 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -266,14 +266,21 @@ Dashboard
                             <td class="title">Housing Points</td>
                             <td><span class="pull-right">{{housing['points']}}</span></td>
                         </tr>
-                        {% if active %}
+
+                        {% if housing['room'] != None %}
                         <tr>
                             <td class="title">Room Number</td>
                             <td><span class="pull-right">{{housing['room']}}</span></td>
                         </tr>
+                        {% endif %}
+                        {% if housing['queue_pos'][0] != None and housing['room'] == None %}
                         <tr>
                             <td class="title">Housing Queue Position</td>
-                            <td><span class="pull-right">{{housing['queue_pos']}}</span></td>
+                            <td>
+                                <span class="pull-right">
+                                    {{housing['queue_pos'][0]}} / {{housing['queue_pos'][1]}}
+                                </span>
+                            </td>
                         </tr>
                         {% endif %}
                         </tbody>

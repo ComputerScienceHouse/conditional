@@ -1,16 +1,30 @@
+import os
+import subprocess
 from flask import Flask
 from flask import redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from csh_ldap import CSHLDAP
 import structlog
 
 app = Flask(__name__)
 
+config = os.path.join(os.getcwd(), "config.py")
+
+app.config.from_pyfile(config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+app.config["GIT_REVISION"] = subprocess.check_output(['git',
+                                                      'rev-parse',
+                                                      '--short',
+                                                      'HEAD']).decode('utf-8').rstrip()
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 logger = structlog.get_logger()
+
+ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
+               app.config['LDAP_BIND_PW'],
+               ro=app.config['LDAP_RO'])
 
 # pylint: disable=C0413
 
@@ -38,8 +52,6 @@ app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 app.register_blueprint(cache_bp)
 
-logger.info('conditional started')
-
 
 @app.route('/<path:path>')
 def static_proxy(path):
@@ -56,3 +68,5 @@ def default_route():
 def zoo():
     from conditional.models.migrate import free_the_zoo
     free_the_zoo(app.config['ZOO_DATABASE_URI'])
+
+logger.info('conditional started')

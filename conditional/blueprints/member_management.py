@@ -3,7 +3,6 @@ import io
 import uuid
 
 from datetime import datetime
-from functools import lru_cache
 
 import structlog
 
@@ -22,29 +21,26 @@ from conditional.models.models import EvalSettings
 from conditional.models.models import OnFloorStatusAssigned
 from conditional.models.models import SpringEval
 
-from conditional.blueprints.cache_management import clear_active_members_cache
-from conditional.blueprints.cache_management import clear_onfloor_members_cache
+from conditional.blueprints.cache_management import clear_members_cache
 from conditional.blueprints.intro_evals import display_intro_evals
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
+from conditional.util.ldap import ldap_is_active
+from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
 from conditional.util.ldap import ldap_set_housingpoints
-from conditional.util.ldap import ldap_get_room_number
-from conditional.util.ldap import ldap_get_housing_points
-from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_name
-from conditional.util.ldap import ldap_is_active
-from conditional.util.ldap import ldap_is_onfloor
+from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
+from conditional.util.member import get_members_info, get_onfloor_members
 
 from conditional import db
 
@@ -53,47 +49,20 @@ logger = structlog.get_logger()
 member_management_bp = Blueprint('member_management_bp', __name__)
 
 
-@lru_cache(maxsize=1024)
-def get_members_info():
-    members = [m['uid'] for m in ldap_get_current_students()]
-    member_list = []
-    number_onfloor = 0
-
-    for member_uid in members:
-        uid = member_uid[0].decode('utf-8')
-        name = ldap_get_name(uid)
-        active = ldap_is_active(uid)
-        onfloor = ldap_is_onfloor(uid)
-        room_number = ldap_get_room_number(uid)
-        room = room_number if room_number != "N/A" else ""
-        hp = ldap_get_housing_points(uid)
-        member_list.append({
-            "uid": uid,
-            "name": name,
-            "active": active,
-            "onfloor": onfloor,
-            "room": room,
-            "hp": hp
-        })
-
-        if onfloor:
-            number_onfloor += 1
-
-    return member_list, number_onfloor
-
-
 @member_management_bp.route('/manage')
 def display_member_management():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
     log.info('frontend', action='display member management')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
+    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval director", 403
 
-    member_list, onfloor_number = get_members_info()
+    member_list = get_members_info()
+    onfloor_list = get_onfloor_members()
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -116,12 +85,12 @@ def display_member_management():
         intro_form = False
 
     return render_template(request, "member_management.html",
-                           username=user_name,
+                           username=username,
                            active=member_list,
                            num_current=len(member_list),
                            num_active=len(ldap_get_active_members()),
                            num_fresh=len(freshmen_list),
-                           num_onfloor=onfloor_number,
+                           num_onfloor=len(onfloor_list),
                            freshmen=freshmen_list,
                            site_lockdown=lockdown,
                            intro_form=intro_form)
@@ -133,9 +102,10 @@ def member_management_eval():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit site settings')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -165,9 +135,10 @@ def member_management_adduser():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='add fid user')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -189,9 +160,10 @@ def member_management_adduser():
 
 @member_management_bp.route('/manage/user/upload', methods=['POST'])
 def member_management_uploaduser():
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     f = request.files['file']
@@ -226,15 +198,16 @@ def member_management_edituser(uid):
                      request_id=str(uuid.uuid4()))
     log.info('api', action='edit uid user')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
+    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
 
     if not uid.isdigit():
-        edit_uid(uid, user_name, post_data)
+        edit_uid(uid, username, post_data)
     else:
         edit_fid(uid, post_data)
 
@@ -243,40 +216,43 @@ def member_management_edituser(uid):
     return jsonify({"success": True}), 200
 
 
-def edit_uid(uid, user_name, post_data):
+def edit_uid(uid, username, post_data):
+
+    account = ldap_get_member(uid)
     active_member = post_data['activeMember']
 
-    if ldap_is_eval_director(user_name):
-        logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
-                                      (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-                                       post_data['housingPoints']))
+    current_account = ldap_get_member(username)
+    if ldap_is_eval_director(current_account):
         room_number = post_data['roomNumber']
         onfloor_status = post_data['onfloorStatus']
         housing_points = post_data['housingPoints']
+        logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
+                                      (uid, post_data['roomNumber'], post_data['onfloorStatus'],
+                                       post_data['housingPoints']))
 
-        ldap_set_roomnumber(uid, room_number)
+        ldap_set_roomnumber(account, room_number)
         if onfloor_status:
             # If a OnFloorStatusAssigned object exists, don't make another
-            if not ldap_is_member_of_group(uid, "onfloor"):
+            if not ldap_is_member_of_group(account, "onfloor"):
                 db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-                ldap_add_member_to_group(uid, "onfloor")
+                ldap_add_member_to_group(account, "onfloor")
         else:
             for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
                 db.session.delete(ofs)
             db.session.flush()
             db.session.commit()
 
-            if ldap_is_member_of_group(uid, "onfloor"):
-                ldap_remove_member_from_group(uid, "onfloor")
-        ldap_set_housingpoints(uid, housing_points)
+            if ldap_is_member_of_group(account, "onfloor"):
+                ldap_remove_member_from_group(account, "onfloor")
+        ldap_set_housingpoints(account, housing_points)
 
     # Only update if there's a diff
     logger.info('backend', action="edit %s active: %s" % (uid, active_member))
-    if ldap_is_active(uid) != active_member:
+    if ldap_is_active(account) != active_member:
         if active_member:
-            ldap_set_active(uid)
+            ldap_set_active(account)
         else:
-            ldap_set_inactive(uid)
+            ldap_set_inactive(account)
 
         if active_member:
             db.session.add(SpringEval(uid))
@@ -287,7 +263,7 @@ def edit_uid(uid, user_name, post_data):
                 {
                     'active': False
                 })
-        clear_active_members_cache()
+        clear_members_cache()
 
 
 def edit_fid(uid, post_data):
@@ -325,9 +301,10 @@ def member_management_getuserinfo(uid):
                      request_id=str(uuid.uuid4()))
     log.info('api', action='retrieve user info')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name) and not ldap_is_financial_director(user_name):
+    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval or financial director", 403
 
     acct = None
@@ -369,7 +346,9 @@ def member_management_getuserinfo(uid):
                 'sig_missed': acct.signatures_missed
             }), 200
 
-    if ldap_is_eval_director(user_name):
+    account = ldap_get_member(uid)
+
+    if ldap_is_eval_director(ldap_get_member(username)):
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -386,19 +365,19 @@ def member_management_getuserinfo(uid):
                 hms_missed.append(hm)
         return jsonify(
             {
-                'name': ldap_get_name(uid),
-                'room_number': ldap_get_room_number(uid),
-                'onfloor_status': ldap_is_onfloor(uid),
-                'housing_points': ldap_get_housing_points(uid),
-                'active_member': ldap_is_active(uid),
+                'name': account.cn,
+                'room_number': account.roomNumber,
+                'onfloor_status': ldap_is_onfloor(account),
+                'housing_points': account.housingPoints,
+                'active_member': ldap_is_active(account),
                 'missed_hm': hms_missed,
                 'user': 'eval'
             }), 200
     else:
         return jsonify(
             {
-                'name': ldap_get_name(uid),
-                'active_member': ldap_is_active(uid),
+                'name': account.cn,
+                'active_member': ldap_is_active(account),
                 'user': 'financial'
             }), 200
 
@@ -409,15 +388,16 @@ def member_management_deleteuser(fid):
                      request_id=str(uuid.uuid4()))
     log.info('api', action='edit fid user')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     if not fid.isdigit():
         return "can only delete freshman accounts", 400
 
-    logger.info('backend', action="delete freshman account %s" % (fid))
+    logger.info('backend', action="delete freshman account %s" % fid)
 
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
         db.session.delete(fca)
@@ -444,9 +424,10 @@ def member_management_upgrade_user():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='convert fid to uid entry')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -495,7 +476,7 @@ def member_management_upgrade_user():
     db.session.flush()
     db.session.commit()
 
-    clear_onfloor_members_cache()
+    clear_members_cache()
 
     return jsonify({"success": True}), 200
 
@@ -506,14 +487,15 @@ def introductory_project():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='show introductory project management')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     return render_template(request,
                            'introductory_project.html',
-                           username=user_name,
+                           username=username,
                            intro_members=display_intro_evals(internal=True))
 
 
@@ -523,9 +505,10 @@ def introductory_project_submit():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='submit introductory project results')
 
-    user_name = request.headers.get('x-webauth-user')
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
 
-    if not ldap_is_eval_director(user_name):
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -553,3 +536,24 @@ def introductory_project_submit():
     db.session.commit()
 
     return jsonify({"success": True}), 200
+
+@member_management_bp.route('/member/<uid>', methods=['GET'])
+def get_member(uid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='submit introductory project results')
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+
+    member = ldap_get_member(uid)
+    account_dict = {
+        "uid": member.uid,
+        "name": member.cn,
+        "display": member.displayName
+    }
+
+    return jsonify(account_dict), 200

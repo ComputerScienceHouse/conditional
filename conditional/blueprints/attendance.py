@@ -6,9 +6,10 @@ import structlog
 from flask import Blueprint, jsonify, redirect, request
 
 from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_is_eboard
-from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_active_members
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_eboard
+from conditional.util.ldap import ldap_get_member
 
 from conditional.models.models import CurrentCoops
 from conditional.models.models import CommitteeMeeting
@@ -31,10 +32,6 @@ logger = structlog.get_logger()
 attendance_bp = Blueprint('attendance_bp', __name__)
 
 
-def get_name(m):
-    return m['cn'][0].decode('utf-8')
-
-
 @attendance_bp.route('/attendance/ts_members')
 def get_all_members():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
@@ -51,14 +48,11 @@ def get_all_members():
         } for f in FreshmanAccount.query.filter(
             FreshmanAccount.eval_date > datetime.now())]
 
-    for m in members:
-        uid = m['uid'][0].decode('utf-8')
-        name = "{name} ({uid})".format(name=get_name(m), uid=uid)
-
+    for account in members:
         named_members.append(
             {
-                'display': name,
-                'value': uid,
+                'display': account.displayName,
+                'value': account.uid,
                 'freshman': False
             })
 
@@ -71,12 +65,11 @@ def get_non_alumni_non_coop(internal=False):
                      request_id=str(uuid.uuid4()))
     log.info('api', action='retrieve house meeting attendance list')
 
-    # Only Members Who Have Paid Dues Are Required to
-    # go to house meetings
-    non_alumni_members = ldap_get_active_members()
+    # Get all active members as a base house meeting attendance.
+    active_members = ldap_get_active_members()
     coop_members = [u.uid for u in CurrentCoops.query.all()]
 
-    named_members = [
+    eligible_members = [
         {
             'display': f.name,
             'value': f.id,
@@ -84,24 +77,22 @@ def get_non_alumni_non_coop(internal=False):
         } for f in FreshmanAccount.query.filter(
             FreshmanAccount.eval_date > datetime.now())]
 
-    for m in non_alumni_members:
-        uid = m['uid'][0].decode('utf-8')
+    for account in active_members:
+        if account.uid in coop_members:
+            # Members who are on co-op don't need to go to house meeting.
+            pass
 
-        if uid in coop_members:
-            continue
-        name = "{name} ({uid})".format(name=get_name(m), uid=uid)
-
-        named_members.append(
+        eligible_members.append(
             {
-                'display': name,
-                'value': uid,
+                'display': account.displayName,
+                'value': account.uid,
                 'freshman': False
             })
 
     if internal:
-        return named_members
+        return eligible_members
     else:
-        return jsonify({'members': named_members}), 200
+        return jsonify({'members': eligible_members}), 200
 
 
 @attendance_bp.route('/attendance/cm_members')
@@ -110,27 +101,25 @@ def get_non_alumni():
                      request_id=str(uuid.uuid4()))
     log.info('api', action='retrieve committee meeting attendance list')
 
-    non_alumni_members = ldap_get_current_students()
+    current_students = ldap_get_current_students()
 
-    named_members = [
+    eligible_members = [
         {
             'display': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
             FreshmanAccount.eval_date > datetime.now())]
-    for m in non_alumni_members:
-        uid = m['uid'][0].decode('utf-8')
-        name = "{name} ({uid})".format(name=get_name(m), uid=uid)
 
-        named_members.append(
+    for account in current_students:
+        eligible_members.append(
             {
-                'display': name,
-                'value': uid,
+                'display': account.displayName,
+                'value': account.uid,
                 'freshman': False
             })
 
-    return jsonify({'members': named_members}), 200
+    return jsonify({'members': eligible_members}), 200
 
 
 @attendance_bp.route('/attendance_cm')
@@ -140,7 +129,8 @@ def display_attendance_cm():
     log.info('frontend', action='display committee meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eboard(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -156,7 +146,8 @@ def display_attendance_ts():
     log.info('frontend', action='display technical seminar attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eboard(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -172,7 +163,8 @@ def display_attendance_hm():
     log.info('frontend', action='display house meeting attendance page')
 
     user_name = request.headers.get('x-webauth-user')
-    if not ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eval_director(account):
         return redirect("/dashboard")
 
     return render_template(request,
@@ -189,8 +181,8 @@ def submit_committee_attendance():
     log.info('api', action='submit committee meeting attendance')
 
     user_name = request.headers.get('x-webauth-user')
-
-    if not ldap_is_eboard(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -232,7 +224,8 @@ def submit_seminar_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eboard(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
         return "must be eboard", 403
 
     post_data = request.get_json()
@@ -275,7 +268,8 @@ def submit_house_attendance():
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eval_director(account):
         return "must be evals", 403
 
     post_data = request.get_json()
@@ -321,7 +315,8 @@ def submit_house_attendance():
 def alter_house_attendance(uid, hid):
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eval_director(account):
         return "must be evals", 403
 
     if not uid.isdigit():
@@ -351,7 +346,8 @@ def alter_house_excuse(uid, hid):
 
     user_name = request.headers.get('x-webauth-user')
 
-    if not ldap_is_eval_director(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -381,3 +377,113 @@ def alter_house_excuse(uid, hid):
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
+
+
+@attendance_bp.route('/attendance/history', methods=['GET'])
+def attendance_history():
+
+
+    def get_meeting_attendees(meeting_id):
+        attendees = [ldap_get_member(a.uid).displayName for a in
+                     MemberCommitteeAttendance.query.filter(
+                     MemberCommitteeAttendance.meeting_id == meeting_id).all()]
+
+        for freshman in [a.fid for a in
+                         FreshmanCommitteeAttendance.query.filter(
+                         FreshmanCommitteeAttendance.meeting_id == meeting_id).all()]:
+            attendees.append(FreshmanAccount.query.filter(
+                             FreshmanAccount.id == freshman).first().name)
+        return attendees
+
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+
+    user_name = request.headers.get('x-webauth-user')
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    if request.method == 'GET':
+        page = request.args.get('page', 1)
+        log.info('api', action='view past attendance submitions')
+        offset = 0 if int(page) == 1 else ((int(page)-1)*10)
+        limit = int(page)*10
+        all_cm = [{"id": m.id,
+                   "directorship": m.committee,
+                   "dt_obj": m.timestamp,
+                   "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                   "attendees": get_meeting_attendees(m.id)
+                   } for m in CommitteeMeeting.query.all()]
+        c_meetings = sorted(all_cm, key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
+        if len(all_cm) % 10 != 0:
+            total_pages = (int(len(all_cm) / 10) + 1)
+        else:
+            total_pages = (int(len(all_cm) / 10))
+        return render_template(request,
+                           'attendance_history.html',
+                           username=user_name,
+                           history=c_meetings,
+                           num_pages=total_pages,
+                           current_page=int(page))
+
+@attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
+def alter_committee_attendance(cid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='edit committee meeting attendance')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    post_data = request.get_json()
+    meeting_id = cid
+    m_attendees = post_data['members']
+    f_attendees = post_data['freshmen']
+
+    FreshmanCommitteeAttendance.query.filter(
+        FreshmanCommitteeAttendance.meeting_id == meeting_id).delete()
+
+    MemberCommitteeAttendance.query.filter(
+        MemberCommitteeAttendance.meeting_id == meeting_id).delete()
+
+    for m in m_attendees:
+        db.session.add(MemberCommitteeAttendance(m, meeting_id))
+
+    for f in f_attendees:
+        db.session.add(FreshmanCommitteeAttendance(f, meeting_id))
+
+    db.session.flush()
+    db.session.commit()
+    return jsonify({"success": True}), 200
+
+@attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
+def get_cm_attendees(cid):
+    if request.method == 'GET':
+        attendees = [{"value": a.uid,
+                      "display": ldap_get_member(a.uid).displayName
+                     } for a in
+                     MemberCommitteeAttendance.query.filter(
+                     MemberCommitteeAttendance.meeting_id == cid).all()]
+
+        for freshman in [{"value": a.fid,
+                          "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
+                         } for a in FreshmanCommitteeAttendance.query.filter(
+                         FreshmanCommitteeAttendance.meeting_id == cid).all()]:
+            attendees.append(freshman)
+        return jsonify({"attendees": attendees}), 200
+
+    elif request.method == 'DELETE':
+        FreshmanCommitteeAttendance.query.filter(
+            FreshmanCommitteeAttendance.meeting_id == cid).delete()
+        MemberCommitteeAttendance.query.filter(
+            MemberCommitteeAttendance.meeting_id == cid).delete()
+        CommitteeMeeting.query.filter(
+            CommitteeMeeting.id == cid).delete()
+
+        db.session.flush()
+        db.session.commit()
+
+        return jsonify({"success": True}), 200

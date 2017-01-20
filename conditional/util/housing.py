@@ -1,80 +1,49 @@
-from functools import lru_cache
 from datetime import datetime
-from conditional.util.ldap import ldap_get_housing_points
-from conditional.util.ldap import ldap_get_room_number
-from conditional.util.ldap import ldap_get_name
-from conditional.util.ldap import ldap_is_active
-from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_is_current_student
 
-from conditional.models.models import CurrentCoops
+from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_is_onfloor
+
+from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
 
-@lru_cache(maxsize=1024)
-def __get_ofm__():
 
-    # check that everyone in onfloor has onfloorstatus
-    onfloors = [uids['uid'][0].decode('utf-8') for uids in ldap_get_onfloor_members()]
+def get_housing_queue(is_eval_director=False):
 
-    ofm = [
-        {
-            'uid': m.uid,
-            'time': m.onfloor_granted,
-            'points': ldap_get_housing_points(m.uid)
-        } for m in OnFloorStatusAssigned.query.all()
-        if ldap_is_active(m.uid)
-        or CurrentCoops.query.filter(
-                CurrentCoops.uid == m.uid and CurrentCoops.active
-            ).first() is not None]
+    # Generate a dictionary of dictionaries where the UID is the key
+    # and {'time': <datetime obj>} is the value. We are doing a left
+    # outer join on the two tables to get a single result that has
+    # both the member's UID and their on-floor datetime.
+    in_queue = {entry.uid: {'time': entry.onfloor_granted} for entry
+    in InHousingQueue.query.outerjoin(OnFloorStatusAssigned,
+    OnFloorStatusAssigned.uid == InHousingQueue.uid)\
+    .with_entities(InHousingQueue.uid, OnFloorStatusAssigned.onfloor_granted)\
+    .all()}
 
-    # Add everyone who has a discrepancy in LDAP and OnFloorStatusAssigned
-    for member in onfloors:
-        if OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == member).first() is None:
-            ofsa = OnFloorStatusAssigned(member, datetime.min)
-            active = ldap_is_active(ofsa.uid)
-            coop = CurrentCoops.query.filter(CurrentCoops.uid == ofsa.uid).first()
-            coop = coop != None and coop.active
+    # Populate a list of dictionaries containing the name, username,
+    # and on-floor datetime for each member who has on-floor status,
+    # is not already assigned to a room and is in the above query.
+    queue = [{"uid": account.uid,
+              "name": account.cn,
+              "points": account.housingPoints,
+              "time": in_queue.get(account.uid, {}).get('time', datetime.now()) or datetime.now(),
+              "in_queue": account.uid in in_queue}
+             for account in ldap_get_current_students()
+             if ldap_is_onfloor(account) and (is_eval_director or account.uid in in_queue)
+             and account.roomNumber is None]
 
-            if active or coop:
-                ofm.append(
-                    {
-                        'uid': ofsa.uid,
-                        'time': ofsa.onfloor_granted,
-                        'points': ldap_get_housing_points(ofsa.uid)
-                    })
-
-    # sort by housing points then by time in queue
-    ofm.sort(key=lambda m: m['time'])
-    ofm.sort(key=lambda m: m['points'], reverse=True)
-
-    return ofm
-
-def get_housing_queue():
-    ofm = __get_ofm__()
-
-    queue = [m['uid'] for m in ofm if ldap_get_room_number(m['uid']) == "N/A" and ldap_is_current_student(m['uid'])]
+    # Sort based on time (ascending) and then points (decending).
+    queue.sort(key=lambda m: m['time'])
+    queue.sort(key=lambda m: m['points'], reverse=True)
 
     return queue
-
-
-def get_queue_with_points():
-    ofm = __get_ofm__()
-
-    queue = [
-        {
-            'name': ldap_get_name(m['uid']),
-            'points': m['points']
-        } for m in ofm if ldap_get_room_number(m['uid']) == "N/A" and ldap_is_current_student(m['uid'])]
-
-    return queue
-
-
-def get_queue_length():
-    return len(get_housing_queue())
 
 
 def get_queue_position(username):
+
+    queue = get_housing_queue()
     try:
-        return get_housing_queue().index(username)
-    except (IndexError, ValueError):
-        return "0"
+        index = next(index for (index, d) in enumerate(get_housing_queue())
+             if d["uid"] == username) + 1
+    except (KeyError, StopIteration):
+        index = None
+    return (index, len(queue))

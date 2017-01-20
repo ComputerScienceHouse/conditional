@@ -4,7 +4,6 @@ import structlog
 from flask import Blueprint, request
 
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_name
 
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
@@ -35,12 +34,11 @@ def display_spring_evals(internal=False):
     if not internal:
         user_name = request.headers.get('x-webauth-user')
 
-    members = [m['uid'] for m in ldap_get_active_members()]
+    active_members = [account for account in ldap_get_active_members()]
 
     sp_members = []
-    for member_uid in members:
-        uid = member_uid[0].decode('utf-8')
-        print(uid)
+    for account in active_members:
+        uid = account.uid
         spring_entry = SpringEval.query.filter(
             SpringEval.uid == uid and
             SpringEval.active).first()
@@ -50,9 +48,8 @@ def display_spring_evals(internal=False):
             db.session.add(spring_entry)
             db.session.flush()
             db.session.commit()
-            # something bad happened to get here
-            print("User did not have existing spring eval data")
-        elif spring_entry.status != "Pending":
+            # something bad happened to get here...
+        elif spring_entry.status != "Pending" and internal:
             continue
 
         eval_data = None
@@ -64,7 +61,7 @@ def display_spring_evals(internal=False):
                           MemberHouseMeetingAttendance.attendance_status == "Absent"
                       )]
         member = {
-            'name': ldap_get_name(uid),
+            'name': account.cn,
             'uid': uid,
             'status': spring_entry.status,
             'committee_meetings': get_cm_count(uid),
