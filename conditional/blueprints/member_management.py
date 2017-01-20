@@ -357,6 +357,7 @@ def member_management_getuserinfo(uid):
                 'status': hma.attendance_status
             } for hma in MemberHouseMeetingAttendance.query.filter(
                 MemberHouseMeetingAttendance.uid == uid and
+                MemberHouseMeetingAttendance.active and
                 (MemberHouseMeetingAttendance.attendance_status != attendance_enum.Attended))]
 
         hms_missed = []
@@ -456,7 +457,8 @@ def member_management_upgrade_user():
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         # Don't duplicate HM attendance records
         mhm = MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
+            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id and
+            MemberHouseMeetingAttendance.active).first()
         if mhm is None:
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))

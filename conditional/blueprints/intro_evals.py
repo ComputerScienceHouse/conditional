@@ -33,7 +33,8 @@ def display_intro_evals(internal=False):
     # get user data
     def get_uid_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == member_id)])
+            MemberCommitteeAttendance.uid == member_id and
+            MemberCommitteeAttendance.active)])
 
     def get_fid_cm_count(member_id):
         return len([a for a in FreshmanCommitteeAttendance.query.filter(
@@ -113,7 +114,8 @@ def display_intro_evals(internal=False):
 
         h_meetings = [m.meeting_id for m in
                       MemberHouseMeetingAttendance.query.filter(
-                          MemberHouseMeetingAttendance.uid == uid
+                          MemberHouseMeetingAttendance.uid == uid and
+                          MemberHouseMeetingAttendance.active
                       ).filter(
                           MemberHouseMeetingAttendance.attendance_status == "Absent"
                       )]
@@ -130,7 +132,8 @@ def display_intro_evals(internal=False):
                         "date": m.date.strftime("%Y-%m-%d"),
                         "reason":
                             MemberHouseMeetingAttendance.query.filter(
-                                MemberHouseMeetingAttendance.uid == uid).filter(
+                                MemberHouseMeetingAttendance.uid == uid and
+                                MemberHouseMeetingAttendance.active).filter(
                                 MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
                     }
                     for m in HouseMeeting.query.filter(
@@ -141,7 +144,8 @@ def display_intro_evals(internal=False):
                 [s.name for s in TechnicalSeminar.query.filter(
                     TechnicalSeminar.id.in_(
                         [a.seminar_id for a in MemberSeminarAttendance.query.filter(
-                            MemberSeminarAttendance.uid == uid)]
+                            MemberSeminarAttendance.uid == uid and
+                            MemberSeminarAttendance.active)]
                     ))
                  ],
             'social_events': freshman_data.social_events,

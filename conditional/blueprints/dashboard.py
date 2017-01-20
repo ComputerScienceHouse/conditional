@@ -57,12 +57,14 @@ def display_dashboard():
     spring = {}
     c_meetings = [m.meeting_id for m in
                   MemberCommitteeAttendance.query.filter(
-                      MemberCommitteeAttendance.uid == member.uid
+                      MemberCommitteeAttendance.uid == member.uid and
+                      MemberCommitteeAttendance.active
                   )]
     spring['committee_meetings'] = len(c_meetings)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in
                   MemberHouseMeetingAttendance.query.filter(
-                      MemberHouseMeetingAttendance.uid == member.uid)]
+                      MemberHouseMeetingAttendance.uid == member.uid and
+                      MemberHouseMeetingAttendance.active)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid
                                          and SpringEval.active).first()
@@ -130,7 +132,8 @@ def display_dashboard():
                 HouseMeeting.id == m.meeting_id).first().date
         } for m in
         MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.uid == member.uid
+            MemberHouseMeetingAttendance.uid == member.uid and
+            MemberHouseMeetingAttendance.active
         ).filter(MemberHouseMeetingAttendance.attendance_status == "Absent")]
 
     data['cm_attendance'] = cm_attendance

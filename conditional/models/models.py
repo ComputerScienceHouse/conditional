@@ -69,10 +69,12 @@ class MemberCommitteeAttendance(db.Model):
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
+    active = Column(Boolean)
 
     def __init__(self, uid, meeting_id):
         self.uid = uid
         self.meeting_id = meeting_id
+        self.active = True
 
 
 class FreshmanCommitteeAttendance(db.Model):
@@ -104,10 +106,12 @@ class MemberSeminarAttendance(db.Model):
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
+    active = Column(Boolean)
 
     def __init__(self, uid, seminar_id):
         self.uid = uid
         self.seminar_id = seminar_id
+        self.active = True
 
 
 class FreshmanSeminarAttendance(db.Model):
@@ -158,12 +162,14 @@ class MemberHouseMeetingAttendance(db.Model):
     meeting_id = Column(ForeignKey('house_meetings.id'), nullable=False)
     excuse = Column(Text)
     attendance_status = Column(attendance_enum)
+    active = Column(Boolean)
 
     def __init__(self, uid, meeting_id, excuse, status):
         self.uid = uid
         self.meeting_id = meeting_id
         self.excuse = excuse
         self.attendance_status = status
+        self.active = True
 
 
 class FreshmanHouseMeetingAttendance(db.Model):
