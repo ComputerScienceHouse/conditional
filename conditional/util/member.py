@@ -71,12 +71,12 @@ def get_freshman_data(user_name):
     t_seminars = [s.seminar_id for s in
                   MemberSeminarAttendance.query.filter(
                       MemberSeminarAttendance.uid == user_name
-                  )]
+                  ) if TechnicalSeminar.query.filter(
+                      TechnicalSeminar.id == s.seminar_id).first().approved]
     freshman['ts_total'] = len(t_seminars)
     attendance = [m.name for m in TechnicalSeminar.query.filter(
         TechnicalSeminar.id.in_(t_seminars)
-        ) if TechnicalSeminar.query.filter(
-            TechnicalSeminar.id == m.seminar_id).first().approved]
+        )]
 
     freshman['ts_list'] = attendance
 

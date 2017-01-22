@@ -13,10 +13,11 @@ export default class ReviewMeeting {
     this.modalTpl = document.querySelector('#' + this.link.dataset.modal);
     this.type = this.modalTpl.dataset.type;
     this.cid = this.link.dataset.cid;
+    this.meeting = this.link.dataset.meeting;
 
     this.endpoints = {
-      meetingDetails: '/attendance/cm/',
-      alterCmAttendance: '/attendance/alter/cm/'
+      meetingDetails: '/attendance/' + this.meeting + '/',
+      alterAttendance: '/attendance/alter/' + this.meeting + '/'
     };
 
     this.render();
@@ -103,8 +104,8 @@ export default class ReviewMeeting {
         credentials: 'same-origin'
       });
 
-      FetchUtil.post(this.endpoints.alterCmAttendance + this.cid, payload, {
-        successText: 'Meeting attendance has been updated.'
+      FetchUtil.post(this.endpoints.alterAttendance + this.cid, payload, {
+        successText: 'Attendance has been updated.'
       }, () => {
         $(this.modal).modal('hide');
         window.location.reload();
@@ -123,8 +124,8 @@ export default class ReviewMeeting {
       // Delete details
       FetchUtil.fetchWithWarning(this.endpoints.meetingDetails + this.cid, {
         method: 'DELETE',
-        warningText: "This meeting will be permanently deleted.",
-        successText: "Meeting has been deleted."
+        warningText: "Attendance will be permanently deleted.",
+        successText: "Attendance has been deleted."
       }, () => {
         $(this.modal).modal('hide');
         window.location.reload();

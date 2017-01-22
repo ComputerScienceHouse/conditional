@@ -22,7 +22,34 @@ Attendance History
             		</p>
             	</div><!--
                 --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{meeting["id"]}}">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{meeting["id"]}}" data-meeting="cm">
+            		<span class="glyphicon glyphicon-eye-open attend-edit-icon"></span> Review
+            		</button>
+            	</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if pending_ts|length != 0 and current_page == 1 %}
+    <h3 class="page-title">Pending Seminars</h3>
+    {% for seminar in pending_ts %}
+    <div class="panel panel-default">
+        <div class="panel-body eval-panel">
+            <div class="container-fluid">
+            	<div class="col-xs-12 col-sm-3 vcenter">
+            		<h5>{{seminar["name"]}}</h5>
+            		<p>{{seminar["date"]}}<p>
+            	</div><!--
+                --><div class="com-xs-12 col-sm-7 vcenter">
+            		<p class="attend-list" id="attendees-{{seminar["id"]}}">
+            			{% for name in seminar["attendees"] %}
+            			{{name}}{% if not loop.last %}, {% endif %}
+            			{% endfor %}
+            		</p>
+            	</div><!--
+                --><div class="col-xs-12 col-sm-2 vcenter text-center">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{seminar["id"]}}" data-meeting="ts">
             		<span class="glyphicon glyphicon-eye-open attend-edit-icon"></span> Review
             		</button>
             	</div>
@@ -48,7 +75,7 @@ Attendance History
             		</p>
             	</div><!--
                 --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmAttendance" data-modal="editMeeting" data-cid="{{meeting["id"]}}">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="editMeeting" data-cid="{{meeting["id"]}}" data-meeting="cm">
             		<span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
             		</button>
             	</div>
@@ -115,7 +142,7 @@ Attendance History
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editMeetingTitle">Review Meeting</h4>
+                    <h4 class="modal-title" id="editMeetingTitle">Review Submittion</h4>
                 </div>
                 <form method="post">
                     <div class="modal-body">

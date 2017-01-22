@@ -173,7 +173,6 @@ def submit_committee_attendance():
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
     approved = ldap_is_eboard(account)
-    print(str(approved) + "IS AN EBAORD MEMBER")
     post_data = request.get_json()
 
     committee = post_data['committee']
@@ -383,6 +382,18 @@ def attendance_history():
                              FreshmanAccount.id == freshman).first().name)
         return attendees
 
+    def get_seminar_attendees(meeting_id):
+        attendees = [ldap_get_member(a.uid).displayName for a in
+                     MemberSeminarAttendance.query.filter(
+                     MemberSeminarAttendance.seminar_id == meeting_id).all()]
+
+        for freshman in [a.fid for a in
+                         FreshmanSeminarAttendance.query.filter(
+                         FreshmanSeminarAttendance.seminar_id == meeting_id).all()]:
+            attendees.append(FreshmanAccount.query.filter(
+                             FreshmanAccount.id == freshman).first().name)
+        return attendees
+
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
 
@@ -410,6 +421,13 @@ def attendance_history():
                     "attendees": get_meeting_attendees(m.id)
                    } for m in CommitteeMeeting.query.filter(
                        CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
+        pend_ts = [{"id": m.id,
+                    "name": m.name,
+                    "dt_obj": m.timestamp,
+                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                    "attendees": get_seminar_attendees(m.id)
+                   } for m in TechnicalSeminar.query.filter(
+                       TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
         c_meetings = sorted(all_cm, key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
         if len(all_cm) % 10 != 0:
             total_pages = (int(len(all_cm) / 10) + 1)
@@ -420,6 +438,7 @@ def attendance_history():
                            username=user_name,
                            history=c_meetings,
                            pending_cm=pend_cm,
+                           pending_ts=pend_ts,
                            num_pages=total_pages,
                            current_page=int(page))
 
@@ -456,8 +475,83 @@ def alter_committee_attendance(cid):
     db.session.commit()
     return jsonify({"success": True}), 200
 
+
+@attendance_bp.route('/attendance/alter/ts/<sid>', methods=['POST'])
+def alter_seminar_attendance(sid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='edit technical seminar attendance')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    post_data = request.get_json()
+    meeting_id = sid
+    m_attendees = post_data['members']
+    f_attendees = post_data['freshmen']
+
+    FreshmanSeminarAttendance.query.filter(
+        FreshmanSeminarAttendance.seminar_id == meeting_id).delete()
+
+    MemberSeminarAttendance.query.filter(
+        MemberSeminarAttendance.seminar_id == meeting_id).delete()
+
+    for m in m_attendees:
+        db.session.add(MemberSeminarAttendance(m, meeting_id))
+
+    for f in f_attendees:
+        db.session.add(FreshmanSeminarAttendance(f, meeting_id))
+
+    db.session.flush()
+    db.session.commit()
+    return jsonify({"success": True}), 200
+
+
+@attendance_bp.route('/attendance/ts/<sid>', methods=['GET', 'DELETE'])
+def get_cm_attendees(sid):
+    if request.method == 'GET':
+        attendees = [{"value": a.uid,
+                      "display": ldap_get_member(a.uid).displayName
+                     } for a in
+                     MemberSeminarAttendance.query.filter(
+                     MemberSeminarAttendance.seminar_id == sid).all()]
+
+        for freshman in [{"value": a.fid,
+                          "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
+                         } for a in FreshmanSeminarAttendance.query.filter(
+                         FreshmanSeminarAttendance.seminar_id == sid).all()]:
+            attendees.append(freshman)
+        return jsonify({"attendees": attendees}), 200
+
+    elif request.method == 'DELETE':
+        log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+        log.info('api', action='delete technical seminar')
+
+        user_name = request.headers.get('x-webauth-user')
+
+        account = ldap_get_member(user_name)
+        if not ldap_is_eboard(account):
+            return "must be eboard", 403
+
+        FreshmanSeminarAttendance.query.filter(
+            FreshmanSeminarAttendance.seminar_id == sid).delete()
+        MemberSeminarAttendance.query.filter(
+            MemberSeminarAttendance.seminar_id == sid).delete()
+        TechnicalSeminar.query.filter(
+            TechnicalSeminar.id == sid).delete()
+
+        db.session.flush()
+        db.session.commit()
+
+        return jsonify({"success": True}), 200
+
+
 @attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
-def get_cm_attendees(cid):
+def get_ts_attendees(cid):
     if request.method == 'GET':
         attendees = [{"value": a.uid,
                       "display": ldap_get_member(a.uid).displayName
