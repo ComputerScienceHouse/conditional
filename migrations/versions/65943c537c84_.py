@@ -1,4 +1,4 @@
-"""empty message
+"""Add Opt-In Housing Queue Table
 
 Revision ID: 65943c537c84
 Revises: 983d69afb7f8
