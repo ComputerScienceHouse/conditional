@@ -9,6 +9,7 @@ from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
 
 from conditional.models.models import FreshmanEvalData
+from conditional.models.models import CommitteeMeeting
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberCommitteeAttendance
@@ -63,7 +64,8 @@ def get_freshman_data(user_name):
     c_meetings = [m.meeting_id for m in
                   MemberCommitteeAttendance.query.filter(
                       MemberCommitteeAttendance.uid == user_name
-                  )]
+                  ) if CommitteeMeeting.query.filter(
+                      CommitteeMeeting.id == m.meeting_id).first().approved]
     freshman['committee_meetings'] = len(c_meetings)
     # technical seminar total
     t_seminars = [s.seminar_id for s in
@@ -73,7 +75,8 @@ def get_freshman_data(user_name):
     freshman['ts_total'] = len(t_seminars)
     attendance = [m.name for m in TechnicalSeminar.query.filter(
         TechnicalSeminar.id.in_(t_seminars)
-    )]
+        ) if TechnicalSeminar.query.filter(
+            TechnicalSeminar.id == m.seminar_id).first().approved]
 
     freshman['ts_list'] = attendance
 

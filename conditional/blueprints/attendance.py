@@ -128,14 +128,9 @@ def display_attendance_cm():
                      request_id=str(uuid.uuid4()))
     log.info('frontend', action='display committee meeting attendance page')
 
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
-    if not ldap_is_eboard(account):
-        return redirect("/dashboard")
-
     return render_template(request,
                            'attendance_cm.html',
-                           username=user_name,
+                           username=request.headers.get("x-webauth-user"),
                            date=datetime.now().strftime("%Y-%m-%d"))
 
 
@@ -145,14 +140,9 @@ def display_attendance_ts():
                      request_id=str(uuid.uuid4()))
     log.info('frontend', action='display technical seminar attendance page')
 
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
-    if not ldap_is_eboard(account):
-        return redirect("/dashboard")
-
     return render_template(request,
                            'attendance_ts.html',
-                           username=user_name,
+                           username=request.headers.get("x-webauth-user"),
                            date=datetime.now().strftime("%Y-%m-%d"))
 
 
@@ -182,9 +172,8 @@ def submit_committee_attendance():
 
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
-    if not ldap_is_eboard(account):
-        return "must be eboard", 403
-
+    approved = ldap_is_eboard(account)
+    print(str(approved) + "IS AN EBAORD MEMBER")
     post_data = request.get_json()
 
     committee = post_data['committee']
@@ -193,7 +182,7 @@ def submit_committee_attendance():
     timestamp = post_data['timestamp']
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
-    meeting = CommitteeMeeting(committee, timestamp)
+    meeting = CommitteeMeeting(committee, timestamp, approved)
 
     db.session.add(meeting)
     db.session.flush()
@@ -225,8 +214,7 @@ def submit_seminar_attendance():
     user_name = request.headers.get('x-webauth-user')
 
     account = ldap_get_member(user_name)
-    if not ldap_is_eboard(account):
-        return "must be eboard", 403
+    approved = ldap_is_eboard(account)
 
     post_data = request.get_json()
 
@@ -236,7 +224,7 @@ def submit_seminar_attendance():
     timestamp = post_data['timestamp']
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
-    seminar = TechnicalSeminar(seminar_name, timestamp)
+    seminar = TechnicalSeminar(seminar_name, timestamp, approved)
 
     db.session.add(seminar)
     db.session.flush()
@@ -413,7 +401,15 @@ def attendance_history():
                    "dt_obj": m.timestamp,
                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
                    "attendees": get_meeting_attendees(m.id)
-                   } for m in CommitteeMeeting.query.all()]
+                   } for m in CommitteeMeeting.query.filter(
+                       CommitteeMeeting.approved).all()]
+        pend_cm = [{"id": m.id,
+                    "directorship": m.committee,
+                    "dt_obj": m.timestamp,
+                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                    "attendees": get_meeting_attendees(m.id)
+                   } for m in CommitteeMeeting.query.filter(
+                       CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
         c_meetings = sorted(all_cm, key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
         if len(all_cm) % 10 != 0:
             total_pages = (int(len(all_cm) / 10) + 1)
@@ -423,6 +419,7 @@ def attendance_history():
                            'attendance_history.html',
                            username=user_name,
                            history=c_meetings,
+                           pending_cm=pend_cm,
                            num_pages=total_pages,
                            current_page=int(page))
 
@@ -476,6 +473,16 @@ def get_cm_attendees(cid):
         return jsonify({"attendees": attendees}), 200
 
     elif request.method == 'DELETE':
+        log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+        log.info('api', action='delete committee meeting')
+
+        user_name = request.headers.get('x-webauth-user')
+
+        account = ldap_get_member(user_name)
+        if not ldap_is_eboard(account):
+            return "must be eboard", 403
+
         FreshmanCommitteeAttendance.query.filter(
             FreshmanCommitteeAttendance.meeting_id == cid).delete()
         MemberCommitteeAttendance.query.filter(
@@ -487,3 +494,43 @@ def get_cm_attendees(cid):
         db.session.commit()
 
         return jsonify({"success": True}), 200
+
+
+@attendance_bp.route('/attendance/cm/<cid>/approve', methods=['POST'])
+def approve_cm(cid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='approve committee meeting attendance')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    CommitteeMeeting.query.filter(
+        CommitteeMeeting.id == cid).first().approved = True
+    db.session.flush()
+    db.session.commit()
+
+    return jsonify({"success": True}), 200
+
+
+@attendance_bp.route('/attendance/ts/<sid>/approve', methods=['POST'])
+def approve_ts(sid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='approve committee meeting attendance')
+
+    user_name = request.headers.get('x-webauth-user')
+
+    account = ldap_get_member(user_name)
+    if not ldap_is_eboard(account):
+        return "must be eboard", 403
+
+    TechnicalSeminar.query.filter(
+        TechnicalSeminar.id == sid).first().approved = True
+    db.session.flush()
+    db.session.commit()
+
+    return jsonify({"success": True}), 200
