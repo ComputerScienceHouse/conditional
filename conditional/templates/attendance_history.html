@@ -5,7 +5,7 @@ Attendance History
 {% block body %}
 <div class="container main">
     {% if pending_cm|length != 0 and current_page == 1 %}
-    <h3 class="page-title">Pending Submittions</h3>
+    <h3 class="page-title">Pending Submissions</h3>
     {% for meeting in pending_cm %}
     <div class="panel panel-default">
         <div class="panel-body eval-panel">
@@ -142,7 +142,7 @@ Attendance History
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editMeetingTitle">Review Submittion</h4>
+                    <h4 class="modal-title" id="editMeetingTitle">Review Submission</h4>
                 </div>
                 <form method="post">
                     <div class="modal-body">
