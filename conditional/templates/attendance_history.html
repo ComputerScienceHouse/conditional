@@ -11,7 +11,7 @@ Attendance History
         <div class="panel-body eval-panel">
             <div class="container-fluid">
             	<div class="col-xs-12 col-sm-3 vcenter">
-            		<h5>{{meeting["directorship"]}}</h5>
+            		<h5>{{meeting["name"]}}</h5>
             		<p>{{meeting["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
@@ -64,7 +64,7 @@ Attendance History
         <div class="panel-body eval-panel">
             <div class="container-fluid">
             	<div class="col-xs-12 col-sm-3 vcenter">
-            		<h5>{{meeting["directorship"]}}</h5>
+            		<h5>{{meeting["name"]}}</h5>
             		<p>{{meeting["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
@@ -75,7 +75,7 @@ Attendance History
             		</p>
             	</div><!--
                 --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="editMeeting" data-cid="{{meeting["id"]}}" data-meeting="cm">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="editMeeting" data-cid="{{meeting["id"]}}" data-meeting="{{meeting["type"]}}">
             		<span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
             		</button>
             	</div>

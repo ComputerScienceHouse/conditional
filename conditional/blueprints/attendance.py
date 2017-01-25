@@ -408,14 +408,23 @@ def attendance_history():
         offset = 0 if int(page) == 1 else ((int(page)-1)*10)
         limit = int(page)*10
         all_cm = [{"id": m.id,
-                   "directorship": m.committee,
+                   "name": m.committee,
                    "dt_obj": m.timestamp,
                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
-                   "attendees": get_meeting_attendees(m.id)
+                   "attendees": get_meeting_attendees(m.id),
+                   "type": "cm"
                    } for m in CommitteeMeeting.query.filter(
                        CommitteeMeeting.approved).all()]
+        all_ts = [{"id": m.id,
+                   "name": m.name,
+                   "dt_obj": m.timestamp,
+                   "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                   "attendees": get_seminar_attendees(m.id),
+                   "type": "ts"
+                   } for m in TechnicalSeminar.query.filter(
+                       TechnicalSeminar.approved).all()]
         pend_cm = [{"id": m.id,
-                    "directorship": m.committee,
+                    "name": m.committee,
                     "dt_obj": m.timestamp,
                     "date": m.timestamp.strftime("%a %m/%d/%Y"),
                     "attendees": get_meeting_attendees(m.id)
@@ -428,7 +437,7 @@ def attendance_history():
                     "attendees": get_seminar_attendees(m.id)
                    } for m in TechnicalSeminar.query.filter(
                        TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
-        c_meetings = sorted(all_cm, key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
+        all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
         if len(all_cm) % 10 != 0:
             total_pages = (int(len(all_cm) / 10) + 1)
         else:
@@ -436,7 +445,7 @@ def attendance_history():
         return render_template(request,
                            'attendance_history.html',
                            username=user_name,
-                           history=c_meetings,
+                           history=all_meetings,
                            pending_cm=pend_cm,
                            pending_ts=pend_ts,
                            num_pages=total_pages,
