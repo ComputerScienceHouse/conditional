@@ -469,7 +469,8 @@ def member_management_upgrade_user():
         db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
 
     if acct.room_number:
-        ldap_set_roomnumber(uid, acct.room_number)
+        new_account = ldap_get_member(uid)
+        ldap_set_roomnumber(new_account, acct.room_number)
 
     db.session.delete(acct)
 

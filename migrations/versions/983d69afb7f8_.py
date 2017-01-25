@@ -1,4 +1,4 @@
-"""empty message
+"""Remove Unused Housing Evals Table
 
 Revision ID: 983d69afb7f8
 Revises: 218de3b34a6f

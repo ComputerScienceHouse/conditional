@@ -1,4 +1,4 @@
-"""empty message
+"""Initial Database Creation
 
 Revision ID: 9c57eb87e918
 Revises: None

@@ -1,4 +1,4 @@
-"""empty message
+"""Add Missed Signatures Field to Freshmen
 
 Revision ID: 218de3b34a6f
 Revises: 9c57eb87e918

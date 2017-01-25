@@ -6,17 +6,18 @@ import FetchUtil from "../utils/fetchUtil";
 import MemberUtil from "../utils/memberUtil";
 import MemberSelect from "./memberSelect";
 
-export default class EditMeeting {
+export default class ReviewMeeting {
   constructor(link) {
     this.link = link;
     this.modal = null;
     this.modalTpl = document.querySelector('#' + this.link.dataset.modal);
     this.type = this.modalTpl.dataset.type;
     this.cid = this.link.dataset.cid;
+    this.meeting = this.link.dataset.meeting;
 
     this.endpoints = {
-      meetingDetails: '/attendance/cm/',
-      alterCmAttendance: '/attendance/alter/cm/'
+      meetingDetails: '/attendance/' + this.meeting + '/',
+      alterAttendance: '/attendance/alter/' + this.meeting + '/'
     };
 
     this.render();
@@ -95,8 +96,16 @@ export default class EditMeeting {
       payload.freshmen = membersSplit.freshmen;
       payload.members = membersSplit.upperclassmen;
 
-      FetchUtil.post(this.endpoints.alterCmAttendance + this.cid, payload, {
-        successText: 'Meeting attendance has been updated.'
+      fetch(this.endpoints.meetingDetails + this.cid + '/approve', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
+        credentials: 'same-origin'
+      });
+
+      FetchUtil.post(this.endpoints.alterAttendance + this.cid, payload, {
+        successText: 'Attendance has been updated.'
       }, () => {
         $(this.modal).modal('hide');
         window.location.reload();
@@ -115,8 +124,8 @@ export default class EditMeeting {
       // Delete details
       FetchUtil.fetchWithWarning(this.endpoints.meetingDetails + this.cid, {
         method: 'DELETE',
-        warningText: "This meeting will be permanently deleted.",
-        successText: "Meeting has been deleted."
+        warningText: "Attendance will be permanently deleted.",
+        successText: "Attendance has been deleted."
       }, () => {
         $(this.modal).modal('hide');
         window.location.reload();
