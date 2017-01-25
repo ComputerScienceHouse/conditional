@@ -12,6 +12,7 @@ def _ldap_is_member_of_group(member, group):
     for group_dn in group_list:
         if group == group_dn.split(",")[0][3:]:
             return True
+    return False
 
 
 def _ldap_add_member_to_group(account, group):

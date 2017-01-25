@@ -58,7 +58,8 @@ def display_dashboard():
     c_meetings = [m.meeting_id for m in
                   MemberCommitteeAttendance.query.filter(
                       MemberCommitteeAttendance.uid == member.uid
-                  )]
+                  ) if CommitteeMeeting.query.filter(
+                      CommitteeMeeting.id == m.meeting_id).first().approved]
     spring['committee_meetings'] = len(c_meetings)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in
                   MemberHouseMeetingAttendance.query.filter(

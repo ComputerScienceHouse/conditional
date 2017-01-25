@@ -9,6 +9,10 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_is_rtp
 from conditional.util.ldap import ldap_get_member
+
+from conditional.models.models import CommitteeMeeting
+from conditional.models.models import TechnicalSeminar
+
 from conditional import db
 
 
@@ -31,6 +35,11 @@ def render_template(request, template_name, **kwargs):
     is_intromember = ldap_is_intromember(account)
     is_rtp = ldap_is_rtp(account)
 
+    cm_review = len(CommitteeMeeting.query.filter(
+        CommitteeMeeting.approved == False).all()) # pylint: disable=singleton-comparison
+    ts_review = len(TechnicalSeminar.query.filter(
+        TechnicalSeminar.approved == False).all()) # pylint: disable=singleton-comparison
+
     if is_eval:
         lockdown = False
 
@@ -44,4 +53,5 @@ def render_template(request, template_name, **kwargs):
         is_financial_director=is_financial,
         is_intromember=is_intromember,
         is_rtp=is_rtp,
+        pending_review=(cm_review + ts_review),
         **kwargs)

@@ -56,11 +56,13 @@ class CommitteeMeeting(db.Model):
                             'R&D', 'House Improvements', 'Financial', 'Chairman', name="committees_enum"),
                        nullable=False)
     timestamp = Column(DateTime, nullable=False)
+    approved = Column(Boolean, nullable=False)
     active = Column(Boolean)
 
-    def __init__(self, committee, timestamp):
+    def __init__(self, committee, timestamp, approved):
         self.committee = committee
         self.timestamp = timestamp
+        self.approved = approved
         self.active = True
 
 
@@ -91,11 +93,13 @@ class TechnicalSeminar(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(128), nullable=False)
     timestamp = Column(DateTime, nullable=False)
+    approved = Column(Boolean, nullable=False)
     active = Column(Boolean)
 
-    def __init__(self, name, timestamp):
+    def __init__(self, name, timestamp, approved):
         self.name = name
         self.timestamp = timestamp
+        self.approved = approved
         self.active = True
 
 

@@ -4,13 +4,14 @@ Attendance History
 {% endblock %}
 {% block body %}
 <div class="container main">
-    <h3 class="page-title">Attendance History</h3>
-    {% for meeting in history %}
+    {% if pending_cm|length != 0 and current_page == 1 %}
+    <h3 class="page-title">Pending Submissions</h3>
+    {% for meeting in pending_cm %}
     <div class="panel panel-default">
         <div class="panel-body eval-panel">
             <div class="container-fluid">
             	<div class="col-xs-12 col-sm-3 vcenter">
-            		<h5>{{meeting["directorship"]}}</h5>
+            		<h5>{{meeting["name"]}}</h5>
             		<p>{{meeting["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
@@ -21,7 +22,60 @@ Attendance History
             		</p>
             	</div><!--
                 --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmAttendance" data-modal="editMeeting" data-cid="{{meeting["id"]}}">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{meeting["id"]}}" data-meeting="cm">
+            		<span class="glyphicon glyphicon-eye-open attend-edit-icon"></span> Review
+            		</button>
+            	</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if pending_ts|length != 0 and current_page == 1 %}
+    <h3 class="page-title">Pending Seminars</h3>
+    {% for seminar in pending_ts %}
+    <div class="panel panel-default">
+        <div class="panel-body eval-panel">
+            <div class="container-fluid">
+            	<div class="col-xs-12 col-sm-3 vcenter">
+            		<h5>{{seminar["name"]}}</h5>
+            		<p>{{seminar["date"]}}<p>
+            	</div><!--
+                --><div class="com-xs-12 col-sm-7 vcenter">
+            		<p class="attend-list" id="attendees-{{seminar["id"]}}">
+            			{% for name in seminar["attendees"] %}
+            			{{name}}{% if not loop.last %}, {% endif %}
+            			{% endfor %}
+            		</p>
+            	</div><!--
+                --><div class="col-xs-12 col-sm-2 vcenter text-center">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{seminar["id"]}}" data-meeting="ts">
+            		<span class="glyphicon glyphicon-eye-open attend-edit-icon"></span> Review
+            		</button>
+            	</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <h3 class="page-title">Attendance History</h3>
+    {% for meeting in history %}
+    <div class="panel panel-default">
+        <div class="panel-body eval-panel">
+            <div class="container-fluid">
+            	<div class="col-xs-12 col-sm-3 vcenter">
+            		<h5>{{meeting["name"]}}</h5>
+            		<p>{{meeting["date"]}}<p>
+            	</div><!--
+                --><div class="com-xs-12 col-sm-7 vcenter">
+            		<p class="attend-list" id="attendees-{{meeting["id"]}}">
+            			{% for name in meeting["attendees"] %}
+            			{{name}}{% if not loop.last %}, {% endif %}
+            			{% endfor %}
+            		</p>
+            	</div><!--
+                --><div class="col-xs-12 col-sm-2 vcenter text-center">
+            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="editMeeting" data-cid="{{meeting["id"]}}" data-meeting="{{meeting["type"]}}">
             		<span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
             		</button>
             	</div>
@@ -75,6 +129,31 @@ Attendance History
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger delete-btn pull-left">Delete</button>
                         <input type="submit" class="btn btn-primary" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reviewMeeting" tabindex="-1">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="editMeetingTitle">Review Submission</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="row user-edit-row">
+                            <label class="control-label" for="attendees">Attendees</label>
+                            <input type="text" name="attendees" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger delete-btn pull-left">Delete</button>
+                        <input type="submit" class="btn btn-success" value="Approve">
                     </div>
                 </form>
             </div>
