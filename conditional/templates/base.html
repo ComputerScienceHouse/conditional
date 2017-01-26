@@ -23,8 +23,14 @@
             {% block body %}
             {% endblock %}
         {% else %}
-        <div class="container main">
-            <div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove-sign"></span> Site Lockdown: Evaluations in progress. Please check back later.</div>
+        <div class="container main error-page align-center">
+            <div class="col-xs-12">
+                <img src="/static/images/material_lock.svg" alt="Attention!">
+                <h1>Congratulations or I'm Sorry...</h1>
+                <h2>We cannot reveal the results of your evaluation!</h2>
+                <h3>Evaluations underway:</h3>
+                <p>Conditional is in Lockdown</p>
+            </div>
         </div>
         {% endif %}
 
