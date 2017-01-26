@@ -1,7 +1,6 @@
 import os
 import subprocess
-from flask import Flask
-from flask import redirect
+from flask import Flask, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from csh_ldap import CSHLDAP
@@ -52,6 +51,8 @@ app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 app.register_blueprint(cache_bp)
 
+from conditional.util.flask import render_template
+from conditional.util.ldap import ldap_get_member
 
 @app.route('/<path:path>')
 def static_proxy(path):
@@ -63,6 +64,20 @@ def static_proxy(path):
 def default_route():
     return redirect('/dashboard')
 
+@app.errorhandler(404)
+@app.errorhandler(500)
+def route_errors(error):
+    username = request.headers.get('x-webauth-user')
+    member = ldap_get_member(username)
+    data = dict()
+    data['username'] = member.uid
+    data['name'] = member.cn
+    code = error.code
+    return render_template(request=request,
+                            template_name='404.html',
+                            error=str(error),
+                            error_code=code,
+                            **data), 404
 
 @app.cli.command()
 def zoo():
