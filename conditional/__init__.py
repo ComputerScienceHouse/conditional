@@ -74,10 +74,10 @@ def route_errors(error):
     data['name'] = member.cn
     code = error.code
     return render_template(request=request,
-                            template_name='404.html',
+                            template_name='errors.html',
                             error=str(error),
                             error_code=code,
-                            **data), 404
+                            **data), int(code)
 
 @app.cli.command()
 def zoo():
