@@ -1,0 +1,36 @@
+.error-page {
+  padding-top: 80px;
+
+  .glyphicon,
+  h1,
+  h2,
+  h3,
+  p {
+    color: #878787;
+  }
+
+  img {
+    margin-bottom: 40px;
+    width: 200px;
+  }
+
+  h1 {
+    font-size: 50px;
+    font-weight: bolder;
+  }
+
+  h2 {
+    margin-bottom: 80px;
+    font-size: 30px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 25px;
+  }
+
+  p {
+    font-size: 20px;
+    font-weight: lighter;
+  }
+}
