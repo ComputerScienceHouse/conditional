@@ -1,25 +1,30 @@
 import os
 import subprocess
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, render_template, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from csh_ldap import CSHLDAP
+from raven import fetch_git_sha
+from raven.contrib.flask import Sentry
+from raven.exceptions import InvalidGitRepository
 import structlog
 
 app = Flask(__name__)
 
-config = os.path.join(os.getcwd(), "config.py")
+config = os.path.join(app.config.get('ROOT_DIR', os.getcwd()), "config.py")
 
 app.config.from_pyfile(config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config["GIT_REVISION"] = subprocess.check_output(['git',
-                                                      'rev-parse',
-                                                      '--short',
-                                                      'HEAD']).decode('utf-8').rstrip()
+try:
+    app.config["GIT_REVISION"] = fetch_git_sha(app.config["ROOT_DIR"])[:7]
+except (InvalidGitRepository, KeyError):
+    app.config["GIT_REVISION"] = "unknown"
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 logger = structlog.get_logger()
+sentry = Sentry(app)
 
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
@@ -51,7 +56,6 @@ app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 app.register_blueprint(cache_bp)
 
-from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_member
 
 @app.route('/<path:path>')
@@ -67,16 +71,38 @@ def default_route():
 @app.errorhandler(404)
 @app.errorhandler(500)
 def route_errors(error):
-    username = request.headers.get('x-webauth-user')
-    member = ldap_get_member(username)
     data = dict()
-    data['username'] = member.uid
-    data['name'] = member.cn
-    code = error.code
-    return render_template(request=request,
-                            template_name='errors.html',
-                            error=str(error),
+    username = request.headers.get('x-webauth-user')
+
+    # Handle the case where the header isn't present
+    if username is not None:
+        member = ldap_get_member(username)
+        data['username'] = member.uid
+        data['name'] = member.cn
+    else:
+        data['username'] = "unknown"
+        data['name'] = "Unknown"
+
+    # Figure out what kind of error was passed
+    if isinstance(error, int):
+        code = error
+    elif hasattr(error, 'code'):
+        code = error.code
+    else:
+        # Unhandled exception
+        code = 500
+
+    # Is this a 404?
+    if code == 404:
+        error_desc = "Page Not Found"
+    else:
+        error_desc = type(error).__name__
+
+    return render_template('errors.html',
+                            error=error_desc,
                             error_code=code,
+                            event_id=g.sentry_event_id,
+                            public_dsn=sentry.client.get_public_dsn('https'),
                             **data), int(code)
 
 @app.cli.command()
