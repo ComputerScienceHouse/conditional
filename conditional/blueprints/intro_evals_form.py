@@ -6,6 +6,7 @@ from flask import Blueprint, request, redirect, jsonify
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import EvalSettings
 from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
 
 from conditional import db
@@ -23,8 +24,8 @@ def display_intro_evals_form():
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
-
-    if not ldap_is_intromember(user_name):
+    account = ldap_get_member(user_name)
+    if not ldap_is_intromember(account):
         return redirect("/dashboard")
     eval_data = FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == user_name).first()
