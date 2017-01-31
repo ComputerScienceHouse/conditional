@@ -9,6 +9,7 @@ from conditional.util.ldap import ldap_get_intro_members
 
 from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import CommitteeMeeting
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import FreshmanHouseMeetingAttendance
@@ -33,11 +34,13 @@ def display_intro_evals(internal=False):
     # get user data
     def get_uid_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == member_id)])
+            MemberCommitteeAttendance.uid == member_id)
+            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
 
     def get_fid_cm_count(member_id):
         return len([a for a in FreshmanCommitteeAttendance.query.filter(
-            FreshmanCommitteeAttendance.fid == member_id)])
+            FreshmanCommitteeAttendance.fid == member_id)
+            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
 
     user_name = None
     if not internal:
@@ -88,7 +91,8 @@ def display_intro_evals(internal=False):
                 [s.name for s in TechnicalSeminar.query.filter(
                     TechnicalSeminar.id.in_(
                         [a.seminar_id for a in FreshmanSeminarAttendance.query.filter(
-                            FreshmanSeminarAttendance.fid == fid.id)]
+                            FreshmanSeminarAttendance.fid == fid.id)
+                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).approved]
                     ))
                  ],
             'social_events': '',
@@ -141,7 +145,8 @@ def display_intro_evals(internal=False):
                 [s.name for s in TechnicalSeminar.query.filter(
                     TechnicalSeminar.id.in_(
                         [a.seminar_id for a in MemberSeminarAttendance.query.filter(
-                            MemberSeminarAttendance.uid == uid)]
+                            MemberSeminarAttendance.uid == uid)
+                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).approved]
                     ))
                  ],
             'social_events': freshman_data.social_events,
