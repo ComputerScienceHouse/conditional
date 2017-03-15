@@ -103,6 +103,8 @@ def ldap_set_housingpoints(account, housing_points):
 
 
 def ldap_set_roomnumber(account, room_number):
+    if room_number == "":
+        room_number = None
     account.roomNumber = room_number
     ldap_get_current_students.cache_clear()
     ldap_get_member.cache_clear()
