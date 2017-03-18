@@ -88,8 +88,7 @@ def ldap_is_financial_director(account):
 
 
 def ldap_is_eval_director(account):
-    # TODO FIXME Evaulations -> Evaluations
-    return _ldap_is_member_of_directorship(account, 'Evaulations')
+    return _ldap_is_member_of_directorship(account, 'Evaluations')
 
 
 def ldap_is_current_student(account):
