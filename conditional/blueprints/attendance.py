@@ -80,7 +80,7 @@ def get_non_alumni_non_coop(internal=False):
     for account in active_members:
         if account.uid in coop_members:
             # Members who are on co-op don't need to go to house meeting.
-            pass
+            continue
 
         eligible_members.append(
             {
