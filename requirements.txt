@@ -9,5 +9,5 @@ structlog
 flask_sqlalchemy
 flask_migrate
 pylint
-psycopg2
+#psycopg2
 raven[flask]
