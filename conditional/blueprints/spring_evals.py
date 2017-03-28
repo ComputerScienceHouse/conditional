@@ -89,6 +89,14 @@ def display_spring_evals(internal=False):
                     MajorProject.uid == uid)]
         }
         member['major_projects_len'] = len(member['major_projects'])
+        member['major_project_passed'] = [
+            {
+                'name': p.name,
+                'status': p.status,
+                'description': p.description
+            } for p in MajorProject.query.filter(MajorProject.uid == uid)
+            if p.status == "Passed"]
+        member['major_projects_passed_len'] = len(member['major_projects_passed'])
         member['major_project_passed'] = False
         for mp in member['major_projects']:
             if mp['status'] == "Passed":
