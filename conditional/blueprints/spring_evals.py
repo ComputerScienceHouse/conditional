@@ -113,8 +113,8 @@ def display_spring_evals(internal=False):
     # return names in 'first last (username)' format
     if internal:
         return sp_members
-    else:
-        return render_template(request,
-                               'spring_evals.html',
-                               username=user_name,
-                               members=sp_members)
+
+    return render_template(request,
+                           'spring_evals.html',
+                           username=user_name,
+                           members=sp_members)

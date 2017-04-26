@@ -373,13 +373,13 @@ def member_management_getuserinfo(uid):
                 'missed_hm': hms_missed,
                 'user': 'eval'
             }), 200
-    else:
-        return jsonify(
-            {
-                'name': account.cn,
-                'active_member': ldap_is_active(account),
-                'user': 'financial'
-            }), 200
+
+    return jsonify(
+        {
+            'name': account.cn,
+            'active_member': ldap_is_active(account),
+            'user': 'financial'
+        }), 200
 
 
 @member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])

@@ -165,9 +165,9 @@ def display_intro_evals(internal=False):
 
     if internal:
         return ie_members
-    else:
-        # return names in 'first last (username)' format
-        return render_template(request,
-                               'intro_evals.html',
-                               username=user_name,
-                               members=ie_members)
+
+    # return names in 'first last (username)' format
+    return render_template(request,
+                           'intro_evals.html',
+                           username=user_name,
+                           members=ie_members)
