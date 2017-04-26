@@ -91,8 +91,8 @@ def get_non_alumni_non_coop(internal=False):
 
     if internal:
         return eligible_members
-    else:
-        return jsonify({'members': eligible_members}), 200
+
+    return jsonify({'members': eligible_members}), 200
 
 
 @attendance_bp.route('/attendance/cm_members')
@@ -314,15 +314,15 @@ def alter_house_attendance(uid, hid):
         member_meeting.attendance_status = "Attended"
         db.session.commit()
         return jsonify({"success": True}), 200
-    else:
-        freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
-            FreshmanHouseMeetingAttendance.fid == uid,
-            FreshmanHouseMeetingAttendance.meeting_id == hid
-        ).first()
 
-        freshman_meeting.attendance_status = "Attended"
-        db.session.commit()
-        return jsonify({"success": True}), 200
+    freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
+        FreshmanHouseMeetingAttendance.fid == uid,
+        FreshmanHouseMeetingAttendance.meeting_id == hid
+    ).first()
+
+    freshman_meeting.attendance_status = "Attended"
+    db.session.commit()
+    return jsonify({"success": True}), 200
 
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['POST'])

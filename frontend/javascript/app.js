@@ -5,8 +5,8 @@ Raven
     .install();
 
 // Capture unhandled exceptions in promises
-window.addEventListener('unhandledrejection', (err) => {
-    Raven.captureException(err.reason);
+window.addEventListener('unhandledrejection', err => {
+  Raven.captureException(err.reason);
 });
 
 // Load the rest of the modules

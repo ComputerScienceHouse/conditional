@@ -117,5 +117,5 @@ def conditional_delete(cid):
         db.session.flush()
         db.session.commit()
         return jsonify({"success": True}), 200
-    else:
-        return "Must be evals director to delete!", 401
+
+    return "Must be evals director to delete!", 401
