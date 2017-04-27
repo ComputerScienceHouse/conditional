@@ -10,7 +10,7 @@ from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.flask import render_template
 
-from conditional.models.models import Conditional
+from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
 
 from conditional import db
 
@@ -63,8 +63,22 @@ def create_conditional():
     uid = post_data['uid']
     description = post_data['description']
     due_date = datetime.strptime(post_data['dueDate'], "%Y-%m-%d")
+    if post_data['evaluation'] == 'spring':
+        current_eval = SpringEval.query.filter(SpringEval.status == "Pending",
+            SpringEval.uid == uid,
+            SpringEval.active == True).first().id # pylint: disable=singleton-comparison
+        db.session.add(Conditional(uid, description, due_date, s_eval=current_eval))
+    elif post_data['evaluation'] == 'intro':
+        if uid.isdigit():
+            current_eval = FreshmanEvalData.query.filter(FreshmanEvalData.freshman_eval_result == "Pending",
+                FreshmanEvalData.id == uid).first().id
+        else:
+            current_eval = FreshmanEvalData.query.filter(FreshmanEvalData.freshman_eval_result == "Pending",
+                FreshmanEvalData.uid == uid).first().id
+        db.session.add(Conditional(uid, description, due_date, i_eval=current_eval))
+    else:
+        db.session.add(Conditional(uid, description, due_date))
 
-    db.session.add(Conditional(uid, description, due_date))
     db.session.flush()
     db.session.commit()
 
@@ -89,12 +103,23 @@ def conditional_review():
     status = post_data['status']
 
     logger.info(action="updated conditional-%s to %s" % (cid, status))
-    Conditional.query.filter(
-        Conditional.id == cid). \
-        update(
+    conditional = Conditional.query.filter(Conditional.id == cid)
+    cond_obj = conditional.first()
+
+    conditional.update(
         {
             'status': status
         })
+    if cond_obj.s_evaluation:
+        SpringEval.query.filter(SpringEval.id == cond_obj.s_evaluation).update(
+            {
+                'status': status
+            })
+    elif cond_obj.i_evaluation:
+        FreshmanEvalData.query.filter(FreshmanEvalData.id == cond_obj.i_evaluation).update(
+            {
+                'freshman_eval_result': status
+            })
 
     db.session.flush()
     db.session.commit()

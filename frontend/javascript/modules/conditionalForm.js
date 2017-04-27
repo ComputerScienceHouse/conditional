@@ -16,10 +16,15 @@ export default class ConditionalForm {
   _submitForm(e) {
     e.preventDefault();
     let uid = this.form.uid.value;
+    let evaluation = null;
+    if (location.pathname.split('/')[1] === "slideshow") {
+      evaluation = location.pathname.split('/')[2];
+    }
     let payload = {
       uid: uid,
       description: this.form.querySelector('input[name=description]').value,
-      dueDate: this.form.querySelector('input[name=due_date]').value
+      dueDate: this.form.querySelector('input[name=due_date]').value,
+      evaluation: evaluation
     };
     FetchUtil.postWithWarning(this.endpoint, payload, {
       warningText: "Are you sure you want to create this conditional?",
