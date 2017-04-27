@@ -1,0 +1,19 @@
+{% extends "nav.html" %}
+{% block title %}Error {{ error_code }}{% endblock %}
+{% block body %}
+<div class="container main error-page align-center">
+    <div class="col-xs-12">
+        <img src="/static/images/material_attention.svg" alt="Attention!">
+        <h1>Congratulations or I'm Sorry...</h1>
+        <h2>Something has gone terribly wrong!</h2>
+        <h3>{{ error }}</h3>
+        {% if event_id %}
+        <p>The error identifier is: {{ event_id }}</p>
+        {% endif %}
+    </div>
+    {% if event_id %}
+    <button type="button" class="btn btn-primary" data-module="errorReport" data-event="{{ event_id }}">Report this Error</button>
+    {% endif %}
+</div>
+
+{% endblock %}

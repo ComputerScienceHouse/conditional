@@ -6,6 +6,7 @@ from flask import Blueprint, request
 from conditional.util.ldap import ldap_get_active_members
 
 from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import CommitteeMeeting
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MajorProject
 from conditional.models.models import HouseMeeting
@@ -28,7 +29,8 @@ def display_spring_evals(internal=False):
 
     def get_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == member_id)])
+            MemberCommitteeAttendance.uid == member_id)
+            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
 
     user_name = None
     if not internal:
@@ -87,6 +89,14 @@ def display_spring_evals(internal=False):
                     MajorProject.uid == uid)]
         }
         member['major_projects_len'] = len(member['major_projects'])
+        member['major_project_passed'] = [
+            {
+                'name': p.name,
+                'status': p.status,
+                'description': p.description
+            } for p in MajorProject.query.filter(MajorProject.uid == uid)
+            if p.status == "Passed"]
+        member['major_projects_passed_len'] = len(member['major_projects_passed'])
         member['major_project_passed'] = False
         for mp in member['major_projects']:
             if mp['status'] == "Passed":
@@ -103,8 +113,8 @@ def display_spring_evals(internal=False):
     # return names in 'first last (username)' format
     if internal:
         return sp_members
-    else:
-        return render_template(request,
-                               'spring_evals.html',
-                               username=user_name,
-                               members=sp_members)
+
+    return render_template(request,
+                           'spring_evals.html',
+                           username=user_name,
+                           members=sp_members)

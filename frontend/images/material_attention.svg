@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Attention_000000</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Attention_000000" fill-rule="nonzero" fill="#C1C1C1">
+            <path d="M75,0 C33.75,0 0,33.75 0,75 C0,116.25 33.75,150 75,150 C116.25,150 150,116.25 150,75 C150,33.75 116.25,0 75,0 Z M75,15 C108,15 135,42 135,75 C135,108 108,135 75,135 C42,135 15,108 15,75 C15,42 42,15 75,15 Z M67.5,37.5 L67.5,82.5 L82.5,82.5 L82.5,37.5 L67.5,37.5 Z M67.5,97.5 L67.5,112.5 L82.5,112.5 L82.5,97.5 L67.5,97.5 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

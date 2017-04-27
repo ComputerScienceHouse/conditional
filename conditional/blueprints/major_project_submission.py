@@ -121,5 +121,5 @@ def major_project_delete(pid):
         db.session.flush()
         db.session.commit()
         return jsonify({"success": True}), 200
-    else:
-        return "Must be project owner to delete!", 401
+
+    return "Must be project owner to delete!", 401

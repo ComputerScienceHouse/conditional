@@ -40,7 +40,7 @@ def render_template(request, template_name, **kwargs):
     ts_review = len(TechnicalSeminar.query.filter(
         TechnicalSeminar.approved == False).all()) # pylint: disable=singleton-comparison
 
-    if is_eval:
+    if is_eboard:
         lockdown = False
 
     return flask_render_template(
