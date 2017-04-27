@@ -32,8 +32,8 @@ Membership Evaluations Slideshow
           </div>
           <div class="col-xs-12 col-md-4">
             {% set major_projects_passed = m['major_projects_passed_len'] >= 1 %}
-            <div class="item{% if major_projects_passed_len %} passed{% endif %}">
-              <span class="icon glyphicon glyphicon-{% if major_projects_passed_len %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+            <div class="item{% if major_projects_passed %} passed{% endif %}">
+              <span class="icon glyphicon glyphicon-{% if major_projects_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
               <h3>{{m['major_projects_passed_len']}}</h3>
               <p>Major Projects</p>
             </div>

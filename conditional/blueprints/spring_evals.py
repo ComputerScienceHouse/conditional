@@ -30,7 +30,7 @@ def display_spring_evals(internal=False):
     def get_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == member_id)
-            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
+            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
 
     user_name = None
     if not internal:
@@ -89,7 +89,7 @@ def display_spring_evals(internal=False):
                     MajorProject.uid == uid)]
         }
         member['major_projects_len'] = len(member['major_projects'])
-        member['major_project_passed'] = [
+        member['major_projects_passed'] = [
             {
                 'name': p.name,
                 'status': p.status,

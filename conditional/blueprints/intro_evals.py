@@ -35,12 +35,12 @@ def display_intro_evals(internal=False):
     def get_uid_cm_count(member_id):
         return len([a for a in MemberCommitteeAttendance.query.filter(
             MemberCommitteeAttendance.uid == member_id)
-            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
+            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
 
     def get_fid_cm_count(member_id):
         return len([a for a in FreshmanCommitteeAttendance.query.filter(
             FreshmanCommitteeAttendance.fid == member_id)
-            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
+            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
 
     user_name = None
     if not internal:
@@ -92,7 +92,7 @@ def display_intro_evals(internal=False):
                     TechnicalSeminar.id.in_(
                         [a.seminar_id for a in FreshmanSeminarAttendance.query.filter(
                             FreshmanSeminarAttendance.fid == fid.id)
-                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).approved]
+                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).first().approved]
                     ))
                  ],
             'social_events': '',
@@ -146,7 +146,7 @@ def display_intro_evals(internal=False):
                     TechnicalSeminar.id.in_(
                         [a.seminar_id for a in MemberSeminarAttendance.query.filter(
                             MemberSeminarAttendance.uid == uid)
-                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).approved]
+                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).first().approved]
                     ))
                  ],
             'social_events': freshman_data.social_events,
