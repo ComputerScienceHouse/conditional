@@ -219,14 +219,18 @@ class Conditional(db.Model):
     status = Column(Enum('Pending', 'Passed', 'Failed',
                          name="conditional_enum"),
                     nullable=False)
+    s_evaluation = Column(ForeignKey('spring_evals.id'))
+    i_evaluation = Column(ForeignKey('freshman_eval_data.id'))
 
-    def __init__(self, uid, description, due):
+    def __init__(self, uid, description, due, s_eval=None, i_eval=None):
         self.uid = uid
         self.description = description
         self.date_due = due
         self.date_created = datetime.now()
         self.status = "Pending"
         self.active = True
+        self.s_evaluation = s_eval
+        self.i_evaluation = i_eval
 
 
 class EvalSettings(db.Model):

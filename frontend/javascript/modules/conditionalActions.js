@@ -28,7 +28,6 @@ export default class ConditionalActions {
       });
     } else {
       const actionExt = (action === "pass") ? "Passed" : "Failed";
-
       let payload = {
         id: this.id,
         status: actionExt
