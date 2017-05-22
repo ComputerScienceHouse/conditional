@@ -9,7 +9,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
 
-from conditional import db
+from conditional import db, start_of_year
 from sqlalchemy import desc
 
 
@@ -38,7 +38,9 @@ def display_major_project():
             'id': p.id,
             'is_owner': bool(user_name == p.uid)
         } for p in
-        MajorProject.query.order_by(desc(MajorProject.id))]
+        MajorProject.query.filter(
+            MajorProject.date > start_of_year()).order_by(
+                desc(MajorProject.id))]
 
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format

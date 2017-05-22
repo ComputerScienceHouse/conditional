@@ -1,5 +1,6 @@
 import os
 import subprocess
+from datetime import datetime
 from flask import Flask, redirect, request, render_template, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -29,6 +30,12 @@ sentry = Sentry(app)
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
                ro=app.config['LDAP_RO'])
+
+def start_of_year():
+    start = datetime(datetime.today().year, 6, 1)
+    if datetime.today() < start:
+        start = datetime(datetime.today().year-1, 6, 1)
+    return start
 
 # pylint: disable=C0413
 
