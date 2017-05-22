@@ -9,7 +9,6 @@ from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_active_members
 
-from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MajorProject
 from conditional.models.models import Conditional
@@ -19,7 +18,9 @@ from conditional.models.models import CommitteeMeeting
 
 from conditional.util.housing import get_queue_position
 from conditional.util.flask import render_template
-from conditional.util.member import get_freshman_data, get_voting_members
+from conditional.util.member import get_freshman_data, get_voting_members, get_cm, get_hm
+
+from conditional import start_of_year
 
 logger = structlog.get_logger()
 
@@ -55,18 +56,13 @@ def display_dashboard():
         data['freshman'] = False
 
     spring = {}
-    c_meetings = [m.meeting_id for m in
-                  MemberCommitteeAttendance.query.filter(
-                      MemberCommitteeAttendance.uid == member.uid
-                  ) if CommitteeMeeting.query.filter(
-                      CommitteeMeeting.id == m.meeting_id).first().approved]
+    c_meetings = get_cm(member)
     spring['committee_meetings'] = len(c_meetings)
-    h_meetings = [(m.meeting_id, m.attendance_status) for m in
-                  MemberHouseMeetingAttendance.query.filter(
-                      MemberHouseMeetingAttendance.uid == member.uid)]
+    h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(member)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
-    eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid
-                                         and SpringEval.active).first()
+    eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid,
+                                         SpringEval.date_created > start_of_year(),
+                                         SpringEval.active == True).first() # pylint: disable=singleton-comparison
     if eval_entry is not None:
         spring['status'] = eval_entry.status
     else:
@@ -92,7 +88,8 @@ def display_dashboard():
             'status': p.status,
             'description': p.description
         } for p in
-        MajorProject.query.filter(MajorProject.uid == member.uid)]
+        MajorProject.query.filter(MajorProject.uid == member.uid,
+                                  MajorProject.date > start_of_year())]
 
     data['major_projects_count'] = len(data['major_projects'])
 
@@ -112,7 +109,9 @@ def display_dashboard():
             'description': c.description,
             'status': c.status
         } for c in
-        Conditional.query.filter(Conditional.uid == member.uid)]
+        Conditional.query.filter(
+            Conditional.uid == member.uid,
+            Conditional.date_due > start_of_year())]
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
@@ -121,18 +120,23 @@ def display_dashboard():
             'type': m.committee,
             'datetime': m.timestamp.date()
         } for m in CommitteeMeeting.query.filter(
-            CommitteeMeeting.id.in_(c_meetings)
+            CommitteeMeeting.id.in_(c_meetings),
+            CommitteeMeeting.timestamp > start_of_year()
         )]
 
     hm_attendance = [
         {
             'reason': m.excuse,
-            'datetime': HouseMeeting.query.filter(
-                HouseMeeting.id == m.meeting_id).first().date
+            'datetime': m.date
         } for m in
-        MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.uid == member.uid
-        ).filter(MemberHouseMeetingAttendance.attendance_status == "Absent")]
+        MemberHouseMeetingAttendance.query.outerjoin(
+            HouseMeeting,
+            MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
+                MemberHouseMeetingAttendance.excuse,
+                HouseMeeting.date).filter(
+            MemberHouseMeetingAttendance.uid == member.uid,
+            MemberHouseMeetingAttendance.attendance_status == "Absent",
+            HouseMeeting.date > start_of_year())]
 
     data['cm_attendance'] = cm_attendance
     data['cm_attendance_len'] = len(cm_attendance)

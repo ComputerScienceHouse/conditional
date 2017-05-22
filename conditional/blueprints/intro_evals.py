@@ -6,9 +6,7 @@ from flask import Blueprint, request
 
 from conditional.util.ldap import ldap_get_intro_members
 
-
 from conditional.models.models import FreshmanCommitteeAttendance
-from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import CommitteeMeeting
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -19,6 +17,10 @@ from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import HouseMeeting
 from conditional.models.models import TechnicalSeminar
 from conditional.util.flask import render_template
+
+from conditional.util.member import get_cm, get_hm
+
+from conditional import start_of_year
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 
@@ -32,11 +34,6 @@ def display_intro_evals(internal=False):
     log.info('frontend', action='display intro evals listing')
 
     # get user data
-    def get_uid_cm_count(member_id):
-        return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == member_id)
-            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
-
     def get_fid_cm_count(member_id):
         return len([a for a in FreshmanCommitteeAttendance.query.filter(
             FreshmanCommitteeAttendance.fid == member_id)
@@ -52,6 +49,7 @@ def display_intro_evals(internal=False):
 
     # freshmen who don't have accounts
     fids = [f for f in FreshmanAccount.query.filter(
+        FreshmanAccount.eval_date > start_of_year(),
         FreshmanAccount.eval_date > datetime.now())]
 
     for fid in fids:
@@ -108,6 +106,7 @@ def display_intro_evals(internal=False):
         uid = member.uid
         name = member.cn
         freshman_data = FreshmanEvalData.query.filter(
+            FreshmanEvalData.eval_date > start_of_year(),
             FreshmanEvalData.uid == uid).first()
 
         if freshman_data is None:
@@ -115,26 +114,21 @@ def display_intro_evals(internal=False):
         elif freshman_data.freshman_eval_result != "Pending" and internal:
             continue
 
-        h_meetings = [m.meeting_id for m in
-                      MemberHouseMeetingAttendance.query.filter(
-                          MemberHouseMeetingAttendance.uid == uid
-                      ).filter(
-                          MemberHouseMeetingAttendance.attendance_status == "Absent"
-                      )]
-        member = {
+        h_meetings = [m.meeting_id for m in get_hm(member)]
+        member_info = {
             'name': name,
             'uid': uid,
             'eval_date': freshman_data.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': freshman_data.signatures_missed,
-            'committee_meetings': get_uid_cm_count(uid),
-            'committee_meetings_passed': get_uid_cm_count(uid) >= 10,
+            'committee_meetings': len(get_cm(member)),
+            'committee_meetings_passed': len(get_cm(member)) >= 10,
             'house_meetings_missed':
                 [
                     {
                         "date": m.date.strftime("%Y-%m-%d"),
                         "reason":
                             MemberHouseMeetingAttendance.query.filter(
-                                MemberHouseMeetingAttendance.uid == uid).filter(
+                                MemberHouseMeetingAttendance.uid == uid,
                                 MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
                     }
                     for m in HouseMeeting.query.filter(
@@ -146,7 +140,9 @@ def display_intro_evals(internal=False):
                     TechnicalSeminar.id.in_(
                         [a.seminar_id for a in MemberSeminarAttendance.query.filter(
                             MemberSeminarAttendance.uid == uid)
-                            if TechnicalSeminar.query.filter(TechnicalSeminar.id == a.seminar_id).first().approved]
+                            if TechnicalSeminar.query.filter(
+                                TechnicalSeminar.id == a.seminar_id,
+                                TechnicalSeminar.timestamp > start_of_year()).first().approved]
                     ))
                  ],
             'social_events': freshman_data.social_events,
@@ -155,7 +151,7 @@ def display_intro_evals(internal=False):
             'ldap_account': True,
             'status': freshman_data.freshman_eval_result
         }
-        ie_members.append(member)
+        ie_members.append(member_info)
 
     ie_members.sort(key=lambda x: x['freshman_project'] == "Passed")
     ie_members.sort(key=lambda x: len(x['house_meetings_missed']))

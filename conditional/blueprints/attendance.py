@@ -25,7 +25,7 @@ from conditional.models.models import FreshmanAccount
 
 from conditional.util.flask import render_template
 
-from conditional import db
+from conditional import db, start_of_year
 
 logger = structlog.get_logger()
 
@@ -414,6 +414,7 @@ def attendance_history():
                    "attendees": get_meeting_attendees(m.id),
                    "type": "cm"
                    } for m in CommitteeMeeting.query.filter(
+                       CommitteeMeeting.timestamp > start_of_year(),
                        CommitteeMeeting.approved).all()]
         all_ts = [{"id": m.id,
                    "name": m.name,
@@ -422,6 +423,7 @@ def attendance_history():
                    "attendees": get_seminar_attendees(m.id),
                    "type": "ts"
                    } for m in TechnicalSeminar.query.filter(
+                       TechnicalSeminar.timestamp > start_of_year(),
                        TechnicalSeminar.approved).all()]
         pend_cm = [{"id": m.id,
                     "name": m.committee,
@@ -429,6 +431,7 @@ def attendance_history():
                     "date": m.timestamp.strftime("%a %m/%d/%Y"),
                     "attendees": get_meeting_attendees(m.id)
                    } for m in CommitteeMeeting.query.filter(
+                       CommitteeMeeting.timestamp > start_of_year(),
                        CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
         pend_ts = [{"id": m.id,
                     "name": m.name,
@@ -436,6 +439,7 @@ def attendance_history():
                     "date": m.timestamp.strftime("%a %m/%d/%Y"),
                     "attendees": get_seminar_attendees(m.id)
                    } for m in TechnicalSeminar.query.filter(
+                       TechnicalSeminar.timestamp > start_of_year(),
                        TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
         all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
         if len(all_cm) % 10 != 0:

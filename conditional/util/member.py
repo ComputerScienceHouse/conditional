@@ -14,6 +14,9 @@ from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import TechnicalSeminar
+from conditional.models.models import HouseMeeting
+
+from conditional import start_of_year
 
 
 @lru_cache(maxsize=1024)
@@ -96,3 +99,28 @@ def get_freshman_data(user_name):
 def get_onfloor_members():
     return [uid for uid in [members.uid for members in ldap_get_active_members()]
             if uid in [members.uid for members in ldap_get_onfloor_members()]]
+
+
+def get_cm(member):
+    try:
+        c_meetings = [m.meeting_id for m in
+                      MemberCommitteeAttendance.query.filter(
+                          MemberCommitteeAttendance.uid == member.uid
+                      ) if CommitteeMeeting.query.filter(
+                          CommitteeMeeting.timestamp > start_of_year(),
+                          CommitteeMeeting.id == m.meeting_id).first().approved]
+    except AttributeError:
+        c_meetings = []
+    return c_meetings
+
+
+def get_hm(member):
+    h_meetings = MemberHouseMeetingAttendance.query.outerjoin(
+                  HouseMeeting,
+                  MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
+                      MemberHouseMeetingAttendance.meeting_id,
+                      MemberHouseMeetingAttendance.attendance_status,
+                      HouseMeeting.date).filter(
+                          HouseMeeting.date > start_of_year(),
+                          MemberHouseMeetingAttendance.uid == member.uid)
+    return h_meetings
