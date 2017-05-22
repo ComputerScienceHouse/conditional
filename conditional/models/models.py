@@ -128,6 +128,7 @@ class FreshmanSeminarAttendance(db.Model):
 class MajorProject(db.Model):
     __tablename__ = 'major_projects'
     id = Column(Integer, primary_key=True)
+    date = Column(Date, nullable=False)
     uid = Column(String(32), nullable=False)
     name = Column(String(64), nullable=False)
     description = Column(Text)
@@ -138,6 +139,7 @@ class MajorProject(db.Model):
 
     def __init__(self, uid, name, desc):
         self.uid = uid
+        self.date = datetime.now()
         self.name = name
         self.description = desc
         self.status = 'Pending'
