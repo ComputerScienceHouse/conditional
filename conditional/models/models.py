@@ -191,13 +191,14 @@ class CurrentCoops(db.Model):
     __tablename__ = 'current_coops'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
-    active = Column(Boolean, nullable=False)
     date_created = Column(Date, nullable=False)
+    semester = Column(Enum('Fall', 'Spring', name="co_op_enum"), nullable=False)
 
-    def __init__(self, uid):
+    def __init__(self, uid, semester):
         self.uid = uid
         self.active = True
         self.date_created = datetime.now()
+        self.semester = semester
 
 
 class OnFloorStatusAssigned(db.Model):
