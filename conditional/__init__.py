@@ -50,6 +50,7 @@ from conditional.blueprints.conditional import conditionals_bp
 from conditional.blueprints.member_management import member_management_bp
 from conditional.blueprints.slideshow import slideshow_bp
 from conditional.blueprints.cache_management import cache_bp
+from conditional.blueprints.co_op import co_op_bp
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(attendance_bp)
@@ -62,6 +63,7 @@ app.register_blueprint(conditionals_bp)
 app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 app.register_blueprint(cache_bp)
+app.register_blueprint(co_op_bp)
 
 from conditional.util.ldap import ldap_get_member
 
