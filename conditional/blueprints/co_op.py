@@ -17,7 +17,7 @@ logger = structlog.get_logger()
 def display_co_op_form():
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display conditional listing page')
+    log.info('frontend', action='display co-op submission page')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')

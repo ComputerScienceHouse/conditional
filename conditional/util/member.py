@@ -29,11 +29,13 @@ def get_voting_members():
     else:
         semester = 'Spring'
 
-    voting_list = [uid for uid in [member.uid for member in ldap_get_active_members()]
-                   if uid not in [member.uid for member in ldap_get_intro_members()] and
-                   uid not in [member.uid for member in CurrentCoops.query.filter(
-                       CurrentCoops.date_created > start_of_year(),
-                       CurrentCoops.semester == semester).all()]]
+    active_members = set(member.uid for member in ldap_get_active_members())
+    intro_members = set(member.uid for member in ldap_get_intro_members())
+    on_coop = set(member.uid for member in CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester).all())
+
+    voting_list = list(active_members - intro_members - on_coop)
 
     passed_fall = FreshmanEvalData.query.filter(
         FreshmanEvalData.freshman_eval_result == "Passed"
