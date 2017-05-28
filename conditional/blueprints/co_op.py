@@ -5,6 +5,8 @@ from flask import Blueprint, request, jsonify
 
 from conditional.util.flask import render_template
 
+from conditional.util.ldap import ldap_get_member, ldap_is_eval_director
+
 from conditional.models.models import CurrentCoops
 
 from conditional import db, start_of_year
@@ -48,6 +50,27 @@ def submit_co_op_form():
 
     co_op = CurrentCoops(uid=user_name, semester=semester)
     db.session.add(co_op)
+    db.session.flush()
+    db.session.commit()
+
+    return jsonify({"success": True}), 200
+
+
+@co_op_bp.route('/co_op/<uid>', methods=['DELETE'])
+def delete_co_op(uid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+
+    log.info('api', action="Delete %s's Co-Op" % uid)
+
+    CurrentCoops.query.filter(CurrentCoops.uid == uid, CurrentCoops.date_created > start_of_year()).delete()
+
     db.session.flush()
     db.session.commit()
 
