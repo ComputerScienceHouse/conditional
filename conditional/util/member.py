@@ -1,4 +1,5 @@
 from functools import lru_cache
+from datetime import datetime
 
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_intro_members
@@ -15,21 +16,34 @@ from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import TechnicalSeminar
 from conditional.models.models import HouseMeeting
+from conditional.models.models import CurrentCoops
 
 from conditional import start_of_year
 
 
 @lru_cache(maxsize=1024)
 def get_voting_members():
-    voting_list = [uid for uid in [member.uid for member in ldap_get_active_members()]
-                   if uid not in [member.uid for member in ldap_get_intro_members()]]
+
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = 'Fall'
+    else:
+        semester = 'Spring'
+
+    active_members = set(member.uid for member in ldap_get_active_members())
+    intro_members = set(member.uid for member in ldap_get_intro_members())
+    on_coop = set(member.uid for member in CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester).all())
+
+    voting_list = list(active_members - intro_members - on_coop)
 
     passed_fall = FreshmanEvalData.query.filter(
         FreshmanEvalData.freshman_eval_result == "Passed"
     ).distinct()
 
     for intro_member in passed_fall:
-        voting_list.append(intro_member.uid)
+        if intro_member.uid not in voting_list:
+            voting_list.append(intro_member.uid)
 
     return voting_list
 

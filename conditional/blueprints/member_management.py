@@ -20,6 +20,7 @@ from conditional.models.models import HouseMeeting
 from conditional.models.models import EvalSettings
 from conditional.models.models import OnFloorStatusAssigned
 from conditional.models.models import SpringEval
+from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
 from conditional.blueprints.intro_evals import display_intro_evals
@@ -42,7 +43,7 @@ from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
 from conditional.util.member import get_members_info, get_onfloor_members
 
-from conditional import db
+from conditional import db, start_of_year
 
 logger = structlog.get_logger()
 
@@ -63,6 +64,11 @@ def display_member_management():
 
     member_list = get_members_info()
     onfloor_list = get_onfloor_members()
+
+    co_op_list = [(ldap_get_member(member.uid).displayName, member.semester, member.uid) \
+        for member in CurrentCoops.query.filter(
+            CurrentCoops.date_created > start_of_year(),
+            CurrentCoops.semester != "Neither")]
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -92,6 +98,7 @@ def display_member_management():
                            num_fresh=len(freshmen_list),
                            num_onfloor=len(onfloor_list),
                            freshmen=freshmen_list,
+                           co_op=co_op_list,
                            site_lockdown=lockdown,
                            intro_form=intro_form)
 

@@ -67,7 +67,15 @@ def get_non_alumni_non_coop(internal=False):
 
     # Get all active members as a base house meeting attendance.
     active_members = ldap_get_active_members()
-    coop_members = [u.uid for u in CurrentCoops.query.all()]
+
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = 'Fall'
+    else:
+        semester = 'Spring'
+
+    coop_members = [u.uid for u in CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester).all()]
 
     eligible_members = [
         {

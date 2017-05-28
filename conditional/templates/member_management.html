@@ -38,6 +38,43 @@ Administration
             </div>
         </div>
     </div>
+    {% if co_op and is_eval_director%}
+       <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Co-Op Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="false" data-sort-column="1" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Semester</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in co_op %}
+                    <tr id="coop-{{c[2]}}">
+                        <td>
+                            <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{c[2]}}"> {{c[0]}}
+                        </td>
+                        <td>
+                            {{c[1]}}
+                        </td>
+                        <td width=100px>
+                            <a href="#" data-module="coopDelete" data-uid="{{c[2]}}">
+                                <span class="glyphicon glyphicon-trash red align-center" style="width: 100%"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     {% if is_eval_director %}
     <div class="panel panel-default">
