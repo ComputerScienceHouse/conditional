@@ -15,7 +15,7 @@ Co-Op Submission
                     <form data-module="coopSubmitForm">
                         <div class="co-op-group">
                             <div class="col-xs-12 col-sm-6">
-                                <div class="radio">
+                                <div class="radio co-op-radio">
                                     <label>
                                         <input type="radio" name="semester" id="fall" value="Fall">
                                         <div class="co-op-option">
@@ -26,7 +26,7 @@ Co-Op Submission
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-6">
-                                <div class="radio">
+                                <div class="radio co-op-radio">
                                     <label>
                                         <input type="radio" name="semester" id="spring" value="Spring">
                                         <div class="co-op-option">
@@ -40,7 +40,8 @@ Co-Op Submission
                         <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
                     </form>
                     {% else %}
-                    <p class="align-center">Thanks for submitting this form. Good luck on your {{on_coop.semester}} co-op!</p>
+                    <p class="align-center">Thank you for submitting this form. Good luck on your {{on_coop.semester}} co-op!</p>
+                    <p class="align-center">If you submitted this form by mistake or your plans have changed, please contact the Evaluations Director.</p>
                     {% endif %}
                 </div>
             </div>
