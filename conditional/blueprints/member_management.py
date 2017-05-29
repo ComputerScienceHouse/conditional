@@ -565,3 +565,23 @@ def get_member(uid):
     }
 
     return jsonify(account_dict), 200
+
+@member_management_bp.route('/manage/active', methods=['DELETE'])
+def clear_active_members():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='clear active group')
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+    # Get the active group.
+    members = ldap_get_active_members()
+
+    # Clear the active group.
+    for account in members:
+        log.info('api', action='remove %s from active status' % account.uid)
+        ldap_remove_member_from_group(account, 'active')
+    return jsonify({"success": True}), 200
