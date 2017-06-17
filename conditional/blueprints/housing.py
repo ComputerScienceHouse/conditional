@@ -11,7 +11,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
+from conditional.util.ldap import ldap_set_active
 
 from conditional.util.flask import render_template
 
@@ -119,7 +119,7 @@ def change_room_numbers(rmnumber):
             account = ldap_get_member(occupant)
             account.roomNumber = rmnumber
             log.info('api', action='%s assigned to room %s' % (occupant, rmnumber))
-            ldap_add_member_to_group(account, "active")
+            ldap_set_active(account)
             log.info('api', action='%s marked as active because of room assignment' % occupant)
     # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students

@@ -33,8 +33,11 @@ from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
 from conditional.util.ldap import ldap_set_housingpoints
+from conditional.util.ldap import ldap_set_current_student
+from conditional.util.ldap import ldap_set_non_current_student
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_member
+from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
@@ -549,7 +552,7 @@ def introductory_project_submit():
 def get_member(uid):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action="get %s's information" & uid)
+    log.info('api', action="get {}'s information".format(uid))
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -583,8 +586,31 @@ def clear_active_members():
     # Clear the active group.
     for account in members:
         log.info('api', action='remove %s from active status' % account.uid)
-        ldap_remove_member_from_group(account, 'active')
+        ldap_set_inactive(account)
     return jsonify({"success": True}), 200
+
+
+@member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])
+def remove_current_student(uid):
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+
+    member = ldap_get_member(uid)
+    if request.method == 'DELETE':
+        log.info('api', action='remove {} from current_student'.format(uid))
+        ldap_set_non_current_student(member)
+    elif request.method == 'POST':
+        log.info('api', action='add {} to current_student'.format(uid))
+        ldap_set_current_student(member)
+    return jsonify({"success": True}), 200
+
 
 @member_management_bp.route('/manage/new', methods=['GET'])
 def new_year():
@@ -598,6 +624,10 @@ def new_year():
     if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
+    current_students = ldap_get_current_students()
+
+
     return render_template(request,
                            'new_year.html',
-                           username=username)
+                           username=username,
+                           current_students=current_students)

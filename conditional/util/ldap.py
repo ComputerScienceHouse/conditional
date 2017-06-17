@@ -121,6 +121,18 @@ def ldap_set_inactive(account):
     ldap_get_member.cache_clear()
 
 
+def ldap_set_current_student(account):
+    _ldap_add_member_to_group(account, 'current_student')
+    ldap_get_current_students.cache_clear()
+    ldap_get_member.cache_clear()
+
+
+def ldap_set_non_current_student(account):
+    _ldap_remove_member_from_group(account, 'current_student')
+    ldap_get_current_students.cache_clear()
+    ldap_get_member.cache_clear()
+
+
 def ldap_get_roomnumber(account):
     try:
         return account.roomNumber
