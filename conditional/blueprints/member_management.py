@@ -549,7 +549,7 @@ def introductory_project_submit():
 def get_member(uid):
     log = logger.new(user_name=request.headers.get("x-webauth-user"),
                      request_id=str(uuid.uuid4()))
-    log.info('api', action='submit introductory project results')
+    log.info('api', action="get %s's information" & uid)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -585,3 +585,19 @@ def clear_active_members():
         log.info('api', action='remove %s from active status' % account.uid)
         ldap_remove_member_from_group(account, 'active')
     return jsonify({"success": True}), 200
+
+@member_management_bp.route('/manage/new', methods=['GET'])
+def new_year():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='show new year page')
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+
+    return render_template(request,
+                           'new_year.html',
+                           username=username)
