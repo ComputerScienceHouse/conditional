@@ -13,7 +13,12 @@ from conditional.blueprints.spring_evals import display_spring_evals
 
 from conditional.util.ldap import ldap_is_eval_director, ldap_get_member
 
+from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import OnFloorStatusAssigned
 from conditional.models.models import SpringEval
 
 from conditional import db
@@ -80,6 +85,21 @@ def slideshow_intro_review():
         {
             'freshman_eval_result': status
         })
+
+    if status == "Failed":
+        for mca in MemberCommitteeAttendance.query.filter(MemberCommitteeAttendance.uid == uid):
+            db.session.delete(mca)
+        for mts in MemberSeminarAttendance.query.filter(MemberSeminarAttendance.uid == uid):
+            db.session.delete(mts)
+        for mhm in MemberHouseMeetingAttendance.query.filter(MemberHouseMeetingAttendance.uid == uid):
+            db.session.delete(mhm)
+        for mof in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
+            db.session.delete(mof)
+        for mco in CurrentCoops.query.filter(CurrentCoops.uid == uid):
+            db.session.delete(mco)
+        for mse in SpringEval.query.filter(SpringEval.uid == uid):
+            db.session.delete(mse)
+        logger.info("backend", action="delete user data for %s" % (uid))
 
     db.session.flush()
     db.session.commit()
