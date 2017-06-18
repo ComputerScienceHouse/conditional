@@ -11,6 +11,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_set_active
 
 from conditional.util.flask import render_template
 
@@ -118,6 +119,8 @@ def change_room_numbers(rmnumber):
             account = ldap_get_member(occupant)
             account.roomNumber = rmnumber
             log.info('api', action='%s assigned to room %s' % (occupant, rmnumber))
+            ldap_set_active(account)
+            log.info('api', action='%s marked as active because of room assignment' % occupant)
     # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students
                              if ldap_get_roomnumber(account) == str(rmnumber)
@@ -138,3 +141,24 @@ def get_occupants(rmnumber):
     occupants = [account.uid for account in current_students
                  if ldap_get_roomnumber(account) == str(rmnumber)]
     return jsonify({"room": rmnumber, "occupants": occupants}), 200
+
+
+@housing_bp.route('/housing', methods=['DELETE'])
+def clear_all_rooms():
+    log = logger.new(user_name=request.headers.get("x-webauth-user"),
+                     request_id=str(uuid.uuid4()))
+    log.info('api', action='clear all room numbers')
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+    # Get list of current students.
+    current_students = ldap_get_current_students()
+
+    # Find the current occupants and clear them.
+    for occupant in current_students:
+        log.info('api', action='remove room %s from %s' % (occupant.roomNumber, occupant.uid))
+        occupant.roomNumber = None
+    return jsonify({"success": True}), 200

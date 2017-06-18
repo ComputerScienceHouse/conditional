@@ -27,12 +27,15 @@ Administration
                     <div class="stat-title">Intro Accounts</div>
                 </div>
                 {% if is_eval_director %}
-                <div class="col-xs-12 col-sm-4 align-center">
+                <div class="col-xs-6 col-sm-2 align-center">
                     <div class="material-switch">
                         <div class="switch-label">Site Lockdown</div>
                         <input type="checkbox" id="siteLockdownSwitch" name="siteLockdownSwitch" data-module="siteSettings" data-setting="siteLockdown"{% if site_lockdown %} checked{% endif %}>
                         <label for="siteLockdownSwitch" class="label-primary"></label>
                     </div>
+                </div>
+                <div class="col-xs-6 col-sm-2 align-center">
+                    <a href="/manage/new" class="btn btn-danger btn-sm btn-new-year"><span class="glyphicon glyphicon-repeat"></span> New Year</a>
                 </div>
                 {% endif %}
             </div>
