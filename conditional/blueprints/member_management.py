@@ -1,6 +1,5 @@
 import csv
 import io
-import uuid
 
 from datetime import datetime
 
@@ -55,9 +54,8 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 
 @member_management_bp.route('/manage')
 def display_member_management():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display member management')
+    log = logger.new(request=request)
+    log.info('Display Member Management')
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -108,9 +106,7 @@ def display_member_management():
 
 @member_management_bp.route('/manage/settings', methods=['PUT'])
 def member_management_eval():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit site settings')
+    log = logger.new(request=request)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -121,14 +117,14 @@ def member_management_eval():
     post_data = request.get_json()
 
     if 'siteLockdown' in post_data:
-        logger.info('backend', action="changed site lockdown setting to %s" % post_data['siteLockdown'])
+        log.info('Changed Site Lockdown: {}'.format(post_data['siteLockdown']))
         EvalSettings.query.update(
             {
                 'site_lockdown': post_data['siteLockdown']
             })
 
     if 'introForm' in post_data:
-        logger.info('backend', action="changed intro form setting to %s" % post_data['introForm'])
+        log.info('Changed Intro Form: {}'.format(post_data['introForm']))
         EvalSettings.query.update(
             {
                 'intro_form_active': post_data['introForm']
@@ -141,9 +137,8 @@ def member_management_eval():
 
 @member_management_bp.route('/manage/user', methods=['POST'])
 def member_management_adduser():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='add fid user')
+    log = logger.new(request=request)
+
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -156,12 +151,12 @@ def member_management_adduser():
     name = post_data['name']
     onfloor_status = post_data['onfloor']
     room_number = post_data['roomNumber']
+    log.info('Create Freshman Account for {}'.format(name))
 
     # empty room numbers should be NULL
     if room_number == "":
         room_number = None
 
-    logger.info('backend', action="add f_%s as onfloor: %s with room_number: %s" % (name, onfloor_status, room_number))
     db.session.add(FreshmanAccount(name, onfloor_status, room_number))
     db.session.flush()
     db.session.commit()
@@ -172,6 +167,7 @@ def member_management_adduser():
 def member_management_uploaduser():
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
+    log = logger.new(request=request)
 
     if not ldap_is_eval_director(account):
         return "must be eval director", 403
@@ -193,6 +189,7 @@ def member_management_uploaduser():
             else:
                 room_number = None
 
+            log.info('Create Freshman Account for {} via CSV Upload'.format(name))
             db.session.add(FreshmanAccount(name, onfloor_status, room_number))
 
         db.session.flush()
@@ -204,9 +201,6 @@ def member_management_uploaduser():
 
 @member_management_bp.route('/manage/user/<uid>', methods=['POST'])
 def member_management_edituser(uid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='edit uid user')
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -214,50 +208,49 @@ def member_management_edituser(uid):
     if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval director", 403
 
-    post_data = request.get_json()
-
     if not uid.isdigit():
-        edit_uid(uid, username, post_data)
+        edit_uid(uid, request)
     else:
-        edit_fid(uid, post_data)
+        edit_fid(uid, request)
 
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
 
 
-def edit_uid(uid, username, post_data):
-
+def edit_uid(uid, flask_request):
+    log = logger.new(request=flask_request)
+    post_data = flask_request.get_json()
     account = ldap_get_member(uid)
     active_member = post_data['activeMember']
 
-    current_account = ldap_get_member(username)
-    if ldap_is_eval_director(current_account):
-        room_number = post_data['roomNumber']
-        onfloor_status = post_data['onfloorStatus']
-        housing_points = post_data['housingPoints']
-        logger.info('backend', action="edit %s room: %s onfloor: %s housepts %s" %
-                                      (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-                                       post_data['housingPoints']))
+    room_number = post_data['roomNumber']
+    onfloor_status = post_data['onfloorStatus']
+    housing_points = post_data['housingPoints']
+    log.info('Edit {} - Room: {} On-Floor: {} Points: {}'.format(
+        uid,
+        post_data['roomNumber'],
+        post_data['onfloorStatus'],
+        post_data['housingPoints']))
 
-        ldap_set_roomnumber(account, room_number)
-        if onfloor_status:
-            # If a OnFloorStatusAssigned object exists, don't make another
-            if not ldap_is_member_of_group(account, "onfloor"):
-                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-                ldap_add_member_to_group(account, "onfloor")
-        else:
-            for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
-                db.session.delete(ofs)
-            db.session.flush()
-            db.session.commit()
+    ldap_set_roomnumber(account, room_number)
+    if onfloor_status:
+        # If a OnFloorStatusAssigned object exists, don't make another
+        if not ldap_is_member_of_group(account, "onfloor"):
+            db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+            ldap_add_member_to_group(account, "onfloor")
+    else:
+        for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
+            db.session.delete(ofs)
+        db.session.flush()
+        db.session.commit()
 
-            if ldap_is_member_of_group(account, "onfloor"):
-                ldap_remove_member_from_group(account, "onfloor")
-        ldap_set_housingpoints(account, housing_points)
+        if ldap_is_member_of_group(account, "onfloor"):
+            ldap_remove_member_from_group(account, "onfloor")
+    ldap_set_housingpoints(account, housing_points)
 
     # Only update if there's a diff
-    logger.info('backend', action="edit %s active: %s" % (uid, active_member))
+    log.info('Set {} Active: {}'.format(uid, active_member))
     if ldap_is_active(account) != active_member:
         if active_member:
             ldap_set_active(account)
@@ -276,10 +269,15 @@ def edit_uid(uid, username, post_data):
         clear_members_cache()
 
 
-def edit_fid(uid, post_data):
-    logger.info('backend', action="edit freshman account %s room: %s onfloor: %s eval_date: %s sig_missed %s" %
-                                  (uid, post_data['roomNumber'], post_data['onfloorStatus'],
-                                   post_data['evalDate'], post_data['sigMissed']))
+def edit_fid(uid, flask_request):
+    log = logger.new(request=flask_request)
+    post_data = flask_request.get_json()
+    log.info('Edit freshman-{} - Room: {} On-Floor: {} Eval: {} SigMiss: {}'.format(
+        uid,
+        post_data['roomNumber'],
+        post_data['onfloorStatus'],
+        post_data['evalDate'],
+        post_data['sigMissed']))
 
     name = post_data['name']
 
@@ -307,9 +305,8 @@ def edit_fid(uid, post_data):
 
 @member_management_bp.route('/manage/user/<uid>', methods=['GET'])
 def member_management_getuserinfo(uid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='retrieve user info')
+    log = logger.new(request=request)
+    log.info('Get {}\'s Information'.format(uid))
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -394,9 +391,8 @@ def member_management_getuserinfo(uid):
 
 @member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])
 def member_management_deleteuser(fid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='edit fid user')
+    log = logger.new(request=request)
+    log.info('Delete freshman-{}'.format(fid))
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -407,7 +403,7 @@ def member_management_deleteuser(fid):
     if not fid.isdigit():
         return "can only delete freshman accounts", 400
 
-    logger.info('backend', action="delete freshman account %s" % fid)
+    log.info('backend', action="delete freshman account %s" % fid)
 
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
         db.session.delete(fca)
@@ -430,9 +426,7 @@ def member_management_deleteuser(fid):
 # manually need to do this
 @member_management_bp.route('/manage/upgrade_user', methods=['POST'])
 def member_management_upgrade_user():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='convert fid to uid entry')
+    log = logger.new(request=request)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -446,8 +440,8 @@ def member_management_upgrade_user():
     uid = post_data['uid']
     signatures_missed = post_data['sigsMissed']
 
-    logger.info('backend', action="upgrade freshman-%s to %s sigsMissed: %s" %
-                                  (fid, uid, signatures_missed))
+    log.info('Upgrade freshman-{} to Account: {}'.format(fid, uid))
+
     acct = FreshmanAccount.query.filter(
         FreshmanAccount.id == fid).first()
 
@@ -471,8 +465,10 @@ def member_management_upgrade_user():
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
         else:
-            logger.info('backend', action="duplicate house meeting attendance! fid: %s, uid: %s, id: %s" %
-                                          (fid, uid, fhm.meeting_id))
+            log.info('Duplicate house meeting attendance! fid: {}, uid: {}, id: {}'.format(
+                fid,
+                uid,
+                fhm.meeting_id))
         db.session.delete(fhm)
 
     if acct.onfloor_status:
@@ -494,9 +490,8 @@ def member_management_upgrade_user():
 
 @member_management_bp.route('/manage/intro_project', methods=['GET'])
 def introductory_project():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='show introductory project management')
+    log = logger.new(request=request)
+    log.info('Display Freshmen Project Management')
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -512,9 +507,7 @@ def introductory_project():
 
 @member_management_bp.route('/manage/intro_project', methods=['POST'])
 def introductory_project_submit():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit introductory project results')
+    log = logger.new(request=request)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -537,7 +530,7 @@ def introductory_project_submit():
         if intro_member['status'] not in ['Passed', 'Pending', 'Failed']:
             abort(400)
 
-        log.info('debug', action='setting status "' + intro_member['status'] + '" for ' + intro_member['uid'])
+        log.info('Freshmen Project {} for {}'.format(intro_member['status'], intro_member['uid']))
 
         FreshmanEvalData.query.filter(FreshmanEvalData.uid == intro_member['uid']).update({
             'freshman_project': intro_member['status']
@@ -550,9 +543,8 @@ def introductory_project_submit():
 
 @member_management_bp.route('/member/<uid>', methods=['GET'])
 def get_member(uid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action="get {}'s information".format(uid))
+    log = logger.new(request=request)
+    log.info('Get {}\'s Information'.format(uid))
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -571,9 +563,7 @@ def get_member(uid):
 
 @member_management_bp.route('/manage/active', methods=['DELETE'])
 def clear_active_members():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='clear active group')
+    log = logger.new(request=request)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -585,15 +575,14 @@ def clear_active_members():
 
     # Clear the active group.
     for account in members:
-        log.info('api', action='remove %s from active status' % account.uid)
+        log.info('Remove {} from Active Status'.format(account.uid))
         ldap_set_inactive(account)
     return jsonify({"success": True}), 200
 
 
 @member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])
 def remove_current_student(uid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
+    log = logger.new(request=request)
 
 
     username = request.headers.get('x-webauth-user')
@@ -604,19 +593,18 @@ def remove_current_student(uid):
 
     member = ldap_get_member(uid)
     if request.method == 'DELETE':
-        log.info('api', action='remove {} from current_student'.format(uid))
+        log.info('Remove {} from Current Student'.format(uid))
         ldap_set_non_current_student(member)
     elif request.method == 'POST':
-        log.info('api', action='add {} to current_student'.format(uid))
+        log.info('Add {} to Current Students'.format(uid))
         ldap_set_current_student(member)
     return jsonify({"success": True}), 200
 
 
 @member_management_bp.route('/manage/new', methods=['GET'])
 def new_year():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='show new year page')
+    log = logger.new(request=request)
+    log.info('Display New Year Page')
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)

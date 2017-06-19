@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request, redirect, jsonify
@@ -18,9 +17,8 @@ intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 
 @intro_evals_form_bp.route('/intro_evals_form/')
 def display_intro_evals_form():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display intro evals form')
+    log = logger.new(request=request)
+    log.info('Display Intro Evals Form')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -42,9 +40,8 @@ def display_intro_evals_form():
 
 @intro_evals_form_bp.route('/intro_evals/submit', methods=['POST'])
 def submit_intro_evals():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit intro evals form')
+    log = logger.new(request=request)
+    log.info('Submit Intro Evals Form')
 
     user_name = request.headers.get('x-webauth-user')
 
