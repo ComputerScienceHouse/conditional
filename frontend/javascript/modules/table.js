@@ -17,7 +17,8 @@ export default class Table {
       info: false,
       paging: !(this.table.dataset.paginated === 'false'),
       pagingType: "numbers",
-      order: []
+      order: [],
+      pageLength: this.table.dataset.pageLength || 10
     };
 
     // Just remove the search input from the DOM instead of disabling it

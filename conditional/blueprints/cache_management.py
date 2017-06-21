@@ -41,7 +41,7 @@ def clear_cache():
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(account) or not ldap_is_rtp(account):
+    if not ldap_is_eval_director(account) and not ldap_is_rtp(account):
         return redirect("/dashboard")
 
     log = logger.new(request=request)

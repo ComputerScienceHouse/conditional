@@ -33,9 +33,9 @@
                 </li>
 
                 <li><a href="/housing"><span class="glyphicon glyphicon-home"></span> Housing</a></li>
-                
+
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-ok"></span> Attendance 
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-ok"></span> Attendance
                     {% if is_eboard and pending_review != 0 %}
                     ({{pending_review}})
                     {% endif %}
@@ -51,8 +51,8 @@
                         {% endif %}
                     </ul>
                 </li>
-                
-                {% if is_eval_director or is_financial_director or is_rtp%}
+
+                {% if is_eboard or is_rtp%}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> Admin<span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -66,6 +66,8 @@
                             <li><a href="/slideshow/intro"><span class="glyphicon glyphicon-eye-open"></span> Introductory Evaluations Presentation</a></li>
                             <li><a href="/slideshow/spring"><span class="glyphicon glyphicon-eye-open"></span> Membership Evaluations Presentation</a></li>
                         {% endif %}
+
+                        <li><a href="/logs"><span class="glyphicon glyphicon-list"></span> User Logs</a></li>
 
                         {% if is_eval_director or is_rtp %}
                             <li><a href="/clearcache"><span class="glyphicon glyphicon-floppy-remove"></span> Clear Cache</a></li>

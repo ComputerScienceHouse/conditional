@@ -224,30 +224,33 @@ def edit_uid(uid, flask_request):
     account = ldap_get_member(uid)
     active_member = post_data['activeMember']
 
-    room_number = post_data['roomNumber']
-    onfloor_status = post_data['onfloorStatus']
-    housing_points = post_data['housingPoints']
-    log.info('Edit {} - Room: {} On-Floor: {} Points: {}'.format(
-        uid,
-        post_data['roomNumber'],
-        post_data['onfloorStatus'],
-        post_data['housingPoints']))
+    username = flask_request.headers.get('x-webauth-user')
+    current_account = ldap_get_member(username)
+    if ldap_is_eval_director(current_account):
+        room_number = post_data['roomNumber']
+        onfloor_status = post_data['onfloorStatus']
+        housing_points = post_data['housingPoints']
+        log.info('Edit {} - Room: {} On-Floor: {} Points: {}'.format(
+            uid,
+            post_data['roomNumber'],
+            post_data['onfloorStatus'],
+            post_data['housingPoints']))
 
-    ldap_set_roomnumber(account, room_number)
-    if onfloor_status:
-        # If a OnFloorStatusAssigned object exists, don't make another
-        if not ldap_is_member_of_group(account, "onfloor"):
-            db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-            ldap_add_member_to_group(account, "onfloor")
-    else:
-        for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
-            db.session.delete(ofs)
-        db.session.flush()
-        db.session.commit()
+        ldap_set_roomnumber(account, room_number)
+        if onfloor_status:
+            # If a OnFloorStatusAssigned object exists, don't make another
+            if not ldap_is_member_of_group(account, "onfloor"):
+                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+                ldap_add_member_to_group(account, "onfloor")
+        else:
+            for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
+                db.session.delete(ofs)
+            db.session.flush()
+            db.session.commit()
 
-        if ldap_is_member_of_group(account, "onfloor"):
-            ldap_remove_member_from_group(account, "onfloor")
-    ldap_set_housingpoints(account, housing_points)
+            if ldap_is_member_of_group(account, "onfloor"):
+                ldap_remove_member_from_group(account, "onfloor")
+        ldap_set_housingpoints(account, housing_points)
 
     # Only update if there's a diff
     log.info('Set {} Active: {}'.format(uid, active_member))
