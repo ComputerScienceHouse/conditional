@@ -2,6 +2,7 @@ import time
 from datetime import date, timedelta, datetime
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
     Date, Text, Boolean
+from sqlalchemy.dialects import postgresql
 from conditional import db
 
 attendance_enum = Enum('Attended', 'Excused', 'Absent', name='attendance_enum')
@@ -269,3 +270,25 @@ class SpringEval(db.Model):
 class InHousingQueue(db.Model):
     __tablename__ = 'in_housing_queue'
     uid = Column(String(32), primary_key=True)
+
+http_enum = Enum('GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH', name='http_enum')
+
+class UserLog(db.Model):
+    __tablename__ = 'user_log'
+    id = Column(Integer, primary_key=True)
+    ipaddr = Column(postgresql.INET, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    uid = Column(String(32), nullable=False)
+    method = Column(http_enum)
+    blueprint = Column(String(32), nullable=False)
+    path = Column(String(128), nullable=False)
+    description = Column(String(128), nullable=False)
+
+    def __init__(self, ipaddr, user, method, blueprint, path, description):
+        self.ipaddr = ipaddr
+        self.timestamp = datetime.now()
+        self.uid = user
+        self.method = method
+        self.blueprint = blueprint
+        self.path = path
+        self.description = description

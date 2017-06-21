@@ -22,9 +22,9 @@ try:
 except (InvalidGitRepository, KeyError):
     app.config["GIT_REVISION"] = "unknown"
 
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-logger = structlog.get_logger()
 sentry = Sentry(app)
 
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
@@ -38,8 +38,47 @@ def start_of_year():
     return start
 
 # pylint: disable=C0413
+from conditional.models.models import UserLog
 
-from conditional.blueprints.dashboard import dashboard_bp
+# Configure Logging
+def request_processor(logger, log_method, event_dict): # pylint: disable=unused-argument, redefined-outer-name
+    if 'request' in event_dict:
+        flask_request = event_dict['request']
+        event_dict['user'] = flask_request.headers.get("x-webauth-user")
+        event_dict['ip'] = flask_request.remote_addr
+        event_dict['method'] = flask_request.method
+        event_dict['blueprint'] = flask_request.blueprint
+        event_dict['path'] = flask_request.full_path
+    return event_dict
+
+
+def database_processor(logger, log_method, event_dict): # pylint: disable=unused-argument, redefined-outer-name
+    if 'request' in event_dict:
+        if event_dict['method'] != 'GET':
+            log = UserLog(
+                ipaddr=event_dict['ip'],
+                user=event_dict['user'],
+                method=event_dict['method'],
+                blueprint=event_dict['blueprint'],
+                path=event_dict['path'],
+                description=event_dict['event']
+                )
+            db.session.add(log)
+            db.session.flush()
+            db.session.commit()
+        del event_dict['request']
+    return event_dict
+
+structlog.configure(processors=[
+    request_processor,
+    database_processor,
+    structlog.processors.KeyValueRenderer()
+    ])
+
+logger = structlog.get_logger()
+
+
+from conditional.blueprints.dashboard import dashboard_bp # pylint: disable=ungrouped-imports
 from conditional.blueprints.attendance import attendance_bp
 from conditional.blueprints.major_project_submission import major_project_bp
 from conditional.blueprints.intro_evals import intro_evals_bp

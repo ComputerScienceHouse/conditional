@@ -1,5 +1,5 @@
 from datetime import datetime
-import uuid
+
 import structlog
 
 from flask import Blueprint, request
@@ -29,9 +29,8 @@ logger = structlog.get_logger()
 
 @intro_evals_bp.route('/intro_evals/')
 def display_intro_evals(internal=False):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display intro evals listing')
+    log = logger.new(request=request)
+    log.info('Display Intro Evals Listing')
 
     # get user data
     def get_fid_cm_count(member_id):

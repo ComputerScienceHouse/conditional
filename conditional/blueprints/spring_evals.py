@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request
@@ -23,9 +22,8 @@ logger = structlog.get_logger()
 
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals(internal=False):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display membership evaluations listing')
+    log = logger.new(request=request)
+    log.info('Display Membership Evaluations Listing')
 
     user_name = None
     if not internal:

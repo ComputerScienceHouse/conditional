@@ -1,5 +1,3 @@
-import uuid
-
 from datetime import datetime
 
 import structlog
@@ -21,9 +19,8 @@ logger = structlog.get_logger()
 
 @conditionals_bp.route('/conditionals/')
 def display_conditionals():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display conditional listing page')
+    log = logger.new(request=request)
+    log.info('Display Conditional Listing Page')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -48,9 +45,7 @@ def display_conditionals():
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
 def create_conditional():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='create new conditional')
+    log = logger.new(request=request)
 
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
@@ -63,6 +58,7 @@ def create_conditional():
     uid = post_data['uid']
     description = post_data['description']
     due_date = datetime.strptime(post_data['dueDate'], "%Y-%m-%d")
+    log.info('Create a new conditional for {}'.format(uid))
     if post_data['evaluation'] == 'spring':
         current_eval = SpringEval.query.filter(SpringEval.status == "Pending",
             SpringEval.uid == uid,
@@ -87,9 +83,7 @@ def create_conditional():
 
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
 def conditional_review():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='review a conditional')
+    log = logger.new(request=request)
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -102,7 +96,7 @@ def conditional_review():
     cid = post_data['id']
     status = post_data['status']
 
-    logger.info(action="updated conditional-%s to %s" % (cid, status))
+    log.info('Updated conditional-{} to {}'.format(cid, status))
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
 
@@ -128,9 +122,8 @@ def conditional_review():
 
 @conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
 def conditional_delete(cid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='delete conditional')
+    log = logger.new(request=request)
+    log.info('Delete conditional-{}'.format(cid))
 
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)

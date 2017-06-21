@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request, jsonify, redirect
@@ -20,9 +19,8 @@ major_project_bp = Blueprint('major_project_bp', __name__)
 
 @major_project_bp.route('/major_project/')
 def display_major_project():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display major project form')
+    log = logger.new(request=request)
+    log.info('Display Major Project Page')
 
     # get user data
 
@@ -53,9 +51,8 @@ def display_major_project():
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
 def submit_major_project():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit major project')
+    log = logger.new(request=request)
+    log.info('Submit Major Project')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -74,9 +71,7 @@ def submit_major_project():
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
 def major_project_review():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='review major project')
+    log = logger.new(request=request)
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -88,6 +83,8 @@ def major_project_review():
     post_data = request.get_json()
     pid = post_data['id']
     status = post_data['status']
+
+    log.info('{} Major Project ID: {}'.format(status, pid))
 
     print(post_data)
     MajorProject.query.filter(
@@ -103,9 +100,8 @@ def major_project_review():
 
 @major_project_bp.route('/major_project/delete/<pid>', methods=['DELETE'])
 def major_project_delete(pid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='review major project')
+    log = logger.new(request=request)
+    log.info('Delete Major Project ID: {}'.format(pid))
 
     # get user data
     user_name = request.headers.get('x-webauth-user')

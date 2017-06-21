@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request, jsonify
@@ -17,9 +16,8 @@ logger = structlog.get_logger()
 
 @co_op_bp.route('/co_op/')
 def display_co_op_form():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display co-op submission page')
+    log = logger.new(request=request)
+    log.info('Display Co-Op Submission Page')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -35,15 +33,14 @@ def display_co_op_form():
 
 @co_op_bp.route('/co_op/submit', methods=['POST'])
 def submit_co_op_form():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
+    log = logger.new(request=request)
 
     user_name = request.headers.get('x-webauth-user')
 
     post_data = request.get_json()
     semester = post_data['semester']
 
-    log.info('api', action='Submit %s Co-Op' % semester)
+    log.info('Submit {} Co-Op'.format(semester))
 
     if CurrentCoops.query.filter(CurrentCoops.uid == user_name, CurrentCoops.date_created > start_of_year()).first():
         return "User has already submitted this form!", 403
@@ -58,8 +55,7 @@ def submit_co_op_form():
 
 @co_op_bp.route('/co_op/<uid>', methods=['DELETE'])
 def delete_co_op(uid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
+    log = logger.new(request=request)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -67,7 +63,7 @@ def delete_co_op(uid):
     if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
-    log.info('api', action="Delete %s's Co-Op" % uid)
+    log.info('Delete {}\'s Co-Op'.format(uid))
 
     CurrentCoops.query.filter(CurrentCoops.uid == uid, CurrentCoops.date_created > start_of_year()).delete()
 

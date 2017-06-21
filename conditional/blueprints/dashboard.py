@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request
@@ -29,9 +28,8 @@ dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
 def display_dashboard():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display dashboard')
+    log = logger.new(request=request)
+    log.info('display dashboard')
 
     # Get username from headers.
     username = request.headers.get('x-webauth-user')
