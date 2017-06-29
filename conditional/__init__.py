@@ -17,10 +17,10 @@ config = os.path.join(app.config.get('ROOT_DIR', os.getcwd()), "config.py")
 app.config.from_pyfile(config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-try:
-    app.config["GIT_REVISION"] = fetch_git_sha(app.config["ROOT_DIR"])[:7]
-except (InvalidGitRepository, KeyError):
-    app.config["GIT_REVISION"] = "unknown"
+app.config["GIT_REVISION"] = subprocess.check_output(['git',
+                                                      'rev-parse',
+                                                      '--short',
+                                                      'HEAD']).decode('utf-8').rstrip()
 
 
 db = SQLAlchemy(app)
