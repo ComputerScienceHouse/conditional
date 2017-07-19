@@ -251,7 +251,16 @@ Dashboard
             </div>
             {% endif %}
 
+            {% if student and not active %}
+                <div class="alert alert-info"><span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"></span>
+                    Hey there! You're eligible to become an active member, click the button below if you'd like to pay dues and become active!
+                    <br />
+                    <a href="#" id="becomeActive" data-module="becomeActive" data-uid="{{username}}" class="btn btn-default">Become Active</a>
+                </div>
+            {% endif %}
+
         </div>
+
         <div class="col-lg-6 col-md-6">
             {% if housing %}
             <div class="panel panel-default">

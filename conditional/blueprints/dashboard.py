@@ -5,6 +5,7 @@ from flask import Blueprint, request
 from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_active_members
 
@@ -44,6 +45,8 @@ def display_dashboard():
     data['active'] = ldap_is_active(member)
     data['onfloor'] = ldap_is_onfloor(member)
     data['voting'] = bool(member.uid in can_vote)
+    data['student'] = ldap_is_current_student(member)
+
 
     data['voting_count'] = {"Voting Members": len(can_vote),
                             "Active Members": len(ldap_get_active_members())}

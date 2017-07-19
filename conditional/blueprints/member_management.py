@@ -28,6 +28,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
+from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
@@ -488,6 +489,25 @@ def member_management_upgrade_user():
 
     clear_members_cache()
 
+    return jsonify({"success": True}), 200
+
+
+@member_management_bp.route('/manage/make_user_active', methods=['POST'])
+def member_management_make_user_active():
+    log = logger.new(request=request)
+
+    post_data = request.get_json()
+
+    uid = post_data['uid']
+    account = ldap_get_member(uid)
+
+    if not ldap_is_current_student(account) or ldap_is_active(account):
+        return jsonify({"success": False}), 403
+
+    ldap_set_active(account)
+    log.info("Make user {} active".format(uid))
+
+    clear_members_cache()
     return jsonify({"success": True}), 200
 
 
