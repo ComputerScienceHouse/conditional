@@ -1,11 +1,12 @@
 import csv
 import io
+import re
 
 from datetime import datetime
 
 import structlog
 
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, make_response
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -88,9 +89,11 @@ def display_member_management():
     if settings:
         lockdown = settings.site_lockdown
         intro_form = settings.intro_form_active
+        accept_dues_until = settings.accept_dues_until
     else:
         lockdown = False
         intro_form = False
+        accept_dues_until = datetime.now()
 
     return render_template(request, "member_management.html",
                            username=username,
@@ -102,6 +105,7 @@ def display_member_management():
                            freshmen=freshmen_list,
                            co_op=co_op_list,
                            site_lockdown=lockdown,
+                           accept_dues_until=accept_dues_until,
                            intro_form=intro_form)
 
 
@@ -129,6 +133,31 @@ def member_management_eval():
         EvalSettings.query.update(
             {
                 'intro_form_active': post_data['introForm']
+            })
+
+    db.session.flush()
+    db.session.commit()
+    return jsonify({"success": True}), 200
+
+
+@member_management_bp.route('/manage/accept_dues_until', methods=['PUT'])
+def member_management_financial():
+    log = logger.new(request=request)
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_financial_director(account):
+        return "must be financial director", 403
+
+    post_data = request.get_json()
+
+    if 'acceptDuesUntil' in post_data:
+        date = datetime.strptime(post_data['acceptDuesUntil'], "%Y-%m-%d")
+        log.info('Changed Dues Accepted Until: {}'.format(date))
+        EvalSettings.query.update(
+            {
+                'accept_dues_until': date
             })
 
     db.session.flush()
@@ -496,13 +525,11 @@ def member_management_upgrade_user():
 def member_management_make_user_active():
     log = logger.new(request=request)
 
-    post_data = request.get_json()
-
-    uid = post_data['uid']
+    uid = request.headers.get('x-webauth-user')
     account = ldap_get_member(uid)
 
     if not ldap_is_current_student(account) or ldap_is_active(account):
-        return jsonify({"success": False}), 403
+        return "must be current student and not active", 403
 
     ldap_set_active(account)
     log.info("Make user {} active".format(uid))
@@ -601,6 +628,31 @@ def clear_active_members():
         log.info('Remove {} from Active Status'.format(account.uid))
         ldap_set_inactive(account)
     return jsonify({"success": True}), 200
+
+
+@member_management_bp.route('/manage/export_active_list', methods=['GET'])
+def export_active_list():
+    sio = io.StringIO()
+    csvw = csv.writer(sio)
+
+    active_list = [["Full Name", "RIT Username", "Amount to Charge"]]
+    for member in ldap_get_active_members():
+        full_name = member.cn
+        rit_username = re.search(".*uid=(\\w*)", member.ritDn).group(1)
+        will_coop = CurrentCoops.query.filter(
+            CurrentCoops.date_created > start_of_year(),
+            CurrentCoops.uid == member.uid).first()
+        if will_coop:
+            dues = 80
+        else:
+            dues = 160
+        active_list.append([full_name, rit_username, dues])
+
+    csvw.writerows(active_list)
+    output = make_response(sio.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=csh_active_list.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
 
 @member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])

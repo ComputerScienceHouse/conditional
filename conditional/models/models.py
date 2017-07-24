@@ -243,11 +243,13 @@ class EvalSettings(db.Model):
     housing_form_active = Column(Boolean)
     intro_form_active = Column(Boolean)
     site_lockdown = Column(Boolean)
+    accept_dues_until = Column(Date)
 
     def __init__(self):
         self.housing_form_active = True
         self.intro_form_active = True
         self.site_lockdown = False
+        self.accept_dues_until = datetime.now()
 
 
 class SpringEval(db.Model):

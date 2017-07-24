@@ -251,7 +251,7 @@ Dashboard
             </div>
             {% endif %}
 
-            {% if student and not active %}
+            {% if accepting_dues and student and not active %}
                 <div class="panel panel-info" id="becomeActive">
                     <div class="panel-heading">
                         <h3 class="panel-title">Become Active</h3>
@@ -260,7 +260,7 @@ Dashboard
                         Hey there, you're eligible to become an active member! Click the button below if you'd like to become active and pay dues.
                     </div>
                     <div class="panel-footer text-right">
-                        <a href="#" data-module="becomeActive" data-uid="{{username}}" class="btn btn-sm btn-default">Become Active</a>
+                        <a href="#" data-module="becomeActive" class="btn btn-sm btn-default">Become Active</a>
                     </div>
                 </div>
             {% endif %}

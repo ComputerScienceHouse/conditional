@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask import render_template as flask_render_template
 from conditional.models.models import EvalSettings
 
@@ -27,6 +29,7 @@ def render_template(request, template_name, **kwargs):
         db.session.commit()
     account = ldap_get_member(user_name)
     lockdown = EvalSettings.query.first().site_lockdown
+    accepting_dues = EvalSettings.query.first().accept_dues_until > date.today()
     is_active = ldap_is_active(account)
     is_alumni = ldap_is_alumni(account)
     is_eboard = ldap_is_eboard(account)
@@ -46,6 +49,7 @@ def render_template(request, template_name, **kwargs):
     return flask_render_template(
         template_name,
         lockdown=lockdown,
+        accepting_dues=accepting_dues,
         is_active=is_active,
         is_alumni=is_alumni,
         is_eboard=is_eboard,

@@ -10,7 +10,7 @@ Administration
         </div>
         <div class="panel-body">
             <div class="container-fluid">
-                <div class="col-xs-6 col-sm-2{% if not is_eval_director %} col-sm-offset-2{% endif %}">
+                <div class="col-xs-6 col-sm-2">
                     <div class="stat-number">{{num_current}}</div>
                     <div class="stat-title">Current Students</div>
                 </div>
@@ -36,6 +36,11 @@ Administration
                 </div>
                 <div class="col-xs-6 col-sm-2 align-center">
                     <a href="/manage/new" class="btn btn-danger btn-sm btn-new-year"><span class="glyphicon glyphicon-repeat"></span> New Year</a>
+                </div>
+                {% else %}
+                <div class="col-xs-6 col-sm-2 align-center">
+                    <label for="acceptDuesUntil" class="control-label accept-dues-until">Accept Dues Until</label>
+                    <input type="text" name="acceptDuesUntil" class="form-control" value="{{ accept_dues_until }}" data-module="acceptDuesDatepicker" data-setting="acceptDuesUntil" />
                 </div>
                 {% endif %}
             </div>
@@ -166,7 +171,14 @@ Administration
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Member Management</h3>
+            <h3 class="panel-title">
+                Member Management
+                <a href="/manage/export_active_list">
+                    <button type="button" class="btn btn-primary btn-sm btn-conditional pull-right">
+                        <span class="glyphicon glyphicon-save"></span> Export Active List
+                    </button>
+                </a>
+            </h3>
         </div>
         <div class="panel-body table-fill">
             <div class="table-responsive">
