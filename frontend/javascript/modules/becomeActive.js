@@ -16,7 +16,7 @@ export default class becomeActive {
 
     FetchUtil.postWithWarning(this.endpoint, {}, {
       warningText: "Becoming an active member means that you will be charged" +
-                    " dues, which are $80 per semester.",
+                    " dues, which are detailed in the CSH Constitution.",
       successText: "You are now an active member."
     }, () => {
       document.getElementById('becomeActive').remove();

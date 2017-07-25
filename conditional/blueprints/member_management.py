@@ -8,6 +8,8 @@ import structlog
 
 from flask import Blueprint, request, jsonify, abort, make_response
 
+from conditional import app
+
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import FreshmanCommitteeAttendance
@@ -642,10 +644,11 @@ def export_active_list():
         will_coop = CurrentCoops.query.filter(
             CurrentCoops.date_created > start_of_year(),
             CurrentCoops.uid == member.uid).first()
+        dues_per_semester = app.config['DUES_PER_SEMESTER']
         if will_coop:
-            dues = 80
+            dues = dues_per_semester
         else:
-            dues = 160
+            dues = 2 * dues_per_semester
         active_list.append([full_name, rit_username, dues])
 
     csvw.writerows(active_list)

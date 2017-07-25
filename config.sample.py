@@ -24,3 +24,6 @@ SENTRY_CONFIG = {
 # Database config
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(os.getcwd(), "data.db"))
 ZOO_DATABASE_URI = 'mysql+pymysql://user:pass@host/database'
+
+# General config
+DUES_PER_SEMESTER = 80
