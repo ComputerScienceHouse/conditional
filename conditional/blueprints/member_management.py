@@ -627,8 +627,9 @@ def clear_active_members():
 
     # Clear the active group.
     for account in members:
-        log.info('Remove {} from Active Status'.format(account.uid))
-        ldap_set_inactive(account)
+        if account.uid != username:
+            log.info('Remove {} from Active Status'.format(account.uid))
+            ldap_set_inactive(account)
     return jsonify({"success": True}), 200
 
 
