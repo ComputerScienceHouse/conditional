@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request, jsonify
@@ -11,6 +10,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_set_active
 
 from conditional.util.flask import render_template
 
@@ -24,9 +24,8 @@ housing_bp = Blueprint('housing_bp', __name__)
 
 @housing_bp.route('/housing')
 def display_housing():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display housing')
+    log = logger.new(request=request)
+    log.info('Display Housing Board')
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -70,9 +69,8 @@ def display_housing():
 
 @housing_bp.route('/housing/in_queue', methods=['PUT'])
 def change_queue_state():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='add or remove member from housing queue')
+    log = logger.new(request=request)
+
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -85,9 +83,11 @@ def change_queue_state():
 
     if uid:
         if post_data.get('inQueue', False):
+            log.info('Add {} to Housing Queue'.format(uid))
             queue_obj = InHousingQueue(uid=uid)
             db.session.add(queue_obj)
         else:
+            log.info('Remove {} from Housing Queue'.format(uid))
             InHousingQueue.query.filter_by(uid=uid).delete()
 
     db.session.flush()
@@ -97,9 +97,7 @@ def change_queue_state():
 
 @housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
 def change_room_numbers(rmnumber):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='mass housing update')
+    log = logger.new(request=request)
 
     username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
@@ -117,13 +115,15 @@ def change_room_numbers(rmnumber):
         if occupant != "":
             account = ldap_get_member(occupant)
             account.roomNumber = rmnumber
-            log.info('api', action='%s assigned to room %s' % (occupant, rmnumber))
+            log.info('{} assigned to room {}'.format(occupant, rmnumber))
+            ldap_set_active(account)
+            log.info('{} marked as active because of room assignment'.format(occupant))
     # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students
                              if ldap_get_roomnumber(account) == str(rmnumber)
                              and account.uid not in update["occupants"]]:
+            log.info('{} removed from room {}'.format(old_occupant.uid, old_occupant.roomNumber))
             old_occupant.roomNumber = None
-            log.info('api', action='%s removed from room' % old_occupant.uid)
 
     return jsonify({"success": True}), 200
 
@@ -138,3 +138,22 @@ def get_occupants(rmnumber):
     occupants = [account.uid for account in current_students
                  if ldap_get_roomnumber(account) == str(rmnumber)]
     return jsonify({"room": rmnumber, "occupants": occupants}), 200
+
+
+@housing_bp.route('/housing', methods=['DELETE'])
+def clear_all_rooms():
+    log = logger.new(request=request)
+
+    username = request.headers.get('x-webauth-user')
+    account = ldap_get_member(username)
+
+    if not ldap_is_eval_director(account):
+        return "must be eval director", 403
+    # Get list of current students.
+    current_students = ldap_get_current_students()
+
+    # Find the current occupants and clear them.
+    for occupant in current_students:
+        log.info('{} removed from room {}'.format(occupant.uid, occupant.roomNumber))
+        occupant.roomNumber = None
+    return jsonify({"success": True}), 200

@@ -1,4 +1,3 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request, jsonify, redirect
@@ -9,7 +8,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
 
-from conditional import db
+from conditional import db, start_of_year
 from sqlalchemy import desc
 
 
@@ -20,9 +19,8 @@ major_project_bp = Blueprint('major_project_bp', __name__)
 
 @major_project_bp.route('/major_project/')
 def display_major_project():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display major project form')
+    log = logger.new(request=request)
+    log.info('Display Major Project Page')
 
     # get user data
 
@@ -38,7 +36,9 @@ def display_major_project():
             'id': p.id,
             'is_owner': bool(user_name == p.uid)
         } for p in
-        MajorProject.query.order_by(desc(MajorProject.id))]
+        MajorProject.query.filter(
+            MajorProject.date > start_of_year()).order_by(
+                desc(MajorProject.id))]
 
     major_projects_len = len(major_projects)
     # return names in 'first last (username)' format
@@ -51,9 +51,8 @@ def display_major_project():
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
 def submit_major_project():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit major project')
+    log = logger.new(request=request)
+    log.info('Submit Major Project')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -72,9 +71,7 @@ def submit_major_project():
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
 def major_project_review():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='review major project')
+    log = logger.new(request=request)
 
     # get user data
     user_name = request.headers.get('x-webauth-user')
@@ -86,6 +83,8 @@ def major_project_review():
     post_data = request.get_json()
     pid = post_data['id']
     status = post_data['status']
+
+    log.info('{} Major Project ID: {}'.format(status, pid))
 
     print(post_data)
     MajorProject.query.filter(
@@ -101,9 +100,8 @@ def major_project_review():
 
 @major_project_bp.route('/major_project/delete/<pid>', methods=['DELETE'])
 def major_project_delete(pid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='review major project')
+    log = logger.new(request=request)
+    log.info('Delete Major Project ID: {}'.format(pid))
 
     # get user data
     user_name = request.headers.get('x-webauth-user')

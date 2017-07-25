@@ -1,0 +1,36 @@
+{% extends "nav.html" %}
+{% block title %}
+User Logs
+{% endblock %}
+{% block body %}
+
+<div class="container main">
+    <h3 class="page-title">User Logs</h3>
+    <div class="panel panel-default">
+    <div class="panel-body table-fill">
+    <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="0" data-sort-order="desc" data-length-changable="true" data-page-length="100">
+    	<thead>
+    		<th>ID</th>
+    		<th>Method</th>
+    		<th>User</th>
+    		<th>Blueprint</th>
+    		<th>URL</th>
+    		<th>Description</th>
+    	</thead>
+    	<tbody>
+    		{% for log in logs %}
+    		<tr>
+    			<td>{{log.timestamp}}</td>
+    			<td>{{log.method}}</td>
+    			<td>{{log.uid}}</td>
+    			<td>{{log.blueprint}}</td>
+    			<td>{{log.path}}</td>
+    			<td>{{log.description}}</td>
+    		</tr>
+			{% endfor %}
+    	</tbody>
+    </table>
+    </div>
+    </div>
+</div>
+{% endblock %}

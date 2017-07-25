@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import uuid
 import structlog
 
 from flask import Blueprint, jsonify, redirect, request
@@ -25,7 +24,7 @@ from conditional.models.models import FreshmanAccount
 
 from conditional.util.flask import render_template
 
-from conditional import db
+from conditional import db, start_of_year
 
 logger = structlog.get_logger()
 
@@ -34,9 +33,8 @@ attendance_bp = Blueprint('attendance_bp', __name__)
 
 @attendance_bp.route('/attendance/ts_members')
 def get_all_members():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='retrieve technical seminar attendance list')
+    log = logger.new(request=request)
+    log.info('Retrieve Technical Seminar Attendance List')
 
     members = ldap_get_current_students()
 
@@ -61,13 +59,20 @@ def get_all_members():
 
 @attendance_bp.route('/attendance/hm_members')
 def get_non_alumni_non_coop(internal=False):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='retrieve house meeting attendance list')
+    log = logger.new(request=request)
+    log.info('Retrieve House Meeting Attendance List')
 
     # Get all active members as a base house meeting attendance.
     active_members = ldap_get_active_members()
-    coop_members = [u.uid for u in CurrentCoops.query.all()]
+
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = 'Fall'
+    else:
+        semester = 'Spring'
+
+    coop_members = [u.uid for u in CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester).all()]
 
     eligible_members = [
         {
@@ -97,9 +102,8 @@ def get_non_alumni_non_coop(internal=False):
 
 @attendance_bp.route('/attendance/cm_members')
 def get_non_alumni():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='retrieve committee meeting attendance list')
+    log = logger.new(request=request)
+    log.info('Retrieve Committee Meeting Attendance List')
 
     current_students = ldap_get_current_students()
 
@@ -124,9 +128,8 @@ def get_non_alumni():
 
 @attendance_bp.route('/attendance_cm')
 def display_attendance_cm():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display committee meeting attendance page')
+    log = logger.new(request=request)
+    log.info('Display Committee Meeting Attendance Page')
 
     return render_template(request,
                            'attendance_cm.html',
@@ -136,9 +139,8 @@ def display_attendance_cm():
 
 @attendance_bp.route('/attendance_ts')
 def display_attendance_ts():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display technical seminar attendance page')
+    log = logger.new(request=request)
+    log.info('Display Technical Seminar Attendance Page')
 
     return render_template(request,
                            'attendance_ts.html',
@@ -148,9 +150,8 @@ def display_attendance_ts():
 
 @attendance_bp.route('/attendance_hm')
 def display_attendance_hm():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display house meeting attendance page')
+    log = logger.new(request=request)
+    log.info('Display House Meeting Attendance Page')
 
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
@@ -166,9 +167,8 @@ def display_attendance_hm():
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 def submit_committee_attendance():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit committee meeting attendance')
+    log = logger.new(request=request)
+
 
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
@@ -180,6 +180,8 @@ def submit_committee_attendance():
     f_attendees = post_data['freshmen']
     timestamp = post_data['timestamp']
 
+    log.info('Submit {} Meeting Attendance'.format(committee))
+
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
     meeting = CommitteeMeeting(committee, timestamp, approved)
 
@@ -188,15 +190,11 @@ def submit_committee_attendance():
     db.session.refresh(meeting)
 
     for m in m_attendees:
-        logger.info('backend',
-                    action=("gave attendance to %s for %s" % (m, committee))
-                    )
+        log.info('Gave Attendance to {} for {}'.format(m, committee))
         db.session.add(MemberCommitteeAttendance(m, meeting.id))
 
     for f in f_attendees:
-        logger.info('backend',
-                    action=("gave attendance to freshman-%s for %s" % (f, committee))
-                    )
+        log.info('Gave Attendance to freshman-{} for {}'.format(f, committee))
         db.session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
     db.session.commit()
@@ -205,10 +203,8 @@ def submit_committee_attendance():
 
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
 def submit_seminar_attendance():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4())
-                     )
-    log.info('api', action='submit technical seminar attendance')
+    log = logger.new(request=request)
+    log.info('Submit Technical Seminar Attendance')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -230,15 +226,11 @@ def submit_seminar_attendance():
     db.session.refresh(seminar)
 
     for m in m_attendees:
-        logger.info('backend',
-                    action=("gave attendance to %s for %s" % (m, seminar_name))
-                    )
+        log.info('Gave Attendance to {} for {}'.format(m, seminar_name))
         db.session.add(MemberSeminarAttendance(m, seminar.id))
 
     for f in f_attendees:
-        logger.info('backend',
-                    action=("gave attendance to freshman-%s for %s" % (f, seminar_name))
-                    )
+        log.info('Gave Attendance to freshman-{} for {}'.format(f, seminar_name))
         db.session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db.session.commit()
@@ -247,9 +239,8 @@ def submit_seminar_attendance():
 
 @attendance_bp.route('/attendance/submit/hm', methods=['POST'])
 def submit_house_attendance():
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='submit house meeting attendance')
+    log = logger.new(request=request)
+    log.info('Submit House Meeting Attendance')
 
     # status: Attended | Excused | Absent
 
@@ -271,11 +262,10 @@ def submit_house_attendance():
 
     if "members" in post_data:
         for m in post_data['members']:
-            logger.info('backend',
-                        action=(
-                            "gave %s to %s for %s house meeting" % (
-                                m['status'], m['uid'], timestamp.strftime("%Y-%m-%d")))
-                        )
+            log.info('Marked {} {} for House Meeting on {}'.format(
+                m['uid'],
+                m['status'],
+                timestamp.strftime("%Y-%m-%d")))
             db.session.add(MemberHouseMeetingAttendance(
                 m['uid'],
                 meeting.id,
@@ -284,10 +274,10 @@ def submit_house_attendance():
 
     if "freshmen" in post_data:
         for f in post_data['freshmen']:
-            logger.info('backend',
-                        action=("gave %s to freshman-%s for %s house meeting" % (
-                            f['status'], f['id'], timestamp.strftime("%Y-%m-%d")))
-                        )
+            log.info('Marked freshman-{} {} for House Meeting on {}'.format(
+                f['id'],
+                f['status'],
+                timestamp.strftime("%Y-%m-%d")))
             db.session.add(FreshmanHouseMeetingAttendance(
                 f['id'],
                 meeting.id,
@@ -300,6 +290,7 @@ def submit_house_attendance():
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['GET'])
 def alter_house_attendance(uid, hid):
+    log = logger.new(request=request)
     user_name = request.headers.get('x-webauth-user')
 
     account = ldap_get_member(user_name)
@@ -307,6 +298,7 @@ def alter_house_attendance(uid, hid):
         return "must be evals", 403
 
     if not uid.isdigit():
+        log.info('Mark {} Present for House Meeting ID: {}'.format(uid, hid))
         member_meeting = MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
@@ -315,6 +307,7 @@ def alter_house_attendance(uid, hid):
         db.session.commit()
         return jsonify({"success": True}), 200
 
+    log.info('Mark freshman-{} Present for House Meeting ID: {}'.format(uid, hid))
     freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == uid,
         FreshmanHouseMeetingAttendance.meeting_id == hid
@@ -327,9 +320,7 @@ def alter_house_attendance(uid, hid):
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['POST'])
 def alter_house_excuse(uid, hid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='edit house meeting excuse')
+    log = logger.new(request=request)
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -341,10 +332,10 @@ def alter_house_excuse(uid, hid):
     hm_status = post_data['status']
     hm_excuse = post_data['excuse']
 
-    logger.info('backend', action="edit hm %s status: %s excuse: %s" %
-                                  (hid, hm_status, hm_excuse))
+
 
     if not uid.isdigit():
+        log.info('Mark {} as {} for HM ID: {}'.format(uid, hm_status, hid))
         MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
@@ -353,6 +344,7 @@ def alter_house_excuse(uid, hid):
             'attendance_status': hm_status
         })
     else:
+        log.info('Mark {} as {} for HM ID: {}'.format(uid, hm_status, hid))
         FreshmanHouseMeetingAttendance.query.filter(
             FreshmanHouseMeetingAttendance.fid == uid,
             FreshmanHouseMeetingAttendance.meeting_id == hid
@@ -394,68 +386,70 @@ def attendance_history():
                              FreshmanAccount.id == freshman).first().name)
         return attendees
 
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
+    log = logger.new(request=request)
 
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
     if not ldap_is_eboard(account):
         return "must be eboard", 403
 
-    if request.method == 'GET':
-        page = request.args.get('page', 1)
-        log.info('api', action='view past attendance submitions')
-        offset = 0 if int(page) == 1 else ((int(page)-1)*10)
-        limit = int(page)*10
-        all_cm = [{"id": m.id,
-                   "name": m.committee,
-                   "dt_obj": m.timestamp,
-                   "date": m.timestamp.strftime("%a %m/%d/%Y"),
-                   "attendees": get_meeting_attendees(m.id),
-                   "type": "cm"
-                   } for m in CommitteeMeeting.query.filter(
-                       CommitteeMeeting.approved).all()]
-        all_ts = [{"id": m.id,
-                   "name": m.name,
-                   "dt_obj": m.timestamp,
-                   "date": m.timestamp.strftime("%a %m/%d/%Y"),
-                   "attendees": get_seminar_attendees(m.id),
-                   "type": "ts"
-                   } for m in TechnicalSeminar.query.filter(
-                       TechnicalSeminar.approved).all()]
-        pend_cm = [{"id": m.id,
-                    "name": m.committee,
-                    "dt_obj": m.timestamp,
-                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
-                    "attendees": get_meeting_attendees(m.id)
-                   } for m in CommitteeMeeting.query.filter(
-                       CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
-        pend_ts = [{"id": m.id,
-                    "name": m.name,
-                    "dt_obj": m.timestamp,
-                    "date": m.timestamp.strftime("%a %m/%d/%Y"),
-                    "attendees": get_seminar_attendees(m.id)
-                   } for m in TechnicalSeminar.query.filter(
-                       TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
-        all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
-        if len(all_cm) % 10 != 0:
-            total_pages = (int(len(all_cm) / 10) + 1)
-        else:
-            total_pages = (int(len(all_cm) / 10))
-        return render_template(request,
-                           'attendance_history.html',
-                           username=user_name,
-                           history=all_meetings,
-                           pending_cm=pend_cm,
-                           pending_ts=pend_ts,
-                           num_pages=total_pages,
-                           current_page=int(page))
+
+    page = request.args.get('page', 1)
+    log.info('View Past Attendance Submitions')
+    offset = 0 if int(page) == 1 else ((int(page)-1)*10)
+    limit = int(page)*10
+    all_cm = [{"id": m.id,
+               "name": m.committee,
+               "dt_obj": m.timestamp,
+               "date": m.timestamp.strftime("%a %m/%d/%Y"),
+               "attendees": get_meeting_attendees(m.id),
+               "type": "cm"
+               } for m in CommitteeMeeting.query.filter(
+                   CommitteeMeeting.timestamp > start_of_year(),
+                   CommitteeMeeting.approved).all()]
+    all_ts = [{"id": m.id,
+               "name": m.name,
+               "dt_obj": m.timestamp,
+               "date": m.timestamp.strftime("%a %m/%d/%Y"),
+               "attendees": get_seminar_attendees(m.id),
+               "type": "ts"
+               } for m in TechnicalSeminar.query.filter(
+                   TechnicalSeminar.timestamp > start_of_year(),
+                   TechnicalSeminar.approved).all()]
+    pend_cm = [{"id": m.id,
+                "name": m.committee,
+                "dt_obj": m.timestamp,
+                "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                "attendees": get_meeting_attendees(m.id)
+               } for m in CommitteeMeeting.query.filter(
+                   CommitteeMeeting.timestamp > start_of_year(),
+                   CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
+    pend_ts = [{"id": m.id,
+                "name": m.name,
+                "dt_obj": m.timestamp,
+                "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                "attendees": get_seminar_attendees(m.id)
+               } for m in TechnicalSeminar.query.filter(
+                   TechnicalSeminar.timestamp > start_of_year(),
+                   TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
+    all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
+    if len(all_cm) % 10 != 0:
+        total_pages = (int(len(all_cm) / 10) + 1)
+    else:
+        total_pages = (int(len(all_cm) / 10))
+    return render_template(request,
+                       'attendance_history.html',
+                       username=user_name,
+                       history=all_meetings,
+                       pending_cm=pend_cm,
+                       pending_ts=pend_ts,
+                       num_pages=total_pages,
+                       current_page=int(page))
 
 @attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
 def alter_committee_attendance(cid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='edit committee meeting attendance')
+    log = logger.new(request=request)
+    log.info('Edit Committee Meeting Attendance')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -487,9 +481,8 @@ def alter_committee_attendance(cid):
 
 @attendance_bp.route('/attendance/alter/ts/<sid>', methods=['POST'])
 def alter_seminar_attendance(sid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='edit technical seminar attendance')
+    log = logger.new(request=request)
+    log.info('Edit Technical Seminar Attendance')
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -536,9 +529,8 @@ def get_cm_attendees(sid):
         return jsonify({"attendees": attendees}), 200
 
     elif request.method == 'DELETE':
-        log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-        log.info('api', action='delete technical seminar')
+        log = logger.new(request=request)
+        log.info('Delete Technical Seminar {}'.format(sid))
 
         user_name = request.headers.get('x-webauth-user')
 
@@ -576,9 +568,8 @@ def get_ts_attendees(cid):
         return jsonify({"attendees": attendees}), 200
 
     elif request.method == 'DELETE':
-        log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-        log.info('api', action='delete committee meeting')
+        log = logger.new(request=request)
+        log.info('Delete Committee Meeting {}'.format(cid))
 
         user_name = request.headers.get('x-webauth-user')
 
@@ -601,9 +592,8 @@ def get_ts_attendees(cid):
 
 @attendance_bp.route('/attendance/cm/<cid>/approve', methods=['POST'])
 def approve_cm(cid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='approve committee meeting attendance')
+    log = logger.new(request=request)
+    log.info('Approve Committee Meeting {} Attendance'.format(cid))
 
     user_name = request.headers.get('x-webauth-user')
 
@@ -621,9 +611,8 @@ def approve_cm(cid):
 
 @attendance_bp.route('/attendance/ts/<sid>/approve', methods=['POST'])
 def approve_ts(sid):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('api', action='approve committee meeting attendance')
+    log = logger.new(request=request)
+    log.info('Approve Technical Seminar {} Attendance'.format(sid))
 
     user_name = request.headers.get('x-webauth-user')
 

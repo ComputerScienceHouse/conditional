@@ -10,7 +10,7 @@ Administration
         </div>
         <div class="panel-body">
             <div class="container-fluid">
-                <div class="col-xs-6 col-sm-2{% if not is_eval_director %} col-sm-offset-2{% endif %}">
+                <div class="col-xs-6 col-sm-2">
                     <div class="stat-number">{{num_current}}</div>
                     <div class="stat-title">Current Students</div>
                 </div>
@@ -27,17 +27,62 @@ Administration
                     <div class="stat-title">Intro Accounts</div>
                 </div>
                 {% if is_eval_director %}
-                <div class="col-xs-12 col-sm-4 align-center">
+                <div class="col-xs-6 col-sm-2 align-center">
                     <div class="material-switch">
                         <div class="switch-label">Site Lockdown</div>
                         <input type="checkbox" id="siteLockdownSwitch" name="siteLockdownSwitch" data-module="siteSettings" data-setting="siteLockdown"{% if site_lockdown %} checked{% endif %}>
                         <label for="siteLockdownSwitch" class="label-primary"></label>
                     </div>
                 </div>
+                <div class="col-xs-6 col-sm-2 align-center">
+                    <a href="/manage/new" class="btn btn-danger btn-sm btn-new-year"><span class="glyphicon glyphicon-repeat"></span> New Year</a>
+                </div>
+                {% else %}
+                <div class="col-xs-6 col-sm-2 align-center">
+                    <label for="acceptDuesUntil" class="control-label accept-dues-until">Accept Dues Until</label>
+                    <input type="text" name="acceptDuesUntil" class="form-control" value="{{ accept_dues_until }}" data-module="acceptDuesDatepicker" data-setting="acceptDuesUntil" />
+                </div>
                 {% endif %}
             </div>
         </div>
     </div>
+    {% if co_op and is_eval_director%}
+       <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Co-Op Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="false" data-sort-column="1" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Semester</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in co_op %}
+                    <tr id="coop-{{c[2]}}">
+                        <td>
+                            <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{c[2]}}"> {{c[0]}}
+                        </td>
+                        <td>
+                            {{c[1]}}
+                        </td>
+                        <td width=100px>
+                            <a href="#" data-module="coopDelete" data-uid="{{c[2]}}">
+                                <span class="glyphicon glyphicon-trash red align-center" style="width: 100%"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     {% if is_eval_director %}
     <div class="panel panel-default">
@@ -126,7 +171,14 @@ Administration
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Member Management</h3>
+            <h3 class="panel-title">
+                Member Management
+                <a href="/manage/export_active_list">
+                    <button type="button" class="btn btn-primary btn-sm btn-conditional pull-right">
+                        <span class="glyphicon glyphicon-save"></span> Export Active List
+                    </button>
+                </a>
+            </h3>
         </div>
         <div class="panel-body table-fill">
             <div class="table-responsive">

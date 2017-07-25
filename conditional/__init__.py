@@ -1,5 +1,6 @@
 import os
 import subprocess
+from datetime import datetime
 from flask import Flask, redirect, request, render_template, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,23 +17,68 @@ config = os.path.join(app.config.get('ROOT_DIR', os.getcwd()), "config.py")
 app.config.from_pyfile(config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-try:
-    app.config["GIT_REVISION"] = fetch_git_sha(app.config["ROOT_DIR"])[:7]
-except (InvalidGitRepository, KeyError):
-    app.config["GIT_REVISION"] = "unknown"
+app.config["GIT_REVISION"] = subprocess.check_output(['git',
+                                                      'rev-parse',
+                                                      '--short',
+                                                      'HEAD']).decode('utf-8').rstrip()
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-logger = structlog.get_logger()
 sentry = Sentry(app)
 
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
                ro=app.config['LDAP_RO'])
 
-# pylint: disable=C0413
+def start_of_year():
+    start = datetime(datetime.today().year, 6, 1)
+    if datetime.today() < start:
+        start = datetime(datetime.today().year-1, 6, 1)
+    return start
 
-from conditional.blueprints.dashboard import dashboard_bp
+# pylint: disable=C0413
+from conditional.models.models import UserLog
+
+# Configure Logging
+def request_processor(logger, log_method, event_dict): # pylint: disable=unused-argument, redefined-outer-name
+    if 'request' in event_dict:
+        flask_request = event_dict['request']
+        event_dict['user'] = flask_request.headers.get("x-webauth-user")
+        event_dict['ip'] = flask_request.remote_addr
+        event_dict['method'] = flask_request.method
+        event_dict['blueprint'] = flask_request.blueprint
+        event_dict['path'] = flask_request.full_path
+    return event_dict
+
+
+def database_processor(logger, log_method, event_dict): # pylint: disable=unused-argument, redefined-outer-name
+    if 'request' in event_dict:
+        if event_dict['method'] != 'GET':
+            log = UserLog(
+                ipaddr=event_dict['ip'],
+                user=event_dict['user'],
+                method=event_dict['method'],
+                blueprint=event_dict['blueprint'],
+                path=event_dict['path'],
+                description=event_dict['event']
+                )
+            db.session.add(log)
+            db.session.flush()
+            db.session.commit()
+        del event_dict['request']
+    return event_dict
+
+structlog.configure(processors=[
+    request_processor,
+    database_processor,
+    structlog.processors.KeyValueRenderer()
+    ])
+
+logger = structlog.get_logger()
+
+
+from conditional.blueprints.dashboard import dashboard_bp # pylint: disable=ungrouped-imports
 from conditional.blueprints.attendance import attendance_bp
 from conditional.blueprints.major_project_submission import major_project_bp
 from conditional.blueprints.intro_evals import intro_evals_bp
@@ -43,6 +89,8 @@ from conditional.blueprints.conditional import conditionals_bp
 from conditional.blueprints.member_management import member_management_bp
 from conditional.blueprints.slideshow import slideshow_bp
 from conditional.blueprints.cache_management import cache_bp
+from conditional.blueprints.co_op import co_op_bp
+from conditional.blueprints.logs import log_bp
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(attendance_bp)
@@ -55,6 +103,8 @@ app.register_blueprint(conditionals_bp)
 app.register_blueprint(member_management_bp)
 app.register_blueprint(slideshow_bp)
 app.register_blueprint(cache_bp)
+app.register_blueprint(co_op_bp)
+app.register_blueprint(log_bp)
 
 from conditional.util.ldap import ldap_get_member
 

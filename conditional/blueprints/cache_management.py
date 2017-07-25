@@ -30,7 +30,8 @@ def restart_app():
     if not ldap_is_rtp(account):
         return redirect("/dashboard")
 
-    logger.info('api', action='restart conditional')
+    log = logger.new(request=request)
+    log.info('Restart Conditional')
     os.kill(os.getpid(), signal.SIGINT)
     return "application restarted", 200
 
@@ -40,10 +41,11 @@ def clear_cache():
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
 
-    if not ldap_is_eval_director(account) or not ldap_is_rtp(account):
+    if not ldap_is_eval_director(account) and not ldap_is_rtp(account):
         return redirect("/dashboard")
 
-    logger.info('api', action='purge system cache')
+    log = logger.new(request=request)
+    log.info('Purge All Caches')
 
     _ldap_is_member_of_directorship.cache_clear()
     ldap_get_member.cache_clear()

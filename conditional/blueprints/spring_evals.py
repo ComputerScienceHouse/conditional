@@ -1,12 +1,9 @@
-import uuid
 import structlog
 
 from flask import Blueprint, request
 
 from conditional.util.ldap import ldap_get_active_members
 
-from conditional.models.models import MemberCommitteeAttendance
-from conditional.models.models import CommitteeMeeting
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MajorProject
 from conditional.models.models import HouseMeeting
@@ -14,7 +11,9 @@ from conditional.models.models import SpringEval
 
 from conditional.util.flask import render_template
 
-from conditional import db
+from conditional.util.member import get_cm, get_hm
+
+from conditional import db, start_of_year
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
@@ -23,14 +22,8 @@ logger = structlog.get_logger()
 
 @spring_evals_bp.route('/spring_evals/')
 def display_spring_evals(internal=False):
-    log = logger.new(user_name=request.headers.get("x-webauth-user"),
-                     request_id=str(uuid.uuid4()))
-    log.info('frontend', action='display membership evaluations listing')
-
-    def get_cm_count(member_id):
-        return len([a for a in MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.uid == member_id)
-            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).approved])
+    log = logger.new(request=request)
+    log.info('Display Membership Evaluations Listing')
 
     user_name = None
     if not internal:
@@ -42,31 +35,26 @@ def display_spring_evals(internal=False):
     for account in active_members:
         uid = account.uid
         spring_entry = SpringEval.query.filter(
-            SpringEval.uid == uid and
-            SpringEval.active).first()
+            SpringEval.date_created > start_of_year(),
+            SpringEval.uid == uid,
+            SpringEval.active == True).first() # pylint: disable=singleton-comparison
 
         if spring_entry is None:
             spring_entry = SpringEval(uid)
             db.session.add(spring_entry)
             db.session.flush()
             db.session.commit()
-            # something bad happened to get here...
         elif spring_entry.status != "Pending" and internal:
             continue
 
         eval_data = None
 
-        h_meetings = [m.meeting_id for m in
-                      MemberHouseMeetingAttendance.query.filter(
-                          MemberHouseMeetingAttendance.uid == uid
-                      ).filter(
-                          MemberHouseMeetingAttendance.attendance_status == "Absent"
-                      )]
+        h_meetings = [m.meeting_id for m in get_hm(account)]
         member = {
             'name': account.cn,
             'uid': uid,
             'status': spring_entry.status,
-            'committee_meetings': get_cm_count(uid),
+            'committee_meetings': len(get_cm(account)),
             'house_meetings_missed':
                 [
                     {
@@ -86,16 +74,19 @@ def display_spring_evals(internal=False):
                     'status': p.status,
                     'description': p.description
                 } for p in MajorProject.query.filter(
+                    MajorProject.date > start_of_year(),
                     MajorProject.uid == uid)]
         }
         member['major_projects_len'] = len(member['major_projects'])
-        member['major_project_passed'] = [
+        member['major_projects_passed'] = [
             {
                 'name': p.name,
                 'status': p.status,
                 'description': p.description
-            } for p in MajorProject.query.filter(MajorProject.uid == uid)
-            if p.status == "Passed"]
+            } for p in MajorProject.query.filter(
+                MajorProject.date > start_of_year(),
+                MajorProject.status == "Passed",
+                MajorProject.uid == uid)]
         member['major_projects_passed_len'] = len(member['major_projects_passed'])
         member['major_project_passed'] = False
         for mp in member['major_projects']:

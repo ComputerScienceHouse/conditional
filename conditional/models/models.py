@@ -2,6 +2,7 @@ import time
 from datetime import date, timedelta, datetime
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, \
     Date, Text, Boolean
+from sqlalchemy.dialects import postgresql
 from conditional import db
 
 attendance_enum = Enum('Attended', 'Excused', 'Absent', name='attendance_enum')
@@ -128,6 +129,7 @@ class FreshmanSeminarAttendance(db.Model):
 class MajorProject(db.Model):
     __tablename__ = 'major_projects'
     id = Column(Integer, primary_key=True)
+    date = Column(Date, nullable=False)
     uid = Column(String(32), nullable=False)
     name = Column(String(64), nullable=False)
     description = Column(Text)
@@ -138,6 +140,7 @@ class MajorProject(db.Model):
 
     def __init__(self, uid, name, desc):
         self.uid = uid
+        self.date = datetime.now()
         self.name = name
         self.description = desc
         self.status = 'Pending'
@@ -189,13 +192,14 @@ class CurrentCoops(db.Model):
     __tablename__ = 'current_coops'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
-    active = Column(Boolean, nullable=False)
     date_created = Column(Date, nullable=False)
+    semester = Column(Enum('Fall', 'Spring', name="co_op_enum"), nullable=False)
 
-    def __init__(self, uid):
+    def __init__(self, uid, semester):
         self.uid = uid
         self.active = True
         self.date_created = datetime.now()
+        self.semester = semester
 
 
 class OnFloorStatusAssigned(db.Model):
@@ -219,14 +223,18 @@ class Conditional(db.Model):
     status = Column(Enum('Pending', 'Passed', 'Failed',
                          name="conditional_enum"),
                     nullable=False)
+    s_evaluation = Column(ForeignKey('spring_evals.id'))
+    i_evaluation = Column(ForeignKey('freshman_eval_data.id'))
 
-    def __init__(self, uid, description, due):
+    def __init__(self, uid, description, due, s_eval=None, i_eval=None):
         self.uid = uid
         self.description = description
         self.date_due = due
         self.date_created = datetime.now()
         self.status = "Pending"
         self.active = True
+        self.s_evaluation = s_eval
+        self.i_evaluation = i_eval
 
 
 class EvalSettings(db.Model):
@@ -235,11 +243,13 @@ class EvalSettings(db.Model):
     housing_form_active = Column(Boolean)
     intro_form_active = Column(Boolean)
     site_lockdown = Column(Boolean)
+    accept_dues_until = Column(Date)
 
     def __init__(self):
         self.housing_form_active = True
         self.intro_form_active = True
         self.site_lockdown = False
+        self.accept_dues_until = datetime.now()
 
 
 class SpringEval(db.Model):
@@ -262,3 +272,25 @@ class SpringEval(db.Model):
 class InHousingQueue(db.Model):
     __tablename__ = 'in_housing_queue'
     uid = Column(String(32), primary_key=True)
+
+http_enum = Enum('GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH', name='http_enum')
+
+class UserLog(db.Model):
+    __tablename__ = 'user_log'
+    id = Column(Integer, primary_key=True)
+    ipaddr = Column(postgresql.INET, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    uid = Column(String(32), nullable=False)
+    method = Column(http_enum)
+    blueprint = Column(String(32), nullable=False)
+    path = Column(String(128), nullable=False)
+    description = Column(String(128), nullable=False)
+
+    def __init__(self, ipaddr, user, method, blueprint, path, description):
+        self.ipaddr = ipaddr
+        self.timestamp = datetime.now()
+        self.uid = user
+        self.method = method
+        self.blueprint = blueprint
+        self.path = path
+        self.description = description

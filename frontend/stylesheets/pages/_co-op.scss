@@ -1,0 +1,20 @@
+.co-op-description {
+  margin-bottom: 25px;
+}
+
+.co-op-group {
+  margin-top: 25px;
+}
+
+.co-op-option {
+  padding-left: 10px;
+}
+
+.co-op-radio {
+  input {
+    &[type='radio'] {
+      position: fixed;
+      margin-top: 20px;
+    }
+  }
+}
