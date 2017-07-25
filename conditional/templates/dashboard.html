@@ -251,7 +251,22 @@ Dashboard
             </div>
             {% endif %}
 
+            {% if accepting_dues and student and not active %}
+                <div class="panel panel-info" id="becomeActive">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Become Active</h3>
+                    </div>
+                    <div class="panel-body">
+                        Hey there, you're eligible to become an active member! Click the button below if you'd like to become active and pay dues.
+                    </div>
+                    <div class="panel-footer text-right">
+                        <a href="#" data-module="becomeActive" class="btn btn-sm btn-default">Become Active</a>
+                    </div>
+                </div>
+            {% endif %}
+
         </div>
+
         <div class="col-lg-6 col-md-6">
             {% if housing %}
             <div class="panel panel-default">
