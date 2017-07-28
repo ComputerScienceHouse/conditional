@@ -31,7 +31,8 @@ export default class NewYear {
           warningText: "This will clear active members and room assignments!",
           successText: "Data successfully cleared."}, () => {
             fetch(this.endpoints.housing, {
-              method: 'DELETE'
+              method: 'DELETE',
+              credentials: "same-origin"
             })
             .then($('#new-clear').fadeOut(() => {
               $("#new-current").fadeIn();
@@ -45,7 +46,8 @@ export default class NewYear {
       } else if (this.uid) {
         if ($('#rem-' + this.uid).is(":visible")) {
           fetch(this.endpoints.current + this.uid, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: "same-origin"
           }).then(() => {
             $('#rem-' + this.uid).hide();
             $('#add-' + this.uid).show();
@@ -58,7 +60,8 @@ export default class NewYear {
           });
         } else {
           fetch(this.endpoints.current + this.uid, {
-            method: 'POST'
+            method: 'POST',
+            credentials: "same-origin"
           }).then(() => {
             $('#add-' + this.uid).hide();
             $('#rem-' + this.uid).show();
