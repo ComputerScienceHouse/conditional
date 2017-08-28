@@ -138,5 +138,5 @@ def get_hm(member, only_absent=False):
                           HouseMeeting.date > start_of_year(),
                           MemberHouseMeetingAttendance.uid == member.uid)
     if only_absent:
-        h_meetings = [hm for hm in h_meetings if hm.attendance_status == "Absent"]
+        h_meetings = h_meetings.filter(MemberHouseMeetingAttendance.attendance_status == "Absent")
     return h_meetings
