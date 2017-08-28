@@ -49,7 +49,7 @@ def display_spring_evals(internal=False):
 
         eval_data = None
 
-        h_meetings = [m.meeting_id for m in get_hm(account)]
+        h_meetings = [m.meeting_id for m in get_hm(account, only_absent=True)]
         member = {
             'name': account.cn,
             'uid': uid,

@@ -128,7 +128,7 @@ def get_cm(member):
     return c_meetings
 
 
-def get_hm(member):
+def get_hm(member, only_absent=False):
     h_meetings = MemberHouseMeetingAttendance.query.outerjoin(
                   HouseMeeting,
                   MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
@@ -137,4 +137,6 @@ def get_hm(member):
                       HouseMeeting.date).filter(
                           HouseMeeting.date > start_of_year(),
                           MemberHouseMeetingAttendance.uid == member.uid)
+    if only_absent:
+        h_meetings = [hm for hm in h_meetings if hm.attendance_status == "Absent"]
     return h_meetings
