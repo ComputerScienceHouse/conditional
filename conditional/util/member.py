@@ -116,15 +116,22 @@ def get_onfloor_members():
 
 
 def get_cm(member):
-    try:
-        c_meetings = [m.meeting_id for m in
-                      MemberCommitteeAttendance.query.filter(
-                          MemberCommitteeAttendance.uid == member.uid
-                      ) if CommitteeMeeting.query.filter(
-                          CommitteeMeeting.timestamp > start_of_year(),
-                          CommitteeMeeting.id == m.meeting_id).first().approved]
-    except AttributeError:
-        c_meetings = []
+    c_meetings = [{
+        "uid": cm.uid,
+        "timestamp": cm.timestamp,
+        "committee": cm.committee
+    } for cm in CommitteeMeeting.query.join(
+        MemberCommitteeAttendance,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+        ).with_entities(
+            MemberCommitteeAttendance.uid,
+            CommitteeMeeting.timestamp,
+            CommitteeMeeting.committee
+            ).filter(
+                CommitteeMeeting.timestamp > start_of_year(),
+                MemberCommitteeAttendance.uid == member.uid,
+                CommitteeMeeting.approved == True # pylint: disable=singleton-comparison
+                ).all()]
     return c_meetings
 
 

@@ -14,7 +14,6 @@ from conditional.models.models import MajorProject
 from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
 from conditional.models.models import SpringEval
-from conditional.models.models import CommitteeMeeting
 
 from conditional.util.housing import get_queue_position
 from conditional.util.flask import render_template
@@ -116,15 +115,6 @@ def display_dashboard():
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
 
-    cm_attendance = [
-        {
-            'type': m.committee,
-            'datetime': m.timestamp.date()
-        } for m in CommitteeMeeting.query.filter(
-            CommitteeMeeting.id.in_(c_meetings),
-            CommitteeMeeting.timestamp > start_of_year()
-        )]
-
     hm_attendance = [
         {
             'reason': m.excuse,
@@ -139,8 +129,8 @@ def display_dashboard():
             MemberHouseMeetingAttendance.attendance_status == "Absent",
             HouseMeeting.date > start_of_year())]
 
-    data['cm_attendance'] = cm_attendance
-    data['cm_attendance_len'] = len(cm_attendance)
+    data['cm_attendance'] = c_meetings
+    data['cm_attendance_len'] = len(c_meetings)
     data['hm_attendance'] = hm_attendance
     data['hm_attendance_len'] = len(hm_attendance)
 
