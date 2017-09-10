@@ -132,6 +132,10 @@ def ldap_set_non_current_student(account):
     ldap_get_current_students.cache_clear()
     ldap_get_member.cache_clear()
 
+def ldap_set_onfloor(account):
+    _ldap_add_member_to_group(account, 'onfloor')
+    ldap_get_onfloor_members.cache_clear()
+    ldap_get_member.cache_clear()
 
 def ldap_get_roomnumber(account):
     try:
