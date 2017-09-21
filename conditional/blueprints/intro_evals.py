@@ -135,15 +135,16 @@ def display_intro_evals(internal=False):
                     )
                 ],
             'technical_seminars':
-                [s.name for s in TechnicalSeminar.query.filter(
-                    TechnicalSeminar.id.in_(
-                        [a.seminar_id for a in MemberSeminarAttendance.query.filter(
-                            MemberSeminarAttendance.uid == uid)
-                            if TechnicalSeminar.query.filter(
-                                TechnicalSeminar.id == a.seminar_id,
-                                TechnicalSeminar.timestamp > start_of_year()).first().approved]
-                    ))
-                 ],
+                [seminar.name for seminar in TechnicalSeminar.query.join(
+                    MemberSeminarAttendance,
+                    MemberSeminarAttendance.seminar_id == TechnicalSeminar.id
+                    ).with_entities(
+                        TechnicalSeminar.name
+                        ).filter(
+                            TechnicalSeminar.timestamp > start_of_year(),
+                            MemberSeminarAttendance.uid == member.uid,
+                            TechnicalSeminar.approved == True # pylint: disable=singleton-comparison
+                            ).all()],
             'social_events': freshman_data.social_events,
             'freshman_project': freshman_data.freshman_project,
             'comments': freshman_data.other_notes,
