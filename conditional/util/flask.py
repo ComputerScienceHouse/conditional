@@ -43,12 +43,15 @@ def render_template(request, template_name, **kwargs):
     ts_review = len(TechnicalSeminar.query.filter(
         TechnicalSeminar.approved == False).all()) # pylint: disable=singleton-comparison
 
-    if is_eboard:
+    admin_warning = lockdown
+
+    if is_eboard or is_rtp:
         lockdown = False
 
     return flask_render_template(
         template_name,
         lockdown=lockdown,
+        admin_warning=admin_warning,
         accepting_dues=accepting_dues,
         is_active=is_active,
         is_alumni=is_alumni,
