@@ -4,6 +4,19 @@ Membership Evaluations
 {% endblock %}
 {% block body %}
 <div class="container main">
+    <div class="row mobile-hide">
+    <div class="col-sm-10">
+    <h3 class="page-title">Spring Evaluations</h3>
+    </div>
+    <div class="col-sm-2">
+		<div class="material-switch align-center">
+            <div class="switch-label">Table View</div>
+			<input id="evalToggle" name="evalToggle" type="checkbox" data-module="evalToggle"/>
+			<label for="evalToggle" class="label-primary"></label>
+		</div>
+    </div>
+    </div>
+    <div id="eval-blocks">
     {% for m in members %}
     <div class="panel panel-default">
         <div class="panel-body eval-panel">
@@ -163,5 +176,66 @@ Membership Evaluations
 
 
     {% endfor %}
+    </div>
+    <div id="eval-table" style="display:none;">
+    <div class="panel panel-default">
+        <div class="panel-body table-fill">
+	<div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="4" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Result</th>
+                        <th>Meetings</th>
+                        <th>Major Project</th>
+						<th>House Meetings Missed</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in members %}
+                    <tr>
+                        <td>
+                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" height="30" /> {{m['name']}} ({{m['uid']}})
+                        </td>
+                        <td>
+                            {% if m['status'] == "Passed" %}
+                            <span class="glyphicon glyphicon-ok green"></span> Passed
+                            {% elif m['status'] == "Pending" %}
+                            <span class="glyphicon glyphicon-hourglass yellow"></span> Pending
+                            {% else %}
+                            <span class="glyphicon glyphicon-remove red"></span> Failed
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if m['committee_meetings'] < 25 %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
+                            {% else %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if m['major_project_passed'] %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> Passed
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> None
+                            {% endif %}
+                        </td>
+						<td>
+                            {% if m['house_meetings_missed']|length == 0 %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['house_meetings_missed']|length}}
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['house_meetings_missed']|length}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
 </div>
 {% endblock %}
