@@ -11,7 +11,7 @@ from conditional.models.models import SpringEval
 
 from conditional.util.flask import render_template
 
-from conditional.util.member import get_cm, get_hm
+from conditional.util.member import get_cm, get_hm, req_cm
 
 from conditional import db, start_of_year
 
@@ -55,6 +55,7 @@ def display_spring_evals(internal=False):
             'uid': uid,
             'status': spring_entry.status,
             'committee_meetings': len(get_cm(account)),
+            'req_meetings': req_cm(account),
             'house_meetings_missed':
                 [
                     {

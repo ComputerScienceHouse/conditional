@@ -127,9 +127,9 @@ Dashboard
                         <tr>
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
-                                {% if spring['committee_meetings'] >= 25 %}
+                                {% if spring['committee_meetings'] >= spring['req_meetings'] %}
                                 <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{ spring['committee_meetings'] }} / 25</span>
+                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}</span>
                             </td>
                         </tr>
                         <tr>
