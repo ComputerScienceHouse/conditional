@@ -2,6 +2,8 @@ import structlog
 
 from flask import Blueprint, request, jsonify, redirect
 
+from sqlalchemy import desc
+
 from conditional.models.models import MajorProject
 
 from conditional.util.ldap import ldap_is_eval_director
@@ -9,7 +11,6 @@ from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
 
 from conditional import db, start_of_year
-from sqlalchemy import desc
 
 
 logger = structlog.get_logger()
