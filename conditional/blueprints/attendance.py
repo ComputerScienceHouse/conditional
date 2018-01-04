@@ -391,7 +391,7 @@ def attendance_history():
     user_name = request.headers.get('x-webauth-user')
     account = ldap_get_member(user_name)
     if not ldap_is_eboard(account):
-        return "must be eboard", 403
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
 
     page = request.args.get('page', 1)
@@ -455,7 +455,7 @@ def alter_committee_attendance(cid):
 
     account = ldap_get_member(user_name)
     if not ldap_is_eboard(account):
-        return "must be eboard", 403
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     post_data = request.get_json()
     meeting_id = cid
@@ -488,7 +488,7 @@ def alter_seminar_attendance(sid):
 
     account = ldap_get_member(user_name)
     if not ldap_is_eboard(account):
-        return "must be eboard", 403
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     post_data = request.get_json()
     meeting_id = sid
@@ -528,7 +528,7 @@ def get_cm_attendees(sid):
             attendees.append(freshman)
         return jsonify({"attendees": attendees}), 200
 
-    elif request.method == 'DELETE':
+    else:
         log = logger.new(request=request)
         log.info('Delete Technical Seminar {}'.format(sid))
 
@@ -536,7 +536,7 @@ def get_cm_attendees(sid):
 
         account = ldap_get_member(user_name)
         if not ldap_is_eboard(account):
-            return "must be eboard", 403
+            return jsonify({"success": False, "error": "Not EBoard"}), 403
 
         FreshmanSeminarAttendance.query.filter(
             FreshmanSeminarAttendance.seminar_id == sid).delete()
@@ -567,7 +567,7 @@ def get_ts_attendees(cid):
             attendees.append(freshman)
         return jsonify({"attendees": attendees}), 200
 
-    elif request.method == 'DELETE':
+    else:
         log = logger.new(request=request)
         log.info('Delete Committee Meeting {}'.format(cid))
 
@@ -575,7 +575,7 @@ def get_ts_attendees(cid):
 
         account = ldap_get_member(user_name)
         if not ldap_is_eboard(account):
-            return "must be eboard", 403
+            return jsonify({"success": False, "error": "Not EBoard"}), 403
 
         FreshmanCommitteeAttendance.query.filter(
             FreshmanCommitteeAttendance.meeting_id == cid).delete()
@@ -599,7 +599,7 @@ def approve_cm(cid):
 
     account = ldap_get_member(user_name)
     if not ldap_is_eboard(account):
-        return "must be eboard", 403
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     CommitteeMeeting.query.filter(
         CommitteeMeeting.id == cid).first().approved = True
@@ -618,7 +618,7 @@ def approve_ts(sid):
 
     account = ldap_get_member(user_name)
     if not ldap_is_eboard(account):
-        return "must be eboard", 403
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     TechnicalSeminar.query.filter(
         TechnicalSeminar.id == sid).first().approved = True

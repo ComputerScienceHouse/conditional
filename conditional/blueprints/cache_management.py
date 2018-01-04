@@ -2,6 +2,8 @@ import os
 import signal
 import structlog
 
+from flask import Blueprint, request, redirect
+
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_rtp
 
@@ -16,8 +18,6 @@ from conditional.util.member import get_voting_members
 from conditional.util.member import get_members_info
 from conditional.util.member import get_onfloor_members
 
-
-from flask import Blueprint, request, redirect
 
 logger = structlog.get_logger()
 cache_bp = Blueprint('cache_bp', __name__)
