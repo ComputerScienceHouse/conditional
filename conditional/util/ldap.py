@@ -31,6 +31,7 @@ def _ldap_is_member_of_directorship(account, directorship):
     for director in directors:
         if director.uid == account.uid:
             return True
+    return False
 
 
 @lru_cache(maxsize=1024)
