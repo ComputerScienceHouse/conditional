@@ -8,6 +8,7 @@ from conditional.models.models import MajorProject
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
+from conditional.util.ldap import ldap_is_active
 from conditional.util.flask import render_template
 
 from conditional import db, start_of_year
@@ -57,17 +58,21 @@ def submit_major_project():
 
     user_name = request.headers.get('x-webauth-user')
 
-    post_data = request.get_json()
-    name = post_data['projectName']
-    description = post_data['projectDescription']
+    if ldap_is_active(user_name):
+        post_data = request.get_json()
+        name = post_data['projectName']
+        description = post_data['projectDescription']
 
-    if name == "" or description == "":
-        return jsonify({"success": False}), 400
-    project = MajorProject(user_name, name, description)
+        if name == "" or description == "":
+            return jsonify({"success": False}), 400
+        project = MajorProject(user_name, name, description)
 
-    db.session.add(project)
-    db.session.commit()
-    return jsonify({"success": True}), 200
+        db.session.add(project)
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    else:
+        # User is not an active member and does not need to complete a major project
+        return jsonify({"success": False}, 403)
 
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
