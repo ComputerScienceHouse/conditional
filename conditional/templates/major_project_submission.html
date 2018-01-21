@@ -6,6 +6,7 @@ Major Project Form
 
 <div class="container main">
     <h3 class="page-title">Major Project Form</h3>
+    {% if is_active %}
     <form data-module="majorProjectForm">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -27,6 +28,11 @@ Major Project Form
         </div>
         <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit" value="Submit Major Project">
     </form>
+    {% else %}
+    <div class="alert alert-success" role="alert">
+        <span class="glyphicon glyphicon-ok-sign"></span> You are not required to complete a major project.
+    </div>
+    {% endif %}
     <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
     <=0 %} <div class="panel panel-default">
         <div class="panel-body">
