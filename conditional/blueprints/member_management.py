@@ -78,7 +78,7 @@ def display_member_management():
     freshmen = FreshmanAccount.query
     freshmen_list = []
 
-    for freshman_user in freshmen:
+    for freshman_user in freshmen: # pylint: disable=not-an-iterable
         freshmen_list.append({
             "id": freshman_user.id,
             "name": freshman_user.name,

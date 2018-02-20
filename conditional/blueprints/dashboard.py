@@ -17,7 +17,7 @@ from conditional.models.models import SpringEval
 
 from conditional.util.housing import get_queue_position
 from conditional.util.flask import render_template
-from conditional.util.member import get_freshman_data, get_voting_members, get_cm, get_hm
+from conditional.util.member import get_freshman_data, get_voting_members, get_cm, get_hm, req_cm
 
 from conditional import start_of_year
 
@@ -58,6 +58,7 @@ def display_dashboard():
     spring = {}
     c_meetings = get_cm(member)
     spring['committee_meetings'] = len(c_meetings)
+    spring['req_meetings'] = req_cm(member)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(member)]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid,

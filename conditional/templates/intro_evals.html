@@ -4,6 +4,19 @@ Introductory Evaluations
 {% endblock %}
 {% block body %}
 <div class="container main">
+    <div class="row mobile-hide">
+        <div class="col-sm-10">
+            <h3 class="page-title">Intro Evaluations</h3>
+        </div>
+        <div class="col-sm-2">
+            <div class="material-switch align-center">
+                <div class="switch-label">Table View</div>
+                <input id="evalToggle" name="evalToggle" type="checkbox" data-module="evalToggle"/>
+                <label for="evalToggle" class="label-primary"></label>
+            </div>
+        </div>
+    </div>
+    <div id="eval-blocks">
     {% if members|length > 0 %}
     {% for m in members %}
     <div class="panel panel-default">
@@ -169,8 +182,90 @@ Introductory Evaluations
 
 </div>
 {% endfor %}
+</div>
 {% else %}
     <div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"></span> There are currently no active intro members.</div>
 {% endif %}
+
+<div id="eval-table" style="display:none;">
+    <div class="panel panel-default">
+        <div class="panel-body table-fill">
+	<div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="3" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Result</th>
+                        <th>Meetings</th>
+                        <th>Signatures Missed</th>
+                        <th>Freshman Project</th>
+                        <th>Technical Seminars</th>
+						<th>House Meetings Missed</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in members %}
+                    <tr>
+                        <td>
+                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" height="30" /> {{m['name']}} ({{m['uid']}})
+                        </td>
+                        <td>
+                            {% if m['status'] == "Passed" %}
+                            <span class="glyphicon glyphicon-ok green"></span> Passed
+                            {% elif m['status'] == "Pending" %}
+                            <span class="glyphicon glyphicon-hourglass yellow"></span> Pending
+                            {% else %}
+                            <span class="glyphicon glyphicon-remove red"></span> Failed
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if m['committee_meetings'] < 10 %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
+                            {% else %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
+                            {% endif %}
+                        </td>
+                        <td>
+                           {% if m['signatures_missed'] == 0 %}
+                               <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{ m['signatures_missed'] }}
+                                {% elif m['signatures_missed'] > 0 %}
+                               <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{ m['signatures_missed'] }}
+                                {% else %}
+                               <span class="glyphicon glyphicon-hourglass yellow eval-info-status"></span> Pending
+                                {% endif %}
+                        </td>
+                        <td>
+                             {% if m['freshman_project'] == "Passed" %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> Passed
+                            {% elif m['freshman_project'] == "Failed" %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> Failed
+                            {% else %}
+                                <span class="glyphicon glyphicon-hourglass yellow eval-info-status"></span> Pending
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if m['technical_seminars']|length >= 2 %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['technical_seminars']|length}}
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['technical_seminars']|length}}
+                            {% endif %}
+                        </td>
+						<td>
+                            {% if m['house_meetings_missed']|length == 0 %}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['house_meetings_missed']|length}}
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['house_meetings_missed']|length}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
 </div>
 {% endblock %}

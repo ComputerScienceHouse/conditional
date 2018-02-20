@@ -103,4 +103,11 @@
         </div>
     </div>
 </nav>
+{% if admin_warning %}
+<div class="container">
+    <div class="alert alert-warning alert-admin" role="alert">
+        <strong>Conditional is in lockdown!</strong> Data shown relating to any on-going evaluation is confidential, do not disclose any information to anyone. 
+    </div>
+</div>
+{% endif %}
 {% endblock %}
