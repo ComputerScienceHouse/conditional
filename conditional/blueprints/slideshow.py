@@ -1,22 +1,17 @@
 import json
-
 from datetime import datetime
 
 import structlog
-
 from flask import Blueprint, jsonify, redirect, request
 
-from conditional.util.flask import render_template
+from conditional import db, auth
 from conditional.blueprints.intro_evals import display_intro_evals
 from conditional.blueprints.spring_evals import display_spring_evals
-
-from conditional.util.ldap import ldap_is_eval_director, ldap_get_member
-
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import SpringEval
-
-from conditional import db
-
+from conditional.util.auth import get_username
+from conditional.util.flask import render_template
+from conditional.util.ldap import ldap_is_eval_director, ldap_get_member
 
 logger = structlog.get_logger()
 
@@ -24,19 +19,19 @@ slideshow_bp = Blueprint('slideshow_bp', __name__)
 
 
 @slideshow_bp.route('/slideshow/intro')
-def slideshow_intro_display():
+@auth.oidc_auth
+@get_username
+def slideshow_intro_display(username=None):
     log = logger.new(request=request)
     log.info('Display Intro Slideshow')
 
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
+    account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
         return redirect("/dashboard")
 
-    return render_template(request,
-                           'intro_eval_slideshow.html',
-                           username=user_name,
+    return render_template('intro_eval_slideshow.html',
+                           username=username,
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_intro_evals(internal=True))
 
@@ -53,12 +48,12 @@ def slideshow_intro_members():
 
 
 @slideshow_bp.route('/slideshow/intro/review', methods=['POST'])
-def slideshow_intro_review():
+@auth.oidc_auth
+@get_username
+def slideshow_intro_review(username=None):
     log = logger.new(request=request)
 
-    # get user data
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
+    account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
         return redirect("/dashboard", code=302)
@@ -82,19 +77,19 @@ def slideshow_intro_review():
 
 
 @slideshow_bp.route('/slideshow/spring')
-def slideshow_spring_display():
+@auth.oidc_auth
+@get_username
+def slideshow_spring_display(username=None):
     log = logger.new(request=request)
     log.info('Display Membership Evaluations Slideshow')
 
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
+    account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
         return redirect("/dashboard")
 
-    return render_template(request,
-                           'spring_eval_slideshow.html',
-                           username=user_name,
+    return render_template('spring_eval_slideshow.html',
+                           username=username,
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_spring_evals(internal=True))
 
@@ -111,12 +106,12 @@ def slideshow_spring_members():
 
 
 @slideshow_bp.route('/slideshow/spring/review', methods=['POST'])
-def slideshow_spring_review():
+@auth.oidc_auth
+@get_username
+def slideshow_spring_review(username=None):
     log = logger.new(request=request)
 
-    # get user data
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
+    account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
         return redirect("/dashboard", code=302)
