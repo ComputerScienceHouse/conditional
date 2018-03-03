@@ -8,7 +8,7 @@ import structlog
 
 from flask import Blueprint, request, jsonify, abort, make_response
 
-from conditional import app
+from conditional import app, get_username, auth
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -57,11 +57,12 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 
 
 @member_management_bp.route('/manage')
-def display_member_management():
+@auth.oidc_auth
+@get_username
+def display_member_management(username=None):
     log = logger.new(request=request)
     log.info('Display Member Management')
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
@@ -97,7 +98,7 @@ def display_member_management():
         intro_form = False
         accept_dues_until = datetime.now()
 
-    return render_template(request, "member_management.html",
+    return render_template("member_management.html",
                            username=username,
                            active=member_list,
                            num_current=len(member_list),
@@ -112,10 +113,11 @@ def display_member_management():
 
 
 @member_management_bp.route('/manage/settings', methods=['PUT'])
-def member_management_eval():
+@auth.oidc_auth
+@get_username
+def member_management_eval(username=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -143,10 +145,11 @@ def member_management_eval():
 
 
 @member_management_bp.route('/manage/accept_dues_until', methods=['PUT'])
-def member_management_financial():
+@auth.oidc_auth
+@get_username
+def member_management_financial(username=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_financial_director(account):
@@ -168,11 +171,11 @@ def member_management_financial():
 
 
 @member_management_bp.route('/manage/user', methods=['POST'])
-def member_management_adduser():
+@auth.oidc_auth
+@get_username
+def member_management_adduser(username=None):
     log = logger.new(request=request)
 
-
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -196,8 +199,9 @@ def member_management_adduser():
 
 
 @member_management_bp.route('/manage/user/upload', methods=['POST'])
-def member_management_uploaduser():
-    username = request.headers.get('x-webauth-user')
+@auth.oidc_auth
+@get_username
+def member_management_uploaduser(username=None):
     account = ldap_get_member(username)
     log = logger.new(request=request)
 
@@ -232,16 +236,16 @@ def member_management_uploaduser():
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['POST'])
-def member_management_edituser(uid):
-
-    username = request.headers.get('x-webauth-user')
+@auth.oidc_auth
+@get_username
+def member_management_edituser(uid, username=None):
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
         return "must be eval director", 403
 
     if not uid.isdigit():
-        edit_uid(uid, request)
+        edit_uid(uid, request, username)
     else:
         edit_fid(uid, request)
 
@@ -250,13 +254,12 @@ def member_management_edituser(uid):
     return jsonify({"success": True}), 200
 
 
-def edit_uid(uid, flask_request):
+def edit_uid(uid, flask_request, username):
     log = logger.new(request=flask_request)
     post_data = flask_request.get_json()
     account = ldap_get_member(uid)
     active_member = post_data['activeMember']
 
-    username = flask_request.headers.get('x-webauth-user')
     current_account = ldap_get_member(username)
     if ldap_is_eval_director(current_account):
         room_number = post_data['roomNumber']
@@ -339,11 +342,12 @@ def edit_fid(uid, flask_request):
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['GET'])
-def member_management_getuserinfo(uid):
+@auth.oidc_auth
+@get_username
+def member_management_getuserinfo(uid, username=None):
     log = logger.new(request=request)
     log.info('Get {}\'s Information'.format(uid))
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
@@ -425,11 +429,12 @@ def member_management_getuserinfo(uid):
 
 
 @member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])
-def member_management_deleteuser(fid):
+@auth.oidc_auth
+@get_username
+def member_management_deleteuser(fid, username=None):
     log = logger.new(request=request)
     log.info('Delete freshman-{}'.format(fid))
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -460,10 +465,11 @@ def member_management_deleteuser(fid):
 # user creation script. There's no reason that the evals director should ever
 # manually need to do this
 @member_management_bp.route('/manage/upgrade_user', methods=['POST'])
-def member_management_upgrade_user():
+@auth.oidc_auth
+@get_username
+def member_management_upgrade_user(username=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -524,44 +530,46 @@ def member_management_upgrade_user():
 
 
 @member_management_bp.route('/manage/make_user_active', methods=['POST'])
-def member_management_make_user_active():
+@auth.oidc_auth
+@get_username
+def member_management_make_user_active(username=None):
     log = logger.new(request=request)
 
-    uid = request.headers.get('x-webauth-user')
-    account = ldap_get_member(uid)
+    account = ldap_get_member(username)
 
     if not ldap_is_current_student(account) or ldap_is_active(account):
         return "must be current student and not active", 403
 
     ldap_set_active(account)
-    log.info("Make user {} active".format(uid))
+    log.info("Make user {} active".format(username))
 
     clear_members_cache()
     return jsonify({"success": True}), 200
 
 
 @member_management_bp.route('/manage/intro_project', methods=['GET'])
-def introductory_project():
+@auth.oidc_auth
+@get_username
+def introductory_project(username=None):
     log = logger.new(request=request)
     log.info('Display Freshmen Project Management')
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
         return "must be eval director", 403
 
-    return render_template(request,
-                           'introductory_project.html',
+    return render_template('introductory_project.html',
                            username=username,
                            intro_members=display_intro_evals(internal=True))
 
 
 @member_management_bp.route('/manage/intro_project', methods=['POST'])
-def introductory_project_submit():
+@auth.oidc_auth
+@get_username
+def introductory_project_submit(username=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -593,12 +601,14 @@ def introductory_project_submit():
 
     return jsonify({"success": True}), 200
 
+
 @member_management_bp.route('/member/<uid>', methods=['GET'])
-def get_member(uid):
+@auth.oidc_auth
+@get_username
+def get_member(uid, username=None):
     log = logger.new(request=request)
     log.info('Get {}\'s Information'.format(uid))
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -613,11 +623,13 @@ def get_member(uid):
 
     return jsonify(account_dict), 200
 
+
 @member_management_bp.route('/manage/active', methods=['DELETE'])
-def clear_active_members():
+@auth.oidc_auth
+@get_username
+def clear_active_members(username=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -660,11 +672,11 @@ def export_active_list():
 
 
 @member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])
-def remove_current_student(uid):
+@auth.oidc_auth
+@get_username
+def remove_current_student(uid, username=None):
     log = logger.new(request=request)
 
-
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -681,11 +693,12 @@ def remove_current_student(uid):
 
 
 @member_management_bp.route('/manage/new', methods=['GET'])
-def new_year():
+@auth.oidc_auth
+@get_username
+def new_year(username=None):
     log = logger.new(request=request)
     log.info('Display New Year Page')
 
-    username = request.headers.get('x-webauth-user')
     account = ldap_get_member(username)
 
     if not ldap_is_eval_director(account):
@@ -693,8 +706,6 @@ def new_year():
 
     current_students = ldap_get_current_students()
 
-
-    return render_template(request,
-                           'new_year.html',
+    return render_template('new_year.html',
                            username=username,
                            current_students=current_students)
