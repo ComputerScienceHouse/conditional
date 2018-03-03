@@ -89,8 +89,7 @@ def display_dashboard():
             'status': p.status,
             'description': p.description
         } for p in
-        MajorProject.query.filter(MajorProject.uid == member.uid,
-                                  MajorProject.date > start_of_year())]
+        MajorProject.query.filter(MajorProject.uid == member.uid)]
 
     data['major_projects_count'] = len(data['major_projects'])
 
