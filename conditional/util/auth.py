@@ -1,5 +1,7 @@
 from functools import wraps
-from flask import request
+
+from flask import request, session
+
 from conditional.util.ldap import ldap_is_active, ldap_is_alumni, \
     ldap_is_eboard, ldap_is_eval_director, \
     ldap_is_financial_director, ldap_get_member
@@ -24,3 +26,13 @@ def webauth_request(func):
                      "is_eval": is_eval}, *args, **kwargs)
 
     return wrapped_func
+
+
+def get_username(func):
+    @wraps(func)
+    def wrapped_function(*args, **kwargs):
+        username = str(session["userinfo"].get("preferred_username", ""))
+        kwargs["username"] = username
+        return func(*args, **kwargs)
+
+    return wrapped_function
