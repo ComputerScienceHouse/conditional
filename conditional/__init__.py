@@ -22,7 +22,6 @@ app.config["GIT_REVISION"] = subprocess.check_output(['git',
                                                       '--short',
                                                       'HEAD']).decode('utf-8').rstrip()
 
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 sentry = Sentry(app)
@@ -39,11 +38,13 @@ app.secret_key = app.config["SECRET_KEY"]
 def start_of_year():
     start = datetime(datetime.today().year, 6, 1)
     if datetime.today() < start:
-        start = datetime(datetime.today().year-1, 6, 1)
+        start = datetime(datetime.today().year - 1, 6, 1)
     return start
+
 
 # pylint: disable=C0413
 from conditional.models.models import UserLog
+
 
 # Configure Logging
 def request_processor(logger, log_method, event_dict):  # pylint: disable=unused-argument, redefined-outer-name
@@ -67,18 +68,19 @@ def database_processor(logger, log_method, event_dict):  # pylint: disable=unuse
                 blueprint=event_dict['blueprint'],
                 path=event_dict['path'],
                 description=event_dict['event']
-                )
+            )
             db.session.add(log)
             db.session.flush()
             db.session.commit()
         del event_dict['request']
     return event_dict
 
+
 structlog.configure(processors=[
     request_processor,
     database_processor,
     structlog.processors.KeyValueRenderer()
-    ])
+])
 
 logger = structlog.get_logger()
 
@@ -113,6 +115,7 @@ app.register_blueprint(co_op_bp)
 app.register_blueprint(log_bp)
 
 from conditional.util.ldap import ldap_get_member
+
 
 @app.route('/<path:path>')
 def static_proxy(path):
@@ -164,15 +167,17 @@ def route_errors(error, username=None):
         error_desc = type(error).__name__
 
     return render_template('errors.html',
-                            error=error_desc,
-                            error_code=code,
-                            event_id=g.sentry_event_id,
-                            public_dsn=sentry.client.get_public_dsn('https'),
-                            **data), int(code)
+                           error=error_desc,
+                           error_code=code,
+                           event_id=g.sentry_event_id,
+                           public_dsn=sentry.client.get_public_dsn('https'),
+                           **data), int(code)
+
 
 @app.cli.command()
 def zoo():
     from conditional.models.migrate import free_the_zoo
     free_the_zoo(app.config['ZOO_DATABASE_URI'])
+
 
 logger.info('conditional started')
