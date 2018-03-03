@@ -2,6 +2,7 @@ from datetime import date
 
 from flask import render_template as flask_render_template
 from conditional.models.models import EvalSettings
+from conditional.util.auth import get_username
 
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_alumni
@@ -18,16 +19,14 @@ from conditional.models.models import TechnicalSeminar
 from conditional import db
 
 
-def render_template(request, template_name, **kwargs):
-    user_name = request.headers.get('x-webauth-user')
-
-    # TODO maybe use the webauth request decorator
+@get_username
+def render_template(template_name, username=None, **kwargs):
 
     if EvalSettings.query.first() is None:
         db.session.add(EvalSettings())
         db.session.flush()
         db.session.commit()
-    account = ldap_get_member(user_name)
+    account = ldap_get_member(username)
     lockdown = EvalSettings.query.first().site_lockdown
     accepting_dues = EvalSettings.query.first().accept_dues_until > date.today()
     is_active = ldap_is_active(account)
