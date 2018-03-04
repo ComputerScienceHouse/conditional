@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 from conditional import db, auth
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import InHousingQueue
-from conditional.util.auth import get_username
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.housing import get_housing_queue
 from conditional.util.ldap import ldap_get_current_students
@@ -21,12 +21,10 @@ housing_bp = Blueprint('housing_bp', __name__)
 
 @housing_bp.route('/housing')
 @auth.oidc_auth
-@get_username
-def display_housing(username=None):
+@get_user
+def display_housing(user_dict=None):
     log = logger.new(request=request)
     log.info('Display Housing Board')
-
-    account = ldap_get_member(username)
 
     housing = {}
     onfloors = [account for account in ldap_get_onfloor_members()]
@@ -57,21 +55,19 @@ def display_housing(username=None):
 
     # return names in 'first last (username)' format
     return render_template('housing.html',
-                           username=username,
-                           queue=get_housing_queue(ldap_is_eval_director(account)),
+                           username=user_dict['username'],
+                           queue=get_housing_queue(ldap_is_eval_director(user_dict['account'])),
                            housing=housing,
                            room_list=sorted(list(room_list)))
 
 
 @housing_bp.route('/housing/in_queue', methods=['PUT'])
 @auth.oidc_auth
-@get_username
-def change_queue_state(username=None):
+@get_user
+def change_queue_state(user_dict=None):
     log = logger.new(request=request)
 
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -93,14 +89,13 @@ def change_queue_state(username=None):
 
 @housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
 @auth.oidc_auth
-@get_username
-def change_room_numbers(rmnumber, username=None):
+@get_user
+def change_room_numbers(rmnumber, user_dict=None):
     log = logger.new(request=request)
 
-    account = ldap_get_member(username)
     update = request.get_json()
 
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     # Get the current list of people living on-floor.
@@ -140,13 +135,11 @@ def get_occupants(rmnumber):
 
 @housing_bp.route('/housing', methods=['DELETE'])
 @auth.oidc_auth
-@get_username
-def clear_all_rooms(username=None):
+@get_user
+def clear_all_rooms(user_dict=None):
     log = logger.new(request=request)
 
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
     # Get list of current students.
     current_students = ldap_get_current_students()

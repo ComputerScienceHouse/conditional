@@ -84,7 +84,7 @@ structlog.configure(processors=[
 
 logger = structlog.get_logger()
 
-from conditional.util.auth import get_username
+from conditional.util.auth import get_user
 
 from conditional.blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from conditional.blueprints.attendance import attendance_bp
@@ -138,15 +138,14 @@ def logout():
 @app.errorhandler(404)
 @app.errorhandler(500)
 @auth.oidc_auth
-@get_username
-def route_errors(error, username=None):
+@get_user
+def route_errors(error, user_dict=None):
     data = dict()
 
     # Handle the case where the header isn't present
-    if username is not None:
-        member = ldap_get_member(username)
-        data['username'] = member.uid
-        data['name'] = member.cn
+    if user_dict['username'] is not None:
+        data['username'] = user_dict['account'].uid
+        data['name'] = user_dict['account'].cn
     else:
         data['username'] = "unknown"
         data['name'] = "Unknown"

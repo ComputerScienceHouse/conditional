@@ -14,7 +14,7 @@ from conditional.models.models import HouseMeeting
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import TechnicalSeminar
-from conditional.util.auth import get_username
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.member import get_cm, get_hm
@@ -26,8 +26,8 @@ logger = structlog.get_logger()
 
 @intro_evals_bp.route('/intro_evals/')
 @auth.oidc_auth
-@get_username
-def display_intro_evals(internal=False, username=None):
+@get_user
+def display_intro_evals(internal=False, user_dict=None):
     log = logger.new(request=request)
     log.info('Display Intro Evals Listing')
 
@@ -159,5 +159,5 @@ def display_intro_evals(internal=False, username=None):
 
     # return names in 'first last (username)' format
     return render_template('intro_evals.html',
-                           username=username,
+                           username=user_dict['username'],
                            members=ie_members)

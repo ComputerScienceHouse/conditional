@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify, redirect
 
 from conditional import db, auth
 from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
-from conditional.util.auth import get_username
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eval_director
@@ -17,8 +17,8 @@ logger = structlog.get_logger()
 
 @conditionals_bp.route('/conditionals/')
 @auth.oidc_auth
-@get_username
-def display_conditionals(username=None):
+@get_user
+def display_conditionals(user_dict=None):
     log = logger.new(request=request)
     log.info('Display Conditional Listing Page')
 
@@ -34,20 +34,18 @@ def display_conditionals(username=None):
             Conditional.status == "Pending")]
     # return names in 'first last (username)' format
     return render_template('conditional.html',
-                           username=username,
+                           username=user_dict['username'],
                            conditionals=conditionals,
                            conditionals_len=len(conditionals))
 
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
 @auth.oidc_auth
-@get_username
-def create_conditional(username=None):
+@get_user
+def create_conditional(user_dict=None):
     log = logger.new(request=request)
 
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -80,14 +78,11 @@ def create_conditional(username=None):
 
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
 @auth.oidc_auth
-@get_username
-def conditional_review(username=None):
+@get_user
+def conditional_review(user_dict=None):
     log = logger.new(request=request)
 
-    # get user data
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -120,14 +115,12 @@ def conditional_review(username=None):
 
 @conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
 @auth.oidc_auth
-@get_username
-def conditional_delete(cid, username=None):
+@get_user
+def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request)
     log.info('Delete conditional-{}'.format(cid))
 
-    account = ldap_get_member(username)
-
-    if ldap_is_eval_director(account):
+    if ldap_is_eval_director(user_dict['account']):
         Conditional.query.filter(
             Conditional.id == cid
         ).delete()

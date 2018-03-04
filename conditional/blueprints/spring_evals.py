@@ -6,7 +6,7 @@ from conditional.models.models import HouseMeeting
 from conditional.models.models import MajorProject
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import SpringEval
-from conditional.util.auth import get_username
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.member import get_cm, get_hm, req_cm
@@ -18,8 +18,8 @@ logger = structlog.get_logger()
 
 @spring_evals_bp.route('/spring_evals/')
 @auth.oidc_auth
-@get_username
-def display_spring_evals(internal=False, username=None):
+@get_user
+def display_spring_evals(internal=False, user_dict=None):
     log = logger.new(request=request)
     log.info('Display Membership Evaluations Listing')
 
@@ -101,5 +101,5 @@ def display_spring_evals(internal=False, username=None):
         return sp_members
 
     return render_template('spring_evals.html',
-                           username=username,
+                           username=user_dict['username'],
                            members=sp_members)

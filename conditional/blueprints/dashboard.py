@@ -7,11 +7,10 @@ from conditional.models.models import HouseMeeting
 from conditional.models.models import MajorProject
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import SpringEval
-from conditional.util.auth import get_username
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.housing import get_queue_position
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_is_intromember
@@ -25,38 +24,37 @@ dashboard_bp = Blueprint('dashboard_bp', __name__)
 
 @dashboard_bp.route('/dashboard/')
 @auth.oidc_auth
-@get_username
-def display_dashboard(username=None):
+@get_user
+def display_dashboard(user_dict=None):
     log = logger.new(request=request)
     log.info('display dashboard')
 
     # Get the list of voting members.
     can_vote = get_voting_members()
 
-    member = ldap_get_member(username)
     data = dict()
-    data['username'] = member.uid
-    data['name'] = member.cn
-    data['active'] = ldap_is_active(member)
-    data['onfloor'] = ldap_is_onfloor(member)
-    data['voting'] = bool(member.uid in can_vote)
-    data['student'] = ldap_is_current_student(member)
+    data['username'] = user_dict['account'].uid
+    data['name'] = user_dict['account'].cn
+    data['active'] = ldap_is_active(user_dict['account'])
+    data['onfloor'] = ldap_is_onfloor(user_dict['account'])
+    data['voting'] = bool(user_dict['account'].uid in can_vote)
+    data['student'] = ldap_is_current_student(user_dict['account'])
 
     data['voting_count'] = {"Voting Members": len(can_vote),
                             "Active Members": len(ldap_get_active_members())}
     # freshman shit
-    if ldap_is_intromember(member):
-        data['freshman'] = get_freshman_data(member.uid)
+    if ldap_is_intromember(user_dict['account']):
+        data['freshman'] = get_freshman_data(user_dict['account'].uid)
     else:
         data['freshman'] = False
 
     spring = {}
-    c_meetings = get_cm(member)
+    c_meetings = get_cm(user_dict['account'])
     spring['committee_meetings'] = len(c_meetings)
-    spring['req_meetings'] = req_cm(member)
-    h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(member)]
+    spring['req_meetings'] = req_cm(user_dict['account'])
+    h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(user_dict['account'])]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
-    eval_entry = SpringEval.query.filter(SpringEval.uid == member.uid,
+    eval_entry = SpringEval.query.filter(SpringEval.uid == user_dict['account'].uid,
                                          SpringEval.date_created > start_of_year(),
                                          SpringEval.active == True).first()  # pylint: disable=singleton-comparison
     if eval_entry is not None:
@@ -67,11 +65,11 @@ def display_dashboard(username=None):
     data['spring'] = spring
 
     # only show housing if member has onfloor status
-    if ldap_is_onfloor(member):
+    if ldap_is_onfloor(user_dict['account']):
         housing = dict()
-        housing['points'] = member.housingPoints
-        housing['room'] = member.roomNumber
-        housing['queue_pos'] = get_queue_position(member.uid)
+        housing['points'] = user_dict['account'].housingPoints
+        housing['room'] = user_dict['account'].roomNumber
+        housing['queue_pos'] = get_queue_position(user_dict['account'].uid)
     else:
         housing = None
 
@@ -84,7 +82,7 @@ def display_dashboard(username=None):
             'status': p.status,
             'description': p.description
         } for p in
-        MajorProject.query.filter(MajorProject.uid == member.uid,
+        MajorProject.query.filter(MajorProject.uid == user_dict['account'].uid,
                                   MajorProject.date > start_of_year())]
 
     data['major_projects_count'] = len(data['major_projects'])
@@ -106,7 +104,7 @@ def display_dashboard(username=None):
             'status': c.status
         } for c in
         Conditional.query.filter(
-            Conditional.uid == member.uid,
+            Conditional.uid == user_dict['account'].uid,
             Conditional.date_due > start_of_year())]
     data['conditionals'] = conditionals
     data['conditionals_len'] = len(conditionals)
@@ -121,7 +119,7 @@ def display_dashboard(username=None):
             MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
             MemberHouseMeetingAttendance.excuse,
             HouseMeeting.date).filter(
-            MemberHouseMeetingAttendance.uid == member.uid,
+            MemberHouseMeetingAttendance.uid == user_dict['account'].uid,
             MemberHouseMeetingAttendance.attendance_status == "Absent",
             HouseMeeting.date > start_of_year())]
 
