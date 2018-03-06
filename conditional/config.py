@@ -23,5 +23,13 @@ SENTRY_CONFIG = {
     'release': __version__,
 }
 
+# OIDC Config
+OIDC_ISSUER = env.get("CONDITIONAL_OIDC_ISSUER", "https://sso.csh.rit.edu/auth/realms/csh")
+OIDC_CLIENT_CONFIG = {
+    'client_id': env.get("CONDITIONAL_OIDC_CLIENT_ID", "conditional"),
+    'client_secret': env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
+    'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:6969/logout")]
+}
+
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)

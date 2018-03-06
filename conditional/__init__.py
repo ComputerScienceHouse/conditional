@@ -5,21 +5,17 @@ import os
 import subprocess
 from datetime import datetime
 
-import structlog
 from csh_ldap import CSHLDAP
-from flask import Flask, redirect, request, render_template, g
+from flask import Flask, redirect, render_template, g
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from raven.contrib.flask import Sentry
-from raven.exceptions import InvalidGitRepository
 import structlog
 
 from conditional import config
 
 app = Flask(__name__)
-
-config = os.path.join(app.config.get('ROOT_DIR', os.getcwd()), "config.py")
 
 app.config.from_object(config)
 if os.path.exists(os.path.join(os.getcwd(), "config.py")):
@@ -45,11 +41,13 @@ auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"],
 
 app.secret_key = app.config["SECRET_KEY"]
 
+
 def start_of_year():
     start = datetime(datetime.today().year, 6, 1)
     if datetime.today() < start:
         start = datetime(datetime.today().year - 1, 6, 1)
     return start
+
 
 # pylint: disable=C0413
 from .models.models import UserLog
@@ -83,6 +81,7 @@ def database_processor(logger, log_method, event_dict):  # pylint: disable=unuse
             db.session.commit()
         del event_dict['request']
     return event_dict
+
 
 structlog.configure(processors=[
     request_processor,
@@ -132,8 +131,16 @@ def static_proxy(path):
 
 
 @app.route('/')
+@auth.oidc_auth
 def default_route():
     return redirect('/dashboard')
+
+
+@app.route("/logout")
+@auth.oidc_logout
+def logout():
+    return redirect("/", 302)
+
 
 @app.errorhandler(404)
 @app.errorhandler(500)
