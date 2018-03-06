@@ -2,7 +2,6 @@
 from ._version import __version__
 
 import os
-import subprocess
 from datetime import datetime
 
 from csh_ldap import CSHLDAP
@@ -23,10 +22,7 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config["GIT_REVISION"] = subprocess.check_output(['git',
-                                                      'rev-parse',
-                                                      '--short',
-                                                      'HEAD']).decode('utf-8').rstrip()
+app.config["VERSION"] = __version__
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
