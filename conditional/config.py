@@ -1,9 +1,13 @@
+import random
+import string
+
 from os import environ as env
 from conditional import __version__
 
 # Flask config
 DEBUG = True if env.get("CONDITIONAL_DEBUG", "false").lower() == "true" else False
 HOST_NAME = env.get("CONDITIONAL_HOST_NAME", "conditional.csh.rit.edu")
+SERVER_NAME = env.get('CONDITIONAL_SERVER_NAME', 'conditional.csh.rit.edu')
 APP_NAME = "conditional"
 IP = env.get("CONDITIONAL_IP", "0.0.0.0")
 PORT = env.get("CONDITIONAL_PORT", 6969)
@@ -30,6 +34,10 @@ OIDC_CLIENT_CONFIG = {
     'client_secret': env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
     'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:6969/logout")]
 }
+
+# Openshift secret
+SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(
+    random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(64)))
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
