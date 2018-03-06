@@ -1,19 +1,15 @@
 import structlog
-
 from flask import Blueprint, request
 
-from conditional.util.ldap import ldap_get_active_members
-
-from conditional.models.models import MemberHouseMeetingAttendance
-from conditional.models.models import MajorProject
+from conditional import db, start_of_year, auth
 from conditional.models.models import HouseMeeting
+from conditional.models.models import MajorProject
+from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import SpringEval
-
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-
+from conditional.util.ldap import ldap_get_active_members
 from conditional.util.member import get_cm, get_hm, req_cm
-
-from conditional import db, start_of_year
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
@@ -21,13 +17,11 @@ logger = structlog.get_logger()
 
 
 @spring_evals_bp.route('/spring_evals/')
-def display_spring_evals(internal=False):
+@auth.oidc_auth
+@get_user
+def display_spring_evals(internal=False, user_dict=None):
     log = logger.new(request=request)
     log.info('Display Membership Evaluations Listing')
-
-    user_name = None
-    if not internal:
-        user_name = request.headers.get('x-webauth-user')
 
     active_members = [account for account in ldap_get_active_members()]
 
@@ -106,7 +100,6 @@ def display_spring_evals(internal=False):
     if internal:
         return sp_members
 
-    return render_template(request,
-                           'spring_evals.html',
-                           username=user_name,
+    return render_template('spring_evals.html',
+                           username=user_dict['username'],
                            members=sp_members)
