@@ -1,20 +1,26 @@
+# pylint: disable=wrong-import-order
+from ._version import __version__
+
 import os
 import subprocess
 from datetime import datetime
 
-import structlog
 from csh_ldap import CSHLDAP
 from flask import Flask, redirect, render_template, g
 from flask_migrate import Migrate
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from raven.contrib.flask import Sentry
+import structlog
+
+from conditional import config
 
 app = Flask(__name__)
 
-config = os.path.join(app.config.get('ROOT_DIR', os.getcwd()), "config.py")
+app.config.from_object(config)
+if os.path.exists(os.path.join(os.getcwd(), "config.py")):
+    app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
 
-app.config.from_pyfile(config)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["GIT_REVISION"] = subprocess.check_output(['git',
@@ -35,6 +41,7 @@ auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"],
 
 app.secret_key = app.config["SECRET_KEY"]
 
+
 def start_of_year():
     start = datetime(datetime.today().year, 6, 1)
     if datetime.today() < start:
@@ -43,7 +50,7 @@ def start_of_year():
 
 
 # pylint: disable=C0413
-from conditional.models.models import UserLog
+from .models.models import UserLog
 
 
 # Configure Logging
@@ -86,19 +93,19 @@ logger = structlog.get_logger()
 
 from conditional.util.auth import get_user
 
-from conditional.blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
-from conditional.blueprints.attendance import attendance_bp
-from conditional.blueprints.major_project_submission import major_project_bp
-from conditional.blueprints.intro_evals import intro_evals_bp
-from conditional.blueprints.intro_evals_form import intro_evals_form_bp
-from conditional.blueprints.housing import housing_bp
-from conditional.blueprints.spring_evals import spring_evals_bp
-from conditional.blueprints.conditional import conditionals_bp
-from conditional.blueprints.member_management import member_management_bp
-from conditional.blueprints.slideshow import slideshow_bp
-from conditional.blueprints.cache_management import cache_bp
-from conditional.blueprints.co_op import co_op_bp
-from conditional.blueprints.logs import log_bp
+from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
+from .blueprints.attendance import attendance_bp
+from .blueprints.major_project_submission import major_project_bp
+from .blueprints.intro_evals import intro_evals_bp
+from .blueprints.intro_evals_form import intro_evals_form_bp
+from .blueprints.housing import housing_bp
+from .blueprints.spring_evals import spring_evals_bp
+from .blueprints.conditional import conditionals_bp
+from .blueprints.member_management import member_management_bp
+from .blueprints.slideshow import slideshow_bp
+from .blueprints.cache_management import cache_bp
+from .blueprints.co_op import co_op_bp
+from .blueprints.logs import log_bp
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(attendance_bp)
@@ -114,7 +121,7 @@ app.register_blueprint(cache_bp)
 app.register_blueprint(co_op_bp)
 app.register_blueprint(log_bp)
 
-from conditional.util.ldap import ldap_get_member
+from .util.ldap import ldap_get_member
 
 
 @app.route('/<path:path>')
