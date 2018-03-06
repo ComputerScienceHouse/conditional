@@ -31,7 +31,23 @@ Then, install the pipeline and frontend dependencies:
 npm install
 ```
 
+### Config
+
 You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.sample.py` for an example.
+
+#### Add OIDC Config
+Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
+```
+# OIDC Config
+OIDC_ISSUER = "https://sso.csh.rit.edu/auth/realms/csh"
+OIDC_CLIENT_CONFIG = {
+    'client_id': '',
+    'client_secret': '',
+    'post_logout_redirect_uris': ['http://0.0.0.0:6969/logout']
+}
+```
+
+### Run
 
 Once you have all of the dependencies installed, simply run:
 

@@ -1,16 +1,14 @@
 from datetime import datetime
 
 import structlog
-
 from flask import Blueprint, request, jsonify, redirect
 
+from conditional import db, auth
+from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
+from conditional.util.auth import get_user
+from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eval_director
-from conditional.util.flask import render_template
-
-from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
-
-from conditional import db
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
@@ -18,12 +16,11 @@ logger = structlog.get_logger()
 
 
 @conditionals_bp.route('/conditionals/')
-def display_conditionals():
+@auth.oidc_auth
+@get_user
+def display_conditionals(user_dict=None):
     log = logger.new(request=request)
     log.info('Display Conditional Listing Page')
-
-    # get user data
-    user_name = request.headers.get('x-webauth-user')
 
     conditionals = [
         {
@@ -36,21 +33,19 @@ def display_conditionals():
         Conditional.query.filter(
             Conditional.status == "Pending")]
     # return names in 'first last (username)' format
-    return render_template(request,
-                           'conditional.html',
-                           username=user_name,
+    return render_template('conditional.html',
+                           username=user_dict['username'],
                            conditionals=conditionals,
                            conditionals_len=len(conditionals))
 
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
-def create_conditional():
+@auth.oidc_auth
+@get_user
+def create_conditional(user_dict=None):
     log = logger.new(request=request)
 
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -61,16 +56,16 @@ def create_conditional():
     log.info('Create a new conditional for {}'.format(uid))
     if post_data['evaluation'] == 'spring':
         current_eval = SpringEval.query.filter(SpringEval.status == "Pending",
-            SpringEval.uid == uid,
-            SpringEval.active == True).first().id # pylint: disable=singleton-comparison
+                                               SpringEval.uid == uid,
+                                               SpringEval.active == True).first().id  # pylint: disable=singleton-comparison
         db.session.add(Conditional(uid, description, due_date, s_eval=current_eval))
     elif post_data['evaluation'] == 'intro':
         if uid.isdigit():
             current_eval = FreshmanEvalData.query.filter(FreshmanEvalData.freshman_eval_result == "Pending",
-                FreshmanEvalData.id == uid).first().id
+                                                         FreshmanEvalData.id == uid).first().id
         else:
             current_eval = FreshmanEvalData.query.filter(FreshmanEvalData.freshman_eval_result == "Pending",
-                FreshmanEvalData.uid == uid).first().id
+                                                         FreshmanEvalData.uid == uid).first().id
         db.session.add(Conditional(uid, description, due_date, i_eval=current_eval))
     else:
         db.session.add(Conditional(uid, description, due_date))
@@ -82,14 +77,12 @@ def create_conditional():
 
 
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
-def conditional_review():
+@auth.oidc_auth
+@get_user
+def conditional_review(user_dict=None):
     log = logger.new(request=request)
 
-    # get user data
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -121,14 +114,13 @@ def conditional_review():
 
 
 @conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
-def conditional_delete(cid):
+@auth.oidc_auth
+@get_user
+def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request)
     log.info('Delete conditional-{}'.format(cid))
 
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
-
-    if ldap_is_eval_director(account):
+    if ldap_is_eval_director(user_dict['account']):
         Conditional.query.filter(
             Conditional.id == cid
         ).delete()

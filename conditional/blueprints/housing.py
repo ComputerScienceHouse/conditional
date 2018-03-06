@@ -1,21 +1,18 @@
 import structlog
-
 from flask import Blueprint, request, jsonify
 
+from conditional import db, auth
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import InHousingQueue
-from conditional.util.housing import get_housing_queue
-from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_is_eval_director
-from conditional.util.ldap import ldap_get_member
-from conditional.util.ldap import ldap_get_roomnumber
-from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_set_active
-
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-
-from conditional import db
-
+from conditional.util.housing import get_housing_queue
+from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_get_member
+from conditional.util.ldap import ldap_get_onfloor_members
+from conditional.util.ldap import ldap_get_roomnumber
+from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_set_active
 
 logger = structlog.get_logger()
 
@@ -23,13 +20,11 @@ housing_bp = Blueprint('housing_bp', __name__)
 
 
 @housing_bp.route('/housing')
-def display_housing():
+@auth.oidc_auth
+@get_user
+def display_housing(user_dict=None):
     log = logger.new(request=request)
     log.info('Display Housing Board')
-
-    # get user data
-    user_name = request.headers.get('x-webauth-user')
-    account = ldap_get_member(user_name)
 
     housing = {}
     onfloors = [account for account in ldap_get_onfloor_members()]
@@ -59,23 +54,20 @@ def display_housing():
             room_list.add(room)
 
     # return names in 'first last (username)' format
-    return render_template(request,
-                           'housing.html',
-                           username=user_name,
-                           queue=get_housing_queue(ldap_is_eval_director(account)),
+    return render_template('housing.html',
+                           username=user_dict['username'],
+                           queue=get_housing_queue(ldap_is_eval_director(user_dict['account'])),
                            housing=housing,
                            room_list=sorted(list(room_list)))
 
 
 @housing_bp.route('/housing/in_queue', methods=['PUT'])
-def change_queue_state():
+@auth.oidc_auth
+@get_user
+def change_queue_state(user_dict=None):
     log = logger.new(request=request)
 
-
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -96,14 +88,14 @@ def change_queue_state():
 
 
 @housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
-def change_room_numbers(rmnumber):
+@auth.oidc_auth
+@get_user
+def change_room_numbers(rmnumber, user_dict=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
     update = request.get_json()
 
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     # Get the current list of people living on-floor.
@@ -129,6 +121,7 @@ def change_room_numbers(rmnumber):
 
 
 @housing_bp.route('/housing/room/<rmnumber>', methods=['GET'])
+@auth.oidc_auth
 def get_occupants(rmnumber):
 
     # Get the current list of people living on-floor.
@@ -141,13 +134,12 @@ def get_occupants(rmnumber):
 
 
 @housing_bp.route('/housing', methods=['DELETE'])
-def clear_all_rooms():
+@auth.oidc_auth
+@get_user
+def clear_all_rooms(user_dict=None):
     log = logger.new(request=request)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
     # Get list of current students.
     current_students = ldap_get_current_students()
