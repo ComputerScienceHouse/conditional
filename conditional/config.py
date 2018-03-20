@@ -1,7 +1,6 @@
-import random
-import string
-
+import secrets
 from os import environ as env
+
 from conditional import __version__
 
 # Flask config
@@ -36,8 +35,7 @@ OIDC_CLIENT_CONFIG = {
 }
 
 # Openshift secret
-SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(
-    random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(64)))
+SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex(16)))
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
