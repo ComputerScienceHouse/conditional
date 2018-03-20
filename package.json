@@ -1,6 +1,6 @@
 {
   "name": "conditional",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "CSH Re-evaluation (MEGA_EVALS RE:RE:LOADED)",
   "license": "MIT",
   "homepage": "http://csh.rit.edu/",
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
-    "bootstrap-material-datetimepicker": "^2.7.3",
+    "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sass": "^3.3.6",
     "bootstrap-sweetalert": "^1.0.1",
     "csh-material-bootstrap": "1.0.0",
