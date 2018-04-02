@@ -23,7 +23,7 @@ housing_bp = Blueprint('housing_bp', __name__)
 @auth.oidc_auth
 @get_user
 def display_housing(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Housing Board')
 
     housing = {}
@@ -65,7 +65,7 @@ def display_housing(user_dict=None):
 @auth.oidc_auth
 @get_user
 def change_queue_state(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
@@ -91,7 +91,7 @@ def change_queue_state(user_dict=None):
 @auth.oidc_auth
 @get_user
 def change_room_numbers(rmnumber, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     update = request.get_json()
 
@@ -137,7 +137,7 @@ def get_occupants(rmnumber):
 @auth.oidc_auth
 @get_user
 def clear_all_rooms(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403

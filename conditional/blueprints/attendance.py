@@ -30,8 +30,9 @@ attendance_bp = Blueprint('attendance_bp', __name__)
 
 @attendance_bp.route('/attendance/ts_members')
 @auth.oidc_auth
-def get_all_members():
-    log = logger.new(request=request)
+@get_user
+def get_all_members(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Technical Seminar Attendance List')
 
     members = ldap_get_current_students()
@@ -57,8 +58,9 @@ def get_all_members():
 
 @attendance_bp.route('/attendance/hm_members')
 @auth.oidc_auth
-def get_non_alumni_non_coop(internal=False):
-    log = logger.new(request=request)
+@get_user
+def get_non_alumni_non_coop(internal=False, user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve House Meeting Attendance List')
 
     # Get all active members as a base house meeting attendance.
@@ -101,8 +103,9 @@ def get_non_alumni_non_coop(internal=False):
 
 @attendance_bp.route('/attendance/cm_members')
 @auth.oidc_auth
-def get_non_alumni():
-    log = logger.new(request=request)
+@get_user
+def get_non_alumni(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Committee Meeting Attendance List')
 
     current_students = ldap_get_current_students()
@@ -128,8 +131,9 @@ def get_non_alumni():
 
 @attendance_bp.route('/attendance_cm')
 @auth.oidc_auth
-def display_attendance_cm():
-    log = logger.new(request=request)
+@get_user
+def display_attendance_cm(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Committee Meeting Attendance Page')
 
     return render_template('attendance_cm.html',
@@ -139,8 +143,9 @@ def display_attendance_cm():
 
 @attendance_bp.route('/attendance_ts')
 @auth.oidc_auth
-def display_attendance_ts():
-    log = logger.new(request=request)
+@get_user
+def display_attendance_ts(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Technical Seminar Attendance Page')
 
     return render_template('attendance_ts.html',
@@ -152,7 +157,7 @@ def display_attendance_ts():
 @auth.oidc_auth
 @get_user
 def display_attendance_hm(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display House Meeting Attendance Page')
 
     if not ldap_is_eval_director(user_dict['account']):
@@ -168,7 +173,7 @@ def display_attendance_hm(user_dict=None):
 @auth.oidc_auth
 @get_user
 def submit_committee_attendance(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     approved = ldap_is_eboard(user_dict['account'])
     post_data = request.get_json()
@@ -203,7 +208,7 @@ def submit_committee_attendance(user_dict=None):
 @auth.oidc_auth
 @get_user
 def submit_seminar_attendance(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Submit Technical Seminar Attendance')
 
     approved = ldap_is_eboard(user_dict['account'])
@@ -238,7 +243,7 @@ def submit_seminar_attendance(user_dict=None):
 @auth.oidc_auth
 @get_user
 def submit_house_attendance(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Submit House Meeting Attendance')
 
     # status: Attended | Excused | Absent
@@ -288,7 +293,7 @@ def submit_house_attendance(user_dict=None):
 @auth.oidc_auth
 @get_user
 def alter_house_attendance(uid, hid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be evals", 403
@@ -318,7 +323,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
 @auth.oidc_auth
 @get_user
 def alter_house_excuse(uid, hid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
@@ -380,7 +385,7 @@ def attendance_history(user_dict=None):
                              FreshmanAccount.id == freshman).first().name)
         return attendees
 
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -442,7 +447,7 @@ def attendance_history(user_dict=None):
 @auth.oidc_auth
 @get_user
 def alter_committee_attendance(cid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Edit Committee Meeting Attendance')
 
     if not ldap_is_eboard(user_dict['account']):
@@ -474,7 +479,7 @@ def alter_committee_attendance(cid, user_dict=None):
 @auth.oidc_auth
 @get_user
 def alter_seminar_attendance(sid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Edit Technical Seminar Attendance')
 
     if not ldap_is_eboard(user_dict['account']):
@@ -521,7 +526,7 @@ def get_cm_attendees(sid, user_dict=None):
         return jsonify({"attendees": attendees}), 200
 
     else:
-        log = logger.new(request=request)
+        log = logger.new(request=request, auth_dict=user_dict)
         log.info('Delete Technical Seminar {}'.format(sid))
 
         if not ldap_is_eboard(user_dict['account']):
@@ -559,7 +564,7 @@ def get_ts_attendees(cid, user_dict=None):
         return jsonify({"attendees": attendees}), 200
 
     else:
-        log = logger.new(request=request)
+        log = logger.new(request=request, auth_dict=user_dict)
         log.info('Delete Committee Meeting {}'.format(cid))
 
         if not ldap_is_eboard(user_dict['account']):
@@ -582,7 +587,7 @@ def get_ts_attendees(cid, user_dict=None):
 @auth.oidc_auth
 @get_user
 def approve_cm(cid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Approve Committee Meeting {} Attendance'.format(cid))
 
     if not ldap_is_eboard(user_dict['account']):
@@ -600,7 +605,7 @@ def approve_cm(cid, user_dict=None):
 @auth.oidc_auth
 @get_user
 def approve_ts(sid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Approve Technical Seminar {} Attendance'.format(sid))
 
     if not ldap_is_eboard(user_dict['account']):

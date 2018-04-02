@@ -20,7 +20,7 @@ logger = structlog.get_logger()
 @auth.oidc_auth
 @get_user
 def display_spring_evals(internal=False, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Listing')
 
     active_members = [account for account in ldap_get_active_members()]

@@ -29,7 +29,7 @@ def restart_app(user_dict=None):
     if not ldap_is_rtp(user_dict['account']):
         return redirect("/dashboard")
 
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Restart Conditional')
     os.kill(os.getpid(), signal.SIGINT)
     return "application restarted", 200
@@ -42,7 +42,7 @@ def clear_cache(user_dict=None):
     if not ldap_is_eval_director(user_dict['account']) and not ldap_is_rtp(user_dict['account']):
         return redirect("/dashboard")
 
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Purge All Caches')
 
     _ldap_is_member_of_directorship.cache_clear()

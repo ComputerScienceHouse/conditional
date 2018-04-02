@@ -17,7 +17,7 @@ log_bp = Blueprint('log_bp', __name__)
 @auth.oidc_auth
 @get_user
 def display_logs(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Logs')
 
     log.info(user_dict['account'].displayName)

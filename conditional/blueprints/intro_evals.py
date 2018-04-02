@@ -28,7 +28,7 @@ logger = structlog.get_logger()
 @auth.oidc_auth
 @get_user
 def display_intro_evals(internal=False, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Evals Listing')
 
     # get user data

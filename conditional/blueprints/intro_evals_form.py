@@ -18,7 +18,7 @@ intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 @auth.oidc_auth
 @get_user
 def display_intro_evals_form(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Evals Form')
 
     if not ldap_is_intromember(user_dict['account']):
@@ -39,7 +39,7 @@ def display_intro_evals_form(user_dict=None):
 @auth.oidc_auth
 @get_user
 def submit_intro_evals(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Submit Intro Evals Form')
 
     post_data = request.get_json()

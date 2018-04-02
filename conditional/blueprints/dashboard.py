@@ -26,7 +26,7 @@ dashboard_bp = Blueprint('dashboard_bp', __name__)
 @auth.oidc_auth
 @get_user
 def display_dashboard(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('display dashboard')
 
     # Get the list of voting members.

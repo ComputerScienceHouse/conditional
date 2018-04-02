@@ -19,7 +19,7 @@ logger = structlog.get_logger()
 @auth.oidc_auth
 @get_user
 def display_conditionals(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Conditional Listing Page')
 
     conditionals = [
@@ -43,7 +43,7 @@ def display_conditionals(user_dict=None):
 @auth.oidc_auth
 @get_user
 def create_conditional(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
@@ -80,7 +80,7 @@ def create_conditional(user_dict=None):
 @auth.oidc_auth
 @get_user
 def conditional_review(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return redirect("/dashboard", code=302)
@@ -117,7 +117,7 @@ def conditional_review(user_dict=None):
 @auth.oidc_auth
 @get_user
 def conditional_delete(cid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Delete conditional-{}'.format(cid))
 
     if ldap_is_eval_director(user_dict['account']):
