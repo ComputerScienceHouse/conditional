@@ -22,7 +22,7 @@ slideshow_bp = Blueprint('slideshow_bp', __name__)
 @auth.oidc_auth
 @get_user
 def slideshow_intro_display(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Slideshow')
 
     if not ldap_is_eval_director(user_dict['account']):
@@ -35,8 +35,10 @@ def slideshow_intro_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/members')
-def slideshow_intro_members():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def slideshow_intro_members(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Intro Members Slideshow Data')
 
     # can't be jsonify because
@@ -49,7 +51,7 @@ def slideshow_intro_members():
 @auth.oidc_auth
 @get_user
 def slideshow_intro_review(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return redirect("/dashboard", code=302)
@@ -76,7 +78,7 @@ def slideshow_intro_review(user_dict=None):
 @auth.oidc_auth
 @get_user
 def slideshow_spring_display(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Slideshow')
 
     if not ldap_is_eval_director(user_dict['account']):
@@ -89,8 +91,10 @@ def slideshow_spring_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/members')
-def slideshow_spring_members():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def slideshow_spring_members(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retreive Membership Evaluations Slideshow Data')
 
     # can't be jsonify because
@@ -103,7 +107,7 @@ def slideshow_spring_members():
 @auth.oidc_auth
 @get_user
 def slideshow_spring_review(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return redirect("/dashboard", code=302)

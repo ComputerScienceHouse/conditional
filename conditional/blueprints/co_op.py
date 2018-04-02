@@ -16,7 +16,7 @@ logger = structlog.get_logger()
 @auth.oidc_auth
 @get_user
 def display_co_op_form(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Co-Op Submission Page')
 
     co_op = CurrentCoops.query.filter(
@@ -32,7 +32,7 @@ def display_co_op_form(user_dict=None):
 @auth.oidc_auth
 @get_user
 def submit_co_op_form(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     post_data = request.get_json()
     semester = post_data['semester']
@@ -55,7 +55,7 @@ def submit_co_op_form(user_dict=None):
 @auth.oidc_auth
 @get_user
 def delete_co_op(uid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403

@@ -21,7 +21,7 @@ major_project_bp = Blueprint('major_project_bp', __name__)
 @auth.oidc_auth
 @get_user
 def display_major_project(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Major Project Page')
 
     major_projects = [
@@ -50,7 +50,7 @@ def display_major_project(user_dict=None):
 @auth.oidc_auth
 @get_user
 def submit_major_project(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Submit Major Project')
 
     post_data = request.get_json()
@@ -70,7 +70,7 @@ def submit_major_project(user_dict=None):
 @auth.oidc_auth
 @get_user
 def major_project_review(user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
 
     if not ldap_is_eval_director(user_dict['account']):
         return redirect("/dashboard", code=302)
@@ -97,7 +97,7 @@ def major_project_review(user_dict=None):
 @auth.oidc_auth
 @get_user
 def major_project_delete(pid, user_dict=None):
-    log = logger.new(request=request)
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Delete Major Project ID: {}'.format(pid))
 
     major_project = MajorProject.query.filter(

@@ -53,11 +53,13 @@ from .models.models import UserLog
 def request_processor(logger, log_method, event_dict):  # pylint: disable=unused-argument, redefined-outer-name
     if 'request' in event_dict:
         flask_request = event_dict['request']
-        event_dict['user'] = flask_request.headers.get("x-webauth-user")
         event_dict['ip'] = flask_request.remote_addr
         event_dict['method'] = flask_request.method
         event_dict['blueprint'] = flask_request.blueprint
         event_dict['path'] = flask_request.full_path
+    if 'auth_dict' in event_dict:
+        auth_dict = event_dict['auth_dict']
+        event_dict['user'] = auth_dict['username']
     return event_dict
 
 
