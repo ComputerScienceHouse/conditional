@@ -352,7 +352,7 @@ Dashboard
                         {% for meeting in cm_attendance %}
                         <tr>
                             <td>{{meeting['committee']}}</td>
-                            <td>{{meeting['timestamp']}}</td>
+                            <td>{{meeting['timestamp'].strftime('%Y-%m-%d')}}</td>
                         </tr>
                         {% endfor %}
                         </tbody>
