@@ -124,7 +124,11 @@ Introductory Evaluations
                 </div>
             </div>
             {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['comments'] != "" %}
-                <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+                <div class="evals-dropdown">
+                    <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}">
+                        <span class="glyphicon glyphicon glyphicon-menu-down"></span>
+                    </span>
+                </div>
             {% endif %}
             <div class="collapse" id="evalsCollapse-{{m['uid']}}">
                 {% if m['house_meetings_missed']|length > 0 %}
