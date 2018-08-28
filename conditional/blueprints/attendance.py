@@ -137,7 +137,7 @@ def display_attendance_cm(user_dict=None):
     log.info('Display Committee Meeting Attendance Page')
 
     return render_template('attendance_cm.html',
-                           username=request.headers.get("x-webauth-user"),
+                           username=user_dict['username'],
                            date=datetime.now().strftime("%Y-%m-%d"))
 
 
@@ -149,7 +149,7 @@ def display_attendance_ts(user_dict=None):
     log.info('Display Technical Seminar Attendance Page')
 
     return render_template('attendance_ts.html',
-                           username=request.headers.get("x-webauth-user"),
+                           username=user_dict['username'],
                            date=datetime.now().strftime("%Y-%m-%d"))
 
 
