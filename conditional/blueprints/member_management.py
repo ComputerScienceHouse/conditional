@@ -1,6 +1,5 @@
 import csv
 import io
-import re
 
 from datetime import datetime
 
@@ -8,7 +7,7 @@ import structlog
 
 from flask import Blueprint, request, jsonify, abort, make_response
 
-from conditional import app
+from conditional import app, get_user, auth
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -57,14 +56,13 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 
 
 @member_management_bp.route('/manage')
-def display_member_management():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def display_member_management(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Member Management')
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
+    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
         return "must be eval director", 403
 
     member_list = get_members_info()
@@ -97,8 +95,8 @@ def display_member_management():
         intro_form = False
         accept_dues_until = datetime.now()
 
-    return render_template(request, "member_management.html",
-                           username=username,
+    return render_template("member_management.html",
+                           username=user_dict['username'],
                            active=member_list,
                            num_current=len(member_list),
                            num_active=len(ldap_get_active_members()),
@@ -112,13 +110,12 @@ def display_member_management():
 
 
 @member_management_bp.route('/manage/settings', methods=['PUT'])
-def member_management_eval():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_eval(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -143,13 +140,12 @@ def member_management_eval():
 
 
 @member_management_bp.route('/manage/accept_dues_until', methods=['PUT'])
-def member_management_financial():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_financial(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_financial_director(account):
+    if not ldap_is_financial_director(user_dict['account']):
         return "must be financial director", 403
 
     post_data = request.get_json()
@@ -168,14 +164,12 @@ def member_management_financial():
 
 
 @member_management_bp.route('/manage/user', methods=['POST'])
-def member_management_adduser():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_adduser(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -196,12 +190,12 @@ def member_management_adduser():
 
 
 @member_management_bp.route('/manage/user/upload', methods=['POST'])
-def member_management_uploaduser():
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_uploaduser(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     f = request.files['file']
@@ -232,16 +226,14 @@ def member_management_uploaduser():
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['POST'])
-def member_management_edituser(uid):
-
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
+@auth.oidc_auth
+@get_user
+def member_management_edituser(uid, user_dict=None):
+    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
         return "must be eval director", 403
 
     if not uid.isdigit():
-        edit_uid(uid, request)
+        edit_uid(uid, request, user_dict['username'])
     else:
         edit_fid(uid, request)
 
@@ -250,13 +242,12 @@ def member_management_edituser(uid):
     return jsonify({"success": True}), 200
 
 
-def edit_uid(uid, flask_request):
-    log = logger.new(request=flask_request)
+def edit_uid(uid, flask_request, username):
+    log = logger.new(request=flask_request, auth_dict={'username': username})
     post_data = flask_request.get_json()
     account = ldap_get_member(uid)
     active_member = post_data['activeMember']
 
-    username = flask_request.headers.get('x-webauth-user')
     current_account = ldap_get_member(username)
     if ldap_is_eval_director(current_account):
         room_number = post_data['roomNumber']
@@ -305,7 +296,7 @@ def edit_uid(uid, flask_request):
 
 
 def edit_fid(uid, flask_request):
-    log = logger.new(request=flask_request)
+    log = logger.new(request=flask_request, auth_dict={'username': uid})
     post_data = flask_request.get_json()
     log.info('Edit freshman-{} - Room: {} On-Floor: {} Eval: {} SigMiss: {}'.format(
         uid,
@@ -339,14 +330,13 @@ def edit_fid(uid, flask_request):
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['GET'])
-def member_management_getuserinfo(uid):
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_getuserinfo(uid, user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Get {}\'s Information'.format(uid))
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account) and not ldap_is_financial_director(account):
+    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
         return "must be eval or financial director", 403
 
     acct = None
@@ -390,7 +380,7 @@ def member_management_getuserinfo(uid):
 
     account = ldap_get_member(uid)
 
-    if ldap_is_eval_director(ldap_get_member(username)):
+    if ldap_is_eval_director(ldap_get_member(user_dict['username'])):
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -425,14 +415,13 @@ def member_management_getuserinfo(uid):
 
 
 @member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])
-def member_management_deleteuser(fid):
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_deleteuser(fid, user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Delete freshman-{}'.format(fid))
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     if not fid.isdigit():
@@ -460,13 +449,12 @@ def member_management_deleteuser(fid):
 # user creation script. There's no reason that the evals director should ever
 # manually need to do this
 @member_management_bp.route('/manage/upgrade_user', methods=['POST'])
-def member_management_upgrade_user():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_upgrade_user(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -524,47 +512,43 @@ def member_management_upgrade_user():
 
 
 @member_management_bp.route('/manage/make_user_active', methods=['POST'])
-def member_management_make_user_active():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def member_management_make_user_active(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    uid = request.headers.get('x-webauth-user')
-    account = ldap_get_member(uid)
-
-    if not ldap_is_current_student(account) or ldap_is_active(account):
+    if not ldap_is_current_student(user_dict['account']) or ldap_is_active(user_dict['account']):
         return "must be current student and not active", 403
 
-    ldap_set_active(account)
-    log.info("Make user {} active".format(uid))
+    ldap_set_active(user_dict['account'])
+    log.info("Make user {} active".format(user_dict['username']))
 
     clear_members_cache()
     return jsonify({"success": True}), 200
 
 
 @member_management_bp.route('/manage/intro_project', methods=['GET'])
-def introductory_project():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def introductory_project(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Freshmen Project Management')
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
-    return render_template(request,
-                           'introductory_project.html',
-                           username=username,
+    return render_template('introductory_project.html',
+                           username=user_dict['username'],
                            intro_members=display_intro_evals(internal=True))
 
 
 @member_management_bp.route('/manage/intro_project', methods=['POST'])
-def introductory_project_submit():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def introductory_project_submit(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -593,15 +577,15 @@ def introductory_project_submit():
 
     return jsonify({"success": True}), 200
 
+
 @member_management_bp.route('/member/<uid>', methods=['GET'])
-def get_member(uid):
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def get_member(uid, user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Get {}\'s Information'.format(uid))
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     member = ldap_get_member(uid)
@@ -613,21 +597,21 @@ def get_member(uid):
 
     return jsonify(account_dict), 200
 
+
 @member_management_bp.route('/manage/active', methods=['DELETE'])
-def clear_active_members():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def clear_active_members(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
     # Get the active group.
     members = ldap_get_active_members()
 
     # Clear the active group.
     for account in members:
-        if account.uid != username:
+        if account.uid != user_dict['username']:
             log.info('Remove {} from Active Status'.format(account.uid))
             ldap_set_inactive(account)
     return jsonify({"success": True}), 200
@@ -641,7 +625,8 @@ def export_active_list():
     active_list = [["Full Name", "RIT Username", "Amount to Charge"]]
     for member in ldap_get_active_members():
         full_name = member.cn
-        rit_username = re.search(".*uid=(\\w*)", member.ritDn).group(1)
+        # XXX[ljm] this should be renamed in LDAP/IPA schema to be ritUid
+        rit_username = member.ritDn
         will_coop = CurrentCoops.query.filter(
             CurrentCoops.date_created > start_of_year(),
             CurrentCoops.uid == member.uid).first()
@@ -660,14 +645,12 @@ def export_active_list():
 
 
 @member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])
-def remove_current_student(uid):
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def remove_current_student(uid, user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     member = ldap_get_member(uid)
@@ -681,20 +664,17 @@ def remove_current_student(uid):
 
 
 @member_management_bp.route('/manage/new', methods=['GET'])
-def new_year():
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def new_year(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display New Year Page')
 
-    username = request.headers.get('x-webauth-user')
-    account = ldap_get_member(username)
-
-    if not ldap_is_eval_director(account):
+    if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
     current_students = ldap_get_current_students()
 
-
-    return render_template(request,
-                           'new_year.html',
-                           username=username,
+    return render_template('new_year.html',
+                           username=user_dict['username'],
                            current_students=current_students)

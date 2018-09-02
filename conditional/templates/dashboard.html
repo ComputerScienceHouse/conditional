@@ -17,8 +17,8 @@ Dashboard
                         {% if active %}
                         <span class="label label-success">Active</span> {% else %}
                         <span class="label label-danger">Inactive</span> {% endif %} {% if onfloor %}
-                        <span class="label label-primary">On-floor</span> {% else %}
-                        <span class="label label-default">Off-floor</span> {% endif %} {% if voting %}
+                        <span class="label label-primary">On-floor Status</span> {% else %}
+                        <span class="label label-default">Off-floor Status</span> {% endif %} {% if voting %}
                         <span class="label label-primary">Voting</span> {% else %}
                         <span class="label label-default">Non-Voting</span> {% endif %}
                     </div>
@@ -352,7 +352,7 @@ Dashboard
                         {% for meeting in cm_attendance %}
                         <tr>
                             <td>{{meeting['committee']}}</td>
-                            <td>{{meeting['timestamp']}}</td>
+                            <td>{{meeting['timestamp'].strftime('%Y-%m-%d')}}</td>
                         </tr>
                         {% endfor %}
                         </tbody>

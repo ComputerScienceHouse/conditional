@@ -1,26 +1,23 @@
 from datetime import datetime
 
 import structlog
-
 from flask import Blueprint, request
 
-from conditional.util.ldap import ldap_get_intro_members
-
-from conditional.models.models import FreshmanCommitteeAttendance
+from conditional import start_of_year, auth
 from conditional.models.models import CommitteeMeeting
 from conditional.models.models import FreshmanAccount
+from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import FreshmanSeminarAttendance
+from conditional.models.models import HouseMeeting
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
-from conditional.models.models import HouseMeeting
 from conditional.models.models import TechnicalSeminar
+from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-
+from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.member import get_cm, get_hm
-
-from conditional import start_of_year
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 
@@ -28,8 +25,10 @@ logger = structlog.get_logger()
 
 
 @intro_evals_bp.route('/intro_evals/')
-def display_intro_evals(internal=False):
-    log = logger.new(request=request)
+@auth.oidc_auth
+@get_user
+def display_intro_evals(internal=False, user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Evals Listing')
 
     # get user data
@@ -37,10 +36,6 @@ def display_intro_evals(internal=False):
         return len([a for a in FreshmanCommitteeAttendance.query.filter(
             FreshmanCommitteeAttendance.fid == member_id)
             if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
-
-    user_name = None
-    if not internal:
-        user_name = request.headers.get('x-webauth-user')
 
     members = [account for account in ldap_get_intro_members()]
 
@@ -163,7 +158,6 @@ def display_intro_evals(internal=False):
         return ie_members
 
     # return names in 'first last (username)' format
-    return render_template(request,
-                           'intro_evals.html',
-                           username=user_name,
+    return render_template('intro_evals.html',
+                           username=user_dict['username'],
                            members=ie_members)

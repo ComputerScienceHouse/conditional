@@ -1,15 +1,15 @@
 {
   "name": "conditional",
-  "version": "1.0.0",
+  "version": "1.7.0",
   "description": "CSH Re-evaluation (MEGA_EVALS RE:RE:LOADED)",
   "license": "MIT",
   "homepage": "http://csh.rit.edu/",
   "repository": {
     "type": "git",
-    "url": "git://github.com/csssuf/conditional.git"
+    "url": "git://github.com/ComputerScienceHouse/conditional.git"
   },
   "bugs": {
-    "url": "https://github.com/csssuf/conditional/issues"
+    "url": "https://github.com/ComputerScienceHouse/conditional/issues"
   },
   "author": "Computer Science House",
   "engines": {
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
-    "bootstrap-material-datetimepicker": "github:T00rk/bootstrap-material-datetimepicker#gh-pages",
+    "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sass": "^3.3.6",
     "bootstrap-sweetalert": "^1.0.1",
     "csh-material-bootstrap": "1.0.0",
@@ -35,7 +35,7 @@
     "dropzone": "^4.3.0",
     "enumify": "^1.0.4",
     "jquery": "^3.1.0",
-    "load-awesome": "github:danielcardoso/load-awesome",
+    "load-awesome": "^1.1.0",
     "lodash": "4.13.1",
     "reveal.js": "^3.3.0",
     "selectize": "^0.12.2",
