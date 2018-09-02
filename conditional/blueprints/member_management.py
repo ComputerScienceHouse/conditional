@@ -1,6 +1,5 @@
 import csv
 import io
-import re
 
 from datetime import datetime
 
@@ -626,7 +625,8 @@ def export_active_list():
     active_list = [["Full Name", "RIT Username", "Amount to Charge"]]
     for member in ldap_get_active_members():
         full_name = member.cn
-        rit_username = re.search(".*uid=(\\w*)", member.ritDn).group(1)
+        # XXX[ljm] this should be renamed in LDAP/IPA schema to be ritUid
+        rit_username = member.ritDn
         will_coop = CurrentCoops.query.filter(
             CurrentCoops.date_created > start_of_year(),
             CurrentCoops.uid == member.uid).first()
