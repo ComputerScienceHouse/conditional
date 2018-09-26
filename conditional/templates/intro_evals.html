@@ -223,14 +223,14 @@ Introductory Evaluations
                             <span class="glyphicon glyphicon-remove red"></span> Failed
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-sort="{{ m['committee_meetings'] }}">
                             {% if m['committee_meetings'] < 10 %}
                                 <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
                             {% else %}
                                 <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-sort="{{ m['signatures_missed'] }}">
                            {% if m['signatures_missed'] == 0 %}
                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{ m['signatures_missed'] }}
                                 {% elif m['signatures_missed'] > 0 %}
@@ -248,14 +248,14 @@ Introductory Evaluations
                                 <span class="glyphicon glyphicon-hourglass yellow eval-info-status"></span> Pending
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-sort="{{ m['technical_seminars']|length }}">
                             {% if m['technical_seminars']|length >= 2 %}
                                 <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['technical_seminars']|length}}
                             {% else %}
                                 <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['technical_seminars']|length}}
                             {% endif %}
                         </td>
-						<td>
+						<td data-sort="{{ m['house_meetings_missed']|length }}">
                             {% if m['house_meetings_missed']|length == 0 %}
                                 <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['house_meetings_missed']|length}}
                             {% else %}

@@ -211,7 +211,7 @@ Membership Evaluations
                             <span class="glyphicon glyphicon-remove red"></span> Failed
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-sort="{{ m['committee_meetings'] }}">
                             {% if m['committee_meetings'] < m['req_meetings'] %}
                                 <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
                             {% else %}
@@ -225,7 +225,7 @@ Membership Evaluations
                                 <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> None
                             {% endif %}
                         </td>
-						<td>
+						<td data-sort="{{ m['house_meetings_missed']|length }}">
                             {% if m['house_meetings_missed']|length == 0 %}
                                 <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['house_meetings_missed']|length}}
                             {% else %}
