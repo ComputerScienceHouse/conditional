@@ -34,6 +34,7 @@ from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
+from conditional.util.ldap import ldap_set_onfloor
 from conditional.util.ldap import ldap_set_housingpoints
 from conditional.util.ldap import ldap_set_current_student
 from conditional.util.ldap import ldap_set_non_current_student
@@ -494,11 +495,12 @@ def member_management_upgrade_user(user_dict=None):
                 fhm.meeting_id))
         db.session.delete(fhm)
 
+    new_account = ldap_get_member(uid)
     if acct.onfloor_status:
         db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+        ldap_set_onfloor(new_account)
 
     if acct.room_number:
-        new_account = ldap_get_member(uid)
         ldap_set_roomnumber(new_account, acct.room_number)
 
     db.session.delete(acct)
