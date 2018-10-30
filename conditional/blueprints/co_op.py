@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import structlog
 from flask import Blueprint, request, jsonify
 
@@ -49,6 +51,25 @@ def submit_co_op_form(user_dict=None):
     db.session.commit()
 
     return jsonify({"success": True}), 200
+
+
+@co_op_bp.route('/co_op/list', methods=['GET'])
+def get_co_op_list(user_dict=None):
+    # TODO: Authenticate properly
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Get list of students currently on Co-Op')
+
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = 'Fall'
+    else:
+        semester = 'Spring'
+
+    co_op_list = [{member.uid}
+                  for member in CurrentCoops.query.filter(
+            CurrentCoops.date_created > start_of_year(),
+            CurrentCoops.semester == semester).all()]
+
+    return jsonify(co_op_list)
 
 
 @co_op_bp.route('/co_op/<uid>', methods=['DELETE'])
