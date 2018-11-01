@@ -1,10 +1,12 @@
 {% extends "nav.html" %}
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	{% block extraHeader % }{% endblock %}
+</head>
 {% block title %}Error {{ error_code }}{% endblock %}
 {% block body %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <div class="container main error-page align-center">
     <div class="col-xs-12">
-
         <img src="/static/images/material_attention.svg" alt="Attention!">
         <h1>Congratulations or I'm Sorry...</h1>
         <h2>Something has gone terribly wrong!</h2>
