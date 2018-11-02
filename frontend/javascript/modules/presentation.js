@@ -12,6 +12,15 @@ export default class Presentation {
   }
   render() {
     reveal.initialize();
+
+    const name = $('h1.member-name');
+    const nameHeight = name.height();
+    const nameLineheight = parseFloat(name.css('line-height'));
+    const nameRows = nameHeight / nameLineheight; // get # lines of name elem
+    if (nameRows > 1) { // if name wraps to two lines
+      name.css('font-size', '1.5em');
+    }
+
     $('.reveal button.pass').click(e => {
       let uid = e.target.parentElement.dataset.uid; // Ex: ID of 'pass-ram' => 'ram'
       let cn = e.target.parentElement.dataset.cn;
