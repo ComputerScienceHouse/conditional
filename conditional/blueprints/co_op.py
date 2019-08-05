@@ -6,6 +6,8 @@ from conditional.models.models import CurrentCoops
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
+from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 
 co_op_bp = Blueprint('co_op_bp', __name__)
 
@@ -43,6 +45,9 @@ def submit_co_op_form(user_dict=None):
                                  CurrentCoops.date_created > start_of_year()).first():
         return "User has already submitted this form!", 403
 
+    # Add to corresponding co-op ldap group
+    ldap_add_member_to_group(user_dict['account'], semester + '_coop')
+
     co_op = CurrentCoops(uid=user_dict['username'], semester=semester)
     db.session.add(co_op)
     db.session.flush()
@@ -62,6 +67,9 @@ def delete_co_op(uid, user_dict=None):
 
     log.info('Delete {}\'s Co-Op'.format(uid))
 
+    # Remove from corresponding co-op ldap group
+    ldap_remove_member_from_group(user_dict['account'], semester + '_coop')
+    
     CurrentCoops.query.filter(CurrentCoops.uid == uid, CurrentCoops.date_created > start_of_year()).delete()
 
     db.session.flush()
