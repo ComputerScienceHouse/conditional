@@ -6,6 +6,9 @@ from conditional.models.models import CurrentCoops
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
+from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 co_op_bp = Blueprint('co_op_bp', __name__)
 
@@ -34,14 +37,20 @@ def display_co_op_form(user_dict=None):
 def submit_co_op_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
+    valid_semesters = ['Fall', 'Spring']
     post_data = request.get_json()
     semester = post_data['semester']
+    if post_data['semester'] not in valid_semesters:
+        return "Invalid semester submitted", 400
 
     log.info('Submit {} Co-Op'.format(semester))
 
     if CurrentCoops.query.filter(CurrentCoops.uid == user_dict['username'],
                                  CurrentCoops.date_created > start_of_year()).first():
         return "User has already submitted this form!", 403
+
+    # Add to corresponding co-op ldap group
+    ldap_add_member_to_group(user_dict['account'], semester.lower() + '_coop')
 
     co_op = CurrentCoops(uid=user_dict['username'], semester=semester)
     db.session.add(co_op)
@@ -61,6 +70,12 @@ def delete_co_op(uid, user_dict=None):
         return "must be eval director", 403
 
     log.info('Delete {}\'s Co-Op'.format(uid))
+
+    # Remove from corresponding co-op ldap group
+    if ldap_is_member_of_group(user_dict['account'], 'fall_coop'):
+        ldap_remove_member_from_group(user_dict['account'], 'fall_coop')
+    if ldap_is_member_of_group(user_dict['account'], 'spring_coop'):
+        ldap_remove_member_from_group(user_dict['account'], 'spring_coop')
 
     CurrentCoops.query.filter(CurrentCoops.uid == uid, CurrentCoops.date_created > start_of_year()).delete()
 
