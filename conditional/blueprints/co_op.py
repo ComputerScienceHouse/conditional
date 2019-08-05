@@ -37,8 +37,11 @@ def display_co_op_form(user_dict=None):
 def submit_co_op_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
+    valid_semesters = ['Fall', 'Spring']
     post_data = request.get_json()
     semester = post_data['semester']
+    if post_data['semester'] not in valid_semesters:
+        return "Invalid semester submitted", 400
 
     log.info('Submit {} Co-Op'.format(semester))
 
@@ -47,7 +50,7 @@ def submit_co_op_form(user_dict=None):
         return "User has already submitted this form!", 403
 
     # Add to corresponding co-op ldap group
-    ldap_add_member_to_group(user_dict['account'], semester + '_coop')
+    ldap_add_member_to_group(user_dict['account'], semester.lower() + '_coop')
 
     co_op = CurrentCoops(uid=user_dict['username'], semester=semester)
     db.session.add(co_op)
