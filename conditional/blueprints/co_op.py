@@ -8,6 +8,7 @@ from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
+from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 co_op_bp = Blueprint('co_op_bp', __name__)
 
@@ -68,8 +69,11 @@ def delete_co_op(uid, user_dict=None):
     log.info('Delete {}\'s Co-Op'.format(uid))
 
     # Remove from corresponding co-op ldap group
-    ldap_remove_member_from_group(user_dict['account'], semester + '_coop')
-    
+    if ldap_is_member_of_group(user_dict['account'], 'fall_coop'):
+        ldap_remove_member_from_group(user_dict['account'], 'fall_coop')
+    if ldap_is_member_of_group(user_dict['account'], 'spring_coop'):
+        ldap_remove_member_from_group(user_dict['account'], 'spring_coop')
+
     CurrentCoops.query.filter(CurrentCoops.uid == uid, CurrentCoops.date_created > start_of_year()).delete()
 
     db.session.flush()
