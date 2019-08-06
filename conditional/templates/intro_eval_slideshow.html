@@ -13,7 +13,7 @@ Introductory Evaluations Slideshow
     <section id="slide-{{m['uid']}}">
       <section>
         <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" />
-        <h1>{{m['name']}}</h1>
+        <h1 class="member-name">{{m['name']}}</h1>
           <div class="row">
             <div class="col-xs-12 col-md-3">
               {% set packet_passed = m['signatures_missed'] == 0 %}
