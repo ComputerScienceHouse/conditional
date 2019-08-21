@@ -25,5 +25,5 @@ raven==6.6.0
 six==1.11.0
 SQLAlchemy==1.3.*
 structlog==18.1.0
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 wrapt==1.10.11
