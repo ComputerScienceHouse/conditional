@@ -2,6 +2,7 @@ import csv
 import io
 
 from datetime import datetime
+from distutils.util import strtobool
 
 import structlog
 
@@ -209,7 +210,7 @@ def member_management_uploaduser(user_dict=None):
 
         for new_user in csv_input:
             name = new_user[0]
-            onfloor_status = new_user[1]
+            onfloor_status = strtobool(new_user[1])
 
             if new_user[2]:
                 room_number = new_user[2]
