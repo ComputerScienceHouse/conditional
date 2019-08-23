@@ -2,7 +2,7 @@ import csv
 import io
 
 from datetime import datetime
-from distutils.util import strtobool
+from distutils.util import strtobool # pylint: disable=no-name-in-module,import-error
 
 import structlog
 
