@@ -525,24 +525,23 @@ def get_cm_attendees(sid, user_dict=None):
             attendees.append(freshman)
         return jsonify({"attendees": attendees}), 200
 
-    else:
-        log = logger.new(request=request, auth_dict=user_dict)
-        log.info('Delete Technical Seminar {}'.format(sid))
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Delete Technical Seminar {}'.format(sid))
 
-        if not ldap_is_eboard(user_dict['account']):
-            return jsonify({"success": False, "error": "Not EBoard"}), 403
+    if not ldap_is_eboard(user_dict['account']):
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
-        FreshmanSeminarAttendance.query.filter(
-            FreshmanSeminarAttendance.seminar_id == sid).delete()
-        MemberSeminarAttendance.query.filter(
-            MemberSeminarAttendance.seminar_id == sid).delete()
-        TechnicalSeminar.query.filter(
-            TechnicalSeminar.id == sid).delete()
+    FreshmanSeminarAttendance.query.filter(
+        FreshmanSeminarAttendance.seminar_id == sid).delete()
+    MemberSeminarAttendance.query.filter(
+        MemberSeminarAttendance.seminar_id == sid).delete()
+    TechnicalSeminar.query.filter(
+        TechnicalSeminar.id == sid).delete()
 
-        db.session.flush()
-        db.session.commit()
+    db.session.flush()
+    db.session.commit()
 
-        return jsonify({"success": True}), 200
+    return jsonify({"success": True}), 200
 
 
 @attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
@@ -563,24 +562,23 @@ def get_ts_attendees(cid, user_dict=None):
             attendees.append(freshman)
         return jsonify({"attendees": attendees}), 200
 
-    else:
-        log = logger.new(request=request, auth_dict=user_dict)
-        log.info('Delete Committee Meeting {}'.format(cid))
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Delete Committee Meeting {}'.format(cid))
 
-        if not ldap_is_eboard(user_dict['account']):
-            return jsonify({"success": False, "error": "Not EBoard"}), 403
+    if not ldap_is_eboard(user_dict['account']):
+        return jsonify({"success": False, "error": "Not EBoard"}), 403
 
-        FreshmanCommitteeAttendance.query.filter(
-            FreshmanCommitteeAttendance.meeting_id == cid).delete()
-        MemberCommitteeAttendance.query.filter(
-            MemberCommitteeAttendance.meeting_id == cid).delete()
-        CommitteeMeeting.query.filter(
-            CommitteeMeeting.id == cid).delete()
+    FreshmanCommitteeAttendance.query.filter(
+        FreshmanCommitteeAttendance.meeting_id == cid).delete()
+    MemberCommitteeAttendance.query.filter(
+        MemberCommitteeAttendance.meeting_id == cid).delete()
+    CommitteeMeeting.query.filter(
+        CommitteeMeeting.id == cid).delete()
 
-        db.session.flush()
-        db.session.commit()
+    db.session.flush()
+    db.session.commit()
 
-        return jsonify({"success": True}), 200
+    return jsonify({"success": True}), 200
 
 
 @attendance_bp.route('/attendance/cm/<cid>/approve', methods=['POST'])
