@@ -4,7 +4,7 @@ from os import environ as env
 from conditional import __version__
 
 # Flask config
-DEBUG = True if env.get("CONDITIONAL_DEBUG", "false").lower() == "true" else False
+DEBUG = env.get("CONDITIONAL_DEBUG", "false").lower() == "true"
 HOST_NAME = env.get("CONDITIONAL_HOST_NAME", "conditional.csh.rit.edu")
 SERVER_NAME = env.get('CONDITIONAL_SERVER_NAME', 'conditional.csh.rit.edu')
 APP_NAME = "conditional"
@@ -15,7 +15,7 @@ PORT = env.get("CONDITIONAL_PORT", 6969)
 SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "")
 
 # LDAP config
-LDAP_RO = True if env.get("CONDITIONAL_LDAP_RO", "true").lower() == "true" else False
+LDAP_RO = env.get("CONDITIONAL_LDAP_RO", "true").lower() == "true"
 LDAP_BIND_DN = env.get("CONDITIONAL_LDAP_BIND_DN", "cn=conditional,ou=Apps,dc=csh,dc=rit,dc=edu")
 LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
 
