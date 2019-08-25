@@ -530,57 +530,6 @@ def member_management_make_user_active(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@member_management_bp.route('/manage/intro_project', methods=['GET'])
-@auth.oidc_auth
-@get_user
-def introductory_project(user_dict=None):
-    log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Display Freshmen Project Management')
-
-    if not ldap_is_eval_director(user_dict['account']):
-        return "must be eval director", 403
-
-    return render_template('introductory_project.html',
-                           username=user_dict['username'],
-                           intro_members=display_intro_evals(internal=True))
-
-
-@member_management_bp.route('/manage/intro_project', methods=['POST'])
-@auth.oidc_auth
-@get_user
-def introductory_project_submit(user_dict=None):
-    log = logger.new(request=request, auth_dict=user_dict)
-
-    if not ldap_is_eval_director(user_dict['account']):
-        return "must be eval director", 403
-
-    post_data = request.get_json()
-
-    if not isinstance(post_data, list):
-        abort(400)
-
-    for intro_member in post_data:
-        if not isinstance(intro_member, dict):
-            abort(400)
-
-        if 'uid' not in intro_member or 'status' not in intro_member:
-            abort(400)
-
-        if intro_member['status'] not in ['Passed', 'Pending', 'Failed']:
-            abort(400)
-
-        log.info('Freshmen Project {} for {}'.format(intro_member['status'], intro_member['uid']))
-
-        FreshmanEvalData.query.filter(FreshmanEvalData.uid == intro_member['uid']).update({
-            'freshman_project': intro_member['status']
-        })
-
-    db.session.flush()
-    db.session.commit()
-
-    return jsonify({"success": True}), 200
-
-
 @member_management_bp.route('/member/<uid>', methods=['GET'])
 @auth.oidc_auth
 @get_user

@@ -88,7 +88,6 @@ def display_intro_evals(internal=False, user_dict=None):
                     ))
                  ],
             'social_events': '',
-            'freshman_project': "Pending",
             'comments': "",
             'ldap_account': False,
             'status': "Pending"
@@ -141,14 +140,12 @@ def display_intro_evals(internal=False, user_dict=None):
                             TechnicalSeminar.approved == True # pylint: disable=singleton-comparison
                             ).all()],
             'social_events': freshman_data.social_events,
-            'freshman_project': freshman_data.freshman_project,
             'comments': freshman_data.other_notes,
             'ldap_account': True,
             'status': freshman_data.freshman_eval_result
         }
         ie_members.append(member_info)
 
-    ie_members.sort(key=lambda x: x['freshman_project'] == "Passed")
     ie_members.sort(key=lambda x: len(x['house_meetings_missed']))
     ie_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
     ie_members.sort(key=lambda x: x['signatures_missed'])
