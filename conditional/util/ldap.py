@@ -151,12 +151,12 @@ def ldap_set_non_current_student(account):
 
 
 def ldap_set_failed(account):
-    _ldap_remove_member_from_group(account, 'failed')
+    _ldap_add_member_to_group(account, 'failed')
     ldap_get_member.cache_clear()
 
 
 def ldap_set_bad_standing(account):
-    _ldap_remove_member_from_group(account, 'bad_standing')
+    _ldap_add_member_to_group(account, 'bad_standing')
     ldap_get_member.cache_clear()
 
 
