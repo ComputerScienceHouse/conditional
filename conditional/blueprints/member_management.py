@@ -27,7 +27,7 @@ from conditional.models.models import CurrentCoops
 from conditional.blueprints.cache_management import clear_members_cache
 from conditional.blueprints.intro_evals import display_intro_evals
 
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_eval_director, ldap_is_bad_standing
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
@@ -520,8 +520,10 @@ def member_management_upgrade_user(user_dict=None):
 def member_management_make_user_active(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_current_student(user_dict['account']) or ldap_is_active(user_dict['account']):
-        return "must be current student and not active", 403
+    if not ldap_is_current_student(user_dict['account']) \
+            or ldap_is_active(user_dict['account']) \
+            or ldap_is_bad_standing(user_dict['account']):
+        return "must be current student, not in bad standing and not active", 403
 
     ldap_set_active(user_dict['account'])
     log.info("Make user {} active".format(user_dict['username']))
