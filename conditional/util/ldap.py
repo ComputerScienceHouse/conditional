@@ -132,6 +132,12 @@ def ldap_set_intro_member(account):
     ldap_get_member.cache_clear()
 
 
+def ldap_set_not_intro_member(account):
+    _ldap_remove_member_from_group(account, 'intromembers')
+    ldap_get_intro_members().cache_clear()
+    ldap_get_member.cache_clear()
+
+
 def ldap_set_current_student(account):
     _ldap_add_member_to_group(account, 'current_student')
     ldap_get_current_students.cache_clear()
