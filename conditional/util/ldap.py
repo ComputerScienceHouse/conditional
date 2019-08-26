@@ -63,6 +63,10 @@ def ldap_is_active(account):
     return _ldap_is_member_of_group(account, 'active')
 
 
+def ldap_is_bad_standing(account):
+    return _ldap_is_member_of_group(account, 'bad_standing')
+
+
 def ldap_is_alumni(account):
     # If the user is not active, they are an alumni.
     return not _ldap_is_member_of_group(account, 'active')
@@ -122,6 +126,12 @@ def ldap_set_inactive(account):
     ldap_get_member.cache_clear()
 
 
+def ldap_set_intro_member(account):
+    _ldap_add_member_to_group(account, 'intromembers')
+    ldap_get_intro_members().cache_clear()
+    ldap_get_member.cache_clear()
+
+
 def ldap_set_current_student(account):
     _ldap_add_member_to_group(account, 'current_student')
     ldap_get_current_students.cache_clear()
@@ -133,10 +143,22 @@ def ldap_set_non_current_student(account):
     ldap_get_current_students.cache_clear()
     ldap_get_member.cache_clear()
 
+
+def ldap_set_failed(account):
+    _ldap_remove_member_from_group(account, 'failed')
+    ldap_get_member.cache_clear()
+
+
+def ldap_set_bad_standing(account):
+    _ldap_remove_member_from_group(account, 'bad_standing')
+    ldap_get_member.cache_clear()
+
+
 def ldap_set_onfloor(account):
     _ldap_add_member_to_group(account, 'onfloor')
     ldap_get_onfloor_members.cache_clear()
     ldap_get_member.cache_clear()
+
 
 def ldap_get_roomnumber(account):
     try:

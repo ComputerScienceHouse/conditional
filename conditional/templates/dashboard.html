@@ -251,7 +251,7 @@ Dashboard
             </div>
             {% endif %}
 
-            {% if accepting_dues and student and not active %}
+            {% if accepting_dues and student and not active and not bad_standing %}
                 <div class="panel panel-info" id="becomeActive">
                     <div class="panel-heading">
                         <h3 class="panel-title">Become Active</h3>
