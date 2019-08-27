@@ -2,7 +2,7 @@ import csv
 import io
 
 from datetime import datetime
-from distutils.util import strtobool # pylint: disable=no-name-in-module,import-error
+from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error
 
 import structlog
 
@@ -71,14 +71,14 @@ def display_member_management(user_dict=None):
     onfloor_list = get_onfloor_members()
 
     co_op_list = [(ldap_get_member(member.uid).displayName, member.semester, member.uid) \
-        for member in CurrentCoops.query.filter(
+                  for member in CurrentCoops.query.filter(
             CurrentCoops.date_created > start_of_year(),
             CurrentCoops.semester != "Neither")]
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
 
-    for freshman_user in freshmen: # pylint: disable=not-an-iterable
+    for freshman_user in freshmen:  # pylint: disable=not-an-iterable
         freshmen_list.append({
             "id": freshman_user.id,
             "name": freshman_user.name,
@@ -217,8 +217,13 @@ def member_management_uploaduser(user_dict=None):
             else:
                 room_number = None
 
+            if new_user[3]:
+                rit_username = new_user[3]
+            else:
+                rit_username = None
+
             log.info('Create Freshman Account for {} via CSV Upload'.format(name))
-            db.session.add(FreshmanAccount(name, onfloor_status, room_number))
+            db.session.add(FreshmanAccount(name, onfloor_status, room_number, rit_username))
 
         db.session.flush()
         db.session.commit()
