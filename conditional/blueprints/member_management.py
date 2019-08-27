@@ -6,7 +6,7 @@ from distutils.util import strtobool # pylint: disable=no-name-in-module,import-
 
 import structlog
 
-from flask import Blueprint, request, jsonify, abort, make_response
+from flask import Blueprint, request, jsonify, make_response
 
 from conditional import app, get_user, auth
 
@@ -25,7 +25,6 @@ from conditional.models.models import SpringEval
 from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
-from conditional.blueprints.intro_evals import display_intro_evals
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_financial_director
