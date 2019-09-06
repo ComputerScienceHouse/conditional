@@ -43,7 +43,7 @@ def submit_co_op_form(user_dict=None):
     if post_data['semester'] not in valid_semesters:
         return "Invalid semester submitted", 400
     if not ldap_is_current_student(user_dict['account']):
-        return "must be current student", 403
+        return "Must be current student", 403
 
     log.info('Submit {} Co-Op'.format(semester))
 
