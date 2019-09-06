@@ -5,7 +5,7 @@ from conditional import db, start_of_year, auth
 from conditional.models.models import CurrentCoops
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_eval_director, ldap_is_current_student
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
@@ -42,6 +42,8 @@ def submit_co_op_form(user_dict=None):
     semester = post_data['semester']
     if post_data['semester'] not in valid_semesters:
         return "Invalid semester submitted", 400
+    if not ldap_is_current_student(user_dict['account']):
+        return "Must be current student", 403
 
     log.info('Submit {} Co-Op'.format(semester))
 
