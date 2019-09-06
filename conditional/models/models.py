@@ -33,7 +33,7 @@ class FreshmanEvalData(db.Model):
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     freshman_project = Column(Enum('Pending', 'Passed', 'Failed',
-                                   name="freshman_project_enum"), nullable=False)
+                                   name="freshman_project_enum"), nullable=True)
     eval_date = Column(DateTime, nullable=False)
     signatures_missed = Column(Integer, nullable=False)
     social_events = Column(Text)
@@ -44,7 +44,7 @@ class FreshmanEvalData(db.Model):
 
     def __init__(self, uid, signatures_missed):
         self.uid = uid
-        self.freshman_project = 'Pending'
+        self.freshman_project = None
         self.freshman_eval_result = 'Pending'
         self.signatures_missed = signatures_missed
         self.social_events = ""
