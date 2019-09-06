@@ -38,7 +38,8 @@ def get_voting_members():
     voting_list = list(active_members - intro_members - on_coop)
 
     passed_fall = FreshmanEvalData.query.filter(
-        FreshmanEvalData.freshman_eval_result == "Passed"
+        FreshmanEvalData.freshman_eval_result == "Passed",
+        FreshmanEvalData.eval_date > start_of_year()
     ).distinct()
 
     for intro_member in passed_fall:
