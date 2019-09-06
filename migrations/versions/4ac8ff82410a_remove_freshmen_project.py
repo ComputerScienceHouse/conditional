@@ -1,14 +1,14 @@
 """remove_freshmen_project
 
 Revision ID: 4ac8ff82410a
-Revises: d1a06ab54211
+Revises: 704962eabf9c
 Create Date: 2019-09-06 11:21:28.515040
 
 """
 
 # revision identifiers, used by Alembic.
 revision = '4ac8ff82410a'
-down_revision = 'd1a06ab54211'
+down_revision = '704962eabf9c'
 
 from alembic import op
 import sqlalchemy as sa
