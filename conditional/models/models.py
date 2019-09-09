@@ -56,7 +56,7 @@ class CommitteeMeeting(db.Model):
     __tablename__ = 'committee_meetings'
     id = Column(Integer, primary_key=True)
     committee = Column(Enum('Evaluations', 'History', 'Social', 'Opcomm',
-                            'R&D', 'House Improvements', 'Financial', 'Chairman', name="committees_enum"),
+                            'R&D', 'House Improvements', 'Financial', 'Chairman', 'Ad-Hoc', name="committees_enum"),
                        nullable=False)
     timestamp = Column(DateTime, nullable=False)
     approved = Column(Boolean, nullable=False)
