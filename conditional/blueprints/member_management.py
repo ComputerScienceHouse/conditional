@@ -6,7 +6,7 @@ from distutils.util import strtobool  # pylint: disable=no-name-in-module,import
 import structlog
 from flask import Blueprint, request, jsonify, make_response
 
-from conditional import app, get_user, auth
+from conditional import app, get_user, auth, db, start_of_year
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
