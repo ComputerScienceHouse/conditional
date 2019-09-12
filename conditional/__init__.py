@@ -88,8 +88,8 @@ structlog.configure(processors=[
 logger = structlog.get_logger()
 
 # pylint: disable=wrong-import-order
+from conditional.util import context_processors
 from conditional.util.auth import get_user
-
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp

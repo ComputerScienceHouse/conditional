@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from conditional import db, start_of_year, auth
 from conditional.models.models import CurrentCoops
+from conditional.util.member import req_cm
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director, ldap_is_current_student
@@ -58,6 +59,7 @@ def submit_co_op_form(user_dict=None):
     db.session.add(co_op)
     db.session.flush()
     db.session.commit()
+    req_cm.cache_clear()
 
     return jsonify({"success": True}), 200
 
@@ -83,5 +85,27 @@ def delete_co_op(uid, user_dict=None):
 
     db.session.flush()
     db.session.commit()
+    req_cm.cache_clear()
 
     return jsonify({"success": True}), 200
+
+
+@co_op_bp.route('/co_op/manage')
+@auth.oidc_auth
+@get_user
+def display_co_op_management(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Display Co-Op Management')
+
+    if not ldap_is_eval_director(user_dict['account']):
+        return "must be eval director", 403
+
+    co_op_list = [(member.semester, member.uid)
+                  for member in CurrentCoops.query.filter(
+            CurrentCoops.date_created > start_of_year(),
+            CurrentCoops.semester != "Neither")]
+
+    return render_template("co_op_management.html",
+                           username=user_dict['username'],
+                           co_op=co_op_list,
+                           )

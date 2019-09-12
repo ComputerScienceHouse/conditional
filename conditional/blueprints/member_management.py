@@ -1,11 +1,9 @@
 import csv
 import io
-
 from datetime import datetime
 from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error
 
 import structlog
-
 from flask import Blueprint, request, jsonify, make_response
 
 from conditional import app, get_user, auth
@@ -43,13 +41,10 @@ from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
-from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
 from conditional.util.member import get_members_info, get_onfloor_members
-
-from conditional import db, start_of_year
 
 logger = structlog.get_logger()
 
@@ -68,11 +63,6 @@ def display_member_management(user_dict=None):
 
     member_list = get_members_info()
     onfloor_list = get_onfloor_members()
-
-    co_op_list = [(ldap_get_member(member.uid).displayName, member.semester, member.uid) \
-                  for member in CurrentCoops.query.filter(
-            CurrentCoops.date_created > start_of_year(),
-            CurrentCoops.semester != "Neither")]
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -104,7 +94,6 @@ def display_member_management(user_dict=None):
                            num_fresh=len(freshmen_list),
                            num_onfloor=len(onfloor_list),
                            freshmen=freshmen_list,
-                           co_op=co_op_list,
                            site_lockdown=lockdown,
                            accept_dues_until=accept_dues_until,
                            intro_form=intro_form)
@@ -268,7 +257,7 @@ def edit_uid(uid, flask_request, username):
         ldap_set_roomnumber(account, room_number)
         if onfloor_status:
             # If a OnFloorStatusAssigned object exists, don't make another
-            if not ldap_is_member_of_group(account, "onfloor"):
+            if not ldap_is_onfloor(account):
                 db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
                 ldap_add_member_to_group(account, "onfloor")
         else:
@@ -277,7 +266,7 @@ def edit_uid(uid, flask_request, username):
             db.session.flush()
             db.session.commit()
 
-            if ldap_is_member_of_group(account, "onfloor"):
+            if ldap_is_onfloor(account):
                 ldap_remove_member_from_group(account, "onfloor")
         ldap_set_housingpoints(account, housing_points)
 

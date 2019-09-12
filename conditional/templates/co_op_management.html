@@ -1,0 +1,45 @@
+{% extends "nav.html" %}
+{% block title %}
+Co-Op Management
+{% endblock %}
+{% block body %}
+<div class="container main">
+    {% if is_eval_director%}
+       <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Co-Op Management</h3>
+        </div>
+        <div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="false" data-sort-column="1" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Semester</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in co_op %}
+                    <tr id="coop-{{c[1]}}">
+                        <td>
+                            <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{c[1]}}"> {{ get_member_name(c[1]) }}
+                        </td>
+                        <td>
+                            {{c[0]}}
+                        </td>
+                        <td width=100px>
+                            <a href="#" data-module="coopDelete" data-uid="{{c[1]}}">
+                                <span class="glyphicon glyphicon-trash red align-center" style="width: 100%"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

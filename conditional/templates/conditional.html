@@ -35,7 +35,7 @@
                             <tbody>
                             {% for c in conditionals %}
                                 <tr id="conditional-{{ c['id'] }}" conditional_id="{{ c['id'] }}">
-                                    <td>{{ c['name'] }}</td>
+                                    <td>{{ get_member_name(c['uid']) }}</td>
                                     <td>{{ c['date_created'] }}</td>
                                     <td>{{ c['date_due'] }}</td>
                                     <td>{{ c['description'] }}</td>

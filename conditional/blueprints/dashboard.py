@@ -34,12 +34,10 @@ def display_dashboard(user_dict=None):
 
     data = dict()
     data['username'] = user_dict['account'].uid
-    data['name'] = user_dict['account'].cn
     data['active'] = ldap_is_active(user_dict['account'])
     data['bad_standing'] = ldap_is_bad_standing(user_dict['account'])
     data['onfloor'] = ldap_is_onfloor(user_dict['account'])
     data['voting'] = bool(user_dict['account'].uid in can_vote)
-    data['student'] = ldap_is_current_student(user_dict['account'])
 
     data['voting_count'] = {"Voting Members": len(can_vote),
                             "Active Members": len(ldap_get_active_members())}
