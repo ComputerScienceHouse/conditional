@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_is_onfloor
-
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
+from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_is_onfloor
 
 
 def get_housing_queue(is_eval_director=False):
@@ -39,11 +38,10 @@ def get_housing_queue(is_eval_director=False):
 
 
 def get_queue_position(username):
-
     queue = get_housing_queue()
     try:
         index = next(index for (index, d) in enumerate(get_housing_queue())
-             if d["uid"] == username) + 1
+                     if d["uid"] == username) + 1
     except (KeyError, StopIteration):
         index = None
-    return (index, len(queue))
+    return index, len(queue)

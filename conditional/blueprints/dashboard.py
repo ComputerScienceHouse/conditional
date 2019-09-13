@@ -12,7 +12,6 @@ from conditional.util.flask import render_template
 from conditional.util.housing import get_queue_position
 from conditional.util.ldap import ldap_get_active_members, ldap_is_bad_standing
 from conditional.util.ldap import ldap_is_active
-from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.member import get_freshman_data, get_voting_members, get_cm, get_hm, req_cm
@@ -34,12 +33,10 @@ def display_dashboard(user_dict=None):
 
     data = dict()
     data['username'] = user_dict['account'].uid
-    data['name'] = user_dict['account'].cn
     data['active'] = ldap_is_active(user_dict['account'])
     data['bad_standing'] = ldap_is_bad_standing(user_dict['account'])
     data['onfloor'] = ldap_is_onfloor(user_dict['account'])
     data['voting'] = bool(user_dict['account'].uid in can_vote)
-    data['student'] = ldap_is_current_student(user_dict['account'])
 
     data['voting_count'] = {"Voting Members": len(can_vote),
                             "Active Members": len(ldap_get_active_members())}

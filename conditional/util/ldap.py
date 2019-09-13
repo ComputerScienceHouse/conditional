@@ -1,6 +1,5 @@
-from functools import lru_cache
-
 from conditional import ldap
+from conditional.util.cache import service_cache
 
 
 def _ldap_get_group_members(group):
@@ -25,7 +24,7 @@ def _ldap_remove_member_from_group(account, group):
         ldap.get_group(group).del_member(account, dn=False)
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=256)
 def _ldap_is_member_of_directorship(account, directorship):
     directors = ldap.get_directorship_heads(directorship)
     for director in directors:
@@ -34,68 +33,86 @@ def _ldap_is_member_of_directorship(account, directorship):
     return False
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def ldap_get_member(username):
     return ldap.get_member(username, uid=True)
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def ldap_get_active_members():
     return _ldap_get_group_members("active")
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def ldap_get_intro_members():
     return _ldap_get_group_members("intromembers")
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def ldap_get_onfloor_members():
     return _ldap_get_group_members("onfloor")
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def ldap_get_current_students():
     return _ldap_get_group_members("current_student")
 
 
+@service_cache(maxsize=128)
+def ldap_get_roomnumber(account):
+    try:
+        return account.roomNumber
+    except AttributeError:
+        return ""
+
+
+@service_cache(maxsize=128)
 def ldap_is_active(account):
     return _ldap_is_member_of_group(account, 'active')
 
 
+@service_cache(maxsize=128)
 def ldap_is_bad_standing(account):
     return _ldap_is_member_of_group(account, 'bad_standing')
 
 
+@service_cache(maxsize=128)
 def ldap_is_alumni(account):
     # If the user is not active, they are an alumni.
     return not _ldap_is_member_of_group(account, 'active')
 
 
+@service_cache(maxsize=128)
 def ldap_is_eboard(account):
     return _ldap_is_member_of_group(account, 'eboard')
 
 
+@service_cache(maxsize=128)
 def ldap_is_rtp(account):
     return _ldap_is_member_of_group(account, 'rtp')
 
 
+@service_cache(maxsize=128)
 def ldap_is_intromember(account):
     return _ldap_is_member_of_group(account, 'intromembers')
 
 
+@service_cache(maxsize=128)
 def ldap_is_onfloor(account):
     return _ldap_is_member_of_group(account, 'onfloor')
 
 
+@service_cache(maxsize=128)
 def ldap_is_financial_director(account):
     return _ldap_is_member_of_directorship(account, 'Financial')
 
 
+@service_cache(maxsize=128)
 def ldap_is_eval_director(account):
     return _ldap_is_member_of_directorship(account, 'Evaluations')
 
 
+@service_cache(maxsize=256)
 def ldap_is_current_student(account):
     return _ldap_is_member_of_group(account, 'current_student')
 
@@ -164,10 +181,3 @@ def ldap_set_onfloor(account):
     _ldap_add_member_to_group(account, 'onfloor')
     ldap_get_onfloor_members.cache_clear()
     ldap_get_member.cache_clear()
-
-
-def ldap_get_roomnumber(account):
-    try:
-        return account.roomNumber
-    except AttributeError:
-        return ""
