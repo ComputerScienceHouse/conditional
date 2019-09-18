@@ -34,8 +34,8 @@ def _ldap_is_member_of_directorship(account, directorship):
 
 
 @service_cache(maxsize=1024)
-def ldap_get_member(username):
-    return ldap.get_member(username, uid=True)
+def ldap_get_member(uid):
+    return ldap.get_member(uid, uid=True)
 
 
 @service_cache(maxsize=1024)
