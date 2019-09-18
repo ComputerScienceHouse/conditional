@@ -147,7 +147,7 @@ def route_errors(error, user_dict=None):
     data = dict()
 
     # Handle the case where the header isn't present
-    if user_dict['username'] is not None:
+    if user_dict['uid'] is not None:
         data['username'] = user_dict['account'].uid
         data['name'] = user_dict['account'].cn
     else:

@@ -30,7 +30,7 @@ def slideshow_intro_display(user_dict=None):
         return redirect("/dashboard")
 
     return render_template('intro_eval_slideshow.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_intro_evals(internal=True))
 
@@ -86,7 +86,7 @@ def slideshow_spring_display(user_dict=None):
         return redirect("/dashboard")
 
     return render_template('spring_eval_slideshow.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_spring_evals(internal=True))
 

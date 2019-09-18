@@ -24,10 +24,10 @@ def display_co_op_form(user_dict=None):
     log.info('Display Co-Op Submission Page')
 
     co_op = CurrentCoops.query.filter(
-        CurrentCoops.uid == user_dict['username'], CurrentCoops.date_created > start_of_year()).first()
+        CurrentCoops.uid == user_dict['uid'], CurrentCoops.date_created > start_of_year()).first()
 
     return render_template('co_op.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            year=start_of_year().year,
                            on_coop=co_op)
 
@@ -48,14 +48,14 @@ def submit_co_op_form(user_dict=None):
 
     log.info('Submit {} Co-Op'.format(semester))
 
-    if CurrentCoops.query.filter(CurrentCoops.uid == user_dict['username'],
+    if CurrentCoops.query.filter(CurrentCoops.uid == user_dict['uid'],
                                  CurrentCoops.date_created > start_of_year()).first():
         return "User has already submitted this form!", 403
 
     # Add to corresponding co-op ldap group
     ldap_add_member_to_group(user_dict['account'], semester.lower() + '_coop')
 
-    co_op = CurrentCoops(uid=user_dict['username'], semester=semester)
+    co_op = CurrentCoops(uid=user_dict['uid'], semester=semester)
     db.session.add(co_op)
     db.session.flush()
     db.session.commit()
@@ -106,6 +106,6 @@ def display_co_op_management(user_dict=None):
             CurrentCoops.semester != "Neither")]
 
     return render_template("co_op_management.html",
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            co_op=co_op_list,
                            )
