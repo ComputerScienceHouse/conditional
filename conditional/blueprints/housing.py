@@ -55,7 +55,7 @@ def display_housing(user_dict=None):
 
     # return names in 'first last (username)' format
     return render_template('housing.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            queue=get_housing_queue(ldap_is_eval_director(user_dict['account'])),
                            housing=housing,
                            room_list=sorted(list(room_list)))

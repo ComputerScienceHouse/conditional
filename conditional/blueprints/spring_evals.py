@@ -101,5 +101,5 @@ def display_spring_evals(internal=False, user_dict=None):
         return sp_members
 
     return render_template('spring_evals.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            members=sp_members)

@@ -87,7 +87,7 @@ def display_member_management(user_dict=None):
         accept_dues_until = datetime.now()
 
     return render_template("member_management.html",
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            active=member_list,
                            num_current=len(member_list),
                            num_active=len(ldap_get_active_members()),
@@ -228,7 +228,7 @@ def member_management_edituser(uid, user_dict=None):
         return "must be eval director", 403
 
     if not uid.isdigit():
-        edit_uid(uid, request, user_dict['username'])
+        edit_uid(uid, request, user_dict['uid'])
     else:
         edit_fid(uid, request)
 
@@ -375,7 +375,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 
     account = ldap_get_member(uid)
 
-    if ldap_is_eval_director(ldap_get_member(user_dict['username'])):
+    if ldap_is_eval_director(ldap_get_member(user_dict['uid'])):
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -519,7 +519,7 @@ def member_management_make_user_active(user_dict=None):
         return "must be current student, not in bad standing and not active", 403
 
     ldap_set_active(user_dict['account'])
-    log.info("Make user {} active".format(user_dict['username']))
+    log.info("Make user {} active".format(user_dict['uid']))
 
     clear_members_cache()
     return jsonify({"success": True}), 200
@@ -558,7 +558,7 @@ def clear_active_members(user_dict=None):
 
     # Clear the active group.
     for account in members:
-        if account.uid != user_dict['username']:
+        if account.uid != user_dict['uid']:
             log.info('Remove {} from Active Status'.format(account.uid))
             ldap_set_inactive(account)
     return jsonify({"success": True}), 200
@@ -623,5 +623,5 @@ def new_year(user_dict=None):
     current_students = ldap_get_current_students()
 
     return render_template('new_year.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            current_students=current_students)

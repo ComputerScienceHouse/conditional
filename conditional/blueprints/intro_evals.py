@@ -156,5 +156,5 @@ def display_intro_evals(internal=False, user_dict=None):
 
     # return names in 'first last (username)' format
     return render_template('intro_evals.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            members=ie_members)

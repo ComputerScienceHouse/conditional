@@ -31,12 +31,12 @@ def webauth_request(func):
 def get_user(func):
     @wraps(func)
     def wrapped_function(*args, **kwargs):
-        username = str(session["userinfo"].get("preferred_username", ""))
-        account = ldap_get_member(username)
+        uid = str(session["userinfo"].get("preferred_username", ""))
+        account = ldap_get_member(uid)
         current_student = ldap_is_current_student(account)
 
         user_dict = {
-            'username': username,
+            'uid': uid,
             'account': account,
             'student': current_student
         }
