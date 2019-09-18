@@ -39,7 +39,7 @@ def display_major_project(user_dict=None):
                 desc(MajorProject.id))]
 
     major_projects_len = len(major_projects)
-    # return names in 'first last (username)' format
+    # return names in 'first last (uid)' format
     return render_template('major_project_submission.html',
                            major_projects=major_projects,
                            major_projects_len=major_projects_len,

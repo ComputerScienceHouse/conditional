@@ -27,7 +27,7 @@ def display_intro_evals_form(user_dict=None):
         FreshmanEvalData.uid == user_dict['uid']).first()
 
     is_open = EvalSettings.query.first().intro_form_active
-    # return names in 'first last (username)' format
+    # return names in 'first last (uid)' format
     return render_template('intro_evals_form.html',
                            username=user_dict['uid'],
                            social_events=eval_data.social_events,

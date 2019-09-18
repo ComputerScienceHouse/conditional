@@ -53,7 +53,7 @@ def display_housing(user_dict=None):
             housing[room] = [name]
             room_list.add(room)
 
-    # return names in 'first last (username)' format
+    # return names in 'first last (uid)' format
     return render_template('housing.html',
                            username=user_dict['uid'],
                            queue=get_housing_queue(ldap_is_eval_director(user_dict['account'])),
