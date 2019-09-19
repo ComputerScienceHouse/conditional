@@ -16,14 +16,16 @@ class FreshmanAccount(db.Model):
     onfloor_status = Column(Boolean)
     room_number = Column(String)
     signatures_missed = Column(Integer)
+    rit_username = Column(String(10), nullable=True)
 
-    def __init__(self, name, onfloor, room=None, missed=None):
+    def __init__(self, name, onfloor, room=None, missed=None, rit_username=None):
         self.name = name
         today = date.fromtimestamp(time.time())
         self.eval_date = today + timedelta(weeks=10)
         self.onfloor_status = onfloor
         self.room_number = room
         self.signatures_missed = missed
+        self.rit_username = rit_username
 
 
 class FreshmanEvalData(db.Model):
@@ -31,7 +33,7 @@ class FreshmanEvalData(db.Model):
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
     freshman_project = Column(Enum('Pending', 'Passed', 'Failed',
-                                   name="freshman_project_enum"), nullable=False)
+                                   name="freshman_project_enum"), nullable=True)
     eval_date = Column(DateTime, nullable=False)
     signatures_missed = Column(Integer, nullable=False)
     social_events = Column(Text)
@@ -42,7 +44,7 @@ class FreshmanEvalData(db.Model):
 
     def __init__(self, uid, signatures_missed):
         self.uid = uid
-        self.freshman_project = 'Pending'
+        self.freshman_project = None
         self.freshman_eval_result = 'Pending'
         self.signatures_missed = signatures_missed
         self.social_events = ""
@@ -54,7 +56,7 @@ class CommitteeMeeting(db.Model):
     __tablename__ = 'committee_meetings'
     id = Column(Integer, primary_key=True)
     committee = Column(Enum('Evaluations', 'History', 'Social', 'Opcomm',
-                            'R&D', 'House Improvements', 'Financial', 'Chairman', name="committees_enum"),
+                            'R&D', 'House Improvements', 'Financial', 'Chairman', 'Ad-Hoc', name="committees_enum"),
                        nullable=False)
     timestamp = Column(DateTime, nullable=False)
     approved = Column(Boolean, nullable=False)

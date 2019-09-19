@@ -32,18 +32,18 @@ def display_major_project(user_dict=None):
             'status': p.status,
             'description': p.description,
             'id': p.id,
-            'is_owner': bool(user_dict['username'] == p.uid)
+            'is_owner': bool(user_dict['uid'] == p.uid)
         } for p in
         MajorProject.query.filter(
             MajorProject.date > start_of_year()).order_by(
                 desc(MajorProject.id))]
 
     major_projects_len = len(major_projects)
-    # return names in 'first last (username)' format
+    # return names in 'first last (uid)' format
     return render_template('major_project_submission.html',
                            major_projects=major_projects,
                            major_projects_len=major_projects_len,
-                           username=user_dict['username'])
+                           username=user_dict['uid'])
 
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
@@ -59,7 +59,7 @@ def submit_major_project(user_dict=None):
 
     if name == "" or description == "":
         return jsonify({"success": False}), 400
-    project = MajorProject(user_dict['username'], name, description)
+    project = MajorProject(user_dict['uid'], name, description)
 
     db.session.add(project)
     db.session.commit()
@@ -105,7 +105,7 @@ def major_project_delete(pid, user_dict=None):
     ).first()
     creator = major_project.uid
 
-    if creator == user_dict['username'] or ldap_is_eval_director(user_dict['account']):
+    if creator == user_dict['uid'] or ldap_is_eval_director(user_dict['account']):
         MajorProject.query.filter(
             MajorProject.id == pid
         ).delete()

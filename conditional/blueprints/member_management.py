@@ -1,14 +1,12 @@
 import csv
 import io
-
 from datetime import datetime
-from distutils.util import strtobool # pylint: disable=no-name-in-module,import-error
+from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error
 
 import structlog
+from flask import Blueprint, request, jsonify, make_response
 
-from flask import Blueprint, request, jsonify, abort, make_response
-
-from conditional import app, get_user, auth
+from conditional import app, get_user, auth, db, start_of_year
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -25,9 +23,8 @@ from conditional.models.models import SpringEval
 from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
-from conditional.blueprints.intro_evals import display_intro_evals
 
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_eval_director, ldap_is_bad_standing
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
@@ -44,13 +41,10 @@ from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
-from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
 from conditional.util.member import get_members_info, get_onfloor_members
-
-from conditional import db, start_of_year
 
 logger = structlog.get_logger()
 
@@ -70,15 +64,10 @@ def display_member_management(user_dict=None):
     member_list = get_members_info()
     onfloor_list = get_onfloor_members()
 
-    co_op_list = [(ldap_get_member(member.uid).displayName, member.semester, member.uid) \
-        for member in CurrentCoops.query.filter(
-            CurrentCoops.date_created > start_of_year(),
-            CurrentCoops.semester != "Neither")]
-
     freshmen = FreshmanAccount.query
     freshmen_list = []
 
-    for freshman_user in freshmen: # pylint: disable=not-an-iterable
+    for freshman_user in freshmen:  # pylint: disable=not-an-iterable
         freshmen_list.append({
             "id": freshman_user.id,
             "name": freshman_user.name,
@@ -98,14 +87,13 @@ def display_member_management(user_dict=None):
         accept_dues_until = datetime.now()
 
     return render_template("member_management.html",
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            active=member_list,
                            num_current=len(member_list),
                            num_active=len(ldap_get_active_members()),
                            num_fresh=len(freshmen_list),
                            num_onfloor=len(onfloor_list),
                            freshmen=freshmen_list,
-                           co_op=co_op_list,
                            site_lockdown=lockdown,
                            accept_dues_until=accept_dues_until,
                            intro_form=intro_form)
@@ -217,8 +205,13 @@ def member_management_uploaduser(user_dict=None):
             else:
                 room_number = None
 
+            if new_user[3]:
+                rit_username = new_user[3]
+            else:
+                rit_username = None
+
             log.info('Create Freshman Account for {} via CSV Upload'.format(name))
-            db.session.add(FreshmanAccount(name, onfloor_status, room_number))
+            db.session.add(FreshmanAccount(name, onfloor_status, room_number, rit_username))
 
         db.session.flush()
         db.session.commit()
@@ -235,7 +228,7 @@ def member_management_edituser(uid, user_dict=None):
         return "must be eval director", 403
 
     if not uid.isdigit():
-        edit_uid(uid, request, user_dict['username'])
+        edit_uid(uid, request, user_dict['uid'])
     else:
         edit_fid(uid, request)
 
@@ -264,7 +257,7 @@ def edit_uid(uid, flask_request, username):
         ldap_set_roomnumber(account, room_number)
         if onfloor_status:
             # If a OnFloorStatusAssigned object exists, don't make another
-            if not ldap_is_member_of_group(account, "onfloor"):
+            if not ldap_is_onfloor(account):
                 db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
                 ldap_add_member_to_group(account, "onfloor")
         else:
@@ -273,7 +266,7 @@ def edit_uid(uid, flask_request, username):
             db.session.flush()
             db.session.commit()
 
-            if ldap_is_member_of_group(account, "onfloor"):
+            if ldap_is_onfloor(account):
                 ldap_remove_member_from_group(account, "onfloor")
         ldap_set_housingpoints(account, housing_points)
 
@@ -382,7 +375,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 
     account = ldap_get_member(uid)
 
-    if ldap_is_eval_director(ldap_get_member(user_dict['username'])):
+    if ldap_is_eval_director(ldap_get_member(user_dict['uid'])):
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -520,64 +513,15 @@ def member_management_upgrade_user(user_dict=None):
 def member_management_make_user_active(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_current_student(user_dict['account']) or ldap_is_active(user_dict['account']):
-        return "must be current student and not active", 403
+    if not ldap_is_current_student(user_dict['account']) \
+            or ldap_is_active(user_dict['account']) \
+            or ldap_is_bad_standing(user_dict['account']):
+        return "must be current student, not in bad standing and not active", 403
 
     ldap_set_active(user_dict['account'])
-    log.info("Make user {} active".format(user_dict['username']))
+    log.info("Make user {} active".format(user_dict['uid']))
 
     clear_members_cache()
-    return jsonify({"success": True}), 200
-
-
-@member_management_bp.route('/manage/intro_project', methods=['GET'])
-@auth.oidc_auth
-@get_user
-def introductory_project(user_dict=None):
-    log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Display Freshmen Project Management')
-
-    if not ldap_is_eval_director(user_dict['account']):
-        return "must be eval director", 403
-
-    return render_template('introductory_project.html',
-                           username=user_dict['username'],
-                           intro_members=display_intro_evals(internal=True))
-
-
-@member_management_bp.route('/manage/intro_project', methods=['POST'])
-@auth.oidc_auth
-@get_user
-def introductory_project_submit(user_dict=None):
-    log = logger.new(request=request, auth_dict=user_dict)
-
-    if not ldap_is_eval_director(user_dict['account']):
-        return "must be eval director", 403
-
-    post_data = request.get_json()
-
-    if not isinstance(post_data, list):
-        abort(400)
-
-    for intro_member in post_data:
-        if not isinstance(intro_member, dict):
-            abort(400)
-
-        if 'uid' not in intro_member or 'status' not in intro_member:
-            abort(400)
-
-        if intro_member['status'] not in ['Passed', 'Pending', 'Failed']:
-            abort(400)
-
-        log.info('Freshmen Project {} for {}'.format(intro_member['status'], intro_member['uid']))
-
-        FreshmanEvalData.query.filter(FreshmanEvalData.uid == intro_member['uid']).update({
-            'freshman_project': intro_member['status']
-        })
-
-    db.session.flush()
-    db.session.commit()
-
     return jsonify({"success": True}), 200
 
 
@@ -614,7 +558,7 @@ def clear_active_members(user_dict=None):
 
     # Clear the active group.
     for account in members:
-        if account.uid != user_dict['username']:
+        if account.uid != user_dict['uid']:
             log.info('Remove {} from Active Status'.format(account.uid))
             ldap_set_inactive(account)
     return jsonify({"success": True}), 200
@@ -679,5 +623,5 @@ def new_year(user_dict=None):
     current_students = ldap_get_current_students()
 
     return render_template('new_year.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            current_students=current_students)

@@ -27,4 +27,4 @@ def display_logs(user_dict=None):
 
     logs = UserLog.query.all()
 
-    return render_template("logs.html", logs=logs, username=user_dict['username'])
+    return render_template("logs.html", logs=logs, username=user_dict['uid'])

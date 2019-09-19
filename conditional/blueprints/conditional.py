@@ -7,7 +7,6 @@ from conditional import db, auth
 from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eval_director
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
@@ -24,7 +23,7 @@ def display_conditionals(user_dict=None):
 
     conditionals = [
         {
-            'name': ldap_get_member(c.uid).cn,
+            'uid': c.uid,
             'date_created': c.date_created,
             'date_due': c.date_due,
             'description': c.description,
@@ -32,9 +31,9 @@ def display_conditionals(user_dict=None):
         } for c in
         Conditional.query.filter(
             Conditional.status == "Pending")]
-    # return names in 'first last (username)' format
+
     return render_template('conditional.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            conditionals=conditionals,
                            conditionals_len=len(conditionals))
 

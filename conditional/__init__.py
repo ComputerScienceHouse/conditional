@@ -1,28 +1,26 @@
-# pylint: disable=wrong-import-order
-from ._version import __version__
-
 import os
 from datetime import datetime
 
+import structlog
 from csh_ldap import CSHLDAP
 from flask import Flask, redirect, render_template, g
 from flask_migrate import Migrate
+from flask_gzip import Gzip
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from raven.contrib.flask import Sentry
-import structlog
-
-from conditional import config
 
 app = Flask(__name__)
+gzip = Gzip(app)
 
-app.config.from_object(config)
-if os.path.exists(os.path.join(os.getcwd(), "config.py")):
-    app.config.from_pyfile(os.path.join(os.getcwd(), "config.py"))
+# Load default configuration and any environment variable overrides
+_root_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+app.config.from_pyfile(os.path.join(_root_dir, "config.env.py"))
 
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-app.config["VERSION"] = __version__
+# Load file based configuration overrides if present
+_pyfile_config = os.path.join(_root_dir, "config.py")
+if os.path.exists(_pyfile_config):
+    app.config.from_pyfile(_pyfile_config)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -89,8 +87,9 @@ structlog.configure(processors=[
 
 logger = structlog.get_logger()
 
+# pylint: disable=wrong-import-order
+from conditional.util import context_processors
 from conditional.util.auth import get_user
-
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp
@@ -148,7 +147,7 @@ def route_errors(error, user_dict=None):
     data = dict()
 
     # Handle the case where the header isn't present
-    if user_dict['username'] is not None:
+    if user_dict['uid'] is not None:
         data['username'] = user_dict['account'].uid
         data['name'] = user_dict['account'].cn
     else:

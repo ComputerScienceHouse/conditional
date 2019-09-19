@@ -1,7 +1,11 @@
+import json
 import secrets
+import os
 from os import environ as env
 
-from conditional import __version__
+# Fetch the version number from the npm package file
+with open(os.path.join(os.getcwd(), "package.json")) as package_file:
+    VERSION = json.load(package_file)["version"]
 
 # Flask config
 DEBUG = env.get("CONDITIONAL_DEBUG", "false").lower() == "true"
@@ -13,6 +17,7 @@ PORT = env.get("CONDITIONAL_PORT", 6969)
 
 # DB Info
 SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "")
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # LDAP config
 LDAP_RO = env.get("CONDITIONAL_LDAP_RO", "true").lower() == "true"
@@ -23,7 +28,7 @@ LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
 # Do not set the DSN for local development
 SENTRY_CONFIG = {
     'dsn': env.get("CONDITIONAL_SENTRY_DSN", ""),
-    'release': __version__,
+    'release': VERSION,
 }
 
 # OIDC Config

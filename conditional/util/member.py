@@ -1,27 +1,25 @@
-from functools import lru_cache
 from datetime import datetime
 
+from conditional import start_of_year
+from conditional.models.models import CommitteeMeeting
+from conditional.models.models import CurrentCoops
+from conditional.models.models import FreshmanEvalData
+from conditional.models.models import HouseMeeting
+from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import TechnicalSeminar
+from conditional.util.cache import service_cache
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_get_roomnumber
+from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_onfloor_members
+from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
 
-from conditional.models.models import FreshmanEvalData
-from conditional.models.models import CommitteeMeeting
-from conditional.models.models import MemberSeminarAttendance
-from conditional.models.models import MemberHouseMeetingAttendance
-from conditional.models.models import MemberCommitteeAttendance
-from conditional.models.models import TechnicalSeminar
-from conditional.models.models import HouseMeeting
-from conditional.models.models import CurrentCoops
 
-from conditional import start_of_year
-
-
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def get_voting_members():
 
     if datetime.today() < datetime(start_of_year().year, 12, 31):
@@ -38,7 +36,8 @@ def get_voting_members():
     voting_list = list(active_members - intro_members - on_coop)
 
     passed_fall = FreshmanEvalData.query.filter(
-        FreshmanEvalData.freshman_eval_result == "Passed"
+        FreshmanEvalData.freshman_eval_result == "Passed",
+        FreshmanEvalData.eval_date > start_of_year()
     ).distinct()
 
     for intro_member in passed_fall:
@@ -48,7 +47,7 @@ def get_voting_members():
     return voting_list
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def get_members_info():
     members = [account for account in ldap_get_current_students()]
     member_list = []
@@ -109,7 +108,7 @@ def get_freshman_data(user_name):
     return freshman
 
 
-@lru_cache(maxsize=1024)
+@service_cache(maxsize=1024)
 def get_onfloor_members():
     return [uid for uid in [members.uid for members in ldap_get_active_members()]
             if uid in [members.uid for members in ldap_get_onfloor_members()]]
@@ -148,12 +147,14 @@ def get_hm(member, only_absent=False):
         h_meetings = h_meetings.filter(MemberHouseMeetingAttendance.attendance_status == "Absent")
     return h_meetings
 
+
+@service_cache(maxsize=128)
 def req_cm(member):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
     co_op = CurrentCoops.query.filter(
         CurrentCoops.uid == member.uid,
-	CurrentCoops.date_created > start_of_year()).first()
+        CurrentCoops.date_created > start_of_year()).first()
     if co_op:
         return 15
     return 30

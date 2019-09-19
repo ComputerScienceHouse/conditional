@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_is_onfloor
-
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
+from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_is_onfloor
 
 
 def get_housing_queue(is_eval_director=False):
@@ -19,9 +18,9 @@ def get_housing_queue(is_eval_director=False):
     .with_entities(InHousingQueue.uid, OnFloorStatusAssigned.onfloor_granted)\
     .all()}
 
-    # Populate a list of dictionaries containing the name, username,
-    # and on-floor datetime for each member who has on-floor status,
-    # is not already assigned to a room and is in the above query.
+    # Populate a list of dictionaries containing the name, uid, and
+    # on-floor datetime for each member who has on-floor status, is
+    # not already assigned to a room and is in the above query.
     queue = [{"uid": account.uid,
               "name": account.cn,
               "points": account.housingPoints,
@@ -38,12 +37,11 @@ def get_housing_queue(is_eval_director=False):
     return queue
 
 
-def get_queue_position(username):
-
+def get_queue_position(uid):
     queue = get_housing_queue()
     try:
         index = next(index for (index, d) in enumerate(get_housing_queue())
-             if d["uid"] == username) + 1
+                     if d["uid"] == uid) + 1
     except (KeyError, StopIteration):
         index = None
-    return (index, len(queue))
+    return index, len(queue)

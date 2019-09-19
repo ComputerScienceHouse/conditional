@@ -24,12 +24,12 @@ def display_intro_evals_form(user_dict=None):
     if not ldap_is_intromember(user_dict['account']):
         return redirect("/dashboard")
     eval_data = FreshmanEvalData.query.filter(
-        FreshmanEvalData.uid == user_dict['username']).first()
+        FreshmanEvalData.uid == user_dict['uid']).first()
 
     is_open = EvalSettings.query.first().intro_form_active
-    # return names in 'first last (username)' format
+    # return names in 'first last (uid)' format
     return render_template('intro_evals_form.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            social_events=eval_data.social_events,
                            other_notes=eval_data.other_notes,
                            is_open=is_open)
@@ -47,7 +47,7 @@ def submit_intro_evals(user_dict=None):
     comments = post_data['comments']
 
     FreshmanEvalData.query.filter(
-        FreshmanEvalData.uid == user_dict['username']). \
+        FreshmanEvalData.uid == user_dict['uid']). \
         update(
         {
             'social_events': social_events,

@@ -137,7 +137,7 @@ def display_attendance_cm(user_dict=None):
     log.info('Display Committee Meeting Attendance Page')
 
     return render_template('attendance_cm.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"))
 
 
@@ -149,7 +149,7 @@ def display_attendance_ts(user_dict=None):
     log.info('Display Technical Seminar Attendance Page')
 
     return render_template('attendance_ts.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"))
 
 
@@ -164,7 +164,7 @@ def display_attendance_hm(user_dict=None):
         return redirect("/dashboard")
 
     return render_template('attendance_hm.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=get_non_alumni_non_coop(internal=True))
 
@@ -435,7 +435,7 @@ def attendance_history(user_dict=None):
     else:
         total_pages = (int(len(all_cm) / 10))
     return render_template('attendance_history.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            history=all_meetings,
                            pending_cm=pend_cm,
                            pending_ts=pend_ts,

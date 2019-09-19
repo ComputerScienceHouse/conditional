@@ -11,7 +11,8 @@ from conditional.models.models import FreshmanEvalData
 from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_is_eval_director, ldap_is_intromember, ldap_set_failed, ldap_set_bad_standing, \
+    ldap_set_inactive, ldap_get_member, ldap_set_not_intro_member
 
 logger = structlog.get_logger()
 
@@ -29,7 +30,7 @@ def slideshow_intro_display(user_dict=None):
         return redirect("/dashboard")
 
     return render_template('intro_eval_slideshow.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_intro_evals(internal=True))
 
@@ -85,7 +86,7 @@ def slideshow_spring_display(user_dict=None):
         return redirect("/dashboard")
 
     return render_template('spring_eval_slideshow.html',
-                           username=user_dict['username'],
+                           username=user_dict['uid'],
                            date=datetime.now().strftime("%Y-%m-%d"),
                            members=display_spring_evals(internal=True))
 
@@ -128,4 +129,18 @@ def slideshow_spring_review(user_dict=None):
 
     db.session.flush()
     db.session.commit()
+
+    # Automate ldap group organizing
+    account = ldap_get_member(uid)
+
+    if status == "Passed":
+        if ldap_is_intromember(account):
+            ldap_set_not_intro_member(account)
+    elif status == "Failed":
+        if ldap_is_intromember(account):
+            ldap_set_failed(account)
+            ldap_set_inactive(account)
+        else:
+            ldap_set_bad_standing(account)
+
     return jsonify({"success": True}), 200
