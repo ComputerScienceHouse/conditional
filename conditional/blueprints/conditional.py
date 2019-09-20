@@ -33,7 +33,7 @@ def display_conditionals(user_dict=None):
             Conditional.status == "Pending")]
 
     return render_template('conditional.html',
-                           username=user_dict['uid'],
+                           username=user_dict['username'],
                            conditionals=conditionals,
                            conditionals_len=len(conditionals))
 
