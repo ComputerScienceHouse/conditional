@@ -96,10 +96,10 @@ def display_spring_evals(internal=False, user_dict=None):
     sp_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
     sp_members.sort(key=lambda x: len(x['house_meetings_missed']))
     sp_members.sort(key=lambda x: len([p for p in x['major_projects'] if p['status'] == "Passed"]), reverse=True)
-    # return names in 'first last (uid)' format
+    # return names in 'first last (username)' format
     if internal:
         return sp_members
 
     return render_template('spring_evals.html',
-                           username=user_dict['uid'],
+                           username=user_dict['username'],
                            members=sp_members)

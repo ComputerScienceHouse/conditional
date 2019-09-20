@@ -14,8 +14,8 @@ def get_member_name(uid):
 
 
 @service_cache(maxsize=256)
-def get_csh_name(uid):
-    member = ldap_get_member(uid)
+def get_csh_name(username):
+    member = ldap_get_member(username)
     return member.cn
 
 
@@ -26,8 +26,8 @@ def get_freshman_name(uid):
 
 
 @service_cache(maxsize=256)
-def check_current_student(uid):
-    member = ldap_get_member(uid)
+def check_current_student(username):
+    member = ldap_get_member(username)
     return ldap_is_current_student(member)
 
 
