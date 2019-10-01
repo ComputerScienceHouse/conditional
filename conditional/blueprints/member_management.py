@@ -211,7 +211,7 @@ def member_management_uploaduser(user_dict=None):
                 rit_username = None
 
             log.info('Create Freshman Account for {} via CSV Upload'.format(name))
-            db.session.add(FreshmanAccount(name, onfloor_status, room_number, rit_username))
+            db.session.add(FreshmanAccount(name, onfloor_status, room_number, None, rit_username))
 
         db.session.flush()
         db.session.commit()
