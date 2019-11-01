@@ -10,6 +10,10 @@ from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
 from raven.contrib.flask import Sentry
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
 app = Flask(__name__)
 gzip = Gzip(app)
 
@@ -24,7 +28,13 @@ if os.path.exists(_pyfile_config):
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# Sentry setup
 sentry = Sentry(app)
+sentry_sdk.init(
+    dsn=app.config['SENTRY_DSN'],
+    integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+)
 
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
