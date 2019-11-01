@@ -26,6 +26,7 @@ LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
 
 # Sentry config
 # Do not set the DSN for local development
+SENTRY_DSN = env.get("CONDITIONAL_SENTRY_DSN", "")
 SENTRY_CONFIG = {
     'dsn': env.get("CONDITIONAL_SENTRY_DSN", ""),
     'release': VERSION,
