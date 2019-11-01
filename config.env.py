@@ -44,3 +44,6 @@ SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
+
+# External services
+PACKET_SERVICE = env.get("CONDITIONAL_PACKET_SERVICE", "https://packet.csh.rit.edu")

@@ -11,9 +11,7 @@ from conditional import app, get_user, auth, db, start_of_year
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import FreshmanCommitteeAttendance
-from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import FreshmanSeminarAttendance
-from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import HouseMeeting
@@ -24,7 +22,7 @@ from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
 
-from conditional.util.ldap import ldap_is_eval_director, ldap_is_bad_standing
+from conditional.util.ldap import ldap_is_eval_director, ldap_is_bad_standing, ldap_get_intro_members
 from conditional.util.ldap import ldap_is_financial_director
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
@@ -32,7 +30,6 @@ from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
-from conditional.util.ldap import ldap_set_onfloor
 from conditional.util.ldap import ldap_set_housingpoints
 from conditional.util.ldap import ldap_set_current_student
 from conditional.util.ldap import ldap_set_non_current_student
@@ -44,7 +41,7 @@ from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
-from conditional.util.member import get_members_info, get_onfloor_members
+from conditional.util.member import get_members_info, get_onfloor_members, upgrade_member, get_missed_signatures
 
 logger = structlog.get_logger()
 
@@ -464,46 +461,33 @@ def member_management_upgrade_user(user_dict=None):
         FreshmanAccount.id == fid).first()
 
     new_acct = FreshmanEvalData(uid, signatures_missed)
-    new_acct.eval_date = acct.eval_date
 
-    db.session.add(new_acct)
-    for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
-        db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
-        db.session.delete(fca)
+    upgrade_member(acct, new_acct, fid, uid, log)
 
-    for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
-        db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
-        db.session.delete(fts)
+    return jsonify({"success": True}), 200
 
-    for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
-        # Don't duplicate HM attendance records
-        mhm = MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
-        if mhm is None:
-            db.session.add(MemberHouseMeetingAttendance(
-                uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
-        else:
-            log.info('Duplicate house meeting attendance! fid: {}, uid: {}, id: {}'.format(
-                fid,
-                uid,
-                fhm.meeting_id))
-        db.session.delete(fhm)
 
-    new_account = ldap_get_member(uid)
-    if acct.onfloor_status:
-        db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-        ldap_set_onfloor(new_account)
+@member_management_bp.route('/manage/upgrade_freshmen', methods=['GET'])
+@auth.oidc_auth
+@get_user
+def member_management_upgrade_freshmen(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
 
-    if acct.room_number:
-        ldap_set_roomnumber(new_account, acct.room_number)
+    # if not ldap_is_eval_director(user_dict['account']):
+    #     return "must be eval director", 403
 
-    db.session.delete(acct)
+    intro_members = dict(map(lambda member: (member.ritDn, member), ldap_get_intro_members()))
+    accts = FreshmanAccount.query.filter(FreshmanAccount.rit_username.isnot(None))
 
-    db.session.flush()
-    db.session.commit()
+    for acct in accts:
+        if acct.rit_username in intro_members.keys():
+            member = intro_members[acct.rit_username]
+            signatures_missed = get_missed_signatures(acct.rit_username, auth.get_access_token())
+            new_acct = FreshmanEvalData(member.uid, signatures_missed)
+            print("Upgrading " + acct.id + " to " + member.uid)
+            upgrade_member(acct, new_acct, acct.id, member.uid, log)
 
-    clear_members_cache()
-
+    # TODO: Redirect back to member management
     return jsonify({"success": True}), 200
 
 

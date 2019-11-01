@@ -1,7 +1,12 @@
 from datetime import datetime
+from urllib import request
 
-from conditional import start_of_year
-from conditional.models.models import CommitteeMeeting
+import requests
+
+from conditional import start_of_year, db, app
+from conditional.blueprints.cache_management import clear_members_cache
+from conditional.models.models import CommitteeMeeting, FreshmanCommitteeAttendance, FreshmanSeminarAttendance, \
+    FreshmanHouseMeetingAttendance, OnFloorStatusAssigned
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import HouseMeeting
@@ -10,7 +15,8 @@ from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import TechnicalSeminar
 from conditional.util.cache import service_cache
-from conditional.util.ldap import ldap_get_active_members
+from conditional.util.ldap import ldap_get_active_members, ldap_get_member, ldap_is_failed_member, \
+    ldap_set_remove_failed, ldap_set_roomnumber, ldap_set_onfloor
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_onfloor_members
@@ -69,6 +75,11 @@ def get_members_info():
         })
 
     return member_list
+
+
+def get_missed_signatures(rit_username, token):
+    # TODO: Make real request with auth
+    requests.get(app.config.PACKET_SERVICE + "/")
 
 
 def get_freshman_data(user_name):
@@ -158,3 +169,48 @@ def req_cm(member):
     if co_op:
         return 15
     return 30
+
+
+def upgrade_member(acct, new_acct, fid, uid, log):
+    new_acct.eval_date = acct.eval_date
+
+    db.session.add(new_acct)
+    for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
+        db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
+        db.session.delete(fca)
+
+    for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
+        db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
+        db.session.delete(fts)
+
+    for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
+        # Don't duplicate HM attendance records
+        mhm = MemberHouseMeetingAttendance.query.filter(
+            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
+        if mhm is None:
+            db.session.add(MemberHouseMeetingAttendance(
+                uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
+        else:
+            log.info('Duplicate house meeting attendance! fid: {}, uid: {}, id: {}'.format(
+                fid,
+                uid,
+                fhm.meeting_id))
+        db.session.delete(fhm)
+
+    new_account = ldap_get_member(uid)
+    if acct.onfloor_status:
+        db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
+        ldap_set_onfloor(new_account)
+
+    if acct.room_number:
+        ldap_set_roomnumber(new_account, acct.room_number)
+
+    if ldap_is_failed_member(new_account):
+        ldap_set_remove_failed(new_account)
+
+    db.session.delete(acct)
+
+    db.session.flush()
+    db.session.commit()
+
+    clear_members_cache()

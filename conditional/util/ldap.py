@@ -117,6 +117,11 @@ def ldap_is_current_student(account):
     return _ldap_is_member_of_group(account, 'current_student')
 
 
+@service_cache(maxsize=256)
+def ldap_is_failed_member(account):
+    return _ldap_is_member_of_group(account, 'failed')
+
+
 def ldap_set_housingpoints(account, housing_points):
     account.housingPoints = housing_points
     ldap_get_current_students.cache_clear()
@@ -169,6 +174,11 @@ def ldap_set_non_current_student(account):
 
 def ldap_set_failed(account):
     _ldap_add_member_to_group(account, 'failed')
+    ldap_get_member.cache_clear()
+
+
+def ldap_set_remove_failed(account):
+    _ldap_remove_member_from_group(account, 'failed')
     ldap_get_member.cache_clear()
 
 
