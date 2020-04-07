@@ -44,6 +44,8 @@ def render_template(template_name, user_dict=None, **kwargs):
 
     if is_eboard or is_rtp:
         lockdown = False
+    if template_name == 'major_project_submission.html':
+        lockdown = False
 
     return flask_render_template(
         template_name,
