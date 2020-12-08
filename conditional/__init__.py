@@ -149,6 +149,14 @@ def logout():
     return redirect("/", 302)
 
 
+@app.route("/health")
+def health():
+    """
+    Shows an ok status if the application is up and running
+    """
+    return {'status': 'ok'}
+
+
 @app.errorhandler(404)
 @app.errorhandler(500)
 @auth.oidc_auth
