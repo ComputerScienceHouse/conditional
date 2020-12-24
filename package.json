@@ -63,7 +63,7 @@
     "gulp-data": "1.2.1",
     "gulp-eslint": "^3.0.1",
     "gulp-gh-pages": "0.5.4",
-    "gulp-htmlmin": "2.0.0",
+    "gulp-htmlmin": "5.0.1",
     "gulp-iconfont": "8.0.1",
     "gulp-if": "2.0.1",
     "gulp-imagemin": "3.0.1",
