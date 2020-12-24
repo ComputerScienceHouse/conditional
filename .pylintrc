@@ -14,7 +14,6 @@ disable =
 	global-statement,
 	import-outside-toplevel,
 	cyclic-import,
-	no-else-continue,
 	locally-disabled,
 	file-ignored
 
