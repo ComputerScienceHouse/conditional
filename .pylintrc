@@ -12,7 +12,6 @@ disable =
 	bad-continuation,
 	too-few-public-methods,
 	global-statement,
-	import-outside-toplevel,
 	cyclic-import,
 	locally-disabled,
 	file-ignored
