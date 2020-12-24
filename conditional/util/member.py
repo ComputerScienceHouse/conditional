@@ -49,7 +49,7 @@ def get_voting_members():
 
 @service_cache(maxsize=1024)
 def get_members_info():
-    members = [account for account in ldap_get_current_students()]
+    members = ldap_get_current_students()
     member_list = []
 
     for account in members:

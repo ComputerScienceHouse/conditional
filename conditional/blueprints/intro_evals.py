@@ -37,14 +37,14 @@ def display_intro_evals(internal=False, user_dict=None):
             FreshmanCommitteeAttendance.fid == member_id)
             if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
 
-    members = [account for account in ldap_get_intro_members()]
+    members = ldap_get_intro_members()
 
     ie_members = []
 
     # freshmen who don't have accounts
-    fids = [f for f in FreshmanAccount.query.filter(
+    fids = list(FreshmanAccount.query.filter(
         FreshmanAccount.eval_date > start_of_year(),
-        FreshmanAccount.eval_date > datetime.now())]
+        FreshmanAccount.eval_date > datetime.now()))
 
     for fid in fids:
         h_meetings = [m.meeting_id for m in
