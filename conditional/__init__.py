@@ -195,10 +195,4 @@ def route_errors(error, user_dict=None):
                            **data), int(code)
 
 
-@app.cli.command()
-def zoo():
-    from conditional.models.migrate import free_the_zoo
-    free_the_zoo(app.config['ZOO_DATABASE_URI'])
-
-
 logger.info('conditional started')
