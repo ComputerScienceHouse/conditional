@@ -25,6 +25,7 @@
     "demo": "gulp production"
   },
   "dependencies": {
+    "@sentry/browser": "^5.29.2",
     "bootstrap": "^3.3.6",
     "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sass": "^3.4.1",
@@ -89,7 +90,6 @@
     "object-assign": "4.1.0",
     "open": "0.0.5",
     "pretty-hrtime": "1.0.2",
-    "raven-js": "^3.27.2",
     "require-dir": "1.2.0",
     "sinon": "1.17.4",
     "sinon-chai": "2.8.0",
