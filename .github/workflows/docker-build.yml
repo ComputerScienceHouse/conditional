@@ -16,7 +16,7 @@ env:
   IMAGE_NAME: conditional
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
