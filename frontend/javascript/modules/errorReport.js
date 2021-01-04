@@ -1,4 +1,4 @@
-import Raven from 'raven-js';
+import * as Sentry from '@sentry/browser';
 
 export default class ErrorReport {
   constructor(btn) {
@@ -8,11 +8,11 @@ export default class ErrorReport {
   }
 
   render() {
-    this.btn.addEventListener('click', () => this._invokeRavenModal());
+    this.btn.addEventListener('click', () => this._invokeSentryModal());
   }
 
-  _invokeRavenModal() {
-    Raven.showReportDialog({
+  _invokeSentryModal() {
+    Sentry.showReportDialog({
       eventId: this.eventId
     });
   }
