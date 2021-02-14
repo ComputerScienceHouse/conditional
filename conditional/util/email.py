@@ -20,8 +20,9 @@ def send_present_hm_attendance_email(member):
 
 def send_attenance_requirement_met_email(user):
     subject = "You have attended 30 Directorship Meetings"
-    # pylint: disable=line-too-long
-    body = "You have met one of the requirements of active membership by attending 30 directorship meetings. Congratulations or I'm Sorry!"
+    body = """You have met one of the requirements of active 
+                membership by attending 30 directorship meetings. 
+                Congratulations or I'm Sorry!"""
     send_email([user], subject, body)
 
 def send_email(members, subject, body):
