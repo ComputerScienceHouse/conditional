@@ -49,7 +49,7 @@ SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
 
 # Email
-SEND_EMAIL = env.get("CONDITIONAL_SEND_EMAIL", False)
+SEND_EMAIL = env.get("CONDITIONAL_SEND_EMAIL", False) # When false, requests to send emails are ignored
 MAIL_SERVER = env.get("CONDITIONAL_MAIL_SERVER", "thoth.csh.rit.edu")
-DEBUG_EMAIL = env.get("CONDITIONAL_DEBUG_EMAIL", "")
+DEBUG_EMAIL = env.get("CONDITIONAL_DEBUG_EMAIL", "") # when set all email is sent to the specified email
 EMAIL_PASSWORD = env.get("CONDITIONAL_MAIL_PASSWORD", "")
