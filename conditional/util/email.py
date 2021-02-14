@@ -21,9 +21,8 @@ def send_present_hm_attendance_email(member):
 def send_email(members, subject, body):
     """A function capable of sending one or many emails"""
     debug_email = app.config['DEBUG_EMAIL']
-    should_send_email = app.config['SEND_EMAIL']
 
-    if should_send_email:
+    if app.config['SEND_EMAIL']:
         recipents = map("{}@csh.rit.edu".format, members)
         server = smtplib.SMTP(app.config['MAIL_SERVER'])
         server.starttls()
