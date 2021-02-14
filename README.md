@@ -33,7 +33,7 @@ npm install
 
 ### Config
 
-You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.sample.py` for an example.
+You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
 
 #### Add OIDC Config
 Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
@@ -46,6 +46,31 @@ OIDC_CLIENT_CONFIG = {
     'post_logout_redirect_uris': ['http://0.0.0.0:6969/logout']
 }
 ```
+
+#### Gain EBoard Privileges Locally 
+In order to view pages that normally only eboard members can see it is reccomended that you do this these things:
+
+* Set up a local database.
+
+To do this through docker, run 
+
+```
+docker run --name postgres --mount target=/var/lib/postgresql/data,type=volume,src=conditional-db -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
+```
+
+* Modify functions in `ldap.py` 
+```
+@service_cache(maxsize=128)
+def ldap_is_eboard(account):
+    return True
+```
+
+```
+@service_cache(maxsize=128)
+def ldap_is_eval_director(account):
+    return True
+```
+**Note: Do not commit these changes.**
 
 ### Run
 
