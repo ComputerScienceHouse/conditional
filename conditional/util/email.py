@@ -30,7 +30,7 @@ def send_email(members, subject, body):
         sender_addr = "conditional@csh.rit.edu"
         for member in recipents:
             msg = MIMEMultipart()
-            if debug_email is not None:
+            if debug_email:
                 recipient_addr = debug_email
             else:
                 recipient_addr = "{}@csh.rit.edu".format(member)
