@@ -16,7 +16,6 @@ def send_present_hm_attendance_email(member):
     today_date = date.today().strftime("%m/%d")
     subject = "You were marked as present for the {} House Meeting.".format(today_date)
     body = subject
-    # doing this uses the same connection for all emails sent to absent members
     send_email([member], subject, body)
 
 def send_attenance_requirement_met_email(user):
