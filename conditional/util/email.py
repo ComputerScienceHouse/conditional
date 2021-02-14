@@ -24,9 +24,9 @@ def send_email(members, subject, body):
 
     if app.config['SEND_EMAIL']:
         recipents = map("{}@csh.rit.edu".format, members)
-        server = smtplib.SMTP(app.config['MAIL_SERVER'])
-        server.starttls()
-        server.login('conditional', app.config['EMAIL_PASSWORD'])
+        conn = smtplib.SMTP(app.config['MAIL_SERVER'])
+        conn.starttls()
+        conn.login('conditional', app.config['EMAIL_PASSWORD'])
         sender_addr = "conditional@csh.rit.edu"
         for member in recipents:
             msg = MIMEMultipart()
@@ -39,5 +39,5 @@ def send_email(members, subject, body):
             msg["Subject"] = subject
             msg["Date"] = formatdate(localtime=True)
             msg.attach(MIMEText(body, 'plain'))
-            server.sendmail(sender_addr, recipient_addr, msg.as_string())
-        server.quit()
+            conn.sendmail(sender_addr, recipient_addr, msg.as_string())
+        conn.quit()
