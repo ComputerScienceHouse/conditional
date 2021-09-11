@@ -44,7 +44,7 @@ def display_dashboard(user_dict=None):
     if ldap_is_intromember(user_dict['account']):
         data['freshman'] = get_freshman_data(user_dict['account'].uid)
     else:
-        data['freshman'] = False
+        data['freshman'] = None
 
     spring = {}
     c_meetings = get_cm(user_dict['account'])
