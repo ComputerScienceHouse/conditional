@@ -75,6 +75,8 @@ def get_freshman_data(user_name):
     freshman = {}
     freshman_data = FreshmanEvalData.query.filter(FreshmanEvalData.uid == user_name).first()
 
+    if freshman_data is None:
+        return None
     freshman['status'] = freshman_data.freshman_eval_result
     # number of committee meetings attended
     c_meetings = [m.meeting_id for m in
