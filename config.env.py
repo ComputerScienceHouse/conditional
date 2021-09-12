@@ -25,12 +25,14 @@ LDAP_BIND_DN = env.get("CONDITIONAL_LDAP_BIND_DN", "cn=conditional,ou=Apps,dc=cs
 LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
 
 # Sentry config
-# Do not set the DSN for local development
+# Not required for local development, but if you set it, make sure the
+# SENTRY_ENV is 'local-development'
 SENTRY_DSN = env.get("CONDITIONAL_SENTRY_DSN", "")
 SENTRY_CONFIG = {
     'dsn': env.get("CONDITIONAL_SENTRY_LEGACY_DSN", ""),
     'release': VERSION,
 }
+SENTRY_ENV = env.get("CONDITIONAL_SENTRY_ENV", "local-development")
 
 # OIDC Config
 OIDC_ISSUER = env.get("CONDITIONAL_OIDC_ISSUER", "https://sso.csh.rit.edu/auth/realms/csh")

@@ -23,7 +23,7 @@ def display_spring_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Listing')
 
-    active_members = [account for account in ldap_get_active_members()]
+    active_members = ldap_get_active_members()
 
     sp_members = []
     for account in active_members:

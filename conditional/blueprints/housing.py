@@ -27,7 +27,7 @@ def display_housing(user_dict=None):
     log.info('Display Housing Board')
 
     housing = {}
-    onfloors = [account for account in ldap_get_onfloor_members()]
+    onfloors = ldap_get_onfloor_members()
     onfloor_freshmen = FreshmanAccount.query.filter(
         FreshmanAccount.room_number is not None
     )

@@ -8,7 +8,6 @@ from flask_migrate import Migrate
 from flask_gzip import Gzip
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
 from flask_sqlalchemy import SQLAlchemy
-from raven.contrib.flask import Sentry
 
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -30,10 +29,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Sentry setup
-sentry = Sentry(app)
 sentry_sdk.init(
     dsn=app.config['SENTRY_DSN'],
-    integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+    integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+    environment=app.config['SENTRY_ENV'],
 )
 
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
@@ -190,15 +189,8 @@ def route_errors(error, user_dict=None):
     return render_template('errors.html',
                            error=error_desc,
                            error_code=code,
-                           event_id=g.sentry_event_id,
-                           public_dsn=sentry.client.get_public_dsn('https'),
+                           event_id=sentry_sdk.last_event_id(),
                            **data), int(code)
-
-
-@app.cli.command()
-def zoo():
-    from conditional.models.migrate import free_the_zoo
-    free_the_zoo(app.config['ZOO_DATABASE_URI'])
 
 
 logger.info('conditional started')
