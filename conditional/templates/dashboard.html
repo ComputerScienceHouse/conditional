@@ -76,18 +76,6 @@ Dashboard
                                 </span>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="title">Freshman Project</td>
-                            <td>
-                                {% if freshman['fresh_proj'] == "Passed" %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
-                                {% elif freshman['fresh_proj'] == "Pending" %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
-                                {% else %}
-                                <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
-                                {% endif %}
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
                     <div class="panel-body" style="padding:0px 0px 8px 8px">
