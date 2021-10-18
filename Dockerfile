@@ -14,7 +14,7 @@ RUN apt-get -yq update && \
 
 ADD . /opt/conditional
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get -yq update && \
     apt-get -yq install nodejs && \
     npm install && \
