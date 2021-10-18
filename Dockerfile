@@ -1,4 +1,4 @@
-FROM docker.io/python:3.8-buster
+FROM docker.io/python:3.9-buster
 MAINTAINER Devin Matte <matted@csh.rit.edu>
 
 RUN mkdir /opt/conditional
