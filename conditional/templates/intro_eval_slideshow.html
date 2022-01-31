@@ -24,7 +24,7 @@ Introductory Evaluations Slideshow
               </div>
             </div>
             <div class="col-xs-12 col-md-3">
-              {% set committee_meetings_passed = m['committee_meetings'] >= 10 %}
+              {% set committee_meetings_passed = m['committee_meetings'] >= 6 %}
               <div class="item{% if committee_meetings_passed %} passed{% endif %}" >
                 <span class="icon glyphicon glyphicon-{% if committee_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
                 <h3>{{m['committee_meetings']}}</h3>
