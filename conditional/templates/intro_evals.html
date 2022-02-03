@@ -74,15 +74,15 @@ Introductory Evaluations
                                 {% endif %}
                             </div>
                             <div class="text-center">
-                                {% if m['committee_meetings'] < 10 %}
+                                {% if m['committee_meetings'] < 6 %}
                                     <div class="eval-info-label">
                                         <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']}} / 10</span>
+                                        <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
                                     </div>
                                     {% else %}
                                     <div class="eval-info-label">
                                         <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']}} / 10</span>
+                                        <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
                                     </div>
                                 {% endif %}
 
@@ -204,7 +204,7 @@ Introductory Evaluations
                             {% endif %}
                         </td>
                         <td data-sort="{{ m['committee_meetings'] }}">
-                            {% if m['committee_meetings'] < 10 %}
+                            {% if m['committee_meetings'] < 6 %}
                                 <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
                             {% else %}
                                 <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
