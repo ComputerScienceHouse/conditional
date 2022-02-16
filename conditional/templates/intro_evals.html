@@ -74,15 +74,15 @@ Introductory Evaluations
                                 {% endif %}
                             </div>
                             <div class="text-center">
-                                {% if m['committee_meetings'] < 6 %}
+                                {% if m['committee_meetings']|length < 6 %}
                                     <div class="eval-info-label">
                                         <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
+                                        <span class="eval-info-number">{{m['committee_meetings']|length}} / 6</span>
                                     </div>
                                     {% else %}
                                     <div class="eval-info-label">
                                         <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
+                                        <span class="eval-info-number">{{m['committee_meetings']|length}} / 6</span>
                                     </div>
                                 {% endif %}
 
@@ -114,7 +114,6 @@ Introductory Evaluations
             <div class="collapse" id="evalsCollapse-{{m['uid']}}">
                 {% if m['house_meetings_missed']|length > 0 %}
                 <!-- VV only display if missing house meetings VV -->
-
                 <h4>Missed House Meetings</h4>
                 <table class="table">
                     <thead>
@@ -136,8 +135,27 @@ Introductory Evaluations
                 </table>
                 {% endif %}
                 <!-- ^^ HOUSE MEETINGS TABLE -->
-                {% if m['technical_seminars']|length > 0 %}
+                {% if m['committee_meetings']|length > 0 %}
+                <h4>Committee Meetings</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Directorship</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meeting in m['committee_meetings'] %}
+                        <tr>
+                            <td>{{meeting['timestamp']}}</td>
+                            <td>{{meeting['committee']}}</td>
+                        </tr>
+                        {% endfor %}
 
+                    </tbody>
+                </table>
+                {% endif %}
+                {% if m['technical_seminars']|length > 0 %}
                 <h4>Technical Seminars</h4>
                 <table class="table">
                     <tbody>
@@ -150,7 +168,6 @@ Introductory Evaluations
                 </table>
                 {% endif %}
                 {% if m['social_events'] != "" %}
-
                 <h4>Social Events</h4>
                 <p>{{m['social_events']}}</p>
                 {% endif %}
@@ -203,11 +220,11 @@ Introductory Evaluations
                             <span class="glyphicon glyphicon-remove red"></span> Failed
                             {% endif %}
                         </td>
-                        <td data-sort="{{ m['committee_meetings'] }}">
-                            {% if m['committee_meetings'] < 6 %}
-                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
+                        <td data-sort="{{ m['committee_meetings']|length }}">
+                            {% if m['committee_meetings']|length < 6 %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']|length}}
                             {% else %}
-                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']|length}}
                             {% endif %}
                         </td>
                         <td data-sort="{{ m['signatures_missed'] }}">
