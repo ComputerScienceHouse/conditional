@@ -104,7 +104,6 @@ def get_freshman_data(user_name):
     freshman['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     freshman['social_events'] = freshman_data.social_events
     freshman['general_comments'] = freshman_data.other_notes
-    freshman['fresh_proj'] = freshman_data.freshman_project
     freshman['sig_missed'] = freshman_data.signatures_missed
     freshman['eval_date'] = freshman_data.eval_date
     return freshman

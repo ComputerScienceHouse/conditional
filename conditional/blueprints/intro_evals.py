@@ -65,7 +65,7 @@ def display_intro_evals(internal=False, user_dict=None):
             'eval_date': fid.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': signatures_missed,
             'committee_meetings': get_fid_cm_count(fid.id),
-            'committee_meetings_passed': get_fid_cm_count(fid.id) >= 10,
+            'committee_meetings_passed': get_fid_cm_count(fid.id) >= 6,
             'house_meetings_missed':
                 [
                     {
@@ -114,7 +114,7 @@ def display_intro_evals(internal=False, user_dict=None):
             'eval_date': freshman_data.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': freshman_data.signatures_missed,
             'committee_meetings': len(get_cm(member)),
-            'committee_meetings_passed': len(get_cm(member)) >= 10,
+            'committee_meetings_passed': len(get_cm(member)) >= 6,
             'house_meetings_missed':
                 [
                     {

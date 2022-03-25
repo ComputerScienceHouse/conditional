@@ -21,7 +21,7 @@ class FreshmanAccount(db.Model):
     def __init__(self, name, onfloor, room=None, missed=None, rit_username=None):
         self.name = name
         today = date.fromtimestamp(time.time())
-        self.eval_date = today + timedelta(weeks=10)
+        self.eval_date = today + timedelta(weeks=6)
         self.onfloor_status = onfloor
         self.room_number = room
         self.signatures_missed = missed
