@@ -31,11 +31,24 @@ def display_intro_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Evals Listing')
 
-    # get user data
-    def get_fid_cm_count(member_id):
-        return len([a for a in FreshmanCommitteeAttendance.query.filter(
-            FreshmanCommitteeAttendance.fid == member_id)
-            if CommitteeMeeting.query.filter(CommitteeMeeting.id == a.meeting_id).first().approved])
+    def get_fid_cm(member):
+        c_meetings = [{
+            "uid": cm.uid,
+            "timestamp": cm.timestamp,
+            "committee": cm.committee
+        } for cm in CommitteeMeeting.query.join(
+            FreshmanCommitteeAttendance,
+            FreshmanCommitteeAttendance.meeting_id == CommitteeMeeting.id
+            ).with_entities(
+                FreshmanCommitteeAttendance.uid,
+                CommitteeMeeting.timestamp,
+                CommitteeMeeting.committee
+                ).filter(
+                    CommitteeMeeting.timestamp > start_of_year(),
+                    FreshmanCommitteeAttendance.uid == member.uid,
+                    CommitteeMeeting.approved == True # pylint: disable=singleton-comparison
+                    ).all()]
+        return c_meetings
 
     members = ldap_get_intro_members()
 
@@ -64,8 +77,12 @@ def display_intro_evals(internal=False, user_dict=None):
             'uid': fid.id,
             'eval_date': fid.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': signatures_missed,
-            'committee_meetings': get_fid_cm_count(fid.id),
-            'committee_meetings_passed': get_fid_cm_count(fid.id) >= 6,
+            'committee_meetings': [{
+                "uid": cm.uid,
+                "timestamp": cm.timestamp.strftime("%Y-%m-%d"),
+                "committee": cm.committee
+            } for cm in get_fid_cm(fid.id)],
+            'committee_meetings_passed': len(get_fid_cm(fid.id)) >= 6,
             'house_meetings_missed':
                 [
                     {
@@ -113,7 +130,11 @@ def display_intro_evals(internal=False, user_dict=None):
             'uid': uid,
             'eval_date': freshman_data.eval_date.strftime("%Y-%m-%d"),
             'signatures_missed': freshman_data.signatures_missed,
-            'committee_meetings': len(get_cm(member)),
+            'committee_meetings': [{
+                "uid": cm.uid,
+                "timestamp": cm.timestamp.strftime("%Y-%m-%d"),
+                "committee": cm.committee
+            } for cm in get_cm(member)],
             'committee_meetings_passed': len(get_cm(member)) >= 6,
             'house_meetings_missed':
                 [
