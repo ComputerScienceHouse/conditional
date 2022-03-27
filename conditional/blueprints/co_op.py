@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from conditional import db, start_of_year, auth
 from conditional.models.models import CurrentCoops
-from conditional.util.member import req_cm
+from conditional.util.member import get_required_directorship_meetings
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director, ldap_is_current_student
@@ -59,7 +59,7 @@ def submit_co_op_form(user_dict=None):
     db.session.add(co_op)
     db.session.flush()
     db.session.commit()
-    req_cm.cache_clear()
+    get_required_directorship_meetings.cache_clear()
 
     return jsonify({"success": True}), 200
 
@@ -85,7 +85,7 @@ def delete_co_op(uid, user_dict=None):
 
     db.session.flush()
     db.session.commit()
-    req_cm.cache_clear()
+    get_required_directorship_meetings.cache_clear()
 
     return jsonify({"success": True}), 200
 

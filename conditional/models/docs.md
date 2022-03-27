@@ -26,34 +26,34 @@ This table stores the evaluations data for freshmen before they pass their 10-we
 | `active` | `BOOLEAN` | Determines whether the freshman account is currently active / displayed.
 
 
-## CommitteeMeetings table ##
-This table stores a list of committee meetings.
+## DirectorshipMeetings table ##
+This table stores a list of directorship meetings.
 
 |     Field     |      Type     |     Description     |
 | ------------- | ------------- | ------------------- |
 | `id`  | `INTEGER`  | Autoincrementing primary key.
-| `committee` | `ENUM` | The committee the meeting belongs to.
+| `directorship` | `ENUM` | The directorship the meeting belongs to.
 | `timestamp` | `TIMESTAMP` | The date and time of the meeting.
 | `active` | `BOOLEAN` | Whether the meeting applies to the current year or not.
 
-## MemberCommitteeAttendance table ##
-This table stores attendance for committee meetings for full members (i.e.
+## MemberDirectorshipAttendance table ##
+This table stores attendance for directorship meetings for full members (i.e.
 non-freshmen).
 
 |     Field     |      Type     |     Description     |
 | ------------- | ------------- | ------------------- |
 | `id`  | `INTEGER`  | Autoincrementing primary key.
 | `uid` | `VARCHAR(32)` | The LDAP uid (i.e. username) of the member who attended the meeting.
-| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`committee_meetings.id`).
+| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`directorship_meetings.id`).
 
-## FreshmanCommitteeAttendance table ##
-This table stores attendance for committee meetings for freshmen.
+## FreshmanDirectorshipAttendance table ##
+This table stores attendance for directorship meetings for freshmen.
 
 |     Field     |      Type     |     Description     |
 | ------------- | ------------- | ------------------- |
 | `id`  | `INTEGER`  | Autoincrementing primary key.
 | `fid` | `INTEGER` | Foreign key referencing the freshman account for the freshman who attended (`freshman_accounts.id`).
-| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`committee_meetings.id`).
+| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`directorship_meetings.id`).
 
 
 ## TechnicalSeminar table ##
@@ -81,7 +81,7 @@ Stores seminar attendance for freshmen.
 | ------------- | ------------- | ------------------- |
 | `id`  | `INTEGER`  | Autoincrementing primary key.
 | `fid` | `INTEGER` | Foreign key referencing the freshman who attended the seminar (`freshman_accounts.id`).
-| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`committee_meetings.id`).
+| `meeting_id` | `INTEGER` | Foreign key referencing the meeting that was attended (`directorship_meetings.id`).
 
 ## MajorProject table ##
 Stores major projects through their entire lifetime.
@@ -181,7 +181,7 @@ Records the yearly results of member's spring evaluations.
 * Not in LDAP Current Student group: 
   * Alumni. Don't track attendance.
 * In LDAP Current Student group and in Co-Op Table: 
-  * On coop. Track committee
+  * On coop. Track directorship
   meeting attendance, but not house meeting.
 * In LDAP Current Student group but not in LDAP Active Group: 
   * Present but not active

@@ -8,14 +8,14 @@ class Attendance(Base):
     __tablename__ = 'attendance'
     username = Column(String(100), nullable=False, primary_key=True)
     meeting_date = Column(Date, nullable=False, primary_key=True)
-    committee_id = Column(Integer, nullable=False, primary_key=True)
+    directorship_id = Column(Integer, nullable=False, primary_key=True)
 
 
-class Committee(Base):
-    __tablename__ = 'committees'
+class Directorship(Base):
+    __tablename__ = 'directorships'
     ID = Column(Integer, primary_key=True, nullable=False)
-    committee_name = Column(Text, nullable=False)
-    committee_head = Column(Text, nullable=False)
+    directorship_name = Column(Text, nullable=False)
+    directorship_head = Column(Text, nullable=False)
 
 
 class Conditional(Base):
@@ -57,7 +57,7 @@ class MajorProject(Base):
     __tablename__ = 'major_project'
     username = Column(String(100), nullable=False, primary_key=True)
     timestamp = Column(DateTime, nullable=False)
-    project_committee = Column(Text)
+    project_directorship = Column(Text)
     project_name = Column(String(200), nullable=False, primary_key=True)
     project_description = Column(Text)
     status = Column(Enum('pending', 'pass', 'fail'), nullable=False)
@@ -71,7 +71,7 @@ class Member(Base):
     voting = Column(Integer, nullable=False)
     alumniable = Column(Integer, nullable=False)
     housing_points = Column(Integer, nullable=False)
-    committee_mtgs = Column(Integer, nullable=False)
+    directorship_mtgs = Column(Integer, nullable=False)
 
 
 class Queue(Base):

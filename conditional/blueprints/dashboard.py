@@ -14,7 +14,8 @@ from conditional.util.ldap import ldap_get_active_members, ldap_is_bad_standing
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.member import get_freshman_data, get_voting_members, get_cm, get_hm, req_cm
+from conditional.util.member import get_freshman_data, get_voting_members, get_directorship_meetings, \
+    get_house_meetings, get_required_directorship_meetings
 
 logger = structlog.get_logger()
 
@@ -47,10 +48,10 @@ def display_dashboard(user_dict=None):
         data['freshman'] = None
 
     spring = {}
-    c_meetings = get_cm(user_dict['account'])
-    spring['committee_meetings'] = len(c_meetings)
-    spring['req_meetings'] = req_cm(user_dict['account'])
-    h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(user_dict['account'])]
+    c_meetings = get_directorship_meetings(user_dict['account'])
+    spring['directorship_meetings'] = len(c_meetings)
+    spring['req_meetings'] = get_required_directorship_meetings(user_dict['account'])
+    h_meetings = [(m.meeting_id, m.attendance_status) for m in get_house_meetings(user_dict['account'])]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     eval_entry = SpringEval.query.filter(SpringEval.uid == user_dict['account'].uid,
                                          SpringEval.date_created > start_of_year(),

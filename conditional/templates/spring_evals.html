@@ -47,15 +47,15 @@ Membership Evaluations
                     <div class="col-sm-5 col-md-6 col-lg-4">
                         <div class="spring-info row">
                             <div class="text-center">
-                                        {% if m['committee_meetings'] < m['req_meetings'] %}
+                                        {% if m['directorship_meetings'] < m['req_meetings'] %}
                                         <div class="eval-info-label">
                                             <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Directorship Meetings
-                                            <span class="eval-info-number">{{m['committee_meetings']}} / {{m['req_meetings']}}</span>
+                                            <span class="eval-info-number">{{m['directorship_meetings']}} / {{m['req_meetings']}}</span>
                                         </div>
                                         {% else %}
                                         <div class="eval-info-label">
                                             <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Directorship Meetings
-                                            <span class="eval-info-number">{{m['committee_meetings']}} / {{m['req_meetings']}}</span>
+                                            <span class="eval-info-number">{{m['directorship_meetings']}} / {{m['req_meetings']}}</span>
                                         </div>
                                         {% endif %}
 
@@ -211,11 +211,11 @@ Membership Evaluations
                             <span class="glyphicon glyphicon-remove red"></span> Failed
                             {% endif %}
                         </td>
-                        <td data-sort="{{ m['committee_meetings'] }}">
-                            {% if m['committee_meetings'] < m['req_meetings'] %}
-                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
+                        <td data-sort="{{ m['directorship_meetings'] }}">
+                            {% if m['directorship_meetings'] < m['req_meetings'] %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['directorship_meetings']}}
                             {% else %}
-                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['directorship_meetings']}}
                             {% endif %}
                         </td>
                         <td>

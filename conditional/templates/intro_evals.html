@@ -74,15 +74,15 @@ Introductory Evaluations
                                 {% endif %}
                             </div>
                             <div class="text-center">
-                                {% if m['committee_meetings']|length < 6 %}
+                                {% if m['directorship_meetings']|length < 6 %}
                                     <div class="eval-info-label">
                                         <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']|length}} / 6</span>
+                                        <span class="eval-info-number">{{m['directorship_meetings']|length}} / 6</span>
                                     </div>
                                     {% else %}
                                     <div class="eval-info-label">
                                         <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']|length}} / 6</span>
+                                        <span class="eval-info-number">{{m['directorship_meetings']|length}} / 6</span>
                                     </div>
                                 {% endif %}
 
@@ -136,7 +136,7 @@ Introductory Evaluations
                 </table>
                 {% endif %}
                 <!-- ^^ HOUSE MEETINGS TABLE -->
-                {% if m['committee_meetings']|length > 0 %}
+                {% if m['directorship_meetings']|length > 0 %}
                 <h4>Directorship Meetings</h4>
                 <table class="table">
                     <thead>
@@ -146,10 +146,10 @@ Introductory Evaluations
                         </tr>
                     </thead>
                     <tbody>
-                        {% for meeting in m['committee_meetings'] %}
+                        {% for meeting in m['directorship_meetings'] %}
                         <tr>
                             <td>{{meeting['timestamp']}}</td>
-                            <td>{{meeting['committee']}}</td>
+                            <td>{{meeting['directorship']}}</td>
                         </tr>
                         {% endfor %}
 
@@ -222,11 +222,11 @@ Introductory Evaluations
                             <span class="glyphicon glyphicon-remove red"></span> Failed
                             {% endif %}
                         </td>
-                        <td data-sort="{{ m['committee_meetings']|length }}">
-                            {% if m['committee_meetings']|length < 6 %}
-                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']|length}}
+                        <td data-sort="{{ m['directorship_meetings']|length }}">
+                            {% if m['directorship_meetings']|length < 6 %}
+                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['directorship_meetings']|length}}
                             {% else %}
-                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']|length}}
+                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['directorship_meetings']|length}}
                             {% endif %}
                         </td>
                         <td data-sort="{{ m['signatures_missed'] }}">

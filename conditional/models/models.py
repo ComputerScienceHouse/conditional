@@ -52,39 +52,39 @@ class FreshmanEvalData(db.Model):
         self.active = True
 
 
-class CommitteeMeeting(db.Model):
-    __tablename__ = 'committee_meetings'
+class DirectorshipMeeting(db.Model):
+    __tablename__ = 'directorship_meetings'
     id = Column(Integer, primary_key=True)
-    committee = Column(Enum('Evaluations', 'History', 'Social', 'Opcomm',
-                            'R&D', 'House Improvements', 'Financial', 'Chairman', 'Ad-Hoc', name="committees_enum"),
+    directorship = Column(Enum('Evaluations', 'History', 'Social', 'Opcomm',
+                            'R&D', 'House Improvements', 'Financial', 'Chairman', 'Ad-Hoc', name="directorships_enum"),
                        nullable=False)
     timestamp = Column(DateTime, nullable=False)
     approved = Column(Boolean, nullable=False)
     active = Column(Boolean)
 
-    def __init__(self, committee, timestamp, approved):
-        self.committee = committee
+    def __init__(self, directorship, timestamp, approved):
+        self.directorship = directorship
         self.timestamp = timestamp
         self.approved = approved
         self.active = True
 
 
-class MemberCommitteeAttendance(db.Model):
-    __tablename__ = 'member_committee_attendance'
+class MemberDirectorshipAttendance(db.Model):
+    __tablename__ = 'member_directorship_attendance'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
-    meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
+    meeting_id = Column(ForeignKey('directorship_meetings.id'), nullable=False)
 
     def __init__(self, uid, meeting_id):
         self.uid = uid
         self.meeting_id = meeting_id
 
 
-class FreshmanCommitteeAttendance(db.Model):
-    __tablename__ = 'freshman_committee_attendance'
+class FreshmanDirectorshipAttendance(db.Model):
+    __tablename__ = 'freshman_directorship_attendance'
     id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id'), nullable=False)
-    meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
+    meeting_id = Column(ForeignKey('directorship_meetings.id'), nullable=False)
 
     def __init__(self, fid, meeting_id):
         self.fid = fid

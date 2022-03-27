@@ -1,11 +1,11 @@
 from datetime import datetime
 
 from conditional import start_of_year
-from conditional.models.models import CommitteeMeeting
+from conditional.models.models import DirectorshipMeeting
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import HouseMeeting
-from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberDirectorshipAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import TechnicalSeminar
@@ -78,13 +78,13 @@ def get_freshman_data(user_name):
     if freshman_data is None:
         return None
     freshman['status'] = freshman_data.freshman_eval_result
-    # number of committee meetings attended
+    # number of directorship meetings attended
     c_meetings = [m.meeting_id for m in
-                  MemberCommitteeAttendance.query.filter(
-                      MemberCommitteeAttendance.uid == user_name
-                  ) if CommitteeMeeting.query.filter(
-                      CommitteeMeeting.id == m.meeting_id).first().approved]
-    freshman['committee_meetings'] = len(c_meetings)
+                  MemberDirectorshipAttendance.query.filter(
+                      MemberDirectorshipAttendance.uid == user_name
+                  ) if DirectorshipMeeting.query.filter(
+                      DirectorshipMeeting.id == m.meeting_id).first().approved]
+    freshman['directorship_meetings'] = len(c_meetings)
     # technical seminar total
     t_seminars = [s.seminar_id for s in
                   MemberSeminarAttendance.query.filter(
@@ -115,27 +115,27 @@ def get_onfloor_members():
             if uid in [members.uid for members in ldap_get_onfloor_members()]]
 
 
-def get_cm(member):
+def get_directorship_meetings(member):
     c_meetings = [{
         "uid": cm.uid,
         "timestamp": cm.timestamp,
-        "committee": cm.committee
-    } for cm in CommitteeMeeting.query.join(
-        MemberCommitteeAttendance,
-        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+        "directorship": cm.directorship
+    } for cm in DirectorshipMeeting.query.join(
+        MemberDirectorshipAttendance,
+        MemberDirectorshipAttendance.meeting_id == DirectorshipMeeting.id
         ).with_entities(
-            MemberCommitteeAttendance.uid,
-            CommitteeMeeting.timestamp,
-            CommitteeMeeting.committee
+            MemberDirectorshipAttendance.uid,
+            DirectorshipMeeting.timestamp,
+            DirectorshipMeeting.directorship
             ).filter(
-                CommitteeMeeting.timestamp > start_of_year(),
-                MemberCommitteeAttendance.uid == member.uid,
-                CommitteeMeeting.approved == True # pylint: disable=singleton-comparison
+                DirectorshipMeeting.timestamp > start_of_year(),
+                MemberDirectorshipAttendance.uid == member.uid,
+                DirectorshipMeeting.approved == True # pylint: disable=singleton-comparison
                 ).all()]
     return c_meetings
 
 
-def get_hm(member, only_absent=False):
+def get_house_meetings(member, only_absent=False):
     h_meetings = MemberHouseMeetingAttendance.query.outerjoin(
                   HouseMeeting,
                   MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
@@ -150,8 +150,8 @@ def get_hm(member, only_absent=False):
 
 
 @service_cache(maxsize=128)
-def req_cm(member):
-    # Get the number of required committee meetings based on if the member
+def get_required_directorship_meetings(member):
+    # Get the number of required directorship meetings based on if the member
     # is going on co-op in the current operating session.
     co_op = CurrentCoops.query.filter(
         CurrentCoops.uid == member.uid,

@@ -18,14 +18,14 @@ from sqlalchemy.dialects import postgresql
 
 
 def upgrade():
-    op.alter_column('committee_meetings', 'committee',
+    op.alter_column('directorship_meetings', 'directorship',
                existing_type=postgresql.ENUM('Evaluations', 'History', 'Social', 'Opcomm',
-                            'R&D', 'House Improvements', 'Financial', 'Chairman', 'Ad-Hoc', name="committees_enum"),
+                            'R&D', 'House Improvements', 'Financial', 'Chairman', 'Ad-Hoc', name="directorships_enum"),
                nullable=False)
 
 
 def downgrade():
-    op.alter_column('committee_meetings', 'committee',
+    op.alter_column('directorship_meetings', 'directorship',
                existing_type=postgresql.Enum('Evaluations', 'History', 'Social', 'Opcomm',
-                            'R&D', 'House Improvements', 'Financial', 'Chairman', name="committees_enum"),
+                            'R&D', 'House Improvements', 'Financial', 'Chairman', name="directorships_enum"),
                nullable=False)

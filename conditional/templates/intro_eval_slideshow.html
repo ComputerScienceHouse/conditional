@@ -24,10 +24,10 @@ Introductory Evaluations Slideshow
               </div>
             </div>
             <div class="col-xs-12 col-md-3">
-              {% set committee_meetings_passed = m['committee_meetings'] >= 6 %}
-              <div class="item{% if committee_meetings_passed %} passed{% endif %}" >
-                <span class="icon glyphicon glyphicon-{% if committee_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
-                <h3>{{m['committee_meetings']}}</h3>
+              {% set directorship_meetings_passed = m['directorship_meetings'] >= 6 %}
+              <div class="item{% if directorship_meetings_passed %} passed{% endif %}" >
+                <span class="icon glyphicon glyphicon-{% if directorship_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+                <h3>{{m['directorship_meetings']}}</h3>
                 <p>Meetings</p>
               </div>
             </div>

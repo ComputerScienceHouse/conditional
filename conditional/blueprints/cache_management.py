@@ -56,5 +56,5 @@ def clear_members_cache():
     ldap_get_onfloor_members.cache_clear()
 
 
-def clear_committee_cache():
+def clear_directorship_cache():
     _ldap_is_member_of_directorship.clear_cache()

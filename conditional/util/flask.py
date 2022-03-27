@@ -12,7 +12,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_is_rtp
 
-from conditional.models.models import CommitteeMeeting
+from conditional.models.models import DirectorshipMeeting
 from conditional.models.models import TechnicalSeminar
 
 from conditional import db
@@ -35,8 +35,8 @@ def render_template(template_name, user_dict=None, **kwargs):
     is_intromember = ldap_is_intromember(user_dict['account'])
     is_rtp = ldap_is_rtp(user_dict['account'])
 
-    cm_review = len(CommitteeMeeting.query.filter(
-        CommitteeMeeting.approved == False).all()) # pylint: disable=singleton-comparison
+    cm_review = len(DirectorshipMeeting.query.filter(
+        DirectorshipMeeting.approved == False).all()) # pylint: disable=singleton-comparison
     ts_review = len(TechnicalSeminar.query.filter(
         TechnicalSeminar.approved == False).all()) # pylint: disable=singleton-comparison
 

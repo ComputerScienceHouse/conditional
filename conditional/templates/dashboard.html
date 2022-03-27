@@ -61,9 +61,9 @@ Dashboard
                         <tr>
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
-                                {% if freshman['committee_meetings'] >= 6 %}
+                                {% if freshman['directorship_meetings'] >= 6 %}
                                 <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{freshman['committee_meetings']}} / 6
+                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{freshman['directorship_meetings']}} / 6
                                 </span>
                             </td>
                         </tr>
@@ -115,9 +115,9 @@ Dashboard
                         <tr>
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
-                                {% if spring['committee_meetings'] >= spring['req_meetings'] %}
+                                {% if spring['directorship_meetings'] >= spring['req_meetings'] %}
                                 <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}</span>
+                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{ spring['directorship_meetings'] }} / {{ spring['req_meetings'] }}</span>
                             </td>
                         </tr>
                         <tr>
@@ -337,7 +337,7 @@ Dashboard
                         <tbody>
                         {% for meeting in cm_attendance %}
                         <tr>
-                            <td>{{meeting['committee']}}</td>
+                            <td>{{meeting['directorship']}}</td>
                             <td>{{meeting['timestamp'].strftime('%Y-%m-%d')}}</td>
                         </tr>
                         {% endfor %}
