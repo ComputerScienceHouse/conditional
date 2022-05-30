@@ -57,6 +57,10 @@ npm start
 
 This will run the asset pipeline, start the Python server, and start BrowserSync. Your default web browser will open automatically. If it doesn't, navigate to `http://127.0.0.1:3000`. Any changes made to the frontend files in `frontend` or the Jinja templates in `conditional/templates` will cause the browser to reload automatically.
 
+### Dependencies
+
+To add new dependencies, add them to `requirements.in` and then run `pip-compile requirements.in` to produce a new locked `requirements.txt`. Do not edit `requirements.txt` directly as it will be overwritten by future PRs.
+
 ### Database Migrations
 
 If the database schema is changed after initializing the database, you must migrate it to the new schema by running:
