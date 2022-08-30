@@ -10,8 +10,8 @@ from conditional import app, get_user, auth, db, start_of_year
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
-from conditional.models.models import FreshmanCommitteeAttendance
-from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import FreshmanDirectorshipAttendance
+from conditional.models.models import MemberDirectorshipAttendance
 from conditional.models.models import FreshmanSeminarAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import FreshmanHouseMeetingAttendance
@@ -340,7 +340,7 @@ def member_management_getuserinfo(uid, user_dict=None):
             FreshmanAccount.id == uid).first()
 
     # missed hm
-    def get_hm_date(hm_id):
+    def get_house_meetings_date(hm_id):
         return HouseMeeting.query.filter(
             HouseMeeting.id == hm_id). \
             first().date.strftime("%Y-%m-%d")
@@ -349,7 +349,7 @@ def member_management_getuserinfo(uid, user_dict=None):
     if acct:
         missed_hm = [
             {
-                'date': get_hm_date(hma.meeting_id),
+                'date': get_house_meetings_date(hma.meeting_id),
                 'id': hma.meeting_id,
                 'excuse': hma.excuse,
                 'status': hma.attendance_status
@@ -378,7 +378,7 @@ def member_management_getuserinfo(uid, user_dict=None):
     if ldap_is_eval_director(ldap_get_member(user_dict['username'])):
         missed_hm = [
             {
-                'date': get_hm_date(hma.meeting_id),
+                'date': get_house_meetings_date(hma.meeting_id),
                 'id': hma.meeting_id,
                 'excuse': hma.excuse,
                 'status': hma.attendance_status
@@ -424,7 +424,7 @@ def member_management_deleteuser(fid, user_dict=None):
 
     log.info('backend', action="delete freshman account %s" % fid)
 
-    for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
+    for fca in FreshmanDirectorshipAttendance.query.filter(FreshmanDirectorshipAttendance.fid == fid):
         db.session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
@@ -467,8 +467,8 @@ def member_management_upgrade_user(user_dict=None):
     new_acct.eval_date = acct.eval_date
 
     db.session.add(new_acct)
-    for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
-        db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
+    for fca in FreshmanDirectorshipAttendance.query.filter(FreshmanDirectorshipAttendance.fid == fid):
+        db.session.add(MemberDirectorshipAttendance(uid, fca.meeting_id))
         db.session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):

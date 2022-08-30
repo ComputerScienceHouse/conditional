@@ -4,14 +4,14 @@ import structlog
 from flask import Blueprint, jsonify, redirect, request
 
 from conditional import db, start_of_year, auth
-from conditional.models.models import CommitteeMeeting
+from conditional.models.models import DirectorshipMeeting
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanAccount
-from conditional.models.models import FreshmanCommitteeAttendance
+from conditional.models.models import FreshmanDirectorshipAttendance
 from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import FreshmanSeminarAttendance
 from conditional.models.models import HouseMeeting
-from conditional.models.models import MemberCommitteeAttendance
+from conditional.models.models import MemberDirectorshipAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import TechnicalSeminar
@@ -106,7 +106,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 @get_user
 def get_non_alumni(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Retrieve Committee Meeting Attendance List')
+    log.info('Retrieve Directorship Meeting Attendance List')
 
     current_students = ldap_get_current_students()
 
@@ -134,7 +134,7 @@ def get_non_alumni(user_dict=None):
 @get_user
 def display_attendance_cm(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Display Committee Meeting Attendance Page')
+    log.info('Display Directorship Meeting Attendance Page')
 
     return render_template('attendance_cm.html',
                            username=user_dict['username'],
@@ -172,33 +172,33 @@ def display_attendance_hm(user_dict=None):
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 @auth.oidc_auth
 @get_user
-def submit_committee_attendance(user_dict=None):
+def submit_directorship_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
     approved = ldap_is_eboard(user_dict['account'])
     post_data = request.get_json()
 
-    committee = post_data['committee']
+    directorship = post_data['directorship']
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
     timestamp = post_data['timestamp']
 
-    log.info('Submit {} Meeting Attendance'.format(committee))
+    log.info('Submit {} Meeting Attendance'.format(directorship))
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
-    meeting = CommitteeMeeting(committee, timestamp, approved)
+    meeting = DirectorshipMeeting(directorship, timestamp, approved)
 
     db.session.add(meeting)
     db.session.flush()
     db.session.refresh(meeting)
 
     for m in m_attendees:
-        log.info('Gave Attendance to {} for {}'.format(m, committee))
-        db.session.add(MemberCommitteeAttendance(m, meeting.id))
+        log.info('Gave Attendance to {} for {}'.format(m, directorship))
+        db.session.add(MemberDirectorshipAttendance(m, meeting.id))
 
     for f in f_attendees:
-        log.info('Gave Attendance to freshman-{} for {}'.format(f, committee))
-        db.session.add(FreshmanCommitteeAttendance(f, meeting.id))
+        log.info('Gave Attendance to freshman-{} for {}'.format(f, directorship))
+        db.session.add(FreshmanDirectorshipAttendance(f, meeting.id))
 
     db.session.commit()
     return jsonify({"success": True}), 200
@@ -363,12 +363,12 @@ def attendance_history(user_dict=None):
 
     def get_meeting_attendees(meeting_id):
         attendees = [ldap_get_member(a.uid).displayName for a in
-                     MemberCommitteeAttendance.query.filter(
-                     MemberCommitteeAttendance.meeting_id == meeting_id).all()]
+                     MemberDirectorshipAttendance.query.filter(
+                     MemberDirectorshipAttendance.meeting_id == meeting_id).all()]
 
         for freshman in [a.fid for a in
-                         FreshmanCommitteeAttendance.query.filter(
-                         FreshmanCommitteeAttendance.meeting_id == meeting_id).all()]:
+                         FreshmanDirectorshipAttendance.query.filter(
+                         FreshmanDirectorshipAttendance.meeting_id == meeting_id).all()]:
             attendees.append(FreshmanAccount.query.filter(
                              FreshmanAccount.id == freshman).first().name)
         return attendees
@@ -396,14 +396,14 @@ def attendance_history(user_dict=None):
     offset = 0 if int(page) == 1 else ((int(page)-1)*10)
     limit = int(page)*10
     all_cm = [{"id": m.id,
-               "name": m.committee,
+               "name": m.directorship,
                "dt_obj": m.timestamp,
                "date": m.timestamp.strftime("%a %m/%d/%Y"),
                "attendees": get_meeting_attendees(m.id),
                "type": "cm"
-               } for m in CommitteeMeeting.query.filter(
-                   CommitteeMeeting.timestamp > start_of_year(),
-                   CommitteeMeeting.approved).all()]
+               } for m in DirectorshipMeeting.query.filter(
+                   DirectorshipMeeting.timestamp > start_of_year(),
+                   DirectorshipMeeting.approved).all()]
     all_ts = [{"id": m.id,
                "name": m.name,
                "dt_obj": m.timestamp,
@@ -414,13 +414,13 @@ def attendance_history(user_dict=None):
                    TechnicalSeminar.timestamp > start_of_year(),
                    TechnicalSeminar.approved).all()]
     pend_cm = [{"id": m.id,
-                "name": m.committee,
+                "name": m.directorship,
                 "dt_obj": m.timestamp,
                 "date": m.timestamp.strftime("%a %m/%d/%Y"),
                 "attendees": get_meeting_attendees(m.id)
-               } for m in CommitteeMeeting.query.filter(
-                   CommitteeMeeting.timestamp > start_of_year(),
-                   CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
+               } for m in DirectorshipMeeting.query.filter(
+                   DirectorshipMeeting.timestamp > start_of_year(),
+                   DirectorshipMeeting.approved == False).all()] # pylint: disable=singleton-comparison
     pend_ts = [{"id": m.id,
                 "name": m.name,
                 "dt_obj": m.timestamp,
@@ -446,9 +446,9 @@ def attendance_history(user_dict=None):
 @attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
 @auth.oidc_auth
 @get_user
-def alter_committee_attendance(cid, user_dict=None):
+def alter_directorship_attendance(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Edit Committee Meeting Attendance')
+    log.info('Edit Directorship Meeting Attendance')
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -458,17 +458,17 @@ def alter_committee_attendance(cid, user_dict=None):
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
 
-    FreshmanCommitteeAttendance.query.filter(
-        FreshmanCommitteeAttendance.meeting_id == meeting_id).delete()
+    FreshmanDirectorshipAttendance.query.filter(
+        FreshmanDirectorshipAttendance.meeting_id == meeting_id).delete()
 
-    MemberCommitteeAttendance.query.filter(
-        MemberCommitteeAttendance.meeting_id == meeting_id).delete()
+    MemberDirectorshipAttendance.query.filter(
+        MemberDirectorshipAttendance.meeting_id == meeting_id).delete()
 
     for m in m_attendees:
-        db.session.add(MemberCommitteeAttendance(m, meeting_id))
+        db.session.add(MemberDirectorshipAttendance(m, meeting_id))
 
     for f in f_attendees:
-        db.session.add(FreshmanCommitteeAttendance(f, meeting_id))
+        db.session.add(FreshmanDirectorshipAttendance(f, meeting_id))
 
     db.session.flush()
     db.session.commit()
@@ -510,7 +510,7 @@ def alter_seminar_attendance(sid, user_dict=None):
 @attendance_bp.route('/attendance/ts/<sid>', methods=['GET', 'DELETE'])
 @auth.oidc_auth
 @get_user
-def get_cm_attendees(sid, user_dict=None):
+def get_directorship_meetings_attendees(sid, user_dict=None):
     if request.method == 'GET':
         attendees = [{"value": a.uid,
                       "display": ldap_get_member(a.uid).displayName
@@ -552,28 +552,28 @@ def get_ts_attendees(cid, user_dict=None):
         attendees = [{"value": a.uid,
                       "display": ldap_get_member(a.uid).displayName
                      } for a in
-                     MemberCommitteeAttendance.query.filter(
-                     MemberCommitteeAttendance.meeting_id == cid).all()]
+                     MemberDirectorshipAttendance.query.filter(
+                     MemberDirectorshipAttendance.meeting_id == cid).all()]
 
         for freshman in [{"value": a.fid,
                           "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
-                         } for a in FreshmanCommitteeAttendance.query.filter(
-                         FreshmanCommitteeAttendance.meeting_id == cid).all()]:
+                         } for a in FreshmanDirectorshipAttendance.query.filter(
+                         FreshmanDirectorshipAttendance.meeting_id == cid).all()]:
             attendees.append(freshman)
         return jsonify({"attendees": attendees}), 200
 
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete Committee Meeting {}'.format(cid))
+    log.info('Delete Directorship Meeting {}'.format(cid))
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
-    FreshmanCommitteeAttendance.query.filter(
-        FreshmanCommitteeAttendance.meeting_id == cid).delete()
-    MemberCommitteeAttendance.query.filter(
-        MemberCommitteeAttendance.meeting_id == cid).delete()
-    CommitteeMeeting.query.filter(
-        CommitteeMeeting.id == cid).delete()
+    FreshmanDirectorshipAttendance.query.filter(
+        FreshmanDirectorshipAttendance.meeting_id == cid).delete()
+    MemberDirectorshipAttendance.query.filter(
+        MemberDirectorshipAttendance.meeting_id == cid).delete()
+    DirectorshipMeeting.query.filter(
+        DirectorshipMeeting.id == cid).delete()
 
     db.session.flush()
     db.session.commit()
@@ -586,13 +586,13 @@ def get_ts_attendees(cid, user_dict=None):
 @get_user
 def approve_cm(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Approve Committee Meeting {} Attendance'.format(cid))
+    log.info('Approve Directorship Meeting {} Attendance'.format(cid))
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
-    CommitteeMeeting.query.filter(
-        CommitteeMeeting.id == cid).first().approved = True
+    DirectorshipMeeting.query.filter(
+        DirectorshipMeeting.id == cid).first().approved = True
     db.session.flush()
     db.session.commit()
 

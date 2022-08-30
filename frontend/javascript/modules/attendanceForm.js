@@ -12,9 +12,9 @@ export default class AttendanceForm {
 
     this.endpoint = '';
 
-    if (this.form.dataset.type === "committee") {
+    if (this.form.dataset.type === "directorship") {
       this.endpoint = '/attendance/submit/cm';
-      this.fields.committee = this.form.elements.committee;
+      this.fields.directorship = this.form.elements.directorship;
     } else if (this.form.dataset.type === "seminar") {
       this.endpoint = '/attendance/submit/ts';
       this.fields.name = this.form.elements.name;

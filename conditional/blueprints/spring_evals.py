@@ -9,7 +9,7 @@ from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.member import get_cm, get_hm, req_cm
+from conditional.util.member import get_directorship_meetings, get_house_meetings, get_required_directorship_meetings
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
@@ -43,13 +43,13 @@ def display_spring_evals(internal=False, user_dict=None):
 
         eval_data = None
 
-        h_meetings = [m.meeting_id for m in get_hm(account, only_absent=True)]
+        h_meetings = [m.meeting_id for m in get_house_meetings(account, only_absent=True)]
         member = {
             'name': account.cn,
             'uid': uid,
             'status': spring_entry.status,
-            'committee_meetings': len(get_cm(account)),
-            'req_meetings': req_cm(account),
+            'directorship_meetings': len(get_directorship_meetings(account)),
+            'req_meetings': get_required_directorship_meetings(account),
             'house_meetings_missed':
                 [
                     {
@@ -93,7 +93,7 @@ def display_spring_evals(internal=False, user_dict=None):
             member['housing_evals'] = eval_data
         sp_members.append(member)
 
-    sp_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
+    sp_members.sort(key=lambda x: x['directorship_meetings'], reverse=True)
     sp_members.sort(key=lambda x: len(x['house_meetings_missed']))
     sp_members.sort(key=lambda x: len([p for p in x['major_projects'] if p['status'] == "Passed"]), reverse=True)
     # return names in 'first last (username)' format
