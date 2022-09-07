@@ -14,15 +14,7 @@ SERVER_NAME = env.get('CONDITIONAL_SERVER_NAME', 'conditional.csh.rit.edu')
 APP_NAME = "conditional"
 IP = env.get("CONDITIONAL_IP", "0.0.0.0")
 PORT = env.get("CONDITIONAL_PORT", 6969)
-<<<<<<< HEAD
-<<<<<<< HEAD
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
-=======
-CHANNEL_ID = env.get("CONDITIONAL_CHANNEL_ID", "INSERT URL HERE")
->>>>>>> 855042d (Added CHANNEL_ID variable (needs to be set to a value) in config.env.py, and created a webhook Slack integration that posts to CHANNEL_ID when a major project is submitted (major_project_submission.py))
-=======
-WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
->>>>>>> b828e44 (updated the conf variable)
 
 # DB Info
 SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "")

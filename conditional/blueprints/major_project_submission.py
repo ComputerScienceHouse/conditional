@@ -3,16 +3,7 @@ import os
 
 from flask import Flask, Blueprint, request, jsonify, redirect
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 from conditional import app
-
-=======
->>>>>>> 855042d (Added CHANNEL_ID variable (needs to be set to a value) in config.env.py, and created a webhook Slack integration that posts to CHANNEL_ID when a major project is submitted (major_project_submission.py))
-=======
-from conditional import app
-
->>>>>>> db584f4 (obtained app via init.py)
 import requests, json
 
 from sqlalchemy import desc
@@ -74,16 +65,7 @@ def submit_major_project(user_dict=None):
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict['username'], name, description)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     send_slack_ping({"text":f"<!subteam^S5XENJJAH> {user_dict['username']} submitted their major project, *{name}*!"})
-=======
-    send_slack_ping({"text":f"{user_dict['username']} submitted their major project, *{name}*!"})
->>>>>>> 855042d (Added CHANNEL_ID variable (needs to be set to a value) in config.env.py, and created a webhook Slack integration that posts to CHANNEL_ID when a major project is submitted (major_project_submission.py))
-=======
-    send_slack_ping({"text":f"<!subteam^S5XENJJAH> {user_dict['username']} submitted their major project, *{name}*!"})
->>>>>>> 0f7f14c (added a ping for eboard)
-
     db.session.add(project)
     db.session.commit()
     return jsonify({"success": True}), 200
@@ -139,16 +121,4 @@ def major_project_delete(pid, user_dict=None):
     return "Must be project owner to delete!", 401
 
 def send_slack_ping(payload):
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     return requests.post(app.config['WEBHOOK_URL'], json.dumps(payload))
-=======
-    return requests.post(app.config['CHANNEL_ID'], json.dumps(payload))
->>>>>>> 855042d (Added CHANNEL_ID variable (needs to be set to a value) in config.env.py, and created a webhook Slack integration that posts to CHANNEL_ID when a major project is submitted (major_project_submission.py))
-=======
-    return requests.post(app.config['WEBHOOK_URL'], json.dumps(payload))
->>>>>>> b828e44 (updated the conf variable)
-=======
-    return requests.post(app.config['WEBHOOK_URL'], json.dumps(payload))
->>>>>>> ba4071a (Added newline)
