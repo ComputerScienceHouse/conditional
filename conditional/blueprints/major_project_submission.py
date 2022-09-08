@@ -1,8 +1,16 @@
-import structlog
+import json
+import requests
 
-from flask import Blueprint, request, jsonify, redirect
+from flask import Blueprint
+from flask import request
+from flask import jsonify
+from flask import redirect
 
 from sqlalchemy import desc
+
+import structlog
+
+from conditional.util.context_processors import get_member_name
 
 from conditional.models.models import MajorProject
 
@@ -10,7 +18,7 @@ from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
 
-from conditional import db, start_of_year, get_user, auth
+from conditional import db, start_of_year, get_user, auth, app
 
 logger = structlog.get_logger()
 
@@ -61,6 +69,9 @@ def submit_major_project(user_dict=None):
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict['username'], name, description)
 
+    username = user_dict['username']
+    send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
+                            f" submitted their major project, *{name}*!"})
     db.session.add(project)
     db.session.commit()
     return jsonify({"success": True}), 200
@@ -114,3 +125,6 @@ def major_project_delete(pid, user_dict=None):
         return jsonify({"success": True}), 200
 
     return "Must be project owner to delete!", 401
+
+def send_slack_ping(payload):
+    requests.post(app.config['WEBHOOK_URL'], json.dumps(payload))
