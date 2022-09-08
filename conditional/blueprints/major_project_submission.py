@@ -70,7 +70,7 @@ def submit_major_project(user_dict=None):
     project = MajorProject(user_dict['username'], name, description)
 
     username = user_dict['username']
-    send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})\n"
+    send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
                             f" submitted their major project, *{name}*!"})
     db.session.add(project)
     db.session.commit()
