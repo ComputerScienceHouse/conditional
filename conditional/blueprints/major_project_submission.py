@@ -9,7 +9,8 @@ from flask import redirect
 
 from conditional import app
 from conditional import context_processors
-import requests, json
+import requests
+import json
 
 from sqlalchemy import desc
 
@@ -70,7 +71,7 @@ def submit_major_project(user_dict=None):
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict['username'], name, description)
 
-    send_slack_ping({"text":f"<!subteam^S5XENJJAH> {context_processors.get_member_name(user_dict['username'])} *{user_dict['username']}* submitted their major project, *{name}*!"})
+    send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(user_dict['username'])}* ({user_dict['username']}) submitted their major project, *{name}*!"})
     db.session.add(project)
     db.session.commit()
     return jsonify({"success": True}), 200
