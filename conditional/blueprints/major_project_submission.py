@@ -1,9 +1,10 @@
+import json
+import requests
+
 from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import redirect
-import requests
-import json
 
 from sqlalchemy import desc
 
