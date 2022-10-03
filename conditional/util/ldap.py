@@ -118,6 +118,8 @@ def ldap_is_current_student(account):
 
 
 def ldap_get_housingpoints(account):
+    ldap_get_current_students.cache_clear()
+    ldap_get_member.cache_clear()
     try:
         return account.housingPoints
     except AttributeError:
