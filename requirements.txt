@@ -22,7 +22,7 @@ blinker==1.4
     # via
     #   -r requirements.in
     #   sentry-sdk
-certifi==2022.5.18.1
+certifi==2022.12.7
     # via
     #   requests
     #   sentry-sdk
