@@ -1,4 +1,5 @@
 from datetime import datetime
+from threading import Thread
 
 import structlog
 from flask import Blueprint, jsonify, redirect, request
@@ -22,6 +23,7 @@ from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eboard
 from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.email import send_absent_hm_attendance_emails, send_present_hm_attendance_email
 
 logger = structlog.get_logger()
 
@@ -261,7 +263,9 @@ def submit_house_attendance(user_dict=None):
     db.session.flush()
     db.session.refresh(meeting)
 
+    # logs whether a user was marked absent or present for attendance and sends an email to anyone marked absent
     if "members" in post_data:
+        absent_members = []
         for m in post_data['members']:
             log.info('Marked {} {} for House Meeting on {}'.format(
                 m['uid'],
@@ -272,6 +276,10 @@ def submit_house_attendance(user_dict=None):
                 meeting.id,
                 None,
                 m['status']))
+            if m['status'] == 'Absent':
+                absent_members.append(m['uid'])
+        thread = Thread(target=send_absent_hm_attendance_emails, name="HM Emails", args=(absent_members,))
+        thread.start()
 
     if "freshmen" in post_data:
         for f in post_data['freshmen']:
@@ -304,6 +312,8 @@ def alter_house_attendance(uid, hid, user_dict=None):
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
         ).first()
+        thread = Thread(target=send_present_hm_attendance_email, name="HM Emails", args=(uid,))
+        thread.start()
         member_meeting.attendance_status = "Attended"
         db.session.commit()
         return jsonify({"success": True}), 200
