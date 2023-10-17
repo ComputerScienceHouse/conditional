@@ -27,6 +27,7 @@ def is_seminar_attendance_valid(attendance):
         TechnicalSeminar.id == attendance.seminar_id).first()
     return seminar and seminar.approved and seminar.timestamp > start_of_year()
 
+# pylint: disable=too-many-statements
 @dashboard_bp.route('/dashboard/')
 @auth.oidc_auth
 @get_user
