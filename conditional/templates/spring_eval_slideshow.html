@@ -47,7 +47,7 @@ Membership Evaluations Slideshow
         
         <div class="actions" data-uid="{{m['uid']}}" data-cn="{{m['name']}}">
           <button class="pass" type="button">Pass</button>
-          {% if not ( major_projects_passed and house_meetings_passed and committee_meetings_passed %}
+          {% if not ( major_projects_passed and house_meetings_passed and committee_meetings_passed ) %}
           <button class="fail" type="button">Fail</button>
           {% endif %}
         </div>
