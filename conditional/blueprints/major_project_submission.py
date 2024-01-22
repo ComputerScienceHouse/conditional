@@ -71,7 +71,9 @@ def submit_major_project(user_dict=None):
 
     username = user_dict['username']
     send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
-                            f" submitted their major project, *{name}*!"})
+                            f" submitted their major project, *{name}*! Please be sure to"
+                            f" reach out to E-Board members to answer any questions they may"
+                            f" have about your project!"})
     db.session.add(project)
     db.session.commit()
     return jsonify({"success": True}), 200
