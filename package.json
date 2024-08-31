@@ -31,7 +31,7 @@
     "bootstrap-sass": "^3.4.1",
     "bootstrap-sweetalert": "^1.0.1",
     "csh-material-bootstrap": "1.0.0",
-    "datatables.net": "^1.10.12",
+    "datatables.net": "^1.13.11",
     "datatables.net-bs": "^1.10.12",
     "dropzone": "^4.3.0",
     "enumify": "^1.0.4",
@@ -51,7 +51,7 @@
     "babel-preset-stage-1": "6.5.0",
     "browser-sync": "2.13.0",
     "chai": "3.5.0",
-    "compression": "1.6.2",
+    "compression": "^1.7.4",
     "del": "2.2.1",
     "eslint-config-google": "^0.6.0",
     "exports-loader": "^0.6.3",
@@ -69,7 +69,7 @@
     "gulp-if": "2.0.1",
     "gulp-imagemin": "3.0.1",
     "gulp-notify": "2.2.0",
-    "gulp-nunjucks-render": "2.0.0",
+    "gulp-nunjucks-render": "^2.2.3",
     "gulp-rename": "1.2.2",
     "gulp-rev": "7.1.0",
     "gulp-rev-napkin": "0.1.0",
@@ -95,6 +95,6 @@
     "sinon-chai": "2.8.0",
     "webpack": "1.13.1",
     "webpack-dev-middleware": "1.6.1",
-    "webpack-hot-middleware": "2.12.1"
+    "webpack-hot-middleware": "^2.26.1"
   }
 }
