@@ -1,103 +1,134 @@
 {% extends "nav.html" %}
 {% block title %}
-Major Project Form
+    Major Project Form
 {% endblock %}
 {% block body %}
 
-<div class="container main">
-    <h3 class="page-title">Major Project Form</h3>
-    <form data-module="majorProjectForm">
+    <div class="container main">
+        <h3 class="page-title">Major Project Form</h3>
+        <form data-module="majorProjectForm">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label" for="name">Project Name</label>
+                        <input class="form-control" id="name" name="name" type="text" maxlength="64"
+                               placeholder="A clever name for your project, sometimes people will come up with an acronym.">
+                    </div>
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label" for="tldr">Short Description / TL;DR</label>
+                        <input class="form-control" id="tldr" name="tldr" type="text" maxlength="100"
+                               placeholder="A quick, one-sentence pitch for your project and what it does.">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label class="control-label" for="skills-applied">Skills Applied</label>
+                            <textarea id="skills-applied" name="skills-applied" class="form-control" rows="5"
+                                      placeholder="A comma-separated list of skills, similar to what you'd put on a resume"></textarea>
+                        </div>
+                        <div class="col-lg-6">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label" for="tldr">Short Description / TL;DR</label>
+                        <input class="form-control" id="tldr" name="tldr" type="text" maxlength="64"
+                               placeholder="A quick, one-sentence pitch for your project and what it does.">
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding-top:20px;">
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label" for="description">Description</label>
+                        <textarea name="description" class="form-control" rows="3" id="description"
+                                  placeholder="A 'two liner' description of what your project is. If you have source materials like a GitHub repo publicly available, it's also useful to include links to them."></textarea>
+                    </div>
+                </div>
+            </div>
+            <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit"
+                   value="Submit Major Project">
+        </form>
+        <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
+    <=0 %}
         <div class="panel panel-default">
             <div class="panel-body">
-                <div class="form-group label-floating is-empty">
-                    <label class="control-label" for="name">Project Name</label>
-                    <input class="form-control" id="name" name="name" type="text" maxlength="64"
-                     placeholder="A clever name for your project, sometimes people will come up with an acronym.">
-                </div>
+                <p class="text-center">No Pending Major Projects</p>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="form-group label-floating is-empty">
-                    <label class="control-label" for="tldr">Short Description / TL;DR</label>
-                    <input class="form-control" id="tldr" name="tldr" type="text" maxlength="64"
-                           placeholder="A quick, one-sentence pitch for your project and what it does.">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-body" style="padding-top:20px;">
-                <div class="form-group label-floating is-empty">
-                    <label class="control-label" for="description">Description</label>
-                    <textarea name="description" class="form-control" rows="3" id="description"
-                     placeholder="A 'two liner' description of what your project is. If you have source materials like a GitHub repo publicly available, it's also useful to include links to them."></textarea>
-                </div>
-            </div>
-        </div>
-        <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit" value="Submit Major Project">
-    </form>
-    <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
-    <=0 %} <div class="panel panel-default">
-        <div class="panel-body">
-            <p class="text-center">No Pending Major Projects</p>
-        </div>
-</div>
-{% else %}
+    {% else %}
 
-    {% for p in major_projects %}
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="col-xs-8 col-sm-10">
-                <h4>{{p['proj_name']}}</h4>
-                <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
-                {{p['name']}} ({{p['username']}})
-            </div>
-            <div class="col-xs-4 col-sm-2">
+        {% for p in major_projects %}
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-xs-8 col-sm-10">
+                        <h4>{{ p['proj_name'] }}</h4>
+                        <img class="table-img" src="https://profiles.csh.rit.edu/image/{{ p['username'] }}">
+                        {{ p['name'] }} ({{ p['username'] }})
+                    </div>
+                    <div class="col-xs-4 col-sm-2">
 
-            {% if is_eval_director %}
+                        {% if is_eval_director %}
 
-                <div class="btn-group" data-module="majorProjectStatus" data-id="{{p['id']}}">
-                    <a href="#" class="btn {% if p['status'] == 'Passed' %}btn-success{% elif p['status'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
-                        {{p['status']}}
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="#" data-option="Passed"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</a>
-                        </li>
-                        <li>
-                            <a href="#" data-option="Pending"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</a>
-                        </li>
-                        <li>
-                            <a href="#" data-option="Failed"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</a>
-                        </li>
-                        <li>
-                            <a href="#" data-option="Delete"><span class="glyphicon glyphicon-trash red"></span> Delete</a>
-                        </li>
-                    </ul>
+                            <div class="btn-group" data-module="majorProjectStatus" data-id="{{ p['id'] }}">
+                                <a href="#"
+                                   class="btn {% if p['status'] == 'Passed' %}btn-success{% elif p['status'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp"
+                                   data-toggle="dropdown" aria-expanded="false">
+                                    {{ p['status'] }}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="#" data-option="Passed"><span
+                                                class="glyphicon glyphicon-ok-sign green"></span> Passed</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-option="Pending"><span
+                                                class="glyphicon glyphicon-hourglass yellow"></span> Pending</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-option="Failed"><span
+                                                class="glyphicon glyphicon-remove-sign red"></span> Failed</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-option="Delete"><span
+                                                class="glyphicon glyphicon-trash red"></span> Delete</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            {% if p['status'] == 'Passed' %}
+                                <h5 style="padding:15px 20px;float:right"><span
+                                        class="glyphicon glyphicon-ok green"></span></h5>
+                            {% elif p['status'] == 'Failed' %}
+                                <h5 style="padding:15px 20px;float:right"><span
+                                        class="glyphicon glyphicon-remove red"></span></h5>
+                            {% else %}
+                                <h5 style="padding:15px 20px;float:right"><span
+                                        class="glyphicon glyphicon-hourglass yellow"></span></h5>
+                            {% endif %}
+                            {% if p.is_owner and p['status'] == 'Pending' %}
+                                <button class="btn btn-danger btn-mp" data-module="majorProjectStatus"
+                                        data-id="{{ p['id'] }}"><span class="glyphicon glyphicon-trash"></span> Delete
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <button class="btn-expand-panel" role="button" data-toggle="collapse"
+                            href="#evalsCollapse-{{ p['id'] }}" aria-expanded="false"
+                            aria-controls="evalsCollapse-{{ p['id'] }}"><span
+                            class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+                    <div class="collapse major-project-desc" id="evalsCollapse-{{ p['id'] }}">
+                        {{ p['description'] }}
+                    </div>
                 </div>
-            {% else %}
-                {% if p['status'] == 'Passed' %}
-                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-ok green"></span></h5>
-                {% elif p['status'] == 'Failed' %}
-                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-remove red"></span></h5>
-                {% else %}
-                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-hourglass yellow"></span></h5>
-                {% endif %}
-                {% if p.is_owner and p['status'] == 'Pending' %}
-                <button class="btn btn-danger btn-mp" data-module="majorProjectStatus" data-id="{{p['id']}}"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-                {% endif %}
-            {% endif %}
             </div>
-            <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
-            <div class="collapse major-project-desc" id="evalsCollapse-{{p['id']}}">
-                {{p['description']}}
-            </div>
-        </div>
+        {% endfor %}
+
+    {% endif %}
+
     </div>
-    {% endfor %}
-
-{% endif %}
-
-</div>
 {% endblock %}
