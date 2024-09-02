@@ -8,25 +8,23 @@
         <h3 class="page-title">Major Project Form</h3>
         <form data-module="majorProjectForm">
             <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="form-group label-floating is-empty">
-                        <label class="control-label" for="name">Project Name</label>
-                        <input class="form-control" id="name" name="name" type="text" maxlength="64"
-                               placeholder="A clever name for your project, sometimes people will come up with an acronym.">
-                    </div>
-                    <div class="form-group label-floating is-empty">
-                        <label class="control-label" for="tldr">Short Description / TL;DR</label>
-                        <input class="form-control" id="tldr" name="tldr" type="text" maxlength="100"
-                               placeholder="A quick, one-sentence pitch for your project and what it does.">
-                    </div>
+                <div class="panel-body form-group-lg">
+                    <label class="control-label" for="name">Project Name</label>
+                    <input class="form-control" id="name" name="name" type="text" maxlength="64"
+                           placeholder="A clever name for your project, sometimes people will come up with an acronym.">
+                    <label class="control-label" for="tldr">Short Description / TL;DR</label>
+                    <input class="form-control" id="tldr" name="tldr" type="text" maxlength="100"
+                           placeholder="A quick, one-sentence pitch for your project and what it does.">
                     <div class="row">
                         <div class="col-lg-6">
                             <label class="control-label" for="skills-applied">Skills Applied</label>
                             <textarea id="skills-applied" name="skills-applied" class="form-control" rows="5"
-                                      placeholder="A comma-separated list of skills, similar to what you'd put on a resume"></textarea>
+                                      placeholder="A comma-separated list of skills, similar to what you'd put on a resume."></textarea>
                         </div>
                         <div class="col-lg-6">
-
+                            <label class="control-label" for="time-commitment">Time Commitment</label>
+                            <textarea id="time-commitment" name="time-commitment" class="form-control" rows="5" wrap="hard"
+                                      placeholder="Tell us about how much time you spent on the project."></textarea>
                         </div>
                     </div>
                 </div>
