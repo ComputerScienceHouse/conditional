@@ -6,6 +6,10 @@
 
     <div class="container main">
         <h3 class="page-title">Major Project Form</h3>
+        <!--TODO: put a box explaining major project -->
+        <div class="panel panel-default">
+            <p>This talks about major project submission guidelines</p>
+        </div>
         <form data-module="majorProjectForm">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -23,8 +27,36 @@
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label" for="time-commitment">Time Commitment</label>
-                            <textarea id="time-commitment" name="time-commitment" class="form-control" rows="5" wrap="hard"
+                            <textarea id="time-commitment" name="time-commitment" class="form-control" rows="5"
+                                      wrap="hard"
                                       placeholder="Tell us about how much time you spent on the project."></textarea>
+                        </div>
+                    </div>
+                    <label class="form-label" for="description">Detailed Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="10"
+                              placeholder="Tell us everything! More information is better than less."></textarea>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label class="form-label" for="links">Project Links</label>
+                            <textarea id="links" name="links" class="form-control" rows="2"
+                                      placeholder="If you have links (GitHub, YouTube, etc.), put them here!"></textarea>
+                        </div>
+                        <div class="col-lg-4">
+                            <label class="form-label" for="project-files">Photos and Files</label>
+                            <div class="dropzone" id="project-files">
+                                <div class="dz-message">
+                                    <img src="../images/user_upload.svg" width="72px">
+                                    <div class="upload-title">Upload Photos and Videos</div>
+                                    <div class="upload-sub">Drag files here or click to upload.</div>
+                                </div>
+                            </div>
+                            <script>
+                                $("#project-files").dropzone({
+                                    // autoQueue:false,
+                                    parallelUploads: 10,
+                                    uploadMultiple: true,
+                                })
+                            </script>
                         </div>
                     </div>
                 </div>
