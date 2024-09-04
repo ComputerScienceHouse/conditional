@@ -14,12 +14,15 @@ RUN apt-get -yq update && \
 
 ADD . /opt/conditional
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get -yq update && \
-    apt-get -yq install nodejs && \
-    npm install && \
-    npm run production && \
-    rm -rf node_modules && \
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION v10.24.1
+RUN mkdir -p $NVM_DIR
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+
+RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION && npm run production"
+
+RUN rm -rf node_modules && \
     apt-get -yq remove nodejs npm && \
     apt-get -yq clean all
 
