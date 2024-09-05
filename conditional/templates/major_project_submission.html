@@ -1,4 +1,7 @@
 {% extends "nav.html" %}
+{% block extraHeader %}
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+{% endblock %}
 {% block title %}
     Major Project Form
 {% endblock %}
@@ -64,6 +67,15 @@
             <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit"
                    value="Submit Major Project">
         </form>
+        <script>
+            Dropzone.options.projectFiles = {
+                // autoQueue:false,
+                url: "/major_project/upload",
+                parallelUploads: 2,
+                uploadMultiple: true,
+                acceptedFiles: "audio/*,photo/*,video/*,.pdf,.doc,.docx"
+            }
+        </script>
         <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
     <=0 %}
         <div class="panel panel-default">

@@ -17,12 +17,3 @@ export default class DropzoneUpload {
 Dropzone.options.uploadUser = {
     acceptedFiles: ".csv"
 };
-
-Dropzone.options.projectFiles = {
-    // autoQueue:false,
-    url: "/major_project/upload",
-    parallelUploads: 2,
-    uploadMultiple: true,
-    acceptedFiles: "audio/*,photo/*,video/*,.pdf,.doc,.docx"
-}
-console.load("loaded")
