@@ -54,36 +54,19 @@
                             <div class="dropzone" id="project-files" style="margin: 0">
                                 <div class="dz-message" style="margin: 0">
                                     <img src="../images/photo_video.svg" width="72px">
-                                    <div class="upload-title">Upload Photos and Videos</div>
+                                    <div class="upload-title">Upload Media</div>
                                     <div class="upload-sub">Drag files here or click to upload.</div>
                                 </div>
                             </div>
                             <script>
-                                $("#project-files").dropzone({
+                                Dropzone.options.projectFiles = {
                                     // autoQueue:false,
-                                    parallelUploads: 10,
+                                    parallelUploads: 2,
                                     uploadMultiple: true,
-                                })
+                                    acceptedFiles: "audio/*,photo/*,video/*,.pdf,.doc,.docx"
+                                }
                             </script>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="form-group label-floating is-empty">
-                        <label class="control-label" for="tldr">Short Description / TL;DR</label>
-                        <input class="form-control" id="tldr" name="tldr" type="text" maxlength="64"
-                               placeholder="A quick, one-sentence pitch for your project and what it does.">
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-body" style="padding-top:20px;">
-                    <div class="form-group label-floating is-empty">
-                        <label class="control-label" for="description">Description</label>
-                        <textarea name="description" class="form-control" rows="3" id="description"
-                                  placeholder="A 'two liner' description of what your project is. If you have source materials like a GitHub repo publicly available, it's also useful to include links to them."></textarea>
                     </div>
                 </div>
             </div>
