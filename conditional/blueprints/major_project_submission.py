@@ -1,5 +1,9 @@
 import json
+import os
+
 import requests
+import boto3
+from botocore.exceptions import ClientError
 
 from flask import Blueprint
 from flask import request
@@ -9,6 +13,7 @@ from flask import redirect
 from sqlalchemy import desc
 
 import structlog
+from werkzeug.utils import secure_filename
 
 from conditional.util.context_processors import get_member_name
 
@@ -53,6 +58,25 @@ def display_major_project(user_dict=None):
                            major_projects_len=major_projects_len,
                            username=user_dict['username'])
 
+@major_project_bp.route('/major_project/upload', methods=['POST'])
+@auth.oidc_auth
+@get_user
+def upload_major_project_files(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Uploading Major Project File(s)')
+
+    file = request.files['file']
+    if not file:
+        return "No file", 400
+
+    # Temporarily save files to a place, to be uploaded on submit
+
+    safe_name = secure_filename(file.filename)
+    filename = f"/tmp/{user_dict['username']}/{safe_name}"
+
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    file.save(filename)
+
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
 @auth.oidc_auth
@@ -65,9 +89,18 @@ def submit_major_project(user_dict=None):
     name = post_data['projectName']
     description = post_data['projectDescription']
 
-    if name == "" or description == "":
+    if name == "" or len(description.strip().split()) < 50:
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict['username'], name, description)
+
+    # Acquire S3 Bucket instance
+    s3 = boto3.resource("s3")
+    bucket = s3.create_bucket(Bucket="major-project-media")
+    # Collect all the locally cached files and put them in the bucket
+    for file in os.listdir(f"/tmp/{user_dict['username']}"):
+        bucket.upload_file(file, file.split("/")[-1])
+        os.remove(file)
+    os.rmdir(f"/tmp/{user_dict['username']}")
 
     username = user_dict['username']
     send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"

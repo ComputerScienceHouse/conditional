@@ -22,6 +22,8 @@ blinker==1.4
     # via
     #   -r requirements.in
     #   sentry-sdk
+boto3==1.35.13
+botocore==1.35.13
 certifi==2022.5.18.1
     # via
     #   requests

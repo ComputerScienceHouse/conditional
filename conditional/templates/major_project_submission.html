@@ -1,6 +1,6 @@
 {% extends "nav.html" %}
 {% block extraHeader %}
-<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 {% endblock %}
 {% block title %}
     Major Project Form
@@ -12,13 +12,13 @@
         <!--TODO: put a box explaining major project -->
         <div class="panel panel-default">
             <div class="panel-body">
-                <p class="lead">This talks about major project submission guidelines. Rubber cheese chalk and cheese
-                    pepper jack. Lancashire monterey jack say cheese roquefort stinking bishop danish fontina manchego
-                    cheese and wine. Cheeseburger cow dolcelatte feta fondue pecorino roquefort cauliflower cheese. St.
-                    agur blue cheese danish fontina emmental stilton smelly cheese bavarian bergkase fromage cheesy
-                    feet. Paneer stilton halloumi ricotta macaroni cheese stinking bishop cottage cheese camembert de
-                    normandie. Danish fontina cheese triangles squirty cheese cheese on toast camembert de
-                    normandie.</p>
+                <p class="lead">Hi! Welcome to the Major Project submission form. We're excited to read about your major
+                    project. For us(E-Board) to best evaluate your project, please give us as much detail as possible.
+                    Don't feel pressured to write full paragraphs though, good bullet points are plenty!<br>Generally,
+                    major projects are most likely to pass when they meet three of the 4 Major Project Pillars -
+                    spending considerable time on your project, benefiting House, learning new things, and applying hard
+                    skills. And of course, after you submit, please try to talk to E-Board members (in-person or over
+                    Slack) so we are familiar with your project and can ask you questions!</p>
             </div>
         </div>
         <form data-module="majorProjectForm">
@@ -33,23 +33,25 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <label class="form-label" for="skills-applied">Skills Applied</label>
-                            <textarea id="skills-applied" name="skills-applied" class="form-control" rows="5"
-                                      placeholder="A comma-separated list of skills, similar to what you'd put on a resume."></textarea>
+                            <textarea id="skills-applied" name="skills-applied" class="form-control form-textarea"
+                                      rows="5"
+                                      placeholder="List what skills you used for this project (at least 2!), similar to what you'd put on a resume."></textarea>
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label" for="time-commitment">Time Commitment</label>
-                            <textarea id="time-commitment" name="time-commitment" class="form-control" rows="5"
+                            <textarea id="time-commitment" name="time-commitment" class="form-control form-textarea"
+                                      rows="5"
                                       wrap="hard"
-                                      placeholder="Tell us about how much time you spent on the project."></textarea>
+                                      placeholder="We're looking for a considerable amount of time spent on your major project, we suggest ~5 hours minimum."></textarea>
                         </div>
                     </div>
                     <label class="form-label" for="description">Detailed Description</label>
-                    <textarea id="description" name="description" class="form-control" rows="10"
+                    <textarea id="description" name="description" class="form-control form-textarea" rows="10"
                               placeholder="Tell us everything! More information is better than less."></textarea>
                     <div class="row">
                         <div class="col-lg-5">
                             <label class="form-label" for="links">Project Links</label>
-                            <textarea id="links" name="links" class="form-control" rows="2"
+                            <textarea id="links" name="links" class="form-control form-textarea" rows="2"
                                       placeholder="If you have links (GitHub, YouTube, etc.), put them here!"></textarea>
                         </div>
                         <div class="col-lg-4">
