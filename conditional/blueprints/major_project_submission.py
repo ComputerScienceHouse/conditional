@@ -66,7 +66,7 @@ def upload_major_project_files(user_dict=None):
     log.info('Uploading Major Project File(s)')
 
     print(request.files)
-    if len(request.files.keys()) < 1:
+    if len(list(request.files.keys())) < 1:
         return "No file", 400
 
     # Temporarily save files to a place, to be uploaded on submit
