@@ -65,6 +65,7 @@ def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
 
+    print(request.files)
     file = request.files['file']
     if not file:
         return "No file", 400
