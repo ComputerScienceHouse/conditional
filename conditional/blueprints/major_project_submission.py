@@ -102,9 +102,10 @@ def submit_major_project(user_dict=None):
     bucket = s3.create_bucket(Bucket="major-project-media")
     # Collect all the locally cached files and put them in the bucket
     for file in os.listdir(f"/tmp/{user_dict['username']}"):
-        print(file)
-        bucket.upload_file(f"/tmp/{user_dict['username']}/{file}", file)
-        os.remove(file)
+        filepath = f"/tmp/{user_dict['username']}/{file}"
+        print(filepath)
+        bucket.upload_file(filepath, f"{project.id}-{file}")
+        os.remove(filepath)
     os.rmdir(f"/tmp/{user_dict['username']}")
 
     username = user_dict['username']
