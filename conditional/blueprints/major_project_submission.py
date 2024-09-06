@@ -65,7 +65,6 @@ def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
 
-    print(request.files)
     if len(list(request.files.keys())) < 1:
         return "No file", 400
 
@@ -79,6 +78,9 @@ def upload_major_project_files(user_dict=None):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         file.save(filename)
 
+    return jsonify({"success": True}), 200
+
+
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
 @auth.oidc_auth
@@ -91,12 +93,12 @@ def submit_major_project(user_dict=None):
     name = post_data['projectName']
     description = post_data['projectDescription']
 
-    if name == "" or len(description.strip().split()) < 50:
+    if name == "" or len(description.strip().split()) < 50: # check for 50 word minimum
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict['username'], name, description)
 
     # Acquire S3 Bucket instance
-    s3 = boto3.resource("s3")
+    s3 = boto3.resource("s3", endpoint_url="https://s3.csh.rit.edu")
     bucket = s3.create_bucket(Bucket="major-project-media")
     # Collect all the locally cached files and put them in the bucket
     for file in os.listdir(f"/tmp/{user_dict['username']}"):
