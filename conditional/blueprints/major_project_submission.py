@@ -66,17 +66,17 @@ def upload_major_project_files(user_dict=None):
     log.info('Uploading Major Project File(s)')
 
     print(request.files)
-    file = request.files['file']
-    if not file:
+    if len(request.files.keys()) < 1:
         return "No file", 400
 
     # Temporarily save files to a place, to be uploaded on submit
 
-    safe_name = secure_filename(file.filename)
-    filename = f"/tmp/{user_dict['username']}/{safe_name}"
+    for _, file in request.files.iterlists():
+        safe_name = secure_filename(file.filename)
+        filename = f"/tmp/{user_dict['username']}/{safe_name}"
 
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    file.save(filename)
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        file.save(filename)
 
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
