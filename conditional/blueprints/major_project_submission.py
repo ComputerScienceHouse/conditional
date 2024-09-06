@@ -71,7 +71,7 @@ def upload_major_project_files(user_dict=None):
 
     # Temporarily save files to a place, to be uploaded on submit
 
-    for _, file in request.files.iterlists():
+    for _, file in request.files.lists():
         safe_name = secure_filename(file.filename)
         filename = f"/tmp/{user_dict['username']}/{safe_name}"
 
