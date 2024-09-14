@@ -9,17 +9,18 @@
 
     <div class="container main">
         <h3 class="page-title">Major Project Form</h3>
-        <!--TODO: put a box explaining major project -->
         <div class="panel panel-default">
             <div class="panel-body">
                 <p class="lead">Welcome to the Major Project submission form! We're excited to read about what you've
                     been working on. For us (E-Board) to best evaluate your project, please give us as much detail as
                     possible. Don't feel pressured to write full paragraphs though, good bullet points are plenty!
-                    <br>Generally, major projects are most likely to pass when they meet at least 3 of the 4
+                    <br>Generally, a major project is something that you make with the goal of challenging yourself,
+                    learning new things, and doing something you would be proud of. Major projects are most likely to
+                    pass when they meet at least 2 of the 3
                     <a href="https://wiki.csh.rit.edu/wiki/Major_Project_Pillars">Major Project Pillars</a> -
-                    considerable time on your project, benefiting House, learning new things, and applying hard
-                    skills. And of course, after you submit, please try to talk to E-Board members (in-person or over
-                    Slack) so we are familiar with your project and can ask you questions!</p>
+                    considerable time on your project, benefiting House, and meaningfully applying skills. And of course,
+                    after you submit, please try to talk to E-Board members (in-person or over Slack) so we are familiar
+                    with your project and can ask you questions!</p>
             </div>
         </div>
         <form data-module="majorProjectForm">
@@ -34,9 +35,11 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <label class="form-label" for="skills-applied">Skills Applied</label>
-                            <textarea id="skills-applied" name="skills-applied" class="form-control form-textarea"
+                            <div id="skills-applied" class="form-control form-textarea">
+                                List what skills you meaningfully used while working on this project (at least 2!)</div>
+                            <textarea id="skills-applied-old" name="skills-applied" class="form-control form-textarea"
                                       rows="5"
-                                      placeholder="List what skills you used for this project (at least 2!), similar to what you'd put on a resume."></textarea>
+                                      placeholder="List what skills you meaningfully used while working on this project (at least 2!)"><span>Test</span></textarea>
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label" for="time-commitment">Time Commitment</label>

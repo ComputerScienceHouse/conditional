@@ -92,27 +92,38 @@ def submit_major_project(user_dict=None):
     post_data = request.get_json()
     name = post_data['projectName']
     description = post_data['projectDescription']
+    user_id = user_dict['username']
 
     if name == "" or len(description.strip().split()) < 50: # check for 50 word minimum
         return jsonify({"success": False}), 400
-    project = MajorProject(user_dict['username'], name, description)
+    project = MajorProject(user_id, name, description)
+
+    db.session.add(project)
+    db.session.commit()
+
+    # This allows us to get a project with a database ID
+    project = MajorProject.query.filter(
+        MajorProject.name == name and MajorProject.uid == user_id
+    ).first()
+
+    if project is None:
+        return jsonify({"success": False}), 500
+
+    # Don't send slack ping until after we are sure the DB worked fine
+    send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
+                            f" submitted their major project, *{name}*!"})
 
     # Acquire S3 Bucket instance
     s3 = boto3.resource("s3", endpoint_url="https://s3.csh.rit.edu")
     bucket = s3.create_bucket(Bucket="major-project-media")
     # Collect all the locally cached files and put them in the bucket
-    for file in os.listdir(f"/tmp/{user_dict['username']}"):
-        filepath = f"/tmp/{user_dict['username']}/{file}"
+    for file in os.listdir(f"/tmp/{user_id}"):
+        filepath = f"/tmp/{user_id}/{file}"
         print(filepath)
         bucket.upload_file(filepath, f"{project.id}-{file}")
         os.remove(filepath)
-    os.rmdir(f"/tmp/{user_dict['username']}")
+    os.rmdir(f"/tmp/{user_id}")
 
-    username = user_dict['username']
-    send_slack_ping({"text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
-                            f" submitted their major project, *{name}*!"})
-    db.session.add(project)
-    db.session.commit()
     return jsonify({"success": True}), 200
 
 

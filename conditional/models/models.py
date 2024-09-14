@@ -135,16 +135,20 @@ class MajorProject(db.Model):
     date = Column(Date, nullable=False)
     uid = Column(String(32), nullable=False)
     name = Column(String(64), nullable=False)
-    description = Column(Text)
+    tldr = Column(String(128), nullable=False)
+    time = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
     active = Column(Boolean, nullable=False)
     status = Column(Enum('Pending', 'Passed', 'Failed',
                          name="major_project_enum"),
                     nullable=False)
 
-    def __init__(self, uid, name, desc):
+    def __init__(self, uid, name, tldr, time, desc):
         self.uid = uid
         self.date = datetime.now()
         self.name = name
+        self.tldr = tldr
+        self.time = time
         self.description = desc
         self.status = 'Pending'
         self.active = True
