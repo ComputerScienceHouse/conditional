@@ -23,8 +23,8 @@ export default class MajorProjectForm {
       this.tags_written = true
       document.getElementsByClassName("placeholder").item(0).remove()
     }
-        let txt = input.value.replace(/[^a-zA-Z0-9\+\-\.\#]/g, ''); // allowed characters list
-    if (txt) input.before('<span class="skill-tag">' + txt + '</span>');
+        let txt = input.value.replace(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
+    if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag">' + txt + '</span>');
     input.value = "";
     input.focus();
 
