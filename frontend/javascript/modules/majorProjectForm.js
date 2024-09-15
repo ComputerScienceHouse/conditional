@@ -52,9 +52,7 @@ export default class MajorProjectForm {
 
         let skills = [];
 
-        for (const skill in document.getElementsByClassName('span[class=skill-tag]')) {
-            skills.push(skill.innerText)
-        }
+        Array.from(document.getElementsByClassName('skill-tag')).forEach(tag => skills.push(tag.firstChild.data))
 
         let payload = {
             projectName: this.form.querySelector('input[name=name]').value,
@@ -63,7 +61,7 @@ export default class MajorProjectForm {
             projectSkills: skills,
             projectDescription: this.form.querySelector('textarea[name=description]').value
         };
-        
+
         console.log(payload)
 
         FetchUtil.postWithWarning(this.endpoint, payload, {
