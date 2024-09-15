@@ -14,7 +14,7 @@ export default class MajorProjectForm {
     this.form.querySelector('input[type=submit]')
       .addEventListener('click', e => this._submitForm(e));
     this.form.querySelector('input[id=skill-input]')
-        .addEventListener('focusout')
+        .addEventListener('focusout', e => this.onWriteSkill(e));
   }
 
   onWriteSkill(e) {
