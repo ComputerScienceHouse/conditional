@@ -35,10 +35,16 @@ export default class MajorProjectForm {
             document.getElementsByClassName("placeholder").item(0).remove()
         }
         let txt = input.value.replace(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
-        if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag">' + txt + '</span>');
+        if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
+        let skills = document.getElementsByClassName("skill-tag")
+        skills[skills.length - 1].addEventListener('click', e => this.onRemoveTag(e));
         input.value = "";
         input.focus();
 
+    }
+
+    onRemoveTag(e) {
+        e.target.remove();
     }
 
     _submitForm(e) {

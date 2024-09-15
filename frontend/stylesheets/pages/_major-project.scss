@@ -37,6 +37,7 @@
   margin: 2px 3px;
   color: #444;
   border-radius: 5px;
+  transition: .5s all;
 }
 
 .skill-tag:after {
@@ -47,4 +48,8 @@
   padding: 0 4px;
   margin: 3px 0 10px 7px;
   font-size: 10px;
+}
+
+.skill-tag:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
