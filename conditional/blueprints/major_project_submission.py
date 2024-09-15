@@ -91,12 +91,15 @@ def submit_major_project(user_dict=None):
 
     post_data = request.get_json()
     name = post_data['projectName']
+    tldr = post_data['projectTldr']
+    time_spent = post_data['projectTimeSpent']
     description = post_data['projectDescription']
+
     user_id = user_dict['username']
 
     if name == "" or len(description.strip().split()) < 50: # check for 50 word minimum
         return jsonify({"success": False}), 400
-    project = MajorProject(user_id, name, description)
+    project = MajorProject(user_id, name, tldr, time_spent, description)
 
     db.session.add(project)
     db.session.commit()

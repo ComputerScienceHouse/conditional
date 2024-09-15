@@ -25,8 +25,8 @@ def upgrade():
     op.alter_column('freshman_hm_attendance', 'attendance_status',
                existing_type=postgresql.ENUM('Attended', 'Excused', 'Absent', name='attendance_enum'),
                nullable=True)
-    op.add_column('major_projects', sa.Column('time', sa.Text(), nullable=False))
-    op.add_column('major_projects', sa.Column('tldr', sa.String(length=128), nullable=False))
+    op.add_column('major_projects', sa.Column('time', sa.Text(), nullable=False, server_default='N/A'))
+    op.add_column('major_projects', sa.Column('tldr', sa.String(length=128), nullable=False, server_default='N/A'))
     op.alter_column('major_projects', 'description',
                existing_type=sa.TEXT(),
                nullable=False)
