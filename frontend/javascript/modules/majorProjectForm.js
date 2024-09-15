@@ -50,12 +50,18 @@ export default class MajorProjectForm {
     _submitForm(e) {
         e.preventDefault();
 
+        let skills = [];
+
+        for (const skill in document.getElementsByClassName('span[class=skill-tag]')) {
+            skills.push(skill.innerText)
+        }
+
         let payload = {
             projectName: this.form.querySelector('input[name=name]').value,
             projectTldr: this.form.querySelector('input[name=tldr]').value,
             projectTimeSpent: this.form.querySelector('textarea[name=time-commitment]').value,
-            projectDescription:
-            this.form.querySelector('textarea[name=description]').value
+            projectSkills: skills,
+            projectDescription: this.form.querySelector('textarea[name=description]').value
         };
 
         FetchUtil.postWithWarning(this.endpoint, payload, {

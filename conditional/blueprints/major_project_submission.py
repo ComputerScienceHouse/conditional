@@ -93,9 +93,12 @@ def submit_major_project(user_dict=None):
     name = post_data['projectName']
     tldr = post_data['projectTldr']
     time_spent = post_data['projectTimeSpent']
+    skills = post_data['projectSkills']
     description = post_data['projectDescription']
 
     user_id = user_dict['username']
+
+    print(skills)
 
     if name == "" or len(description.strip().split()) < 50: # check for 50 word minimum
         return jsonify({"success": False}), 400
