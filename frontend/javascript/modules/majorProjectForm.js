@@ -7,7 +7,7 @@ export default class MajorProjectForm {
         this.form = form;
         this.endpoint = '/major_project/submit';
         this.tags_written = false;
-        this.tag_keys = ["Enter", "Comma", "Tab"];
+        this.tag_keys = ["Enter", "Comma"];
         this.render();
     }
 
