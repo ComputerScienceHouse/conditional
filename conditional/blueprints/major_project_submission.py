@@ -90,6 +90,7 @@ def submit_major_project(user_dict=None):
     log.info('Submit Major Project')
 
     post_data = request.get_json()
+    print(post_data)
     name = post_data['projectName']
     tldr = post_data['projectTldr']
     time_spent = post_data['projectTimeSpent']
