@@ -25,6 +25,7 @@ export default class MajorProjectForm {
             e.preventDefault();
             this.onWriteSkill(e);
         }
+        return false;
     }
 
     onWriteSkill(e) {
