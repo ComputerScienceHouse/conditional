@@ -37,7 +37,7 @@ export default class MajorProjectForm {
         let txt = input.value.replace(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
         if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
         let skills = document.getElementsByClassName("skill-tag")
-        skills[skills.length - 1].addEventListener('click', e => this.onRemoveTag(e));
+        skills.item(skills.length - 1).addEventListener('click', e => this.onRemoveTag(e));
         input.value = "";
         input.focus();
 
@@ -63,6 +63,8 @@ export default class MajorProjectForm {
             projectSkills: skills,
             projectDescription: this.form.querySelector('textarea[name=description]').value
         };
+        
+        console.log(payload)
 
         FetchUtil.postWithWarning(this.endpoint, payload, {
             warningText: "You will not be able to edit your " +
