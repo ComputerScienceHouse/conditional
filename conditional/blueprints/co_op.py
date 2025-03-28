@@ -17,7 +17,7 @@ logger = structlog.get_logger()
 
 
 @co_op_bp.route('/co_op/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_co_op_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -33,7 +33,7 @@ def display_co_op_form(user_dict=None):
 
 
 @co_op_bp.route('/co_op/submit', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_co_op_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -65,7 +65,7 @@ def submit_co_op_form(user_dict=None):
 
 
 @co_op_bp.route('/co_op/<uid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def delete_co_op(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -91,7 +91,7 @@ def delete_co_op(uid, user_dict=None):
 
 
 @co_op_bp.route('/co_op/manage')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_co_op_management(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

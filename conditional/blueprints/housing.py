@@ -20,7 +20,7 @@ housing_bp = Blueprint('housing_bp', __name__)
 
 
 @housing_bp.route('/housing')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_housing(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -62,7 +62,7 @@ def display_housing(user_dict=None):
 
 
 @housing_bp.route('/housing/in_queue', methods=['PUT'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def change_queue_state(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -88,7 +88,7 @@ def change_queue_state(user_dict=None):
 
 
 @housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def change_room_numbers(rmnumber, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -121,7 +121,7 @@ def change_room_numbers(rmnumber, user_dict=None):
 
 
 @housing_bp.route('/housing/room/<rmnumber>', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 def get_occupants(rmnumber):
 
     # Get the current list of people living on-floor.
@@ -134,7 +134,7 @@ def get_occupants(rmnumber):
 
 
 @housing_bp.route('/housing', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def clear_all_rooms(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

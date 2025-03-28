@@ -29,7 +29,7 @@ attendance_bp = Blueprint('attendance_bp', __name__)
 
 
 @attendance_bp.route('/attendance/ts_members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def get_all_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -57,7 +57,7 @@ def get_all_members(user_dict=None):
 
 
 @attendance_bp.route('/attendance/hm_members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def get_non_alumni_non_coop(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -102,7 +102,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
 
 @attendance_bp.route('/attendance/cm_members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def get_non_alumni(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -130,7 +130,7 @@ def get_non_alumni(user_dict=None):
 
 
 @attendance_bp.route('/attendance_cm')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_attendance_cm(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -142,7 +142,7 @@ def display_attendance_cm(user_dict=None):
 
 
 @attendance_bp.route('/attendance_ts')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_attendance_ts(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -154,7 +154,7 @@ def display_attendance_ts(user_dict=None):
 
 
 @attendance_bp.route('/attendance_hm')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_attendance_hm(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -170,7 +170,7 @@ def display_attendance_hm(user_dict=None):
 
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_committee_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -205,7 +205,7 @@ def submit_committee_attendance(user_dict=None):
 
 
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_seminar_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -240,7 +240,7 @@ def submit_seminar_attendance(user_dict=None):
 
 
 @attendance_bp.route('/attendance/submit/hm', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_house_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -290,7 +290,7 @@ def submit_house_attendance(user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def alter_house_attendance(uid, hid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -320,7 +320,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def alter_house_excuse(uid, hid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -357,7 +357,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/history', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def attendance_history(user_dict=None):
 
@@ -444,7 +444,7 @@ def attendance_history(user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def alter_committee_attendance(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -476,7 +476,7 @@ def alter_committee_attendance(cid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/ts/<sid>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def alter_seminar_attendance(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -508,7 +508,7 @@ def alter_seminar_attendance(sid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/ts/<sid>', methods=['GET', 'DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def get_cm_attendees(sid, user_dict=None):
     if request.method == 'GET':
@@ -545,7 +545,7 @@ def get_cm_attendees(sid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def get_ts_attendees(cid, user_dict=None):
     if request.method == 'GET':
@@ -582,7 +582,7 @@ def get_ts_attendees(cid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/cm/<cid>/approve', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def approve_cm(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -600,7 +600,7 @@ def approve_cm(cid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/ts/<sid>/approve', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def approve_ts(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

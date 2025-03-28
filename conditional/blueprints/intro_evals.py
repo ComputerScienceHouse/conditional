@@ -25,7 +25,7 @@ logger = structlog.get_logger()
 
 
 @intro_evals_bp.route('/intro_evals/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_intro_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

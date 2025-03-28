@@ -15,7 +15,7 @@ logger = structlog.get_logger()
 
 
 @conditionals_bp.route('/conditionals/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_conditionals(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -39,7 +39,7 @@ def display_conditionals(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def create_conditional(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -76,7 +76,7 @@ def create_conditional(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def conditional_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -113,7 +113,7 @@ def conditional_review(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

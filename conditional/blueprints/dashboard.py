@@ -29,7 +29,7 @@ def is_seminar_attendance_valid(attendance):
 
 # pylint: disable=too-many-statements
 @dashboard_bp.route('/dashboard/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_dashboard(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

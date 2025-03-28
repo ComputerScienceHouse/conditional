@@ -31,7 +31,7 @@ major_project_bp = Blueprint('major_project_bp', __name__)
 
 
 @major_project_bp.route('/major_project/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_major_project(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -59,11 +59,12 @@ def display_major_project(user_dict=None):
                            username=user_dict['username'])
 
 @major_project_bp.route('/major_project/upload', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
+
 
     if len(list(request.files.keys())) < 1:
         return "No file", 400
@@ -83,7 +84,7 @@ def upload_major_project_files(user_dict=None):
 
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_major_project(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -135,7 +136,7 @@ def submit_major_project(user_dict=None):
 
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def major_project_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -162,7 +163,7 @@ def major_project_review(user_dict=None):
 
 
 @major_project_bp.route('/major_project/delete/<pid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def major_project_delete(pid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

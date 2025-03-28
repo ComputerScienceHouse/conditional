@@ -1,4 +1,4 @@
-FROM docker.io/python:3.8-buster
+FROM docker.io/python:3.12-bookworm
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 RUN mkdir /opt/conditional
@@ -8,7 +8,7 @@ ADD requirements.txt /opt/conditional
 WORKDIR /opt/conditional
 
 RUN apt-get -yq update && \
-    apt-get -yq install libsasl2-dev libldap2-dev libssl-dev gcc g++ make && \
+    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make && \
     pip install -r requirements.txt && \
     apt-get -yq clean all
 
@@ -29,4 +29,5 @@ RUN rm -rf node_modules && \
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
-CMD ["ddtrace-run", "gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
+#CMD ["ddtrace-run", "gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
+CMD ["gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]

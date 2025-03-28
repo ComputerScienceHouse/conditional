@@ -52,7 +52,7 @@ member_management_bp = Blueprint('member_management_bp', __name__)
 
 
 @member_management_bp.route('/manage')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_member_management(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -100,7 +100,7 @@ def display_member_management(user_dict=None):
 
 
 @member_management_bp.route('/manage/settings', methods=['PUT'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_eval(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -130,7 +130,7 @@ def member_management_eval(user_dict=None):
 
 
 @member_management_bp.route('/manage/accept_dues_until', methods=['PUT'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_financial(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -154,7 +154,7 @@ def member_management_financial(user_dict=None):
 
 
 @member_management_bp.route('/manage/user', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_adduser(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -180,7 +180,7 @@ def member_management_adduser(user_dict=None):
 
 
 @member_management_bp.route('/manage/user/upload', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_uploaduser(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -221,7 +221,7 @@ def member_management_uploaduser(user_dict=None):
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_edituser(uid, user_dict=None):
     if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
@@ -325,7 +325,7 @@ def edit_fid(uid, flask_request):
 
 
 @member_management_bp.route('/manage/user/<uid>', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_getuserinfo(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -410,7 +410,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 
 
 @member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_deleteuser(fid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -444,7 +444,7 @@ def member_management_deleteuser(fid, user_dict=None):
 # user creation script. There's no reason that the evals director should ever
 # manually need to do this
 @member_management_bp.route('/manage/upgrade_user', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_upgrade_user(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -508,7 +508,7 @@ def member_management_upgrade_user(user_dict=None):
 
 
 @member_management_bp.route('/manage/make_user_active', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def member_management_make_user_active(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -526,7 +526,7 @@ def member_management_make_user_active(user_dict=None):
 
 
 @member_management_bp.route('/member/<uid>', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def get_member(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -546,7 +546,7 @@ def get_member(uid, user_dict=None):
 
 
 @member_management_bp.route('/manage/active', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def clear_active_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -592,7 +592,7 @@ def export_active_list():
 
 
 @member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def remove_current_student(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -611,7 +611,7 @@ def remove_current_student(uid, user_dict=None):
 
 
 @member_management_bp.route('/manage/new', methods=['GET'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def new_year(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

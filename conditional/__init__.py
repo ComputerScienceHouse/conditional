@@ -7,6 +7,7 @@ from flask import Flask, redirect, render_template, g
 from flask_migrate import Migrate
 from flask_gzip import Gzip
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
+from flask_pyoidc.provider_configuration import ProviderConfiguration, ClientMetadata
 from flask_sqlalchemy import SQLAlchemy
 
 import sentry_sdk
@@ -39,8 +40,12 @@ ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
                ro=app.config['LDAP_RO'])
 
-auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"],
-                          client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
+#auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"], client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
+
+client_metadata = ClientMetadata(app.config["OIDC_CLIENT_CONFIG"])
+provider_config = ProviderConfiguration(issuer=app.config["OIDC_ISSUER"], client_registration_info=client_metadata)
+
+auth = OIDCAuthentication({'default': provider_config}, app)
 
 app.secret_key = app.config["SECRET_KEY"]
 
@@ -137,7 +142,7 @@ def static_proxy(path):
 
 
 @app.route('/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 def default_route():
     return redirect('/dashboard')
 
@@ -158,7 +163,7 @@ def health():
 
 @app.errorhandler(404)
 @app.errorhandler(500)
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def route_errors(error, user_dict=None):
     data = dict()

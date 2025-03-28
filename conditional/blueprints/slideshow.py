@@ -20,7 +20,7 @@ slideshow_bp = Blueprint('slideshow_bp', __name__)
 
 
 @slideshow_bp.route('/slideshow/intro')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_intro_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -36,7 +36,7 @@ def slideshow_intro_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_intro_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -49,7 +49,7 @@ def slideshow_intro_members(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_intro_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -76,7 +76,7 @@ def slideshow_intro_review(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_spring_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -92,7 +92,7 @@ def slideshow_spring_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_spring_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -105,7 +105,7 @@ def slideshow_spring_members(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_spring_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
