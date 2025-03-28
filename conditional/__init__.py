@@ -40,8 +40,6 @@ ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
                ro=app.config['LDAP_RO'])
 
-#auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"], client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
-
 client_metadata = ClientMetadata(app.config["OIDC_CLIENT_CONFIG"])
 provider_config = ProviderConfiguration(issuer=app.config["OIDC_ISSUER"], client_registration_info=client_metadata)
 

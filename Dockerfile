@@ -29,5 +29,4 @@ RUN rm -rf node_modules && \
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
-#CMD ["ddtrace-run", "gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
-CMD ["gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
+CMD ["ddtrace-run", "gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
