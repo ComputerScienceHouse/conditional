@@ -117,7 +117,7 @@ def conditional_review(user_dict=None):
 @get_user
 def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete conditional-{}'.format(cid))
+    log.info(f'Delete conditional-{cid}')
 
     if ldap_is_eval_director(user_dict['account']):
         Conditional.query.filter(

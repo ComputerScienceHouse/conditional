@@ -46,7 +46,7 @@ def submit_co_op_form(user_dict=None):
     if not ldap_is_current_student(user_dict['account']):
         return "Must be current student", 403
 
-    log.info('Submit {} Co-Op'.format(semester))
+    log.info(f'Submit {semester} Co-Op')
 
     if CurrentCoops.query.filter(CurrentCoops.uid == user_dict['username'],
                                  CurrentCoops.date_created > start_of_year()).first():

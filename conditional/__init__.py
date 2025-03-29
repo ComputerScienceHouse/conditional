@@ -164,7 +164,7 @@ def health():
 @auth.oidc_auth("default")
 @get_user
 def route_errors(error, user_dict=None):
-    data = dict()
+    data = {}
 
     # Handle the case where the header isn't present
     if user_dict['username'] is not None:

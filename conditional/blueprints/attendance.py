@@ -520,7 +520,7 @@ def get_cm_attendees(sid, user_dict=None):
         return jsonify({"attendees": attendees}), 200
 
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete Technical Seminar {}'.format(sid))
+    log.info(f'Delete Technical Seminar {sid}')
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -557,7 +557,7 @@ def get_ts_attendees(cid, user_dict=None):
         return jsonify({"attendees": attendees}), 200
 
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete Committee Meeting {}'.format(cid))
+    log.info(f'Delete Committee Meeting {cid}')
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -580,7 +580,7 @@ def get_ts_attendees(cid, user_dict=None):
 @get_user
 def approve_cm(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Approve Committee Meeting {} Attendance'.format(cid))
+    log.info(f'Approve Committee Meeting {cid} Attendance')
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -598,7 +598,7 @@ def approve_cm(cid, user_dict=None):
 @get_user
 def approve_ts(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Approve Technical Seminar {} Attendance'.format(sid))
+    log.info(f'Approve Technical Seminar {sid} Attendance')
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
