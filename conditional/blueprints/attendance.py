@@ -183,7 +183,7 @@ def submit_committee_attendance(user_dict=None):
     f_attendees = post_data['freshmen']
     timestamp = post_data['timestamp']
 
-    log.info('Submit {} Meeting Attendance'.format(committee))
+    log.info(f'Submit {committee} Meeting Attendance')
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
     meeting = CommitteeMeeting(committee, timestamp, approved)
@@ -193,11 +193,11 @@ def submit_committee_attendance(user_dict=None):
     db.session.refresh(meeting)
 
     for m in m_attendees:
-        log.info('Gave Attendance to {} for {}'.format(m, committee))
+        log.info(f'Gave Attendance to {m} for {committee}')
         db.session.add(MemberCommitteeAttendance(m, meeting.id))
 
     for f in f_attendees:
-        log.info('Gave Attendance to freshman-{} for {}'.format(f, committee))
+        log.info(f'Gave Attendance to freshman-{f} for {committee}')
         db.session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
     db.session.commit()
@@ -228,11 +228,11 @@ def submit_seminar_attendance(user_dict=None):
     db.session.refresh(seminar)
 
     for m in m_attendees:
-        log.info('Gave Attendance to {} for {}'.format(m, seminar_name))
+        log.info(f'Gave Attendance to {m} for {seminar_name}')
         db.session.add(MemberSeminarAttendance(m, seminar.id))
 
     for f in f_attendees:
-        log.info('Gave Attendance to freshman-{} for {}'.format(f, seminar_name))
+        log.info(f'Gave Attendance to freshman-{f} for {seminar_name}')
         db.session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db.session.commit()
@@ -263,10 +263,7 @@ def submit_house_attendance(user_dict=None):
 
     if "members" in post_data:
         for m in post_data['members']:
-            log.info('Marked {} {} for House Meeting on {}'.format(
-                m['uid'],
-                m['status'],
-                timestamp.strftime("%Y-%m-%d")))
+            log.info(f'Marked {m['uid']} {m['status']} for House Meeting on {timestamp.strftime("%Y-%m-%d")}')
             db.session.add(MemberHouseMeetingAttendance(
                 m['uid'],
                 meeting.id,
@@ -275,10 +272,7 @@ def submit_house_attendance(user_dict=None):
 
     if "freshmen" in post_data:
         for f in post_data['freshmen']:
-            log.info('Marked freshman-{} {} for House Meeting on {}'.format(
-                f['id'],
-                f['status'],
-                timestamp.strftime("%Y-%m-%d")))
+            log.info(f'Marked freshman-{f['id']} {f['status']} for House Meeting on {timestamp.strftime("%Y-%m-%d")}')
             db.session.add(FreshmanHouseMeetingAttendance(
                 f['id'],
                 meeting.id,
@@ -299,7 +293,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
         return "must be evals", 403
 
     if not uid.isdigit():
-        log.info('Mark {} Present for House Meeting ID: {}'.format(uid, hid))
+        log.info(f'Mark {uid} Present for House Meeting ID: {hid}')
         member_meeting = MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
@@ -308,7 +302,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
         db.session.commit()
         return jsonify({"success": True}), 200
 
-    log.info('Mark freshman-{} Present for House Meeting ID: {}'.format(uid, hid))
+    log.info(f'Mark freshman-{uid} Present for House Meeting ID: {hid}')
     freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == uid,
         FreshmanHouseMeetingAttendance.meeting_id == hid
@@ -333,7 +327,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
     hm_excuse = post_data['excuse']
 
     if not uid.isdigit():
-        log.info('Mark {} as {} for HM ID: {}'.format(uid, hm_status, hid))
+        log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
         MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
@@ -342,7 +336,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
             'attendance_status': hm_status
         })
     else:
-        log.info('Mark {} as {} for HM ID: {}'.format(uid, hm_status, hid))
+        log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
         FreshmanHouseMeetingAttendance.query.filter(
             FreshmanHouseMeetingAttendance.fid == uid,
             FreshmanHouseMeetingAttendance.meeting_id == hid

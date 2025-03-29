@@ -111,14 +111,14 @@ def member_management_eval(user_dict=None):
     post_data = request.get_json()
 
     if 'siteLockdown' in post_data:
-        log.info('Changed Site Lockdown: {}'.format(post_data['siteLockdown']))
+        log.info(f'Changed Site Lockdown: {post_data['siteLockdown']}')
         EvalSettings.query.update(
             {
                 'site_lockdown': post_data['siteLockdown']
             })
 
     if 'introForm' in post_data:
-        log.info('Changed Intro Form: {}'.format(post_data['introForm']))
+        log.info(f'Changed Intro Form: {post_data['introForm']}')
         EvalSettings.query.update(
             {
                 'intro_form_active': post_data['introForm']
@@ -142,7 +142,7 @@ def member_management_financial(user_dict=None):
 
     if 'acceptDuesUntil' in post_data:
         date = datetime.strptime(post_data['acceptDuesUntil'], "%Y-%m-%d")
-        log.info('Changed Dues Accepted Until: {}'.format(date))
+        log.info(f'Changed Dues Accepted Until: {date}')
         EvalSettings.query.update(
             {
                 'accept_dues_until': date
@@ -167,7 +167,7 @@ def member_management_adduser(user_dict=None):
     name = post_data['name']
     onfloor_status = post_data['onfloor']
     room_number = post_data['roomNumber']
-    log.info('Create Freshman Account for {}'.format(name))
+    log.info(f'Create Freshman Account for {name}')
 
     # empty room numbers should be NULL
     if room_number == "":
@@ -210,7 +210,7 @@ def member_management_uploaduser(user_dict=None):
             else:
                 rit_username = None
 
-            log.info('Create Freshman Account for {} via CSV Upload'.format(name))
+            log.info(f'Create Freshman Account for {name} via CSV Upload')
             db.session.add(FreshmanAccount(name, onfloor_status, room_number, None, rit_username))
 
         db.session.flush()
@@ -248,11 +248,7 @@ def edit_uid(uid, flask_request, username):
         room_number = post_data['roomNumber']
         onfloor_status = post_data['onfloorStatus']
         housing_points = post_data['housingPoints']
-        log.info('Edit {} - Room: {} On-Floor: {} Points: {}'.format(
-            uid,
-            post_data['roomNumber'],
-            post_data['onfloorStatus'],
-            post_data['housingPoints']))
+        log.info(f'Edit {uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Points: {post_data['housingPoints']}')
 
         ldap_set_roomnumber(account, room_number)
         if onfloor_status:
@@ -271,7 +267,7 @@ def edit_uid(uid, flask_request, username):
         ldap_set_housingpoints(account, housing_points)
 
     # Only update if there's a diff
-    log.info('Set {} Active: {}'.format(uid, active_member))
+    log.info(f'Set {uid} Active: {active_member}')
     if ldap_is_active(account) != active_member:
         if active_member:
             ldap_set_active(account)
@@ -293,12 +289,7 @@ def edit_uid(uid, flask_request, username):
 def edit_fid(uid, flask_request):
     log = logger.new(request=flask_request, auth_dict={'username': uid})
     post_data = flask_request.get_json()
-    log.info('Edit freshman-{} - Room: {} On-Floor: {} Eval: {} SigMiss: {}'.format(
-        uid,
-        post_data['roomNumber'],
-        post_data['onfloorStatus'],
-        post_data['evalDate'],
-        post_data['sigMissed']))
+    log.info(f'Edit freshman-{uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Eval: {post_data['evalDate']} SigMiss: {post_data['sigMissed']}')
 
     name = post_data['name']
 
@@ -329,7 +320,7 @@ def edit_fid(uid, flask_request):
 @get_user
 def member_management_getuserinfo(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Get {}\'s Information'.format(uid))
+    log.info(f'Get {uid}\'s Information')
 
     if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
         return "must be eval or financial director", 403
@@ -414,7 +405,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 @get_user
 def member_management_deleteuser(fid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete freshman-{}'.format(fid))
+    log.info(f'Delete freshman-{fid}')
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
@@ -458,7 +449,7 @@ def member_management_upgrade_user(user_dict=None):
     uid = post_data['uid']
     signatures_missed = post_data['sigsMissed']
 
-    log.info('Upgrade freshman-{} to Account: {}'.format(fid, uid))
+    log.info(f'Upgrade freshman-{fid} to Account: {uid}')
 
     acct = FreshmanAccount.query.filter(
         FreshmanAccount.id == fid).first()
@@ -483,10 +474,7 @@ def member_management_upgrade_user(user_dict=None):
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
         else:
-            log.info('Duplicate house meeting attendance! fid: {}, uid: {}, id: {}'.format(
-                fid,
-                uid,
-                fhm.meeting_id))
+            log.info(f'Duplicate house meeting attendance! fid: {fid}, uid: {uid}, id: {fhm.meeting_id}')
         db.session.delete(fhm)
 
     new_account = ldap_get_member(uid)
@@ -519,7 +507,7 @@ def member_management_make_user_active(user_dict=None):
         return "must be current student, not in bad standing and not active", 403
 
     ldap_set_active(user_dict['account'])
-    log.info("Make user {} active".format(user_dict['username']))
+    log.info(f"Make user {user_dict['username']} active")
 
     clear_members_cache()
     return jsonify({"success": True}), 200
@@ -530,7 +518,7 @@ def member_management_make_user_active(user_dict=None):
 @get_user
 def get_member(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Get {}\'s Information'.format(uid))
+    log.info(f'Get {uid}\'s Information')
 
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
@@ -559,7 +547,7 @@ def clear_active_members(user_dict=None):
     # Clear the active group.
     for account in members:
         if account.uid != user_dict['username']:
-            log.info('Remove {} from Active Status'.format(account.uid))
+            log.info(f'Remove {account.uid} from Active Status')
             ldap_set_inactive(account)
     return jsonify({"success": True}), 200
 
@@ -602,10 +590,10 @@ def remove_current_student(uid, user_dict=None):
 
     member = ldap_get_member(uid)
     if request.method == 'DELETE':
-        log.info('Remove {} from Current Student'.format(uid))
+        log.info(f'Remove {uid} from Current Student')
         ldap_set_non_current_student(member)
     elif request.method == 'POST':
-        log.info('Add {} to Current Students'.format(uid))
+        log.info(f'Add {uid} to Current Students')
         ldap_set_current_student(member)
     return jsonify({"success": True}), 200
 

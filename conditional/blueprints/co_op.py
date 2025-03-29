@@ -73,7 +73,7 @@ def delete_co_op(uid, user_dict=None):
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
-    log.info('Delete {}\'s Co-Op'.format(uid))
+    log.info(f'Delete {uid}\'s Co-Op')
 
     # Remove from corresponding co-op ldap group
     if ldap_is_member_of_group(user_dict['account'], 'fall_coop'):

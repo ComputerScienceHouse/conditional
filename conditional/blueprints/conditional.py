@@ -52,7 +52,7 @@ def create_conditional(user_dict=None):
     uid = post_data['uid']
     description = post_data['description']
     due_date = datetime.strptime(post_data['dueDate'], "%Y-%m-%d")
-    log.info('Create a new conditional for {}'.format(uid))
+    log.info(f'Create a new conditional for {uid}')
     if post_data['evaluation'] == 'spring':
         current_eval = SpringEval.query.filter(SpringEval.status == "Pending",
                                                SpringEval.uid == uid,
@@ -88,7 +88,7 @@ def conditional_review(user_dict=None):
     cid = post_data['id']
     status = post_data['status']
 
-    log.info('Updated conditional-{} to {}'.format(cid, status))
+    log.info(f'Updated conditional-{cid} to {status}')
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
 

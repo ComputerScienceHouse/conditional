@@ -148,7 +148,7 @@ def major_project_review(user_dict=None):
     pid = post_data['id']
     status = post_data['status']
 
-    log.info('{} Major Project ID: {}'.format(status, pid))
+    log.info(f'{status} Major Project ID: {pid}')
 
     print(post_data)
     MajorProject.query.filter(
@@ -167,7 +167,7 @@ def major_project_review(user_dict=None):
 @get_user
 def major_project_delete(pid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete Major Project ID: {}'.format(pid))
+    log.info(f'Delete Major Project ID: {pid}')
 
     major_project = MajorProject.query.filter(
         MajorProject.id == pid

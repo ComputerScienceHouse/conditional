@@ -61,7 +61,7 @@ def slideshow_intro_review(user_dict=None):
     uid = post_data['uid']
     status = post_data['status']
 
-    log.info('Intro Eval for {}: {}'.format(uid, status))
+    log.info(f'Intro Eval for {uid}: {status}')
     FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == uid and
         FreshmanEvalData.active). \
@@ -117,7 +117,7 @@ def slideshow_spring_review(user_dict=None):
     uid = post_data['uid']
     status = post_data['status']
 
-    log.info('Spring Eval for {}: {}'.format(uid, status))
+    log.info(f'Spring Eval for {uid}: {status}')
 
     SpringEval.query.filter(
         SpringEval.uid == uid and
