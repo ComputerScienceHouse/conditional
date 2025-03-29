@@ -3,7 +3,6 @@ import os
 
 import requests
 import boto3
-from botocore.exceptions import ClientError
 
 from flask import Blueprint
 from flask import request
@@ -185,4 +184,4 @@ def major_project_delete(pid, user_dict=None):
     return "Must be project owner to delete!", 401
 
 def send_slack_ping(payload):
-    requests.post(app.config['WEBHOOK_URL'], json.dumps(payload))
+    requests.post(app.config['WEBHOOK_URL'], json.dumps(payload), timeout=120)

@@ -413,7 +413,7 @@ def member_management_deleteuser(fid, user_dict=None):
     if not fid.isdigit():
         return "can only delete freshman accounts", 400
 
-    log.info('backend', action="delete freshman account %s" % fid)
+    log.info('backend', action=f"delete freshman account {fid}")
 
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
         db.session.delete(fca)

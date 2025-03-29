@@ -425,9 +425,9 @@ def attendance_history(user_dict=None):
                    TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
     all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
     if len(all_cm) % 10 != 0:
-        total_pages = (int(len(all_cm) / 10) + 1)
+        total_pages = int(len(all_cm) / 10) + 1
     else:
-        total_pages = (int(len(all_cm) / 10))
+        total_pages = int(len(all_cm) / 10)
     return render_template('attendance_history.html',
                            username=user_dict['username'],
                            history=all_meetings,
