@@ -9,7 +9,6 @@ disable =
 	duplicate-code,
 	no-member,
 	parse-error,
-	bad-continuation,
 	too-few-public-methods,
 	global-statement,
 	cyclic-import,

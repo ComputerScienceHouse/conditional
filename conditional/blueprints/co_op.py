@@ -17,7 +17,7 @@ logger = structlog.get_logger()
 
 
 @co_op_bp.route('/co_op/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_co_op_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -33,7 +33,7 @@ def display_co_op_form(user_dict=None):
 
 
 @co_op_bp.route('/co_op/submit', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_co_op_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -46,7 +46,7 @@ def submit_co_op_form(user_dict=None):
     if not ldap_is_current_student(user_dict['account']):
         return "Must be current student", 403
 
-    log.info('Submit {} Co-Op'.format(semester))
+    log.info(f'Submit {semester} Co-Op')
 
     if CurrentCoops.query.filter(CurrentCoops.uid == user_dict['username'],
                                  CurrentCoops.date_created > start_of_year()).first():
@@ -65,7 +65,7 @@ def submit_co_op_form(user_dict=None):
 
 
 @co_op_bp.route('/co_op/<uid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def delete_co_op(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -73,7 +73,7 @@ def delete_co_op(uid, user_dict=None):
     if not ldap_is_eval_director(user_dict['account']):
         return "must be eval director", 403
 
-    log.info('Delete {}\'s Co-Op'.format(uid))
+    log.info(f'Delete {uid}\'s Co-Op')
 
     # Remove from corresponding co-op ldap group
     if ldap_is_member_of_group(user_dict['account'], 'fall_coop'):
@@ -91,7 +91,7 @@ def delete_co_op(uid, user_dict=None):
 
 
 @co_op_bp.route('/co_op/manage')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_co_op_management(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

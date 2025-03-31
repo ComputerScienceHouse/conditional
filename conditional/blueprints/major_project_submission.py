@@ -3,7 +3,6 @@ import os
 
 import requests
 import boto3
-from botocore.exceptions import ClientError
 
 from flask import Blueprint
 from flask import request
@@ -31,7 +30,7 @@ major_project_bp = Blueprint('major_project_bp', __name__)
 
 
 @major_project_bp.route('/major_project/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_major_project(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -59,11 +58,12 @@ def display_major_project(user_dict=None):
                            username=user_dict['username'])
 
 @major_project_bp.route('/major_project/upload', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
+
 
     if len(list(request.files.keys())) < 1:
         return "No file", 400
@@ -83,7 +83,7 @@ def upload_major_project_files(user_dict=None):
 
 
 @major_project_bp.route('/major_project/submit', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def submit_major_project(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -135,7 +135,7 @@ def submit_major_project(user_dict=None):
 
 
 @major_project_bp.route('/major_project/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def major_project_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -147,7 +147,7 @@ def major_project_review(user_dict=None):
     pid = post_data['id']
     status = post_data['status']
 
-    log.info('{} Major Project ID: {}'.format(status, pid))
+    log.info(f'{status} Major Project ID: {pid}')
 
     print(post_data)
     MajorProject.query.filter(
@@ -162,11 +162,11 @@ def major_project_review(user_dict=None):
 
 
 @major_project_bp.route('/major_project/delete/<pid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def major_project_delete(pid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete Major Project ID: {}'.format(pid))
+    log.info(f'Delete Major Project ID: {pid}')
 
     major_project = MajorProject.query.filter(
         MajorProject.id == pid
@@ -184,4 +184,4 @@ def major_project_delete(pid, user_dict=None):
     return "Must be project owner to delete!", 401
 
 def send_slack_ping(payload):
-    requests.post(app.config['WEBHOOK_URL'], json.dumps(payload))
+    requests.post(app.config['WEBHOOK_URL'], json.dumps(payload), timeout=120)
