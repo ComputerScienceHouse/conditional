@@ -1,7 +1,7 @@
 import csv
 import io
 from datetime import datetime
-from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error
+from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error,deprecated-module
 
 import structlog
 from flask import Blueprint, request, jsonify, make_response
@@ -248,7 +248,7 @@ def edit_uid(uid, flask_request, username):
         room_number = post_data['roomNumber']
         onfloor_status = post_data['onfloorStatus']
         housing_points = post_data['housingPoints']
-        log.info(f'Edit {uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Points: {post_data['housingPoints']}')
+        log.info(f'Edit {uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Points: {post_data['housingPoints']}') #pylint: disable=line-too-long
 
         ldap_set_roomnumber(account, room_number)
         if onfloor_status:
@@ -289,7 +289,9 @@ def edit_uid(uid, flask_request, username):
 def edit_fid(uid, flask_request):
     log = logger.new(request=flask_request, auth_dict={'username': uid})
     post_data = flask_request.get_json()
-    log.info(f'Edit freshman-{uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Eval: {post_data['evalDate']} SigMiss: {post_data['sigMissed']}')
+
+    log.info(f'Edit freshman-{uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Eval: {post_data['evalDate']} SigMiss: {post_data['sigMissed']}') #pylint: disable=line-too-long
+
 
     name = post_data['name']
 
