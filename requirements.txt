@@ -47,7 +47,7 @@ cryptography==37.0.2
     # via oic
 csh-ldap==2.3.1
     # via -r requirements.in
-ddtrace==3.3.0
+ddtrace==3.3.1
     # via -r requirements.in
 defusedxml==0.7.1
     # via oic
