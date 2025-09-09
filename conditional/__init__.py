@@ -128,6 +128,7 @@ from .blueprints.slideshow import slideshow_bp
 from .blueprints.cache_management import cache_bp
 from .blueprints.co_op import co_op_bp
 from .blueprints.logs import log_bp
+from .blueprints.packet import packet_bp
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(attendance_bp)
@@ -142,6 +143,7 @@ app.register_blueprint(slideshow_bp)
 app.register_blueprint(cache_bp)
 app.register_blueprint(co_op_bp)
 app.register_blueprint(log_bp)
+app.register_blueprint(packet_bp)
 
 from .util.ldap import ldap_get_member
 
