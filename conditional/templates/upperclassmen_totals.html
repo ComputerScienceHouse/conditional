@@ -1,0 +1,90 @@
+{% extends "extend/base.html" %}
+
+{% block body %}
+    <div class="container main">
+        <div class="row mobile-hide">
+            <div class="col-sm-10">
+                <h3 class="page-title">Upperclassmen Signatures</h3>
+            </div>
+        </div>
+
+        <div id="eval-blocks">
+            {% if num_open_packets > 0 %}
+                <div id="eval-table">
+                    <div class="card mb-2">
+                        <div class="card-body table-fill">
+                            <div class="table-responsive">
+                                <table class="table table-striped no-bottom-margin" data-module="table"
+                                       data-searchable="true" data-sort-column="1" data-sort-order="asc"
+                                       data-length-changable="true" data-paginated="false">
+                                    <thead>
+                                    <tr>
+                                        <th>Active Member</th>
+                                        <th>Signatures</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for member, signed_count in upperclassmen %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for("upperclassman", uid=member) }}">
+                                                    <img class="eval-user-img"
+                                                         alt="{{ member }}"
+                                                         src="https://profiles.csh.rit.edu/image/{{ member }}"
+                                                         width="25"
+                                                         height="25"/> {{ get_csh_name(member) }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {{ signed_count }}/{{ num_open_packets }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-2">
+                        <div class="card-body table-fill">
+                            <div class="table-responsive">
+                                <table class="table table-striped no-bottom-margin" data-module="table"
+                                       data-searchable="true" data-sort-column="1" data-sort-order="asc"
+                                       data-length-changable="true" data-paginated="false">
+                                    <thead>
+                                    <tr>
+                                        <th>Alumni or Advisor</th>
+                                        <th>Signatures</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for member, signed_count in misc %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for("upperclassman", uid=member) }}">
+                                                    <img class="eval-user-img"
+                                                         alt="{{ member }}"
+                                                         src="https://profiles.csh.rit.edu/image/{{ member }}"
+                                                         width="25"
+                                                         height="25"/> {{ get_csh_name(member) }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {{ signed_count }}/{{ num_open_packets }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    There are currently no active packets.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

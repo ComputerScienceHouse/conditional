@@ -1,0 +1,194 @@
+{% extends "extend/base.html" %}
+
+{% set packet_end = packet.end.strftime('%m/%d/%Y, %H:%M %Z') %}
+
+{% block body %}
+    <div class="container main">
+        <div class="mb-2 m-1">
+            <div class="row justify-content-between w-100">
+                <div class="col m-1">
+                    <h3>{{ get_rit_name(packet.freshman_username) }}</h3>
+                </div>
+                <div class="col">
+                    {% if not did_sign and info.ritdn != packet.freshman_username %}
+                        <button class="btn btn-primary sign-button"
+                                data-packet_id="{{ packet.id }}"
+                                data-freshman_name="{{ get_rit_name(packet.freshman_username) }}">Sign
+                        </button>
+                    {% elif did_sign %}
+                        <button class="btn btn-primary signed-button" disabled="disabled"><i
+                                class="fa fa-check"></i>&nbsp;Signed
+                        </button>
+                    {% endif %}
+                    {% if info.realm == "csh" and info.is_upper %}
+                        <a class="btn btn-primary"
+                           style="float: right; margin-right: 5px"
+                           href="{{ url_for('packet_graphs', packet_id=packet.id) }}">
+                            Graphs
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% if info.is_upper or packet.freshman_username == info.ritdn %}
+            <div class="row">
+                <div class="col ml-1 mb-1">
+                    <h6>Signatures: <span class="badge badge-secondary">{{ received.total }}/{{ required.total }}</span>
+                    </h6>
+                </div>
+                <div class="col mr-1 mb-1">
+                    <h6 class="right-align">Ends: <span class="badge badge-secondary">{{ packet_end }}</span></h6>
+                </div>
+            </div>
+            <div class="card card-body">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        {% set total_score = received.total / required.total * 100 %}
+                        <h5>Total Score - {{ '%0.2f' % total_score }}%</h5>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                 aria-valuenow="{{ total_score }}" aria-valuemin="0"
+                                 aria-valuemax="100" style="width: {{ total_score }}%"></div>
+                        </div>
+                        {% set upper_score = received.member_total / required.member_total * 100 %}
+                        <h5>Upperclassmen Score - {{ '%0.2f' % upper_score }}%</h5>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"
+                                 role="progressbar" aria-valuenow="{{ upper_score }}" aria-valuemin="0"
+                                 aria-valuemax="100" style="width: {{ upper_score }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="eval-blocks">
+            <div id="eval-table">
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <b>Active Upperclassmen Signatures</b>
+                        <b class="signature-count">{{ received.upper }}/{{ required.upper }}</b>
+                    </div>
+                    <div class="card-body table-fill">
+                        <div class="table-responsive">
+                            <table class="table table-striped no-bottom-margin" data-module="table"
+                                   data-searchable="true" data-sort-column="3" data-sort-order="asc"
+                                   data-length-changable="true" data-paginated="false">
+                                <tbody>
+                                {% for sig in upper %}
+                                    <tr {% if sig.signed %}style="background-color: #4caf505e" {% endif %}>
+                                        <td>
+                                            {% if info.realm == "csh" %}
+                                                <a href="/member/{{ sig.member }}">
+                                            {% endif %}
+                                            <img class="eval-user-img" alt="{{ sig.member }}"
+                                                 src="https://profiles.csh.rit.edu/image/{{ sig.member }}"
+                                                 width="25" height="25"/>
+                                            {{ get_csh_name(sig.member) }}
+                                            {% if info.realm == "csh" %}
+                                                </a>
+                                            {% endif %}
+                                            {% for role in get_roles(sig) %}
+                                                <span class="badge badge-pill badge-{{ role }}">{{ get_roles(sig)[role] }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td width="15%">
+                                            {% if sig.signed %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-times"></i>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if info.is_upper or packet.freshman_username == info.ritdn %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <b>Freshmen Signatures</b>
+                        {% if info.is_upper or packet.freshman_username == info.ritdn %}
+                        <b class="signature-count">{{ received.fresh }}/{{ required.fresh }}</b>
+                        {% else %}
+                        <b>Signed</b>
+                        {% endif %}
+                    </div>
+                    <div class="card-body table-fill">
+                        <div class="table-responsive">
+                            <table class="table table-striped no-bottom-margin" data-module="table"
+                                   data-searchable="true" data-sort-column="3" data-sort-order="asc"
+                                   data-length-changable="true" data-paginated="false">
+                                <tbody>
+                                {% for sig in (packet.fresh_signatures if info.is_upper or packet.freshman_username == info.ritdn else fresh_sig) %}
+                                    <tr {% if sig.signed %}style="background-color: #4caf505e" {% endif %}>
+                                        <td>
+                                            <img class="eval-user-img" alt="{{ sig.freshman_username }}"
+                                                 src="{{ get_rit_image(sig.freshman_username) }}"
+                                                 width="25" height="25"/>
+                                            {{ get_rit_name(sig.freshman_username) }}
+                                        </td>
+                                        <td width="15%">
+                                            {% if sig.signed %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-times"></i>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if info.is_upper or packet.freshman_username == info.ritdn %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <b>Alumni & Advisor Signatures</b>
+                        <b class="signature-count">{{ received.misc }}/{{ required.misc }}</b>
+                    </div>
+                    <div class="card-body table-fill">
+                        <div class="table-responsive">
+                            <table class="table table-striped no-bottom-margin" data-module="table"
+                                   data-searchable="true" data-sort-column="3" data-sort-order="asc"
+                                   data-length-changable="true" data-paginated="false">
+                                <tbody>
+                                {% for sig in packet.misc_signatures %}
+                                    <tr style="background-color: #4caf505e">
+                                        <td width="3%">
+                                            {{ loop.index }}.
+                                        </td>
+                                        <td>
+                                            {% if info.realm == "csh" %}
+                                                <a href="/member/{{ sig.member }}">
+                                            {% endif %}
+                                            <img class="eval-user-img" alt="{{ sig.member }}"
+                                                 src="https://profiles.csh.rit.edu/image/{{ sig.member }}"
+                                                 width="25" height="25"/>
+                                            {{ get_csh_name(sig.member) }}
+                                            {% if info.realm == "csh" %}
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        <td width="15%">
+                                            {% if loop.index <= 10 %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <p>Extra!</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

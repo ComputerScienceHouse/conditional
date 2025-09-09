@@ -18,6 +18,7 @@ blinker==1.9.0
     # via
     #   -r requirements.in
     #   flask
+    #   flask-mail
     #   sentry-sdk
 boto3==1.35.13
     # via -r requirements.in
@@ -63,11 +64,14 @@ flask==3.1.0
     # via
     #   -r requirements.in
     #   flask-gzip
+    #   flask-mail
     #   flask-migrate
     #   flask-pyoidc
     #   flask-sqlalchemy
     #   sentry-sdk
 flask-gzip==0.2
+    # via -r requirements.in
+flask-mail==0.10.0
     # via -r requirements.in
 flask-migrate==2.1.1
     # via -r requirements.in
