@@ -1,0 +1,59 @@
+{% extends "extend/base.html" %}
+
+{% block body %}
+    <div class="container main">
+        <div class="ml-1">
+            <div class="row">
+                <div class="col">
+                    <h3 class="page-title">
+                        <img class="eval-user-img" alt="{{ member }}"
+                             src="https://profiles.csh.rit.edu/image/{{ member }}"
+                             width="35" height="35"/>
+                        {{ get_csh_name(member) }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div id="eval-blocks">
+            <div id="eval-table">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <b class="signature-count">{{ signatures }}/{{ open_packets|length }}</b>
+                    </div>
+                    <div class="card-body table-fill">
+                        <div class="table-responsive">
+                            <table class="table table-striped no-bottom-margin" data-module="table"
+                                   data-searchable="true" data-sort-column="3" data-sort-order="asc"
+                                   data-length-changable="true" data-paginated="false">
+                                <tbody>
+                                {% for packet in open_packets %}
+                                    {# Using inline style because of how themeswitcher loads the css theme :( #}
+                                    <tr {% if packet.did_sign_result %}style="background-color: #4caf505e" {% endif %}>
+                                        <td>
+                                            <a href="{{ url_for('freshman_packet', packet_id=packet.id) }}">
+                                                <img class="eval-user-img"
+                                                     alt="{{ get_rit_name(packet.freshman_username) }}"
+                                                     src="{{ get_rit_image(packet.freshman_username) }}"
+                                                     width="25"
+                                                     height="25"/>
+                                                {{ get_rit_name(packet.freshman_username) }}
+                                            </a>
+                                        </td>
+                                        <td width="15%">
+                                            {% if packet.did_sign_result %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-times"></i>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
