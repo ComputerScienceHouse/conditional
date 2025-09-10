@@ -46,7 +46,7 @@ def admin_packets(user_dict=None):
     # Pre-calculate and store the return values of did_sign(), signatures_received(), and signatures_required()
     for packet in open_packets:
         packet.did_sign_result = packet.did_sign(
-            user_dict["username"], app.config["REALM"] == "csh"
+            user_dict["username"], session["provider"] == "csh"
         )
         packet.signatures_received_result = packet.signatures_received()
         packet.signatures_required_result = packet.signatures_required()
@@ -306,7 +306,7 @@ def freshman_packet(packet_id, user_dict=None):
         "packet.html",
         info=user_dict,
         packet=packet,
-        did_sign=packet.did_sign(user_dict["uid"], app.config["REALM"] == "csh"),
+        did_sign=packet.did_sign(user_dict["uid"], session["provider"] == "csh"),
         required=packet.signatures_required(),
         received=packet.signatures_received(),
         upper=packet.upper_signatures,
@@ -333,7 +333,7 @@ def packets(user_dict=None):
     # Pre-calculate and store the return values of did_sign(), signatures_received(), and signatures_required()
     for packet in open_packets:
         packet.did_sign_result = packet.did_sign(
-            user_dict["uid"], app.config["REALM"] == "csh"
+            user_dict["uid"], session["provider"] == "csh"
         )
         packet.signatures_received_result = packet.signatures_received()
         packet.signatures_required_result = packet.signatures_required()
@@ -352,7 +352,7 @@ def index():
     """
 
 
-@app.route("/upperclassmen/")
+@packet_bp.route("/upperclassmen/")
 @auth.oidc_auth("default")
 @get_user
 def upperclassmen_total(user_dict=None):
@@ -380,7 +380,7 @@ def upperclassmen_total(user_dict=None):
     )
 
 
-@app.route("/stats/packet/<packet_id>")
+@packet_bp.route("/stats/packet/<packet_id>")
 @auth.oidc_auth("default")
 @get_user
 def packet_graphs(packet_id, user_dict=None):
@@ -421,3 +421,17 @@ def packet_graphs(packet_id, user_dict=None):
         fresh=stats["freshman"],
         packet=Packet.by_id(packet_id),
     )
+
+
+@packet_bp.route("/auth/csh")
+@auth.oidc_auth("default")
+def csh_login():
+    session["provider"] = "csh"
+    return redirect("/packet", code=301)
+
+
+@packet_bp.route("/auth/frosh")
+@auth.oidc_auth("frosh")
+def frosh_login():
+    session["provider"] = "frosh"
+    return redirect("/packet", code=301)
