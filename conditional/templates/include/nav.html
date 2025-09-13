@@ -1,6 +1,6 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for("index") }}">Packet</a>
+        <a class="navbar-brand" href="{{ url_for("packet_bp.index") }}">Packet</a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,12 +11,12 @@
             <ul class="navbar-nav mr-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for("packets") }}">Active Packets</a>
+                    <a class="nav-link" href="{{ url_for("packet_bp.packets") }}">Active Packets</a>
                 </li>
 
                 {% if info.realm == "csh" %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for("upperclassmen_total") }}">Signatures</a>
+                        <a class="nav-link" href="{{ url_for("packet_bp.upperclassmen_total") }}">Signatures</a>
                     </li>
                     {% if info.admin %}
                         <li class="nav-item dropdown">
@@ -25,8 +25,8 @@
                                 Admin
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="{{ url_for("admin_freshmen") }}">Freshmen</a>
-                                <a class="dropdown-item" href="{{ url_for("admin_packets") }}">Packets</a>
+                                <a class="dropdown-item" href="{{ url_for("packet_bp.admin_freshmen") }}">Freshmen</a>
+                                <a class="dropdown-item" href="{{ url_for("packet_bp.admin_packets") }}">Packets</a>
                             </div>
                         </li>
                     {% endif %}
@@ -57,7 +57,7 @@
                             <a class="dropdown-item" href="https://themeswitcher.csh.rit.edu/">Theme</a>
                             <div class="dropdown-divider"></div>
                         {% endif %}
-                        <a class="dropdown-item" href="{{ url_for("logout") }}">Logout</a>
+                        <a class="dropdown-item" href="{{ url_for("packet_bp.logout") }}">Logout</a>
                     </div>
 
                 </li>
