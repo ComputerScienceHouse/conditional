@@ -3,7 +3,7 @@ from datetime import datetime
 
 import structlog
 from csh_ldap import CSHLDAP
-from flask import Flask, redirect, render_template, g
+from flask import Flask, redirect, render_template, request, g
 from flask_migrate import Migrate
 from flask_gzip import Gzip
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
@@ -56,7 +56,14 @@ def start_of_year():
 
 
 # pylint: disable=C0413
-from .models.models import UserLog
+from .models.models import (
+    CommitteeMeeting,
+    MemberCommitteeAttendance,
+    MemberHouseMeetingAttendance,
+    MemberSeminarAttendance,
+    TechnicalSeminar,
+    UserLog,
+)
 
 
 # Configure Logging
@@ -157,6 +164,32 @@ def health():
     Shows an ok status if the application is up and running
     """
     return {'status': 'ok'}
+
+
+@app.route("/gatekeep/<username>")
+def gatekeep_status(username):
+    token = request.headers.get("X-VOTE-TOKEN","")
+    if token != app.config["VOTE_TOKEN"]:
+        return "Users cannot access this page", 403
+    # number of committee meetings attended
+    c_meetings = len([m.meeting_id for m in
+                  MemberCommitteeAttendance.query.filter(
+                      MemberCommitteeAttendance.uid == username
+                  ) if CommitteeMeeting.query.filter(
+                      CommitteeMeeting.id == m.meeting_id).first().approved])
+    # technical seminar total
+    t_seminars = len([s.seminar_id for s in
+                  MemberSeminarAttendance.query.filter(
+                      MemberSeminarAttendance.uid == username
+                  ) if TechnicalSeminar.query.filter(
+                      TechnicalSeminar.id == s.seminar_id).first().approved])
+    # house meeting total
+    h_meetings = len([(m.meeting_id, m.attendance_status) for m in
+                  MemberHouseMeetingAttendance.query.filter(
+                      MemberHouseMeetingAttendance.uid == username)])
+    result = c_meetings >= 6 and t_seminars >= 2 and h_meetings >= 6
+    return {"result": result}, 200
+
 
 
 @app.errorhandler(404)
