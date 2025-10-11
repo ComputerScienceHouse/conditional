@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from conditional import start_of_year
+from conditional import gatekeep_status, start_of_year
 from conditional.models.models import CommitteeMeeting
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
@@ -32,8 +32,8 @@ def get_voting_members():
     on_coop = set(member.uid for member in CurrentCoops.query.filter(
         CurrentCoops.date_created > start_of_year(),
         CurrentCoops.semester == semester).all())
-
     voting_list = list(active_members - intro_members - on_coop)
+    voting_list = list(username for username in voting_list if gatekeep_status(username))
 
     passed_fall = FreshmanEvalData.query.filter(
         FreshmanEvalData.freshman_eval_result == "Passed",
