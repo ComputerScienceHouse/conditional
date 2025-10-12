@@ -171,8 +171,8 @@ def gatekeep_status(username):
     token = request.headers.get("X-VOTE-TOKEN","")
     if token != app.config["VOTE_TOKEN"]:
         return "Users cannot access this page", 403
-    # number of committee meetings attended
-    c_meetings = len([m.meeting_id for m in
+    # number of directorship meetings attended
+    d_meetings = len([m.meeting_id for m in
                   MemberCommitteeAttendance.query.filter(
                       MemberCommitteeAttendance.uid == username
                   ) if CommitteeMeeting.query.filter(
@@ -187,8 +187,11 @@ def gatekeep_status(username):
     h_meetings = len([(m.meeting_id, m.attendance_status) for m in
                   MemberHouseMeetingAttendance.query.filter(
                       MemberHouseMeetingAttendance.uid == username)])
-    result = c_meetings >= 6 and t_seminars >= 2 and h_meetings >= 6
-    return {"result": result}, 200
+    result = d_meetings >= 6 and t_seminars >= 2 and h_meetings >= 6
+    return {"result": result,
+            "h_meetings": h_meetings,
+            "c_meetings": d_meetings,
+            "t_seminars": t_seminars}, 200
 
 
 
