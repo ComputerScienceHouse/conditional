@@ -2,7 +2,7 @@ from functools import wraps
 
 from flask import request, session, redirect
 
-from conditional import auth
+from conditional import auth, app
 from conditional.util.ldap import (
     ldap_is_active,
     ldap_is_alumni,
@@ -101,3 +101,17 @@ def csh_auth():
 @auth.oidc_auth("frosh")
 def frosh_auth():
     return
+
+
+@app.route("/auth/csh")
+@auth.oidc_auth("default")
+def csh_login():
+    session["provider"] = "csh"
+    return redirect("/packet", code=301)
+
+
+@app.route("/auth/frosh")
+@auth.oidc_auth("frosh")
+def frosh_login():
+    session["provider"] = "frosh"
+    return redirect("/packet", code=301)
