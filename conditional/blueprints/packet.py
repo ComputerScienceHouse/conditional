@@ -435,9 +435,3 @@ def csh_login():
 def frosh_login():
     session["provider"] = "frosh"
     return redirect("/packet", code=301)
-
-
-@packet_bp.route("/logout")
-@auth.oidc_logout
-def logout():
-    return redirect("/", 302)
