@@ -104,7 +104,7 @@ def frosh_auth():
 
 
 @app.route("/auth/csh")
-@auth.oidc_auth("default")
+@auth.oidc_auth("csh")
 def csh_login():
     session["provider"] = "csh"
     return redirect("/packet", code=301)
