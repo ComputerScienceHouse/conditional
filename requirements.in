@@ -7,7 +7,6 @@ click~=8.1.8
 csh_ldap>=2.3.1
 ddtrace~=3.2.1
 Flask~=3.1.0
-Flask-Mail~=0.10.0
 Flask-Migrate~=2.1.1
 Flask-Gzip~=0.2
 Flask-pyoidc~=3.14.3
