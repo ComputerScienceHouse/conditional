@@ -24,7 +24,7 @@ from conditional.models.models import (
 
 logger = structlog.get_logger()
 
-packet_bp = Blueprint("packet_bp", __name__, url_prefix="/packet")
+packet_bp = Blueprint("packet_bp", __name__)
 
 
 class POSTFreshman:
