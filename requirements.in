@@ -1,9 +1,7 @@
 alembic~=1.15.1
 astroid~=3.3.9
 blinker~=1.4
-boto3==1.35.13
-botocore==1.35.13
-click~=8.1.8
+click~=7.1
 csh_ldap>=2.3.1
 ddtrace~=3.2.1
 Flask~=3.1.0

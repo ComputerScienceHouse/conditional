@@ -19,17 +19,6 @@ blinker==1.9.0
     #   -r requirements.in
     #   flask
     #   sentry-sdk
-boto3==1.35.13
-    # via -r requirements.in
-botocore==1.35.13
-    # via
-    #   -r requirements.in
-    #   boto3
-    #   s3transfer
-build==1.2.2.post1
-    # via pip-tools
-bytecode==0.16.1
-    # via ddtrace
 certifi==2022.5.18.1
     # via
     #   requests
