@@ -17,19 +17,8 @@ from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
-
-from conditional.models.models import (
-    CommitteeMeeting,
-    CurrentCoops,
-    FreshmanEvalData,
-    HouseMeeting,
-    MemberCommitteeAttendance,
-    MemberHouseMeetingAttendance,
-    MemberSeminarAttendance,
-    TechnicalSeminar,
-)
-
-from .ldap import ldap_get_member, ldap_is_active, ldap_is_intromember
+from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_get_member
 
 
 @service_cache(maxsize=1024)
