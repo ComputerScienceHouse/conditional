@@ -56,18 +56,7 @@ def start_of_year():
 
 
 # pylint: disable=C0413
-from .models.models import (
-    CommitteeMeeting,
-    CurrentCoops,
-    FreshmanEvalData,
-    HouseMeeting,
-    MemberCommitteeAttendance,
-    MemberHouseMeetingAttendance,
-    MemberSeminarAttendance,
-    TechnicalSeminar,
-    UserLog,
-)
-
+from .models.models import UserLog
 
 # Configure Logging
 def request_processor(logger, log_method, event_dict):  # pylint: disable=unused-argument, redefined-outer-name
@@ -112,6 +101,7 @@ logger = structlog.get_logger()
 # pylint: disable=wrong-import-order
 from conditional.util import context_processors
 from conditional.util.auth import get_user
+from conditional.util.member import gatekeep_status
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp
@@ -140,7 +130,7 @@ app.register_blueprint(cache_bp)
 app.register_blueprint(co_op_bp)
 app.register_blueprint(log_bp)
 
-from .util.ldap import ldap_get_member, ldap_is_active, ldap_is_intromember
+from .util.ldap import ldap_get_member
 
 
 @app.route('/<path:path>')
@@ -170,88 +160,12 @@ def health():
 
 
 @app.route("/gatekeep/<username>")
-def gatekeep_status(username):
+def gatekeep(username):
     token = request.headers.get("X-VOTE-TOKEN", "")
     if token != app.config["VOTE_TOKEN"]:
         return "Users cannot access this page", 403
 
-    if datetime.today() < datetime(start_of_year().year, 12, 31):
-        semester = "Fall"
-        semester_start = datetime(start_of_year().year,6,1)
-    else:
-        semester = "Spring"
-        semester_start = datetime(start_of_year().year + 1,1,1)
-
-    # groups
-    ldap_member = ldap_get_member(username)
-    is_intro_member = ldap_is_intromember(ldap_member)
-    is_active_member = ldap_is_active(ldap_member) and not is_intro_member
-
-    is_on_coop = (
-        CurrentCoops.query.filter(
-            CurrentCoops.date_created > start_of_year(),
-            CurrentCoops.semester == semester,
-            CurrentCoops.uid == username,
-        ).first()
-        is not None
-    )
-
-    passed_fall = (
-        FreshmanEvalData.query.filter(
-            FreshmanEvalData.freshman_eval_result == "Passed",
-            FreshmanEvalData.eval_date > start_of_year(),
-            FreshmanEvalData.uid == username,
-        ).first()
-        is not None
-    )
-    eligibility_of_groups = (is_active_member and not is_on_coop) or passed_fall
-
-    # number of directorship meetings attended in the current semester
-    d_meetings = (
-        MemberCommitteeAttendance.query.join(
-            CommitteeMeeting,
-            MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id,
-        )
-        .filter(
-            MemberCommitteeAttendance.uid == username,
-            CommitteeMeeting.approved is True,
-            CommitteeMeeting.date >= semester_start,
-        )
-        .count()
-    )
-    # number of technical seminars attended in the current semester
-    t_seminars = (
-        MemberSeminarAttendance.query.join(
-            TechnicalSeminar,
-            MemberSeminarAttendance.meeting_id == TechnicalSeminar.id,
-        )
-        .filter(
-            MemberSeminarAttendance.uid == username,
-            TechnicalSeminar.approved is True,
-            TechnicalSeminar.date >= semester_start,
-        )
-        .count()
-    )
-    # number of house meetings attended in the current semester
-    h_meetings = (
-        MemberHouseMeetingAttendance.query.join(
-            HouseMeeting,
-            MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id,
-        )
-        .filter(
-            MemberHouseMeetingAttendance.uid == username,
-            HouseMeeting.date >= semester_start
-        )
-        .count()
-    )
-    result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings >= 6)
-
-    return {
-        "result": result,
-        "h_meetings": h_meetings,
-        "c_meetings": d_meetings,
-        "t_seminars": t_seminars,
-    }, 200
+    return gatekeep_status(username)
 
 
 
