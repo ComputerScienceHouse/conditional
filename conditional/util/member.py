@@ -27,7 +27,6 @@ from conditional.models.models import (
     MemberHouseMeetingAttendance,
     MemberSeminarAttendance,
     TechnicalSeminar,
-    UserLog,
 )
 
 from .ldap import ldap_get_member, ldap_is_active, ldap_is_intromember
@@ -56,7 +55,7 @@ def get_voting_members():
     for intro_member in passed_fall:
         voting_set.add(intro_member.uid)
 
-    voting_list = list(username for username in voting_set if gatekeep_status(username))
+    voting_list = list(username for username in voting_set if gatekeep_status(username)[0]["result"])
     return voting_list
 
 
