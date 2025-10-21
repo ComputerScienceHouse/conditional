@@ -238,4 +238,4 @@ def gatekeep_status(username):
         "h_meetings": h_meetings,
         "c_meetings": d_meetings,
         "t_seminars": t_seminars,
-    }, 200
+    }

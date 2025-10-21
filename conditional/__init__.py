@@ -165,9 +165,7 @@ def gatekeep(username):
     if token != app.config["VOTE_TOKEN"]:
         return "Users cannot access this page", 403
 
-    return gatekeep_status(username)
-
-
+    return gatekeep_status(username), 200
 
 
 @app.errorhandler(404)
