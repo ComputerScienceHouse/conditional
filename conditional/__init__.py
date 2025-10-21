@@ -3,10 +3,11 @@ from datetime import datetime
 
 import structlog
 from csh_ldap import CSHLDAP
-from flask import Flask, redirect, render_template, g
+from flask import Flask, redirect, render_template, request, g
 from flask_migrate import Migrate
 from flask_gzip import Gzip
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
+from flask_pyoidc.provider_configuration import ProviderConfiguration, ClientMetadata
 from flask_sqlalchemy import SQLAlchemy
 
 import sentry_sdk
@@ -39,8 +40,10 @@ ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
                ro=app.config['LDAP_RO'])
 
-auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"],
-                          client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
+client_metadata = ClientMetadata(app.config["OIDC_CLIENT_CONFIG"])
+provider_config = ProviderConfiguration(issuer=app.config["OIDC_ISSUER"], client_registration_info=client_metadata)
+
+auth = OIDCAuthentication({'default': provider_config}, app)
 
 app.secret_key = app.config["SECRET_KEY"]
 
@@ -54,7 +57,6 @@ def start_of_year():
 
 # pylint: disable=C0413
 from .models.models import UserLog
-
 
 # Configure Logging
 def request_processor(logger, log_method, event_dict):  # pylint: disable=unused-argument, redefined-outer-name
@@ -99,6 +101,7 @@ logger = structlog.get_logger()
 # pylint: disable=wrong-import-order
 from conditional.util import context_processors
 from conditional.util.auth import get_user
+from conditional.util.member import gatekeep_status
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp
@@ -137,7 +140,7 @@ def static_proxy(path):
 
 
 @app.route('/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 def default_route():
     return redirect('/dashboard')
 
@@ -156,12 +159,25 @@ def health():
     return {'status': 'ok'}
 
 
+@app.route("/gatekeep/<username>")
+def gatekeep(username):
+    token = request.headers.get("X-VOTE-TOKEN", "")
+    if token != app.config["VOTE_TOKEN"]:
+        return "Users cannot access this page", 403
+    try:
+        gatekeep_data = gatekeep_status(username)
+    except KeyError:
+        return "", 404
+
+    return gatekeep_data, 200
+
+
 @app.errorhandler(404)
 @app.errorhandler(500)
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def route_errors(error, user_dict=None):
-    data = dict()
+    data = {}
 
     # Handle the case where the header isn't present
     if user_dict['username'] is not None:

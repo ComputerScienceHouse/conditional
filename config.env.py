@@ -48,3 +48,6 @@ SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
+
+# Vote config
+VOTE_TOKEN = env.get("CONDITIONAL_VOTE_TOKEN", "")

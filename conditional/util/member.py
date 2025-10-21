@@ -17,6 +17,8 @@ from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
+from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_get_member
 
 
 @service_cache(maxsize=1024)
@@ -32,8 +34,7 @@ def get_voting_members():
     on_coop = set(member.uid for member in CurrentCoops.query.filter(
         CurrentCoops.date_created > start_of_year(),
         CurrentCoops.semester == semester).all())
-
-    voting_list = list(active_members - intro_members - on_coop)
+    voting_set = active_members - intro_members - on_coop
 
     passed_fall = FreshmanEvalData.query.filter(
         FreshmanEvalData.freshman_eval_result == "Passed",
@@ -41,9 +42,9 @@ def get_voting_members():
     ).distinct()
 
     for intro_member in passed_fall:
-        if intro_member.uid not in voting_list:
-            voting_list.append(intro_member.uid)
+        voting_set.add(intro_member.uid)
 
+    voting_list = list(username for username in voting_set if gatekeep_status(username)["result"])
     return voting_list
 
 
@@ -159,3 +160,82 @@ def req_cm(member):
     if co_op:
         return 15
     return 30
+
+def gatekeep_status(username):
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = "Fall"
+        semester_start = datetime(start_of_year().year,6,1)
+    else:
+        semester = "Spring"
+        semester_start = datetime(start_of_year().year + 1,1,1)
+
+    # groups
+    ldap_member = ldap_get_member(username)
+    is_intro_member = ldap_is_intromember(ldap_member)
+    is_active_member = ldap_is_active(ldap_member) and not is_intro_member
+
+    is_on_coop = (
+        CurrentCoops.query.filter(
+            CurrentCoops.date_created > start_of_year(),
+            CurrentCoops.semester == semester,
+            CurrentCoops.uid == username,
+        ).first()
+        is not None
+    )
+
+    passed_fall = (
+        FreshmanEvalData.query.filter(
+            FreshmanEvalData.freshman_eval_result == "Passed",
+            FreshmanEvalData.eval_date > start_of_year(),
+            FreshmanEvalData.uid == username,
+        ).first()
+        is not None
+    )
+    eligibility_of_groups = (is_active_member and not is_on_coop) or passed_fall
+
+    # number of directorship meetings attended in the current semester
+    d_meetings = (
+        MemberCommitteeAttendance.query.join(
+            CommitteeMeeting,
+            MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id,
+        )
+        .filter(
+            MemberCommitteeAttendance.uid == username,
+            CommitteeMeeting.approved is True,
+            CommitteeMeeting.timestamp >= semester_start,
+        )
+        .count()
+    )
+    # number of technical seminars attended in the current semester
+    t_seminars = (
+        MemberSeminarAttendance.query.join(
+            TechnicalSeminar,
+            MemberSeminarAttendance.seminar_id == TechnicalSeminar.id,
+        )
+        .filter(
+            MemberSeminarAttendance.uid == username,
+            TechnicalSeminar.approved is True,
+            TechnicalSeminar.timestamp >= semester_start,
+        )
+        .count()
+    )
+    # number of house meetings attended in the current semester
+    h_meetings = (
+        MemberHouseMeetingAttendance.query.join(
+            HouseMeeting,
+            MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id,
+        )
+        .filter(
+            MemberHouseMeetingAttendance.uid == username,
+            HouseMeeting.date >= semester_start
+        )
+        .count()
+    )
+    result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings >= 6)
+
+    return {
+        "result": result,
+        "h_meetings": h_meetings,
+        "c_meetings": d_meetings,
+        "t_seminars": t_seminars,
+    }
