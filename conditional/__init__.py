@@ -164,10 +164,12 @@ def gatekeep(username):
     token = request.headers.get("X-VOTE-TOKEN", "")
     if token != app.config["VOTE_TOKEN"]:
         return "Users cannot access this page", 403
+    try:
+        gatekeep_data = gatekeep_status(username)
+    except KeyError:
+        return "", 404
 
-    return gatekeep_status(username)
-
-
+    return gatekeep_data, 200
 
 
 @app.errorhandler(404)

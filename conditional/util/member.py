@@ -44,7 +44,7 @@ def get_voting_members():
     for intro_member in passed_fall:
         voting_set.add(intro_member.uid)
 
-    voting_list = list(username for username in voting_set if gatekeep_status(username)[0]["result"])
+    voting_list = list(username for username in voting_set if gatekeep_status(username)["result"])
     return voting_list
 
 
@@ -238,4 +238,4 @@ def gatekeep_status(username):
         "h_meetings": h_meetings,
         "c_meetings": d_meetings,
         "t_seminars": t_seminars,
-    }, 200
+    }
