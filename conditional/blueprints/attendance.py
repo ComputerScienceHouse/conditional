@@ -29,7 +29,7 @@ attendance_bp = Blueprint('attendance_bp', __name__)
 
 
 @attendance_bp.route('/attendance/ts_members')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def get_all_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -57,7 +57,7 @@ def get_all_members(user_dict=None):
 
 
 @attendance_bp.route('/attendance/hm_members')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def get_non_alumni_non_coop(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -102,7 +102,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
 
 @attendance_bp.route('/attendance/cm_members')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def get_non_alumni(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -130,7 +130,7 @@ def get_non_alumni(user_dict=None):
 
 
 @attendance_bp.route('/attendance_cm')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_attendance_cm(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -142,7 +142,7 @@ def display_attendance_cm(user_dict=None):
 
 
 @attendance_bp.route('/attendance_ts')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_attendance_ts(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -154,7 +154,7 @@ def display_attendance_ts(user_dict=None):
 
 
 @attendance_bp.route('/attendance_hm')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_attendance_hm(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -170,7 +170,7 @@ def display_attendance_hm(user_dict=None):
 
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def submit_committee_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -183,7 +183,7 @@ def submit_committee_attendance(user_dict=None):
     f_attendees = post_data['freshmen']
     timestamp = post_data['timestamp']
 
-    log.info(f'Submit {committee} Meeting Attendance')
+    log.info('Submit {} Meeting Attendance'.format(committee))
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
     meeting = CommitteeMeeting(committee, timestamp, approved)
@@ -193,11 +193,11 @@ def submit_committee_attendance(user_dict=None):
     db.session.refresh(meeting)
 
     for m in m_attendees:
-        log.info(f'Gave Attendance to {m} for {committee}')
+        log.info('Gave Attendance to {} for {}'.format(m, committee))
         db.session.add(MemberCommitteeAttendance(m, meeting.id))
 
     for f in f_attendees:
-        log.info(f'Gave Attendance to freshman-{f} for {committee}')
+        log.info('Gave Attendance to freshman-{} for {}'.format(f, committee))
         db.session.add(FreshmanCommitteeAttendance(f, meeting.id))
 
     db.session.commit()
@@ -205,7 +205,7 @@ def submit_committee_attendance(user_dict=None):
 
 
 @attendance_bp.route('/attendance/submit/ts', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def submit_seminar_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -228,11 +228,11 @@ def submit_seminar_attendance(user_dict=None):
     db.session.refresh(seminar)
 
     for m in m_attendees:
-        log.info(f'Gave Attendance to {m} for {seminar_name}')
+        log.info('Gave Attendance to {} for {}'.format(m, seminar_name))
         db.session.add(MemberSeminarAttendance(m, seminar.id))
 
     for f in f_attendees:
-        log.info(f'Gave Attendance to freshman-{f} for {seminar_name}')
+        log.info('Gave Attendance to freshman-{} for {}'.format(f, seminar_name))
         db.session.add(FreshmanSeminarAttendance(f, seminar.id))
 
     db.session.commit()
@@ -240,7 +240,7 @@ def submit_seminar_attendance(user_dict=None):
 
 
 @attendance_bp.route('/attendance/submit/hm', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def submit_house_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -263,7 +263,10 @@ def submit_house_attendance(user_dict=None):
 
     if "members" in post_data:
         for m in post_data['members']:
-            log.info(f'Marked {m['uid']} {m['status']} for House Meeting on {timestamp.strftime("%Y-%m-%d")}')
+            log.info('Marked {} {} for House Meeting on {}'.format(
+                m['uid'],
+                m['status'],
+                timestamp.strftime("%Y-%m-%d")))
             db.session.add(MemberHouseMeetingAttendance(
                 m['uid'],
                 meeting.id,
@@ -272,7 +275,10 @@ def submit_house_attendance(user_dict=None):
 
     if "freshmen" in post_data:
         for f in post_data['freshmen']:
-            log.info(f'Marked freshman-{f['id']} {f['status']} for House Meeting on {timestamp.strftime("%Y-%m-%d")}')
+            log.info('Marked freshman-{} {} for House Meeting on {}'.format(
+                f['id'],
+                f['status'],
+                timestamp.strftime("%Y-%m-%d")))
             db.session.add(FreshmanHouseMeetingAttendance(
                 f['id'],
                 meeting.id,
@@ -284,7 +290,7 @@ def submit_house_attendance(user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['GET'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def alter_house_attendance(uid, hid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -293,7 +299,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
         return "must be evals", 403
 
     if not uid.isdigit():
-        log.info(f'Mark {uid} Present for House Meeting ID: {hid}')
+        log.info('Mark {} Present for House Meeting ID: {}'.format(uid, hid))
         member_meeting = MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
@@ -302,7 +308,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
         db.session.commit()
         return jsonify({"success": True}), 200
 
-    log.info(f'Mark freshman-{uid} Present for House Meeting ID: {hid}')
+    log.info('Mark freshman-{} Present for House Meeting ID: {}'.format(uid, hid))
     freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == uid,
         FreshmanHouseMeetingAttendance.meeting_id == hid
@@ -314,7 +320,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def alter_house_excuse(uid, hid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -327,7 +333,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
     hm_excuse = post_data['excuse']
 
     if not uid.isdigit():
-        log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
+        log.info('Mark {} as {} for HM ID: {}'.format(uid, hm_status, hid))
         MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
             MemberHouseMeetingAttendance.meeting_id == hid
@@ -336,7 +342,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
             'attendance_status': hm_status
         })
     else:
-        log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
+        log.info('Mark {} as {} for HM ID: {}'.format(uid, hm_status, hid))
         FreshmanHouseMeetingAttendance.query.filter(
             FreshmanHouseMeetingAttendance.fid == uid,
             FreshmanHouseMeetingAttendance.meeting_id == hid
@@ -351,7 +357,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/history', methods=['GET'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def attendance_history(user_dict=None):
 
@@ -425,9 +431,9 @@ def attendance_history(user_dict=None):
                    TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
     all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
     if len(all_cm) % 10 != 0:
-        total_pages = int(len(all_cm) / 10) + 1
+        total_pages = (int(len(all_cm) / 10) + 1)
     else:
-        total_pages = int(len(all_cm) / 10)
+        total_pages = (int(len(all_cm) / 10))
     return render_template('attendance_history.html',
                            username=user_dict['username'],
                            history=all_meetings,
@@ -438,7 +444,7 @@ def attendance_history(user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def alter_committee_attendance(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -470,7 +476,7 @@ def alter_committee_attendance(cid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/alter/ts/<sid>', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def alter_seminar_attendance(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -502,7 +508,7 @@ def alter_seminar_attendance(sid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/ts/<sid>', methods=['GET', 'DELETE'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def get_cm_attendees(sid, user_dict=None):
     if request.method == 'GET':
@@ -520,7 +526,7 @@ def get_cm_attendees(sid, user_dict=None):
         return jsonify({"attendees": attendees}), 200
 
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info(f'Delete Technical Seminar {sid}')
+    log.info('Delete Technical Seminar {}'.format(sid))
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -539,7 +545,7 @@ def get_cm_attendees(sid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def get_ts_attendees(cid, user_dict=None):
     if request.method == 'GET':
@@ -557,7 +563,7 @@ def get_ts_attendees(cid, user_dict=None):
         return jsonify({"attendees": attendees}), 200
 
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info(f'Delete Committee Meeting {cid}')
+    log.info('Delete Committee Meeting {}'.format(cid))
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -576,11 +582,11 @@ def get_ts_attendees(cid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/cm/<cid>/approve', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def approve_cm(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info(f'Approve Committee Meeting {cid} Attendance')
+    log.info('Approve Committee Meeting {} Attendance'.format(cid))
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
@@ -594,11 +600,11 @@ def approve_cm(cid, user_dict=None):
 
 
 @attendance_bp.route('/attendance/ts/<sid>/approve', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def approve_ts(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info(f'Approve Technical Seminar {sid} Attendance')
+    log.info('Approve Technical Seminar {} Attendance'.format(sid))
 
     if not ldap_is_eboard(user_dict['account']):
         return jsonify({"success": False, "error": "Not EBoard"}), 403

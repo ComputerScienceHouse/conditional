@@ -9,6 +9,7 @@ disable =
 	duplicate-code,
 	no-member,
 	parse-error,
+	bad-continuation,
 	too-few-public-methods,
 	global-statement,
 	cyclic-import,
@@ -17,11 +18,14 @@ disable =
 
 [REPORTS]
 output-format = text
+files-output = no
 reports = no
 
 [FORMAT]
 max-line-length = 120
+max-statement-lines = 75
 single-line-if-stmt = no
+no-space-check = trailing-comma,dict-separator
 max-module-lines = 1000
 indent-string = '    '
 
@@ -69,6 +73,8 @@ good-names=logger,id,ID
 # Bad variable names which should always be refused, separated by a comma
 bad-names=foo,bar,baz,toto,tutu,tata
 
+# List of builtins function names that should not be used, separated by a comma
+bad-functions=apply,input
 
 
 [DESIGN]
@@ -84,4 +90,4 @@ min-public-methods = 2
 max-public-methods = 20
 
 [EXCEPTIONS]
-overgeneral-exceptions = builtins.Exception
+overgeneral-exceptions = Exception

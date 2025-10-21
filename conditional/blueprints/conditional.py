@@ -15,7 +15,7 @@ logger = structlog.get_logger()
 
 
 @conditionals_bp.route('/conditionals/')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_conditionals(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -39,7 +39,7 @@ def display_conditionals(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def create_conditional(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -52,7 +52,7 @@ def create_conditional(user_dict=None):
     uid = post_data['uid']
     description = post_data['description']
     due_date = datetime.strptime(post_data['dueDate'], "%Y-%m-%d")
-    log.info(f'Create a new conditional for {uid}')
+    log.info('Create a new conditional for {}'.format(uid))
     if post_data['evaluation'] == 'spring':
         current_eval = SpringEval.query.filter(SpringEval.status == "Pending",
                                                SpringEval.uid == uid,
@@ -76,7 +76,7 @@ def create_conditional(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def conditional_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -88,7 +88,7 @@ def conditional_review(user_dict=None):
     cid = post_data['id']
     status = post_data['status']
 
-    log.info(f'Updated conditional-{cid} to {status}')
+    log.info('Updated conditional-{} to {}'.format(cid, status))
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
 
@@ -113,11 +113,11 @@ def conditional_review(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info(f'Delete conditional-{cid}')
+    log.info('Delete conditional-{}'.format(cid))
 
     if ldap_is_eval_director(user_dict['account']):
         Conditional.query.filter(

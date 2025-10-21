@@ -15,7 +15,7 @@ intro_evals_form_bp = Blueprint('intro_evals_form_bp', __name__)
 
 
 @intro_evals_form_bp.route('/intro_evals_form/')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_intro_evals_form(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -36,7 +36,7 @@ def display_intro_evals_form(user_dict=None):
 
 
 @intro_evals_form_bp.route('/intro_evals/submit', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def submit_intro_evals(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

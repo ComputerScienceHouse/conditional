@@ -61,19 +61,8 @@
     border: 0;
     background: transparent;
     width: 100%;
+    height: 0;
     text-align: center;
-    display: block;
-  }
-  
-  &[aria-expanded="true"] {
-    span.glyphicon {
-      transform: rotate(180deg);
-    }
-  }
-  
-  span.glyphicon {
-    transition: transform ease-in-out 0.2s;
-    transform: rotate(0deg);
   }
 }
 

@@ -29,7 +29,7 @@ def is_seminar_attendance_valid(attendance):
 
 # pylint: disable=too-many-statements
 @dashboard_bp.route('/dashboard/')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_dashboard(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -38,7 +38,7 @@ def display_dashboard(user_dict=None):
     # Get the list of voting members.
     can_vote = get_voting_members()
 
-    data = {}
+    data = dict()
     data['username'] = user_dict['account'].uid
     data['active'] = ldap_is_active(user_dict['account'])
     data['bad_standing'] = ldap_is_bad_standing(user_dict['account'])
@@ -71,7 +71,7 @@ def display_dashboard(user_dict=None):
 
     # only show housing if member has onfloor status
     if ldap_is_onfloor(user_dict['account']):
-        housing = {}
+        housing = dict()
         housing['points'] = user_dict['account'].housingPoints
         housing['room'] = user_dict['account'].roomNumber
         housing['queue_pos'] = get_queue_position(user_dict['account'].uid)

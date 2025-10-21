@@ -20,7 +20,7 @@ housing_bp = Blueprint('housing_bp', __name__)
 
 
 @housing_bp.route('/housing')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def display_housing(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -62,7 +62,7 @@ def display_housing(user_dict=None):
 
 
 @housing_bp.route('/housing/in_queue', methods=['PUT'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def change_queue_state(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -75,11 +75,11 @@ def change_queue_state(user_dict=None):
 
     if uid:
         if post_data.get('inQueue', False):
-            log.info(f'Add {uid} to Housing Queue')
+            log.info('Add {} to Housing Queue'.format(uid))
             queue_obj = InHousingQueue(uid=uid)
             db.session.add(queue_obj)
         else:
-            log.info(f'Remove {uid} from Housing Queue')
+            log.info('Remove {} from Housing Queue'.format(uid))
             InHousingQueue.query.filter_by(uid=uid).delete()
 
     db.session.flush()
@@ -88,7 +88,7 @@ def change_queue_state(user_dict=None):
 
 
 @housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def change_room_numbers(rmnumber, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -107,21 +107,21 @@ def change_room_numbers(rmnumber, user_dict=None):
         if occupant != "":
             account = ldap_get_member(occupant)
             account.roomNumber = rmnumber
-            log.info(f'{occupant} assigned to room {rmnumber}')
+            log.info('{} assigned to room {}'.format(occupant, rmnumber))
             ldap_set_active(account)
-            log.info(f'{occupant} marked as active because of room assignment')
+            log.info('{} marked as active because of room assignment'.format(occupant))
     # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students
                              if ldap_get_roomnumber(account) == str(rmnumber)
                              and account.uid not in update["occupants"]]:
-            log.info(f'{old_occupant.uid} removed from room {old_occupant.roomNumber}')
+            log.info('{} removed from room {}'.format(old_occupant.uid, old_occupant.roomNumber))
             old_occupant.roomNumber = None
 
     return jsonify({"success": True}), 200
 
 
 @housing_bp.route('/housing/room/<rmnumber>', methods=['GET'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 def get_occupants(rmnumber):
 
     # Get the current list of people living on-floor.
@@ -134,7 +134,7 @@ def get_occupants(rmnumber):
 
 
 @housing_bp.route('/housing', methods=['DELETE'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def clear_all_rooms(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -146,6 +146,6 @@ def clear_all_rooms(user_dict=None):
 
     # Find the current occupants and clear them.
     for occupant in current_students:
-        log.info(f'{occupant.uid} removed from room {occupant.roomNumber}')
+        log.info('{} removed from room {}'.format(occupant.uid, occupant.roomNumber))
         occupant.roomNumber = None
     return jsonify({"success": True}), 200

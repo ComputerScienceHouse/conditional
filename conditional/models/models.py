@@ -18,7 +18,7 @@ class FreshmanAccount(db.Model):
     signatures_missed = Column(Integer)
     rit_username = Column(String(10), nullable=True)
 
-    def __init__(self, name, onfloor, room=None, missed=None, rit_username=None): # pylint: disable=too-many-positional-arguments
+    def __init__(self, name, onfloor, room=None, missed=None, rit_username=None):
         self.name = name
         today = date.fromtimestamp(time.time())
         self.eval_date = today + timedelta(weeks=6)
@@ -32,7 +32,8 @@ class FreshmanEvalData(db.Model):
     __tablename__ = 'freshman_eval_data'
     id = Column(Integer, primary_key=True)
     uid = Column(String(32), nullable=False)
-    freshman_project = Column(Enum('Pending', 'Passed', 'Failed', name="freshman_project_enum"), nullable=True)
+    freshman_project = Column(Enum('Pending', 'Passed', 'Failed',
+                                   name="freshman_project_enum"), nullable=True)
     eval_date = Column(DateTime, nullable=False)
     signatures_missed = Column(Integer, nullable=False)
     social_events = Column(Text)
@@ -228,7 +229,7 @@ class Conditional(db.Model):
     s_evaluation = Column(ForeignKey('spring_evals.id'))
     i_evaluation = Column(ForeignKey('freshman_eval_data.id'))
 
-    def __init__(self, uid, description, due, s_eval=None, i_eval=None): # pylint: disable=too-many-positional-arguments
+    def __init__(self, uid, description, due, s_eval=None, i_eval=None):
         self.uid = uid
         self.description = description
         self.date_due = due
@@ -288,7 +289,7 @@ class UserLog(db.Model):
     path = Column(String(128), nullable=False)
     description = Column(String(128), nullable=False)
 
-    def __init__(self, ipaddr, user, method, blueprint, path, description): # pylint: disable=too-many-positional-arguments
+    def __init__(self, ipaddr, user, method, blueprint, path, description):
         self.ipaddr = ipaddr
         self.timestamp = datetime.now()
         self.uid = user

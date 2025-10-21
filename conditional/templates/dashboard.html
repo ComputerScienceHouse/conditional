@@ -15,22 +15,12 @@ Dashboard
                     <h5 class="email">{{username}}@csh.rit.edu</h5>
                     <div class="profile-badges">
                         {% if active %}
-                            <span class="label label-success">Active</span> 
-                        {% else %}
-                            <span class="label label-danger">Inactive</span> 
-                        {% endif %} 
-
-                        {% if onfloor %}
-                            <span class="label label-primary">On-floor Status</span> 
-                        {% else %}
-                            <span class="label label-default">Off-floor Status</span> 
-                        {% endif %} 
-
-                        {% if voting %}
-                            <span class="label label-primary">Voting</span> 
-                        {% else %}
-                            <span class="label label-default">Non-Voting</span> 
-                        {% endif %}
+                        <span class="label label-success">Active</span> {% else %}
+                        <span class="label label-danger">Inactive</span> {% endif %} {% if onfloor %}
+                        <span class="label label-primary">On-floor Status</span> {% else %}
+                        <span class="label label-default">Off-floor Status</span> {% endif %} {% if voting %}
+                        <span class="label label-primary">Voting</span> {% else %}
+                        <span class="label label-default">Non-Voting</span> {% endif %}
                     </div>
                 </div>
             </div>

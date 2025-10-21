@@ -20,7 +20,7 @@ slideshow_bp = Blueprint('slideshow_bp', __name__)
 
 
 @slideshow_bp.route('/slideshow/intro')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def slideshow_intro_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -36,7 +36,7 @@ def slideshow_intro_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/members')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def slideshow_intro_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -49,7 +49,7 @@ def slideshow_intro_members(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/review', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def slideshow_intro_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -61,7 +61,7 @@ def slideshow_intro_review(user_dict=None):
     uid = post_data['uid']
     status = post_data['status']
 
-    log.info(f'Intro Eval for {uid}: {status}')
+    log.info('Intro Eval for {}: {}'.format(uid, status))
     FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == uid and
         FreshmanEvalData.active). \
@@ -76,7 +76,7 @@ def slideshow_intro_review(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def slideshow_spring_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -92,7 +92,7 @@ def slideshow_spring_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/members')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def slideshow_spring_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -105,7 +105,7 @@ def slideshow_spring_members(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/review', methods=['POST'])
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def slideshow_spring_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -117,7 +117,7 @@ def slideshow_spring_review(user_dict=None):
     uid = post_data['uid']
     status = post_data['status']
 
-    log.info(f'Spring Eval for {uid}: {status}')
+    log.info('Spring Eval for {}: {}'.format(uid, status))
 
     SpringEval.query.filter(
         SpringEval.uid == uid and

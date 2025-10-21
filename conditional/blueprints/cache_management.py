@@ -21,7 +21,7 @@ cache_bp = Blueprint('cache_bp', __name__)
 
 
 @cache_bp.route('/restart')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def restart_app(user_dict=None):
     if not ldap_is_rtp(user_dict['account']):
@@ -34,7 +34,7 @@ def restart_app(user_dict=None):
 
 
 @cache_bp.route('/clearcache')
-@auth.oidc_auth("default")
+@auth.oidc_auth
 @get_user
 def clear_cache(user_dict=None):
     if not ldap_is_eval_director(user_dict['account']) and not ldap_is_rtp(user_dict['account']):
