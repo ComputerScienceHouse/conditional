@@ -201,7 +201,7 @@ def gatekeep_status(username):
         )
         .filter(
             MemberCommitteeAttendance.uid == username,
-            CommitteeMeeting.approved is True,
+            bool(CommitteeMeeting.approved),
             CommitteeMeeting.timestamp >= semester_start,
         )
         .count()
@@ -214,7 +214,7 @@ def gatekeep_status(username):
         )
         .filter(
             MemberSeminarAttendance.uid == username,
-            TechnicalSeminar.approved is True,
+            bool(TechnicalSeminar.approved),
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()
