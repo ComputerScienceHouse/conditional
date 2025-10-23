@@ -25,7 +25,7 @@
     "demo": "gulp production"
   },
   "dependencies": {
-    "@sentry/browser": "^5.29.2",
+    "@sentry/browser": "^7.119.1",
     "bootstrap": "^3.3.6",
     "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sass": "^3.4.1",
