@@ -22,7 +22,8 @@
     "development": "gulp",
     "production": "gulp production",
     "deploy": "gulp deploy",
-    "demo": "gulp production"
+    "demo": "gulp production",
+    "css": "sass -p node -I node_modules frontend/stylesheets/app.scss conditional/static/app.css"
   },
   "dependencies": {
     "@sentry/browser": "^10.21.0",
