@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^7.119.1",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^5.0.0",
     "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sass": "^3.4.1",
     "bootstrap-sweetalert": "^1.0.1",
