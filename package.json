@@ -23,7 +23,8 @@
     "production": "gulp production",
     "deploy": "gulp deploy",
     "demo": "gulp production",
-    "webpack": "node build-webpack.js"
+    "webpack": "node build-webpack.js",
+    "scss": "node build-css.js"
   },
   "dependencies": {
     "@sentry/browser": "^5.29.2",
@@ -91,6 +92,7 @@
     "open": "0.0.5",
     "pretty-hrtime": "1.0.2",
     "require-dir": "1.2.0",
+    "sass": "1.1.0",
     "sinon": "1.17.4",
     "sinon-chai": "2.8.0",
     "webpack": "1.13.1",

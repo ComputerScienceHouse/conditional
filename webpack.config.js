@@ -19,8 +19,6 @@ env = 'production'
 var rev = config.tasks.production.rev && env === 'production';
 var filenamePattern = rev ? '[name]-[hash].js' : '[name].js';
 
-console.log(config)
-
 var webpackConfig = {
   context: jsSrc,
   plugins: [],
@@ -48,7 +46,7 @@ var webpackConfig = {
         test: /bootstrap-sweetalert.*$/,
         loader: 'babel-loader',
         query: config.tasks.js.babel
-      }
+      },
     ]
   }
 };
