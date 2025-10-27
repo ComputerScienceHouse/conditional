@@ -16,7 +16,7 @@ var extensions = config.tasks.js.extensions.map(function(extension) {
 
 env = 'production'
 
-var rev = config.tasks.production.rev && env === 'production';
+var rev = false;
 var filenamePattern = rev ? '[name]-[hash].js' : '[name].js';
 
 var webpackConfig = {
@@ -48,7 +48,7 @@ var webpackConfig = {
         query: config.tasks.js.babel
       },
     ]
-  }
+  },
 };
 
 if (env === 'development') {

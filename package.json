@@ -24,7 +24,8 @@
     "deploy": "gulp deploy",
     "demo": "gulp production",
     "webpack": "node build-webpack.js",
-    "scss": "node build-css.js"
+    "scss": "node build-css.js",
+    "build": "npm run webpack && npm run scss"
   },
   "dependencies": {
     "@sentry/browser": "^5.29.2",
