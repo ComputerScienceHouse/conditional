@@ -25,7 +25,7 @@
     "demo": "gulp production",
     "webpack": "node build-webpack.js",
     "scss": "node build-css.js",
-    "build": "npm run webpack && npm run scss"
+    "build": "npm run webpack && npm run scss && cp -r node_modules/bootstrap-icons/font/fonts conditional/static/css/fonts"
   },
   "dependencies": {
     "@sentry/browser": "^5.29.2",
