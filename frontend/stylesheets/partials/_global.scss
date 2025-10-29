@@ -26,6 +26,20 @@
   margin-bottom: 0;
 }
 
+.bi {
+  &.green {
+    color: #4da74d;
+  }
+
+  &.red {
+    color: #cb4b4b;
+  }
+
+  &.yellow {
+    color: #f1c40f;
+  }
+}
+
 .glyphicon {
   &.green {
     color: #4da74d;

@@ -1,7 +1,10 @@
 // Third Party
-@import 'csh-material-bootstrap';
-@import 'dataTables.bootstrap';
-@import 'bootstrap-material-datetimepicker';
+@use 'csh-material-bootstrap.css';
+@use 'dataTables.bootstrap.css';
+@use 'bootstrap-material-datetimepicker.css';
+
+// $bootstrap-icons-font-dir: "bootstrap-icons/font/fonts";
+@import "bootstrap-icons/font/bootstrap-icons";
 
 // External
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';

@@ -16,9 +16,13 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | b
 
 RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION"
 
+RUN curl -O -L https://github.com/sass/dart-sass/releases/download/1.93.2/dart-sass-1.93.2-linux-x64.tar.gz && tar -xzvf dart-sass-*.tar.gz
+ENV PATH="$PATH:/opt/conditional/dart-sass"
+
 COPY package.json package-lock.json /opt/conditional/
 
-COPY build*.js webpack.config.js frontend /opt/conditional
+COPY build*.js webpack.config.js /opt/conditional
+COPY frontend /opt/conditional/frontend
 COPY gulpfile.js/lib /opt/conditional/gulpfile.js/lib
 COPY gulpfile.js/config.json /opt/conditional/gulpfile.js/config.json
 
@@ -39,7 +43,7 @@ RUN apt-get -yq update && \
     apt-get -yq clean all
 
 ADD . /opt/conditional
-COPY --from=build-frontend /opt/conditional/static /opt/conditional/static
+COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/conditional/static
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 

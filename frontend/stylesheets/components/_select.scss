@@ -19,8 +19,8 @@
 @import './node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/vendor-prefixes';
 $selectize-font-family: inherit !default;
 $selectize-font-size: inherit !default;
-$selectize-line-height: $line-height-computed !default;
 $selectize-color-text: $text-color !default;
+$selectize-line-height: $font-size-base !default;
 $selectize-color-highlight: rgba(255, 237, 40, .4) !default;
 $selectize-color-input: $input-bg !default;
 $selectize-color-input-full: $input-bg !default;
