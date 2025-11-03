@@ -21,10 +21,8 @@ ENV PATH="$PATH:/opt/conditional/dart-sass"
 
 COPY package.json package-lock.json /opt/conditional/
 
-COPY build*.js webpack.config.js /opt/conditional
+COPY build*.js /opt/conditional
 COPY frontend /opt/conditional/frontend
-COPY gulpfile.js/lib /opt/conditional/gulpfile.js/lib
-COPY gulpfile.js/config.json /opt/conditional/gulpfile.js/config.json
 
 RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm use --delete-prefix $NODE_VERSION && npm ci && npm run build"
 
