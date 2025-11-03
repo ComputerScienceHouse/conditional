@@ -23,9 +23,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - run: curl -O -L https://github.com/sass/dart-sass/releases/download/1.93.2/dart-sass-1.93.2-linux-x64.tar.gz
+      - run: tar -xzvf dart-sass-*.tar.gz
       - run: |
-          curl -O -L https://github.com/sass/dart-sass/releases/download/1.93.2/dart-sass-1.93.2-linux-x64.tar.gz
-          tar -xzvf dart-sass-*.tar.gz
           echo PATH=${GITHUB_WORKSPACE}/dart_sass >> $GITHUB_ENV
           which sass
           npm ci
