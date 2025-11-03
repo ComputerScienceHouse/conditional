@@ -1,5 +1,4 @@
 const { exec } = require('child_process');
-const fs = require('fs');
 const path = require('path');
 
 // yes I know this is awkward. I want to actually use the node libraries but that gets SUBSTANTIALLY easier when node and all the dependinces are updated
@@ -33,15 +32,6 @@ function compileFile(file) {
     }
   })
 }
-
-exec("pwd", (error, stdout, stderr) => {
-  console.log(`stdout: ${stdout}`);
-  console.error(`stderr: ${stderr}`);
-  if (error) {
-    console.error(`exec error: ${error}`);
-    throw error;
-  }
-})
 
 exec("mkdir -p " + path.resolve("conditional/static/css"))
 
