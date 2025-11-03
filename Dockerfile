@@ -24,9 +24,10 @@ COPY package.json package-lock.json /opt/conditional/
 COPY build*.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
-RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm use --delete-prefix $NODE_VERSION && npm ci && npm run build"
+RUN /bin/bash -c "source $NVM_DIR/nvm.sh && npm ci"
+RUN /bin/bash -c "source $NVM_DIR/nvm.sh && npm run build"
 
-FROM docker.io/python:3.12-bookworm
+FROM docker.io/python:3.12-slim-bookworm
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 RUN mkdir /opt/conditional
@@ -40,9 +41,13 @@ RUN apt-get -yq update && \
     pip install -r requirements.txt && \
     apt-get -yq clean all
 
-ADD . /opt/conditional
+ARG PORT=8080
+ENV PORT=${PORT}
+EXPOSE ${PORT}
+
+COPY . /opt/conditional
 COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/conditional/static
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
-CMD ["gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
+CMD ["sh", "-c", "gunicorn conditional:app --bind=0.0.0.0:${PORT} --access-logfile=- --timeout=256"]
