@@ -11,7 +11,7 @@ Housing
                     <h3 class="panel-title">Housing Queue
                     {% if is_eval_director %}
                         <button id="queueFilterToggle" type="button" class="btn btn-primary btn-sm btn-conditional pull-right">
-                            <span class="glyphicon glyphicon-filter"></span> Show Current Queue
+                            <i class="bi bi-filter"></i> Show Current Queue
                         </button>
                     {% endif %}
                     </h3>
@@ -50,7 +50,7 @@ Housing
                     <h3 class="panel-title">Current Room Numbers
                     {% if is_eval_director %}
                         <button type="button" class="btn btn-primary btn-sm btn-conditional pull-right" data-module="housingEdit" data-modal="editHousing" data-rmnumber="">
-                            <span class="glyphicon glyphicon-plus"></span> Add Room
+                            <i class="bi bi-plus"></i> Add Room
                         </button>
                     {% endif %}
                     </h3>
@@ -80,7 +80,7 @@ Housing
                                 {% if is_eval_director %}
                                 <td>
                                     <button type="button" class="btn btn-default navbar-btn" data-module="housingEdit" data-modal="editHousing" data-rmnumber="{{room}}" id="rm-edit-btn">
-            		                <span class="glyphicon glyphicon-edit attend-edit-icon"></span> Edit
+            		                <i class="bi bi-pencil-square attend-edit-icon"></i> Edit
             		                </button>
                                 </td>
                                 {% endif %}

@@ -14,69 +14,69 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-stats"></span> Evals <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-bar-chart-fill"></i> Evals <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/intro_evals"><span class="glyphicon glyphicon-star"></span> Introductory Evaluations</a></li>
-                        <li><a href="/spring_evals"><span class="glyphicon glyphicon-tree-deciduous"></span> Membership Evaluations</a></li>
-                        <li><a href="/conditionals"><span class="glyphicon glyphicon-exclamation-sign"></span> Current Conditionals</a></li>
+                        <li><a href="/intro_evals"><i class="bi bi-star-fill"></i> Introductory Evaluations</a></li>
+                        <li><a href="/spring_evals"><i class="bi bi-tree-fill"></i> Membership Evaluations</a></li>
+                        <li><a href="/conditionals"><i class="bi bi-exclamation-circle"></i> Current Conditionals</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-list-alt"></span> Forms <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-card-list"></i> Forms <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/major_project"><span class="glyphicon glyphicon-star"></span> Major Project</a></li>
+                        <li><a href="/major_project"><i class="bi bi-star-fill"></i> Major Project</a></li>
                         {% if check_current_student(username) %}
-                        <li><a href="/co_op"><span class="glyphicon glyphicon-briefcase"></span> Co-Op Submission</a></li>
+                        <li><a href="/co_op"><i class="bi bi-briefcase-fill"></i> Co-Op Submission</a></li>
                         {% endif %}
                         {% if is_intromember %}
-                        <li><a href="/intro_evals_form"><span class="glyphicon glyphicon-blackboard"></span> Introductory Evaluations</a></li>
+                        <li><a href="/intro_evals_form"><i class="bi bi-card-text"></i> Introductory Evaluations</a></li>
                         {% endif %}
                     </ul>
                 </li>
 
-                <li><a href="/housing"><span class="glyphicon glyphicon-home"></span> Housing</a></li>
+                <li><a href="/housing"><i class="bi bi-house-door-fill"></i> Housing</a></li>
 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-ok"></span> Attendance
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-check"></i> Attendance
                     {% if is_eboard and pending_review != 0 %}
                     ({{pending_review}})
                     {% endif %}
                     <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/attendance_cm"><span class="glyphicon glyphicon-user"></span> Directorship Meeting </a></li>
-                        <li><a href="/attendance_ts"><span class="glyphicon glyphicon-blackboard"></span> Technical Seminar</a></li>
+                        <li><a href="/attendance_cm"><i class="bi bi-person-fill"></i> Directorship Meeting </a></li>
+                        <li><a href="/attendance_ts"><i class="bi bi-card-text"></i> Technical Seminar</a></li>
                         {% if is_eboard %}
-                        <li><a href="/attendance/history"><span class="glyphicon glyphicon-calendar"></span> Attendance History</a></li>
+                        <li><a href="/attendance/history"><i class="bi bi-calendar2-check"></i> Attendance History</a></li>
                         {% endif %}
                         {% if is_eval_director %}
-                        <li><a href="/attendance_hm"><span class="glyphicon glyphicon-home"></span> House Meeting</a></li>
+                        <li><a href="/attendance_hm"><i class="bi bi-house-door-fill"></i> House Meeting</a></li>
                         {% endif %}
                     </ul>
                 </li>
 
                 {% if is_eboard or is_rtp%}
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> Admin<span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-wrench"></i> Admin<span class="caret"></span></a>
                     <ul class="dropdown-menu">
 
                         {% if is_financial_director or is_eval_director %}
-                            <li><a href="/manage"><span class="glyphicon glyphicon-user"></span> Member Management</a></li>
+                            <li><a href="/manage"><i class="bi bi-person-fill"></i> Member Management</a></li>
                         {% endif %}
 
                         {% if is_eval_director %}
-                            <li><a href="/co_op/manage"><span class="glyphicon glyphicon-briefcase"></span> Co-Op Management</a></li>
-                            <li><a href="/slideshow/intro"><span class="glyphicon glyphicon-eye-open"></span> Introductory Evaluations Presentation</a></li>
-                            <li><a href="/slideshow/spring"><span class="glyphicon glyphicon-eye-open"></span> Membership Evaluations Presentation</a></li>
+                            <li><a href="/co_op/manage"><i class="bi bi-briefcase-fill"></i> Co-Op Management</a></li>
+                            <li><a href="/slideshow/intro"><i class="bi bi-eye-fill"></i> Introductory Evaluations Presentation</a></li>
+                            <li><a href="/slideshow/spring"><i class="bi bi-eye-fill"></i> Membership Evaluations Presentation</a></li>
                         {% endif %}
 
-                        <li><a href="/logs"><span class="glyphicon glyphicon-list"></span> User Logs</a></li>
+                        <li><a href="/logs"><i class="bi bi-list-ul"></i> User Logs</a></li>
 
                         {% if is_eval_director or is_rtp %}
-                            <li><a href="/clearcache"><span class="glyphicon glyphicon-floppy-remove"></span> Clear Cache</a></li>
+                            <li><a href="/clearcache"><i class="bi bi-database-fill-x"></i> Clear Cache</a></li>
                         {% endif %}
 
                         {% if is_rtp %}
-                            <li><a href="/restart"><span class="glyphicon glyphicon-refresh"></span> Restart Conditional</a></li>
+                            <li><a href="/restart"><i class="bi bi-arrow-repeat"></i> Restart Conditional</a></li>
                         {% endif %}
                     </ul>
                 </li>
@@ -93,12 +93,12 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a></li>
-                        <li><a href="https://profiles.csh.rit.edu/user/{{username}}"><span class="glyphicon glyphicon-user"></span> Profiles</a></li>
+                        <li><a href="/dashboard"><i class="bi bi-globe-americas"></i> Dashboard</a></li>
+                        <li><a href="https://profiles.csh.rit.edu/user/{{username}}"><i class="bi bi-person-fill"></i> Profiles</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="https://members.csh.rit.edu/"><span class="glyphicon glyphicon-globe"></span> Members Portal</a></li>
-                        <li><a href="https://github.com/ComputerScienceHouse/conditional/issues"><span class="glyphicon glyphicon-exclamation-sign"></span> Report an Issue</a></li>
-                        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                        <li><a href="https://members.csh.rit.edu/"><i class="bi bi-globe-americas"></i> Members Portal</a></li>
+                        <li><a href="https://github.com/ComputerScienceHouse/conditional/issues"><i class="bi bi-exclamation-circle"></i> Report an Issue</a></li>
+                        <li><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
                     </ul>
                 </li>
             </ul>
