@@ -24,9 +24,6 @@ var webpackConfig = {
         'NODE_ENV': JSON.stringify('production')
       }
     }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
-    new webpack.NoErrorsPlugin()
   ],
   resolve: {
     modules: [
@@ -34,20 +31,21 @@ var webpackConfig = {
       path.join(__dirname, "frontend/node_modules"),
     ],
   },
+  mode: 'production',
   module: {
     rules: [
       {
         test: /\.js$/,
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          // exclude: /node_modules/,
           query: babelQuery
         }
       },
       {
         test: require.resolve("jquery"),
         use: {
-          loader: 'expose?$!expose?jQuery'
+          loader: 'expose-loader'
         }
       },
       {
