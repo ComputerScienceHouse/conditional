@@ -6,7 +6,7 @@ var jsDest = path.resolve('./conditional/static/js');
 var publicPath = 'static/js';
 
 var babelQuery = {
-  "presets": ["es2015", "stage-1"],
+  "presets": ["@babel/preset-env"],
   "plugins": []
 }
 
@@ -65,6 +65,9 @@ var webpackConfig = {
       },
     ]
   },
+  optimization: {
+    emitOnErrors: true,
+  }
 };
 
 webpack(webpackConfig, (err, stats) => {
