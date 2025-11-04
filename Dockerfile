@@ -11,7 +11,7 @@ COPY package.json package-lock.json /opt/conditional/
 
 RUN npm ci 
 
-COPY build*.js /opt/conditional
+COPY build*.js webpack.config.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
 RUN npm run build

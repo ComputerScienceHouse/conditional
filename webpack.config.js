@@ -1,4 +1,4 @@
-var webpack = require("webpack")
+var webpack = require('webpack')
 var path = require('path');
 
 var jsSrc = path.resolve('./frontend/javascript');
@@ -25,43 +25,45 @@ var webpackConfig = {
       }
     }),
   ],
-  resolve: {
-    modules: [
-      path.join(__dirname, "frontend/javascript"),
-      path.join(__dirname, "frontend/node_modules"),
-    ],
-  },
+  // resolve: {
+  //   modules: [
+  //     path.join(__dirname, "frontend/node_modules"),
+  //     path.join(__dirname, "frontend/javascript"),
+  //   ],
+  // },
   mode: 'production',
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          query: babelQuery
-        }
+        loader: 'babel-loader',
+        options: babelQuery
       },
       {
         test: require.resolve("jquery"),
-        use: {
-          loader: 'expose-loader'
-        }
+        loader: 'expose-loader',
+        options: {
+          exposes: ["$", "jQuery"],
+        },
       },
       {
         test: /bootstrap-material-datetimepicker/,
-        use: {
-          loader: 'imports?moment'
-        }
+        loader: 'imports-loader',
+        options: {
+          imports: [
+            {
+              syntax: 'default',
+              moduleName: 'moment',
+              name: 'moment',
+            },
+          ],
+        },
       },
       {
         test: /bootstrap-sweetalert.*$/,
-        use: {
-          loader: 'babel-loader',
-          query: {
-            query: babelQuery
-          }
-        }
+        loader: 'babel-loader',
+        options: babelQuery
       },
     ]
   },
@@ -70,7 +72,9 @@ var webpackConfig = {
   }
 };
 
-webpack(webpackConfig, (err, stats) => {
-  console.log("Done!")
-  console.log(err, stats)
-});
+module.exports = webpackConfig;
+//
+// webpack(webpackConfig, (err, stats) => {
+//   console.log("Done!")
+//   console.log(err, stats)
+// });

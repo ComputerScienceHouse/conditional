@@ -17,7 +17,7 @@
     "npm": ">=6.14.8"
   },
   "scripts": {
-    "webpack": "node build-webpack.js",
+    "webpack": "webpack-cli",
     "scss": "node build-css.js",
     "build": "npm run webpack && npm run scss && cp -r node_modules/bootstrap-icons/font/fonts conditional/static/css/fonts"
   },
@@ -49,6 +49,7 @@
     "eslint-config-google": "^0.14.0",
     "expose-loader": "^5.0.1",
     "imports-loader": "^5.0.0",
-    "webpack": "^5.102.1"
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
   }
 }
