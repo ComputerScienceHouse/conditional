@@ -36,6 +36,7 @@
     "load-awesome": "^1.1.0",
     "lodash": "4.17.21",
     "reveal.js": "^3.3.0",
+    "sass": "^1.93.3",
     "selectize": "^0.12.2",
     "selectize-scss": "^0.9.1",
     "simple-masonry": "1.0.5",
@@ -64,7 +65,7 @@
     "require-dir": "1.2.0",
     "sinon": "1.17.4",
     "sinon-chai": "2.8.0",
-    "webpack": "1.13.1",
+    "webpack": "2.6.1",
     "webpack-dev-middleware": "1.6.1",
     "webpack-hot-middleware": "2.12.1"
   }

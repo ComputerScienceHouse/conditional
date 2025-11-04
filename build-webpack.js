@@ -29,29 +29,41 @@ var webpackConfig = {
     new webpack.NoErrorsPlugin()
   ],
   resolve: {
-    root: jsSrc,
-    extensions: ['', '.js']
+    modules: [
+      path.join(__dirname, "frontend/javascript"),
+      path.join(__dirname, "frontend/node_modules"),
+    ],
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        query: babelQuery
+        use: {
+          loader: 'babel-loader',
+          // exclude: /node_modules/,
+          query: babelQuery
+        }
       },
       {
         test: require.resolve("jquery"),
-        loader: 'expose?$!expose?jQuery'
+        use: {
+          loader: 'expose?$!expose?jQuery'
+        }
       },
       {
         test: /bootstrap-material-datetimepicker/,
-        loader: 'imports?moment'
+        use: {
+          loader: 'imports?moment'
+        }
       },
       {
         test: /bootstrap-sweetalert.*$/,
-        loader: 'babel-loader',
-        query: babelQuery
+        use: {
+          loader: 'babel-loader',
+          query: {
+            query: babelQuery
+          }
+        }
       },
     ]
   },

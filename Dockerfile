@@ -1,5 +1,4 @@
-FROM node:16-bookworm AS build-frontend
-# I'd love to use a node image but our version of node is too old :)
+FROM node:25-bookworm-slim AS build-frontend
 
 RUN mkdir /opt/conditional
 
@@ -8,15 +7,14 @@ WORKDIR /opt/conditional
 RUN apt-get -yq update && \
     apt-get -yq install curl git
 
-RUN curl -O -L https://github.com/sass/dart-sass/releases/download/1.93.2/dart-sass-1.93.2-linux-x64.tar.gz && tar -xzvf dart-sass-*.tar.gz
-ENV PATH="$PATH:/opt/conditional/dart-sass"
-
 COPY package.json package-lock.json /opt/conditional/
+
+RUN npm ci 
 
 COPY build*.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
-RUN npm ci && npm run build
+RUN npm run build
 
 FROM docker.io/python:3.12-slim-bookworm
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
