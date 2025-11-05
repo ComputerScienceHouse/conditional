@@ -22,8 +22,9 @@
     "build": "npm run webpack && npm run scss && cp -r node_modules/bootstrap-icons/font/fonts conditional/static/css/fonts"
   },
   "dependencies": {
+    "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^3.4.1",
     "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sass": "^3.4.1",
     "bootstrap-sweetalert": "^1.0.1",
@@ -35,9 +36,6 @@
     "jquery": "^3.7.1",
     "lodash": "4.17.21",
     "reveal.js": "^5.2.1",
-    "sass": "^1.93.3",
-    "selectize": "^0.12.2",
-    "selectize-scss": "^0.9.1",
     "simple-masonry": "1.0.5",
     "whatwg-fetch": "^3.6.20"
   },
@@ -46,9 +44,13 @@
     "@babel/preset-env": "^7.28.5",
     "babel-loader": "^10.0.0",
     "bootstrap-icons": "^1.13.1",
+    "css-loader": "^7.1.2",
     "eslint-config-google": "^0.14.0",
     "expose-loader": "^5.0.1",
     "imports-loader": "^5.0.0",
+    "sass": "^1.93.3",
+    "sass-loader": "^16.0.6",
+    "style-loader": "^4.0.0",
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1"
   }

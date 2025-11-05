@@ -15,3 +15,6 @@ window.addEventListener('unhandledrejection', err => {
 import "jquery";
 import "bootstrap";
 import "./modules";
+
+import "../stylesheets/app.scss"
+import "../stylesheets/presentations.scss"

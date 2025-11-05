@@ -2,8 +2,10 @@
 // 2014 (c) - Tristan Edwards
 // github.com/t4t5/sweetalert
 
+@use 'pkg:csh-material-bootstrap/sass/variables';
+@import 'bootstrap-sass/assets/stylesheets/bootstrap/mixins/vendor-prefixes';
+@import 'bootstrap-sass/assets/stylesheets/bootstrap/mixins/forms';
 @import 'sweet-alert-animations';
-@import './node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/forms';
 // @import 'ball-fall';
 
 body {

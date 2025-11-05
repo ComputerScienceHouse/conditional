@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
+const sass = require('sass');
 
 var jsSrc = path.resolve('./frontend/javascript');
 var jsDest = path.resolve('./conditional/static');
@@ -16,7 +17,8 @@ var webpackConfig = {
   output: {
     path: path.normalize(jsDest),
     filename: 'js/app.js',
-    publicPath: publicPath
+    publicPath: publicPath,
+    clean: true,
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -59,6 +61,31 @@ var webpackConfig = {
         loader: 'babel-loader',
         options: babelQuery
       },
+      {
+        test: /\.s[ac]ss$/i,
+        loader: "sass-loader",
+        type: "asset/resource",
+        generator: {
+          filename: "css/[name].css",
+        },
+        options: {
+          sassOptions: {
+            loadPaths: [
+              "./node_modules/csh-material-bootstrap/dist",
+              "./node_modules/csh-material-bootstrap/dist/css",
+              "./node_modules/datatables.net-bs/css",
+              "./node_modules/bootstrap-material-datetimepicker/css",
+              "./node_modules/load-awesome/css",
+              "./node_modules/reveal.js/css",
+              "./node_modules",
+              ".",
+            ],
+            importers: [
+              new sass.NodePackageImporter()
+            ],
+          }
+        }
+      }
     ]
   },
   optimization: {

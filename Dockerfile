@@ -14,7 +14,7 @@ RUN npm ci
 COPY build*.js webpack.config.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
-RUN npm run build
+RUN npm run webpack
 
 FROM docker.io/python:3.12-slim-bookworm
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
