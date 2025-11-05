@@ -1,14 +1,11 @@
-import {Enum} from 'enumify';
+import { Enumify } from 'enumify';
 
-class MasonryException extends Enum {
-}
+export default class MasonryException extends Enumify {
+  CANT_FIND_SHARED_SELECTOR = new MasonryException("Unable to find shared selector for Masonry grid items");
+  _ = MasonryException.closeEnum();
 
-MasonryException.initEnum({
-  CANT_FIND_SHARED_SELECTOR: {
-    get message() {
-      return "Unable to find shared selector for Masonry grid items";
-    }
+  constructor(message) {
+    super();
+    this.message = message;
   }
-});
-
-export default MasonryException;
+}

@@ -1,8 +1,8 @@
-var webpack = require('webpack')
+var webpack = require('webpack');
 var path = require('path');
 
 var jsSrc = path.resolve('./frontend/javascript');
-var jsDest = path.resolve('./conditional/static/js');
+var jsDest = path.resolve('./conditional/static');
 var publicPath = 'static/js';
 
 var babelQuery = {
@@ -15,7 +15,7 @@ var webpackConfig = {
   entry: ["./app.js"],
   output: {
     path: path.normalize(jsDest),
-    filename: '[name].js',
+    filename: 'js/app.js',
     publicPath: publicPath
   },
   plugins: [
@@ -25,12 +25,6 @@ var webpackConfig = {
       }
     }),
   ],
-  // resolve: {
-  //   modules: [
-  //     path.join(__dirname, "frontend/node_modules"),
-  //     path.join(__dirname, "frontend/javascript"),
-  //   ],
-  // },
   mode: 'production',
   module: {
     rules: [
