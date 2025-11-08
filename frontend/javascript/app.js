@@ -16,5 +16,10 @@ import "jquery";
 import "bootstrap";
 import "./modules";
 
+// Load fonts
+import "bootstrap-icons/font/fonts/bootstrap-icons.woff"
+import "bootstrap-icons/font/fonts/bootstrap-icons.woff2"
+
+// Load styles
 import "../stylesheets/app.scss"
 import "../stylesheets/presentations.scss"
