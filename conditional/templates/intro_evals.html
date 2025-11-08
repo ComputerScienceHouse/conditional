@@ -30,7 +30,7 @@ Introductory Evaluations
                             <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
                             {% if m['ldap_account'] %}
                                 {% if m['status'] == "Passed" %}
-                                <i class="bi bi-check white success eval-user-status"></i>
+                                <i class="bi bi-check2 white success eval-user-status"></i>
                                 {% elif m['status'] == "Pending" %}
                                 <i class="bi bi-hourglass white warning eval-user-status"></i>
                                 {% else %}
@@ -196,7 +196,7 @@ Introductory Evaluations
                         </td>
                         <td>
                             {% if m['status'] == "Passed" %}
-                            <i class="bi bi-check green"></i> Passed
+                            <i class="bi bi-check2 green"></i> Passed
                             {% elif m['status'] == "Pending" %}
                             <i class="bi bi-hourglass yellow"></i> Pending
                             {% else %}
