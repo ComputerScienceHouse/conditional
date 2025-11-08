@@ -1,8 +1,9 @@
-var webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin')
+const path = require('path');
 const sass = require('sass');
 
-var jsSrc = path.resolve('./frontend/javascript');
+var jsSrc = path.resolve('./frontend');
 var jsDest = path.resolve('./conditional/static');
 var publicPath = 'static/js';
 
@@ -13,7 +14,7 @@ var babelQuery = {
 
 var webpackConfig = {
   context: jsSrc,
-  entry: ["./app.js"],
+  entry: ["./javascript/app.js"],
   output: {
     path: path.normalize(jsDest),
     filename: 'js/app.js',
@@ -26,6 +27,11 @@ var webpackConfig = {
         'NODE_ENV': JSON.stringify('production')
       }
     }),
+    new CopyPlugin({
+      patterns: [
+        { from: "images", to: "images" },
+      ],
+    })
   ],
   mode: 'production',
   module: {

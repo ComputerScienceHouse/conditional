@@ -44,6 +44,7 @@
     "@babel/preset-env": "^7.28.5",
     "babel-loader": "^10.0.0",
     "bootstrap-icons": "^1.13.1",
+    "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^7.1.2",
     "eslint-config-google": "^0.14.0",
     "expose-loader": "^5.0.1",
