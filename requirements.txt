@@ -36,7 +36,7 @@ cryptography==46.0.3
     # via oic
 csh-ldap==2.4.0
     # via -r requirements.in
-ddtrace==3.2.3
+ddtrace==3.18.1
     # via -r requirements.in
 defusedxml==0.7.1
     # via oic
@@ -188,7 +188,6 @@ tomlkit==0.13.3
 typing-extensions==4.15.0
     # via
     #   alembic
-    #   ddtrace
     #   opentelemetry-api
     #   pydantic
     #   pydantic-core
@@ -212,7 +211,5 @@ wrapt==1.17.3
     # via
     #   -r requirements.in
     #   ddtrace
-xmltodict==1.0.2
-    # via ddtrace
 zipp==3.23.0
     # via importlib-metadata
