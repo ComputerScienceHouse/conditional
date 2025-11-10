@@ -60,9 +60,14 @@ $selectize-border-radius: $input-border-radius !default;
 // $selectize-arrow-color: $selectize-color-text !default;
 // $selectize-arrow-offset: $selectize-padding-x + 5px !default;
 
+.selectize-dropdown {
+  &.form-control {
+    height: unset;
+  }
+}
+
 .selectize-dropdown-content {
   padding: 5px 0;
-
 
   .option {
     line-height: 23px;
@@ -91,6 +96,12 @@ $selectize-border-radius: $input-border-radius !default;
 
       & > div {
         border-radius: $select-border-radius - 1px;
+      }
+
+      & > div.active {
+        background: $brand-primary;
+        color: #fff;
+        border: 0 solid transparent;
       }
     }
   }
