@@ -471,7 +471,8 @@ def member_management_upgrade_user(user_dict=None):
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         # Don't duplicate HM attendance records
         mhm = MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id).first()
+            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id and
+            MemberHouseMeetingAttendance.uid == uid).first()
         if mhm is None:
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
