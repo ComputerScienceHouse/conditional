@@ -123,22 +123,6 @@ $yellow: #f1c40f;
       font-weight: lighter;
     }
   }
-  & .icon {
-    position: absolute;
-    top: -40px;
-    left: calc(50% - 40px);
-    border-radius: 50%;
-    background: $red;
-    width: 80px;
-    height: 80px;
-    line-height: 80px;
-    color: #fff;
-    font-family: 'Glyphicons Halflings';
-    font-size: 40px;
-    &.passed {
-      background: $green;
-    }
-  }
   & .more {
     padding: 10px;
     text-align: left;

@@ -68,7 +68,7 @@ future==1.0.0
     # via pyjwkest
 greenlet==3.2.4
     # via sqlalchemy
-gunicorn==22.0.0
+gunicorn==20.1.0
     # via -r requirements.in
 idna==3.11
     # via requests
@@ -90,8 +90,6 @@ jinja2==3.1.6
     #   flask
 lazy-object-proxy==1.4.3
     # via -r requirements.in
-legacy-cgi==2.6.3
-    # via ddtrace
 mako==1.0.14
     # via
     #   -r requirements.in
@@ -116,9 +114,9 @@ oic==1.6.1
 opentelemetry-api==1.38.0
     # via ddtrace
 packaging==25.0
-    # via
-    #   build
-    #   gunicorn
+    # via build
+pip==25.2
+    # via pip-tools
 pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.5.0
@@ -166,8 +164,12 @@ requests==2.32.5
     #   flask-pyoidc
     #   oic
     #   pyjwkest
-sentry-sdk[flask]==2.24.1
+sentry-sdk==2.24.1
     # via -r requirements.in
+setuptools==80.9.0
+    # via
+    #   gunicorn
+    #   pip-tools
 six==1.17.0
     # via
     #   -r requirements.in

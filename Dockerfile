@@ -1,4 +1,22 @@
-FROM docker.io/python:3.12-bookworm
+FROM node:25-bookworm-slim AS build-frontend
+
+RUN mkdir /opt/conditional
+
+WORKDIR /opt/conditional
+
+RUN apt-get -yq update && \
+    apt-get -yq install curl git
+
+COPY package.json package-lock.json /opt/conditional/
+
+RUN npm ci 
+
+COPY webpack.config.js /opt/conditional
+COPY frontend /opt/conditional/frontend
+
+RUN npm run webpack
+
+FROM docker.io/python:3.12-slim-bookworm
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 RUN mkdir /opt/conditional
@@ -12,21 +30,13 @@ RUN apt-get -yq update && \
     pip install -r requirements.txt && \
     apt-get -yq clean all
 
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION v10.24.1
-RUN mkdir -p $NVM_DIR
+ARG PORT=8080
+ENV PORT=${PORT}
+EXPOSE ${PORT}
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
-
-RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION"
-
-ADD . /opt/conditional
-
-RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm use --delete-prefix $NODE_VERSION && npm install && npm run production"
-
-RUN rm -rf node_modules && \
-    apt-get -yq clean all
+COPY . /opt/conditional
+COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/conditional/static
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
-CMD ["gunicorn", "conditional:app", "--bind=0.0.0.0:8080", "--access-logfile=-", "--timeout=256"]
+CMD ["sh", "-c", "gunicorn conditional:app --bind=0.0.0.0:${PORT} --access-logfile=- --timeout=256"]

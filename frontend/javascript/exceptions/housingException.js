@@ -1,14 +1,11 @@
-import {Enum} from 'enumify';
+import { Enumify } from 'enumify';
 
-class HousingException extends Enum {
-}
+export default class HousingException extends Enumify {
+  SUBMIT_BEFORE_RENDER = HousingException("Cannot submit updated roster before the modal renders.");
+  _ = HousingException.closeEnum();
 
-HousingException.initEnum({
-  SUBMIT_BEFORE_RENDER: {
-    get message() {
-      return "Cannot submit updated roster before the modal renders.";
-    }
+  constructor(message) {
+    super();
+    this.message = message;
   }
-});
-
-export default HousingException;
+}

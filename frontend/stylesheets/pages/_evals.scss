@@ -25,12 +25,18 @@
 
 .eval-user-status {
   display: block;
+  position: relative;
+  font-weight: 400;
   float: right;
   margin: -25px 5px;
   border-radius: 50%;
   padding: 6px;
   width: 25px;
   height: 25px;
+
+  &:before {
+    vertical-align: .25em;
+  }
 }
 
 .col-sm-2 {
@@ -66,12 +72,12 @@
   }
   
   &[aria-expanded="true"] {
-    span.glyphicon {
+    i.bi {
       transform: rotate(180deg);
     }
   }
   
-  span.glyphicon {
+  i.bi {
     transition: transform ease-in-out 0.2s;
     transform: rotate(0deg);
   }
