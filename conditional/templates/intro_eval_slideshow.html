@@ -19,9 +19,9 @@ Introductory Evaluations Slideshow
               {% set packet_passed = m['signatures_missed'] == 0 %}
               <div class="item{% if packet_passed %} passed{% endif %}" >
                 {% if packet_passed %}
-                <i class="bi bi-check-circle passed" aria-hidden="true"></i>
+                <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
                 {% else %}
-                <i class="bi bi-x-circle" aria-hidden="true"></i>
+                <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['signatures_missed']}}</h3>
                 <p>Signatures Missed</p>
@@ -31,9 +31,9 @@ Introductory Evaluations Slideshow
               {% set committee_meetings_passed = m['committee_meetings'] >= 6 %}
               <div class="item{% if committee_meetings_passed %} passed{% endif %}" >
                 {% if committee_meetings_passed %}
-                <i class="bi bi-check-circle passed" aria-hidden="true"></i>
+                <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
                 {% else %}
-                <i class="bi bi-x-circle" aria-hidden="true"></i>
+                <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['committee_meetings']}}</h3>
                 <p>Meetings</p>
@@ -43,9 +43,9 @@ Introductory Evaluations Slideshow
               {% set house_meetings_passed = m['house_meetings_missed']|length == 0 %}
               <div class="item{% if house_meetings_passed %} passed{% endif %}">
                 {% if house_meetings_passed %}
-                <i class="bi bi-check-circle passed" aria-hidden="true"></i>
+                <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
                 {% else %}
-                <i class="bi bi-x-circle" aria-hidden="true"></i>
+                <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['house_meetings_missed']|length}}</h3>
                 <p>Absences</p>
@@ -55,9 +55,9 @@ Introductory Evaluations Slideshow
               {% set technical_seminars_passed = m['technical_seminars']|length >= 2 %}
               <div class="item{% if technical_seminars_passed %} passed{% endif %}">
                 {% if technical_seminars_passed %}
-                <i class="bi bi-check-circle passed" aria-hidden="true"></i>
+                <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
                 {% else %}
-                <i class="bi bi-x-circle" aria-hidden="true"></i>
+                <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['technical_seminars']|length}}</h3>
                 <p>Seminars</p>
