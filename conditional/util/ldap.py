@@ -117,6 +117,14 @@ def ldap_is_current_student(account):
     return _ldap_is_member_of_group(account, 'current_student')
 
 
+def ldap_get_housingpoints(account):
+    ldap_get_current_students.cache_clear()
+    ldap_get_member.cache_clear()
+    try:
+        return account.housingPoints
+    except AttributeError:
+        return 0
+
 def ldap_set_housingpoints(account, housing_points):
     account.housingPoints = housing_points
     ldap_get_current_students.cache_clear()
