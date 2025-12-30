@@ -44,11 +44,11 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Freshman Evaluations
                         {% if freshman['status'] == "Passed" %}
-                        <span class="pull-right"><i class="bi bi-check-circle green"></i> Passed</span>
+                        <span class="pull-right"><i class="bi bi-check-circle-fill green"></i> Passed</span>
                         {% elif freshman['status'] == "Pending" %}
-                        <span class="pull-right"><i class="bi bi-hourglass yellow"></i> Pending</span>
+                        <span class="pull-right"><i class="bi bi-hourglass-split yellow"></i> Pending</span>
                         {% else %}
-                        <span class="pull-right"><i class="bi bi-x-circle red"></i> Failed</span>
+                        <span class="pull-right"><i class="bi bi-x-circle-fill red"></i> Failed</span>
                         {% endif %}
                     </h3>
                 </div>
@@ -63,8 +63,8 @@ Dashboard
                             <td class="title">Signatures Missed</td>
                             <td><span class="pull-right">
                                 {% if freshman['sig_missed'] == 0 %}
-                                <i class="bi bi-check-circle green"></i> None {% else %}
-                                <i class="bi bi-x-circle red"></i> {{freshman['sig_missed']}} {% endif %}
+                                <i class="bi bi-check-circle-fill green"></i> None {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {{freshman['sig_missed']}} {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -72,8 +72,8 @@ Dashboard
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if freshman['committee_meetings'] >= 6 %}
-                                <i class="bi bi-check-circle green"></i> {% else %}
-                                <i class="bi bi-x-circle red"></i> {% endif %} {{freshman['committee_meetings']}} / 6
+                                <i class="bi bi-check-circle-fill green"></i> {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {% endif %} {{freshman['committee_meetings']}} / 6
                                 </span>
                             </td>
                         </tr>
@@ -81,8 +81,8 @@ Dashboard
                             <td class="title">House Meetings Missed</td>
                             <td><span class="pull-right">
                                 {% if freshman['hm_missed'] == 0 %}
-                                <i class="bi bi-check-circle green"></i> None {% else %}
-                                <i class="bi bi-x-circle red"></i> {{ freshman['hm_missed'] }} {% endif %}
+                                <i class="bi bi-check-circle-fill green"></i> None {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {{ freshman['hm_missed'] }} {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -111,11 +111,11 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Membership Evaluations
                         {% if spring['status'] == "Passed" %}
-                        <span class="pull-right"><i class="bi bi-check-circle green"></i> Passed</span>
+                        <span class="pull-right"><i class="bi bi-check-circle-fill green"></i> Passed</span>
                         {% elif spring['status'] == "Failed" %}
-                        <span class="pull-right"><i class="bi bi-x-circle red"></i> Failed</span>
+                        <span class="pull-right"><i class="bi bi-x-circle-fill red"></i> Failed</span>
                         {% elif active %}
-                        <span class="pull-right"><i class="bi bi-hourglass yellow"></i> Pending</span>
+                        <span class="pull-right"><i class="bi bi-hourglass-split yellow"></i> Pending</span>
                         {% endif %}
                     </h3>
                 </div>
@@ -141,16 +141,16 @@ Dashboard
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if spring['committee_meetings'] >= spring['req_meetings'] %}
-                                <i class="bi bi-check-circle green"></i> {% else %}
-                                <i class="bi bi-x-circle red"></i> {% endif %} {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}</span>
+                                <i class="bi bi-check-circle-fill green"></i> {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {% endif %} {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="title">House Meetings Missed</td>
                             <td><span class="pull-right">
                                 {% if spring['hm_missed'] == 0 %}
-                                <i class="bi bi-check-circle green"></i> None {% else %}
-                                <i class="bi bi-x-circle red"></i> {{spring['hm_missed']}}</span>
+                                <i class="bi bi-check-circle-fill green"></i> None {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {{spring['hm_missed']}}</span>
                                 {% endif %}
                                 </span>
                             </td>
@@ -160,9 +160,9 @@ Dashboard
                             <td>
                                 <span class="pull-right">
                                 {% if spring['mp_status'] == "Passed" %}
-                                <i class="bi bi-check-circle green"></i> Passed {% elif spring['mp_status'] == "Pending" %}
-                                <i class="bi bi-hourglass yellow"></i> Pending {% else %}
-                                <i class="bi bi-x-circle red"></i> None {% endif %}
+                                <i class="bi bi-check-circle-fill green"></i> Passed {% elif spring['mp_status'] == "Pending" %}
+                                <i class="bi bi-hourglass-split yellow"></i> Pending {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> None {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -193,9 +193,9 @@ Dashboard
                                 <td>{{c['description']}}</td>
                                 <td>
                                     {% if c['status'] == "Passed" %}
-                                    <i style="padding-left:15px; padding-top:15px;" class="bi bi-check-circle green"></i> {% elif c['status'] == "Pending" %}
-                                    <i class="bi bi-hourglass yellow"></i> <span class="mobile-hide">Pending</span> {% else %}
-                                    <i class="bi bi-x-circle red"></i> <span class="mobile-hide">Failed</span> {% endif %}
+                                    <i style="padding-left:15px; padding-top:15px;" class="bi bi-check-circle-fill green"></i> {% elif c['status'] == "Pending" %}
+                                    <i class="bi bi-hourglass-split yellow"></i> <span class="mobile-hide">Pending</span> {% else %}
+                                    <i class="bi bi-x-circle-fill red"></i> <span class="mobile-hide">Failed</span> {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -245,10 +245,10 @@ Dashboard
                 {% for p in major_projects %}
                     <div class="mp-container">
                         {% if p['status'] == "Passed" %}
-                        <div class="title"><i class="bi bi-check-circle green"></i> {{p['name']}}</div>
+                        <div class="title"><i class="bi bi-check-circle-fill green"></i> {{p['name']}}</div>
                         {% elif p['status'] == "Pending" %}
                         <div class="title">
-                            <i class="bi bi-hourglass yellow"></i> {{p['name']}}
+                            <i class="bi bi-hourglass-split yellow"></i> {{p['name']}}
                             <button class="btn-xs btn-danger pull-right" data-module="majorProjectStatus" data-id="{{p['id']}}">
                                 <i class="bi bi-trash3"></i>
                                 Delete

@@ -54,13 +54,13 @@ Major Project Form
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#" data-option="Passed"><i class="bi bi-check-circle green"></i> Passed</a>
+                            <a href="#" data-option="Passed"><i class="bi bi-check-circle-fill green"></i> Passed</a>
                         </li>
                         <li>
-                            <a href="#" data-option="Pending"><i class="bi bi-hourglass yellow"></i> Pending</a>
+                            <a href="#" data-option="Pending"><i class="bi bi-hourglass-split yellow"></i> Pending</a>
                         </li>
                         <li>
-                            <a href="#" data-option="Failed"><i class="bi bi-x-circle red"></i> Failed</a>
+                            <a href="#" data-option="Failed"><i class="bi bi-x-circle-fill red"></i> Failed</a>
                         </li>
                         <li>
                             <a href="#" data-option="Delete"><i class="bi bi-trash3 red"></i> Delete</a>
@@ -69,11 +69,11 @@ Major Project Form
                 </div>
             {% else %}
                 {% if p['status'] == 'Passed' %}
-                <h5 style="padding:15px 20px;float:right"><i class="bi bi-check-circle green"></i></h5>
+                <h5 style="padding:15px 20px;float:right"><i class="bi bi-check-circle-fill green"></i></h5>
                 {% elif p['status'] == 'Failed' %}
-                <h5 style="padding:15px 20px;float:right"><i class="bi bi-x-circle red"></i></h5>
+                <h5 style="padding:15px 20px;float:right"><i class="bi bi-x-circle-fill red"></i></h5>
                 {% else %}
-                <h5 style="padding:15px 20px;float:right"><i class="bi bi-hourglass yellow"></i></h5>
+                <h5 style="padding:15px 20px;float:right"><i class="bi bi-hourglass-split yellow"></i></h5>
                 {% endif %}
                 {% if p.is_owner and p['status'] == 'Pending' %}
                 <button class="btn btn-danger btn-mp" data-module="majorProjectStatus" data-id="{{p['id']}}"><i class="bi bi-trash3"></i> Delete</button>
