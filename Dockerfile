@@ -21,7 +21,7 @@ MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 RUN mkdir /opt/conditional
 
-ADD requirements.txt /opt/conditional
+COPY requirements.txt /opt/conditional
 
 WORKDIR /opt/conditional
 
@@ -34,7 +34,8 @@ ARG PORT=8080
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
-COPY . /opt/conditional
+COPY conditional /opt/conditional/conditional
+COPY *.py package.json /opt/conditional
 COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/conditional/static
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
