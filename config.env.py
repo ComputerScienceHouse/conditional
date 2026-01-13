@@ -37,10 +37,12 @@ SENTRY_ENV = env.get("CONDITIONAL_SENTRY_ENV", "local-development")
 
 # OIDC Config
 OIDC_ISSUER = env.get("CONDITIONAL_OIDC_ISSUER", "https://sso.csh.rit.edu/auth/realms/csh")
+
 OIDC_CLIENT_CONFIG = {
     'client_id': env.get("CONDITIONAL_OIDC_CLIENT_ID", "conditional"),
     'client_secret': env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
-    'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:6969/logout")]
+    'redirect_uri': env.get("CONDITIONAL_OIDC_REDIRECT_URI", "http://localhost:8080/redirect_uri"),
+    'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:8080/logout")],
 }
 
 # Openshift secret
@@ -48,3 +50,6 @@ SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
+
+# Vote config
+VOTE_TOKEN = env.get("CONDITIONAL_VOTE_TOKEN", "")

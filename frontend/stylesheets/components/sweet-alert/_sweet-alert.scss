@@ -2,9 +2,10 @@
 // 2014 (c) - Tristan Edwards
 // github.com/t4t5/sweetalert
 
+@use 'pkg:csh-material-bootstrap/sass/variables';
+@import 'bootstrap-sass/assets/stylesheets/bootstrap/mixins/vendor-prefixes';
+@import 'bootstrap-sass/assets/stylesheets/bootstrap/mixins/forms';
 @import 'sweet-alert-animations';
-@import './node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins/forms';
-@import 'ball-fall';
 
 body {
   .stop-scrolling {
@@ -71,16 +72,6 @@ body {
     display: inline-block;
     position: relative;
   }
-  .la-ball-fall {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    visibility: hidden;
-    opacity: 0;
-    margin-top: -9px;
-    margin-left: -27px;
-    width: 55px;
-  }
   button {
     &[disabled] {
       opacity: .6;
@@ -88,12 +79,6 @@ body {
     }
     &.confirm[disabled] {
       color: transparent;
-      ~ .la-ball-fall {
-        visibility: visible;
-        opacity: 1;
-
-        transition-delay: 0s;
-      }
     }
   }
   .sa-icon {

@@ -14,7 +14,7 @@ log_bp = Blueprint('log_bp', __name__)
 
 
 @log_bp.route('/logs')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_logs(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

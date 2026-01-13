@@ -17,7 +17,7 @@ logger = structlog.get_logger()
 
 
 @spring_evals_bp.route('/spring_evals/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_spring_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)

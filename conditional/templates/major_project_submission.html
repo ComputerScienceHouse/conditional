@@ -54,33 +54,35 @@ Major Project Form
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#" data-option="Passed"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</a>
+                            <a href="#" data-option="Passed"><i class="bi bi-check-circle-fill green"></i> Passed</a>
                         </li>
                         <li>
-                            <a href="#" data-option="Pending"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</a>
+                            <a href="#" data-option="Pending"><i class="bi bi-hourglass-split yellow"></i> Pending</a>
                         </li>
                         <li>
-                            <a href="#" data-option="Failed"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</a>
+                            <a href="#" data-option="Failed"><i class="bi bi-x-circle-fill red"></i> Failed</a>
                         </li>
                         <li>
-                            <a href="#" data-option="Delete"><span class="glyphicon glyphicon-trash red"></span> Delete</a>
+                            <a href="#" data-option="Delete"><i class="bi bi-trash3 red"></i> Delete</a>
                         </li>
                     </ul>
                 </div>
             {% else %}
                 {% if p['status'] == 'Passed' %}
-                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-ok green"></span></h5>
+                <h5 style="padding:15px 20px;float:right"><i class="bi bi-check-circle-fill green"></i></h5>
                 {% elif p['status'] == 'Failed' %}
-                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-remove red"></span></h5>
+                <h5 style="padding:15px 20px;float:right"><i class="bi bi-x-circle-fill red"></i></h5>
                 {% else %}
-                <h5 style="padding:15px 20px;float:right"><span class="glyphicon glyphicon-hourglass yellow"></span></h5>
+                <h5 style="padding:15px 20px;float:right"><i class="bi bi-hourglass-split yellow"></i></h5>
                 {% endif %}
                 {% if p.is_owner and p['status'] == 'Pending' %}
-                <button class="btn btn-danger btn-mp" data-module="majorProjectStatus" data-id="{{p['id']}}"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                <button class="btn btn-danger btn-mp" data-module="majorProjectStatus" data-id="{{p['id']}}"><i class="bi bi-trash3"></i> Delete</button>
                 {% endif %}
             {% endif %}
             </div>
-            <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}"><span class="glyphicon glyphicon glyphicon-menu-down"></span></button>
+            <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}">
+                <i class="bi bi-chevron-down"></i>
+            </button>
             <div class="collapse major-project-desc" id="evalsCollapse-{{p['id']}}">
                 {{p['description']}}
             </div>
