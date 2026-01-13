@@ -73,15 +73,14 @@ def submit_major_project(user_dict=None):
     project = MajorProject(user_dict["username"], name, description)
 
     # Don't you dare try pinging @channel
-    if "<!" in name:
-        name = "<! ".join(name.split("<!"))
+    name = name.replace("<!", "<! ")
 
-    username = user_dict['username']
+    username = user_dict["username"]
     send_slack_ping(
-      {
-        "text":f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
-        f" submitted their major project, *{name}*!"
-      }
+        {
+            "text": f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
+            f" submitted their major project, *{name}*!"
+        }
     )
     db.session.add(project)
     db.session.commit()
