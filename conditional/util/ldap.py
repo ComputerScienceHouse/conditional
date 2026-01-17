@@ -9,11 +9,7 @@ def _ldap_get_group_members(group: str) -> list[CSHMember]:
 
 
 def _ldap_is_member_of_group(member: CSHMember, group: str) -> bool:
-    group_list = member.get("memberOf")
-    for group_dn in group_list:
-        if group == group_dn.split(",")[0][3:]:
-            return True
-    return False
+    return ldap.get_group(group).check_member(member)
 
 
 def _ldap_add_member_to_group(account: CSHMember, group: str):
@@ -28,17 +24,12 @@ def _ldap_remove_member_from_group(account: CSHMember, group: str):
 
 @service_cache(maxsize=256)
 def _ldap_is_member_of_directorship(account: CSHMember, directorship: str):
-    directors = ldap.get_directorship_heads(directorship)
-    for director in directors:
-        if director.uid == account.uid:
-            return True
-    return False
-
+    return account.in_group(f'eboard-{directorship}', dn=True)
+# TODO: try in_group(ldap.get_group(f'eboard-{directorship}')) and profile
 
 @service_cache(maxsize=1024)
 def ldap_get_member(username: str) -> CSHMember:
     return ldap.get_member(username, uid=True)
-
 
 @service_cache(maxsize=1024)
 def ldap_get_active_members() -> list[CSHMember]:
