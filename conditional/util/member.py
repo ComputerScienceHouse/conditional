@@ -139,7 +139,7 @@ def req_cm(member):
     return 30
 
 @service_cache(maxsize=256)
-def get_voting_memberse():
+def get_voting_members():
     if datetime.today() < datetime(start_of_year().year, 12, 31):
         semester = "Fall"
         semester_start = datetime(start_of_year().year,6,1)
