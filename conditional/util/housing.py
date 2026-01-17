@@ -50,8 +50,7 @@ def get_housing_queue(is_eval_director=False):
 def get_queue_position(username):
     queue = get_housing_queue()
     try:
-        index = next(index for (index, d) in enumerate(queue)
-                     if d["uid"] == username) + 1
+        index = next(index for (index, d) in enumerate(queue) if d["uid"] == username) + 1
     except (KeyError, StopIteration):
         index = None
     return index, len(queue)
