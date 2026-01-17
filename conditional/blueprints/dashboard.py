@@ -36,7 +36,8 @@ def display_dashboard(user_dict=None):
     log.info('display dashboard')
 
     # Get the list of voting members.
-    can_vote = get_voting_members()
+
+    can_vote = get_gatekeep_passed()
 
     data = {}
     data['username'] = user_dict['account'].uid

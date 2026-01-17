@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import func, or_
 
 from conditional import start_of_year
 from conditional.models.models import CommitteeMeeting
@@ -160,6 +161,98 @@ def req_cm(member):
     if co_op:
         return 15
     return 30
+
+def get_gatekeep_passed():
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = "Fall"
+        semester_start = datetime(start_of_year().year,6,1)
+    else:
+        semester = "Spring"
+        semester_start = datetime(start_of_year().year + 1,1,1)
+
+    active_members = set(ldap_get_active_members())
+    intro_memberes = set(ldap_get_intro_members())
+
+    coop_members = CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester,
+    ).with_entities(
+        func.array_agg(CurrentCoops.uid)
+    ).scalar()
+
+    # have to do this because if it's none then set constructor screams
+    if coop_members == None:
+        coop_members = set()
+    else: 
+        coop_members = set(coop_members)
+
+    passed_fall_members = FreshmanEvalData.query.filter(
+            FreshmanEvalData.freshman_eval_result == "Passed",
+            FreshmanEvalData.eval_date > start_of_year(),
+    ).with_entities(
+        func.array_agg(FreshmanEvalData.uid)
+    ).scalar()
+
+    if (passed_fall_members == None):
+        passed_fall_members = set()
+    else:
+        passed_fall_members = set(passed_fall_members)
+
+    elligible_members = (active_members - intro_memberes - coop_members) | passed_fall_members
+
+    passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
+        CommitteeMeeting,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.approved,
+    ).filter(
+        CommitteeMeeting.approved,
+        CommitteeMeeting.timestamp >= semester_start
+    ).with_entities(
+        MemberCommitteeAttendance.uid
+    ).group_by(
+        MemberCommitteeAttendance.uid
+    ).having(
+        func.count(MemberCommitteeAttendance.uid) >= 6
+    ).with_entities(
+        MemberCommitteeAttendance.uid
+    ).all())
+
+    passing_ts = set(member.uid for member in MemberSeminarAttendance.query.join(
+        TechnicalSeminar,
+        MemberSeminarAttendance.seminar_id == TechnicalSeminar.id
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        MemberSeminarAttendance.uid
+    ).group_by(
+        MemberSeminarAttendance.uid
+    ).having(
+        func.count(MemberSeminarAttendance.uid) >= 2
+    ).all())
+
+    passing_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
+        HouseMeeting,
+        MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
+    ).filter(
+        HouseMeeting.date >= semester_start, or_(
+            MemberHouseMeetingAttendance.attendance_status == 'Attended',
+            MemberHouseMeetingAttendance.attendance_status == 'Excused'
+        )
+    ).with_entities(
+        MemberHouseMeetingAttendance.uid
+    ).group_by(
+        MemberHouseMeetingAttendance.uid
+    ).having(
+        func.count(MemberHouseMeetingAttendance.uid) >= 2
+    ).all())
+
+    passing_reqs = passing_dm | passing_ts | passing_hm
+
+    return elligible_members & passing_reqs
 
 def gatekeep_status(username):
     if datetime.today() < datetime(start_of_year().year, 12, 31):
