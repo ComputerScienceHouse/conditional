@@ -1,8 +1,7 @@
+from csh_ldap import CSHMember
+
 from conditional import ldap
 from conditional.util.cache import service_cache
-
-from csh_ldap import CSHGroup, CSHMember
-
 
 def _ldap_get_group_members(group: str) -> list[CSHMember]:
     return ldap.get_group(group).get_members()

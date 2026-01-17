@@ -18,7 +18,7 @@ def get_housing_queue(is_eval_director=False):
             OnFloorStatusAssigned,
             OnFloorStatusAssigned.uid == InHousingQueue.uid
         ).with_entities(
-            InHousingQueue.uid, 
+            InHousingQueue.uid,
             OnFloorStatusAssigned.onfloor_granted
         ).all()
     }
@@ -28,7 +28,7 @@ def get_housing_queue(is_eval_director=False):
 
     # Populate a list of dictionaries containing the name, username,
     # and on-floor datetime for each current studetn who has on-floor status
-    # and is not already assigned to a room 
+    # and is not already assigned to a room
     queue = [
         {
             "uid": account.uid,

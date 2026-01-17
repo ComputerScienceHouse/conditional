@@ -158,9 +158,9 @@ def get_voting_memberse():
     ).scalar()
 
     # have to do this because if it's none then set constructor screams
-    if coop_members == None:
+    if coop_members is None:
         coop_members = set()
-    else: 
+    else:
         coop_members = set(coop_members)
 
     passed_fall_members = FreshmanEvalData.query.filter(
@@ -170,7 +170,7 @@ def get_voting_memberse():
         func.array_agg(FreshmanEvalData.uid)
     ).scalar()
 
-    if (passed_fall_members == None):
+    if passed_fall_members is None:
         passed_fall_members = set()
     else:
         passed_fall_members = set(passed_fall_members)
@@ -195,7 +195,7 @@ def get_voting_memberse():
     ).group_by(
         MemberCommitteeAttendance.uid
     ).having(
-        func.count(MemberCommitteeAttendance.uid) >= 6
+        func.count(MemberCommitteeAttendance.uid) >= 6 #pylint: disable=not-callable
     ).with_entities(
         MemberCommitteeAttendance.uid
     ).all())
@@ -211,7 +211,7 @@ def get_voting_memberse():
     ).group_by(
         MemberSeminarAttendance.uid
     ).having(
-        func.count(MemberSeminarAttendance.uid) >= 2
+        func.count(MemberSeminarAttendance.uid) >= 2 #pylint: disable=not-callable
     ).all())
 
     passing_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
@@ -227,7 +227,7 @@ def get_voting_memberse():
     ).group_by(
         MemberHouseMeetingAttendance.uid
     ).having(
-        func.count(MemberHouseMeetingAttendance.uid) >= 6
+        func.count(MemberHouseMeetingAttendance.uid) >= 6 #pylint: disable=not-callable
     ).all())
 
     passing_reqs = passing_dm & passing_ts & passing_hm
