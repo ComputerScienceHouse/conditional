@@ -16,7 +16,7 @@ from conditional.util.ldap import ldap_get_active_members, ldap_is_bad_standing
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.member import get_freshman_data, get_voting_members, get_cm, get_hm, req_cm
+from conditional.util.member import get_freshman_data, get_voting_members, get_gatekeep_passed, get_cm, get_hm, req_cm
 
 logger = structlog.get_logger()
 
