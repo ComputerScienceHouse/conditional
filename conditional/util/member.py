@@ -21,34 +21,6 @@ from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
 
-
-@service_cache(maxsize=1024)
-def get_voting_members():
-
-    if datetime.today() < datetime(start_of_year().year, 12, 31):
-        semester = 'Fall'
-    else:
-        semester = 'Spring'
-
-    active_members = set(member.uid for member in ldap_get_active_members())
-    intro_members = set(member.uid for member in ldap_get_intro_members())
-    on_coop = set(member.uid for member in CurrentCoops.query.filter(
-        CurrentCoops.date_created > start_of_year(),
-        CurrentCoops.semester == semester).all())
-    voting_set = active_members - intro_members - on_coop
-
-    passed_fall = FreshmanEvalData.query.filter(
-        FreshmanEvalData.freshman_eval_result == "Passed",
-        FreshmanEvalData.eval_date > start_of_year()
-    ).distinct()
-
-    for intro_member in passed_fall:
-        voting_set.add(intro_member.uid)
-
-    voting_list = list(username for username in voting_set if gatekeep_status(username)["result"])
-    return voting_list
-
-
 @service_cache(maxsize=1024)
 def get_members_info():
     members = ldap_get_current_students()
@@ -166,7 +138,8 @@ def req_cm(member):
         return 15
     return 30
 
-def get_gatekeep_passed():
+@service_cache(maxsize=256)
+def get_voting_memberse():
     if datetime.today() < datetime(start_of_year().year, 12, 31):
         semester = "Fall"
         semester_start = datetime(start_of_year().year,6,1)
@@ -175,7 +148,7 @@ def get_gatekeep_passed():
         semester_start = datetime(start_of_year().year + 1,1,1)
 
     active_members = set(ldap_get_active_members())
-    intro_memberes = set(ldap_get_intro_members())
+    intro_members = set(ldap_get_intro_members())
 
     coop_members = CurrentCoops.query.filter(
         CurrentCoops.date_created > start_of_year(),
@@ -202,7 +175,10 @@ def get_gatekeep_passed():
     else:
         passed_fall_members = set(passed_fall_members)
 
-    elligible_members = (active_members - intro_memberes - coop_members) | passed_fall_members
+    active_not_intro = active_members - intro_members
+    active_not_intro = set(map(lambda member: member.uid, active_not_intro))
+
+    elligible_members = (active_not_intro - coop_members) | passed_fall_members
 
     passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
@@ -244,17 +220,17 @@ def get_gatekeep_passed():
     ).filter(
         HouseMeeting.date >= semester_start, or_(
             MemberHouseMeetingAttendance.attendance_status == 'Attended',
-            MemberHouseMeetingAttendance.attendance_status == 'Excused'
+            # MemberHouseMeetingAttendance.attendance_status == 'Excused'
         )
     ).with_entities(
         MemberHouseMeetingAttendance.uid
     ).group_by(
         MemberHouseMeetingAttendance.uid
     ).having(
-        func.count(MemberHouseMeetingAttendance.uid) >= 2
+        func.count(MemberHouseMeetingAttendance.uid) >= 6
     ).all())
 
-    passing_reqs = passing_dm | passing_ts | passing_hm
+    passing_reqs = passing_dm & passing_ts & passing_hm
 
     return elligible_members & passing_reqs
 
