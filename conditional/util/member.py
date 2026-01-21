@@ -90,19 +90,18 @@ def get_onfloor_members():
 
 
 def get_cm(member):
-
     query_result = CommitteeMeeting.query.join(
         MemberCommitteeAttendance,
         MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
-        ).with_entities(
-            MemberCommitteeAttendance.uid,
-            CommitteeMeeting.timestamp,
-            CommitteeMeeting.committee
-            ).filter(
-                CommitteeMeeting.timestamp > start_of_year(),
-                MemberCommitteeAttendance.uid == member.uid,
-                CommitteeMeeting.approved == True # pylint: disable=singleton-comparison
-                ).all()
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.committee
+    ).filter(
+        CommitteeMeeting.timestamp > start_of_year(),
+        MemberCommitteeAttendance.uid == member.uid,
+        CommitteeMeeting.approved
+    ).all()
 
     c_meetings = [{
         "uid": cm.uid,
