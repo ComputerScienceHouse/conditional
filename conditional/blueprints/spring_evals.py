@@ -1,3 +1,4 @@
+from time import perf_counter
 import structlog
 from flask import Blueprint, request
 from sqlalchemy import func
@@ -58,6 +59,12 @@ def display_spring_evals(internal=False, user_dict=None):
         MajorProject.date >= start_of_year()
     ).all()
 
+    coop_members = CurrentCoops.query.filter(
+        CurrentCoops.date_created >= start_of_year()
+    ).with_entities(
+        func.array_agg(CurrentCoops.uid)
+    ).scalar()
+
     major_projects = {}
 
     for project in major_project_query:
@@ -73,6 +80,8 @@ def display_spring_evals(internal=False, user_dict=None):
     sp_members = []
     for account in active_members:
         uid = account.uid
+        name = account.cn
+
         spring_entry = SpringEval.query.filter(
             SpringEval.date_created > start_of_year(),
             SpringEval.uid == uid,
@@ -100,17 +109,22 @@ def display_spring_evals(internal=False, user_dict=None):
                 func.array_agg(HouseMeeting.date)
             ).scalar()
 
+        cm_attended_count = cm_count.get(uid, 0)
+        member_major_projects = major_projects.get(uid, [])
+
+        passed_mps = [project for project in member_major_projects if project['status'] == 'Passed']
+
+        req_cm_count = req_cm(uid, coop_members)
+
         member = {
-            'name': account.cn,
+            'name': name,
             'uid': uid,
             'status': spring_entry.status,
-            'committee_meetings': cm_count.get(uid, 0),
-            'req_meetings': req_cm(account),
+            'committee_meetings': cm_attended_count,
+            'req_meetings': req_cm_count,
             'house_meetings_missed': member_missed_hms,
-            'major_projects': major_projects.get(uid, [])
+            'major_projects': member_major_projects
         }
-
-        passed_mps = [project for project in member['major_projects'] if project['status'] == 'Passed']
 
         member['major_projects_len'] = len(member['major_projects'])
         member['major_projects_passed'] = passed_mps

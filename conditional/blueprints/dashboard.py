@@ -57,7 +57,7 @@ def display_dashboard(user_dict=None):
     spring = {}
     c_meetings = get_cm(user_dict['account'])
     spring['committee_meetings'] = len(c_meetings)
-    spring['req_meetings'] = req_cm(user_dict['account'])
+    spring['req_meetings'] = req_cm(user_dict['account'].uid)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(user_dict['account'])]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     eval_entry = SpringEval.query.filter(SpringEval.uid == user_dict['account'].uid,

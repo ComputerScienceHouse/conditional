@@ -126,14 +126,20 @@ def get_hm(member, only_absent=False):
     return h_meetings
 
 
-@service_cache(maxsize=128)
-def req_cm(member):
+# @service_cache(maxsize=128)
+def req_cm(uid, members_on_coop = None):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
-    co_op = CurrentCoops.query.filter(
-        CurrentCoops.uid == member.uid,
-        CurrentCoops.date_created > start_of_year()).first()
-    if co_op:
+    on_coop = False
+    if members_on_coop:
+        on_coop = uid in members_on_coop
+    else:
+        co_op = CurrentCoops.query.filter(
+            CurrentCoops.uid == uid,
+            CurrentCoops.date_created > start_of_year()).first()
+        if co_op:
+            on_coop = True
+    if on_coop:
         return 15
     return 30
 
