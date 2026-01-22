@@ -1,10 +1,9 @@
-from time import perf_counter
 import structlog
 from flask import Blueprint, request
 from sqlalchemy import func
 
 from conditional import db, start_of_year, auth
-from conditional.models.models import CommitteeMeeting, HouseMeeting, MemberCommitteeAttendance
+from conditional.models.models import CommitteeMeeting, CurrentCoops, HouseMeeting, MemberCommitteeAttendance
 from conditional.models.models import MajorProject, MemberHouseMeetingAttendance, SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
@@ -83,9 +82,9 @@ def display_spring_evals(internal=False, user_dict=None):
         name = account.cn
 
         spring_entry = SpringEval.query.filter(
-            SpringEval.date_created > start_of_year(),
+            SpringEval.date_created >= start_of_year(),
             SpringEval.uid == uid,
-            SpringEval.active == True).first() # pylint: disable=singleton-comparison
+            SpringEval.active).first() # pylint: disable=singleton-comparison
 
         if spring_entry is None:
             spring_entry = SpringEval(uid)
@@ -114,14 +113,12 @@ def display_spring_evals(internal=False, user_dict=None):
 
         passed_mps = [project for project in member_major_projects if project['status'] == 'Passed']
 
-        req_cm_count = req_cm(uid, coop_members)
-
         member = {
             'name': name,
             'uid': uid,
             'status': spring_entry.status,
             'committee_meetings': cm_attended_count,
-            'req_meetings': req_cm_count,
+            'req_meetings': req_cm(uid, coop_members),
             'house_meetings_missed': member_missed_hms,
             'major_projects': member_major_projects
         }
