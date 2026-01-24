@@ -96,7 +96,7 @@ def display_spring_evals(internal=False, user_dict=None):
 
         member_missed_hms = []
 
-        if  hm_missed.get(uid, 0) != 0:
+        if hm_missed.get(uid, 0) != 0:
             member_missed_hms = MemberHouseMeetingAttendance.query.join(
                 HouseMeeting,
                 MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
