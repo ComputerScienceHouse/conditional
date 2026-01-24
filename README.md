@@ -61,6 +61,21 @@ This will run the asset pipeline, start the Python server, and start BrowserSync
 
 To add new dependencies, add them to `requirements.in` and then run `pip-compile requirements.in` to produce a new locked `requirements.txt`. Do not edit `requirements.txt` directly as it will be overwritten by future PRs.
 
+### Profiling 
+
+To profile routes to figure out how long it's taking and what's taking the most time, in `conditional/__init__.py` add
+
+```python
+from werkzeug.middleware.profiler import ProfilerMiddleware
+
+app.wsgi_app = ProfilerMiddleware(
+    app.wsgi_app,
+    restrictions=[30]
+)
+```
+
+after app initialization
+
 ### Database Migrations
 
 If the database schema is changed after initializing the database, you must migrate it to the new schema by running:
