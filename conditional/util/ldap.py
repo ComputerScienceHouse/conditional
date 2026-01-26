@@ -1,65 +1,57 @@
+from csh_ldap import CSHMember
+
 from conditional import ldap
 from conditional.util.cache import service_cache
 
-
-def _ldap_get_group_members(group):
+def _ldap_get_group_members(group: str) -> list[CSHMember]:
     return ldap.get_group(group).get_members()
 
 
-def _ldap_is_member_of_group(member, group):
-    group_list = member.get("memberOf")
-    for group_dn in group_list:
-        if group == group_dn.split(",")[0][3:]:
-            return True
-    return False
+def _ldap_is_member_of_group(member: CSHMember, group: str) -> bool:
+    return ldap.get_group(group).check_member(member)
 
 
-def _ldap_add_member_to_group(account, group):
+def _ldap_add_member_to_group(account: CSHMember, group: str):
     if not _ldap_is_member_of_group(account, group):
         ldap.get_group(group).add_member(account, dn=False)
 
 
-def _ldap_remove_member_from_group(account, group):
+def _ldap_remove_member_from_group(account: CSHMember, group: str):
     if _ldap_is_member_of_group(account, group):
         ldap.get_group(group).del_member(account, dn=False)
 
 
 @service_cache(maxsize=256)
-def _ldap_is_member_of_directorship(account, directorship):
-    directors = ldap.get_directorship_heads(directorship)
-    for director in directors:
-        if director.uid == account.uid:
-            return True
-    return False
-
+def _ldap_is_member_of_directorship(account: CSHMember, directorship: str):
+    return account.in_group(f'eboard-{directorship}', dn=True)
+# TODO: try in_group(ldap.get_group(f'eboard-{directorship}')) and profile
 
 @service_cache(maxsize=1024)
-def ldap_get_member(username):
+def ldap_get_member(username: str) -> CSHMember:
     return ldap.get_member(username, uid=True)
 
-
 @service_cache(maxsize=1024)
-def ldap_get_active_members():
+def ldap_get_active_members() -> list[CSHMember]:
     return _ldap_get_group_members("active")
 
 
 @service_cache(maxsize=1024)
-def ldap_get_intro_members():
+def ldap_get_intro_members() -> list[CSHMember]:
     return _ldap_get_group_members("intromembers")
 
 
 @service_cache(maxsize=1024)
-def ldap_get_onfloor_members():
+def ldap_get_onfloor_members() -> list[CSHMember]:
     return _ldap_get_group_members("onfloor")
 
 
 @service_cache(maxsize=1024)
-def ldap_get_current_students():
+def ldap_get_current_students() -> list[CSHMember]:
     return _ldap_get_group_members("current_student")
 
 
 @service_cache(maxsize=128)
-def ldap_get_roomnumber(account):
+def ldap_get_roomnumber(account) -> str:
     try:
         return account.roomNumber
     except AttributeError:
@@ -67,57 +59,57 @@ def ldap_get_roomnumber(account):
 
 
 @service_cache(maxsize=128)
-def ldap_is_active(account):
+def ldap_is_active(account) -> bool:
     return _ldap_is_member_of_group(account, 'active')
 
 
 @service_cache(maxsize=128)
-def ldap_is_bad_standing(account):
+def ldap_is_bad_standing(account) -> bool:
     return _ldap_is_member_of_group(account, 'bad_standing')
 
 
 @service_cache(maxsize=128)
-def ldap_is_alumni(account):
+def ldap_is_alumni(account) -> bool:
     # If the user is not active, they are an alumni.
     return not _ldap_is_member_of_group(account, 'active')
 
 
 @service_cache(maxsize=128)
-def ldap_is_eboard(account):
+def ldap_is_eboard(account) -> bool:
     return _ldap_is_member_of_group(account, 'eboard')
 
 
 @service_cache(maxsize=128)
-def ldap_is_rtp(account):
+def ldap_is_rtp(account) -> bool:
     return _ldap_is_member_of_group(account, 'rtp')
 
 
 @service_cache(maxsize=128)
-def ldap_is_intromember(account):
+def ldap_is_intromember(account) -> bool:
     return _ldap_is_member_of_group(account, 'intromembers')
 
 
 @service_cache(maxsize=128)
-def ldap_is_onfloor(account):
+def ldap_is_onfloor(account) -> bool:
     return _ldap_is_member_of_group(account, 'onfloor')
 
 
 @service_cache(maxsize=128)
-def ldap_is_financial_director(account):
+def ldap_is_financial_director(account) -> bool:
     return _ldap_is_member_of_directorship(account, 'Financial')
 
 
 @service_cache(maxsize=128)
-def ldap_is_eval_director(account):
+def ldap_is_eval_director(account) -> bool:
     return _ldap_is_member_of_directorship(account, 'Evaluations')
 
 
 @service_cache(maxsize=256)
-def ldap_is_current_student(account):
+def ldap_is_current_student(account) -> bool:
     return _ldap_is_member_of_group(account, 'current_student')
 
 
-def ldap_set_housingpoints(account, housing_points):
+def ldap_set_housingpoints(account, housing_points) -> bool:
     account.housingPoints = housing_points
     ldap_get_current_students.cache_clear()
     ldap_get_member.cache_clear()

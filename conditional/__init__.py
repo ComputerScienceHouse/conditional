@@ -13,6 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+from werkzeug.middleware.profiler import ProfilerMiddleware
 
 app = Flask(__name__)
 gzip = Gzip(app)
@@ -28,6 +29,12 @@ if os.path.exists(_pyfile_config):
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+if app.config['PROFILING']:
+    app.wsgi_app = ProfilerMiddleware(
+        app.wsgi_app,
+        restrictions=[30]
+    )
 
 # Sentry setup
 sentry_sdk.init(

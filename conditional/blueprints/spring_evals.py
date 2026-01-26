@@ -1,15 +1,14 @@
 import structlog
 from flask import Blueprint, request
+from sqlalchemy import func
 
 from conditional import db, start_of_year, auth
-from conditional.models.models import HouseMeeting
-from conditional.models.models import MajorProject
-from conditional.models.models import MemberHouseMeetingAttendance
-from conditional.models.models import SpringEval
+from conditional.models.models import CommitteeMeeting, CurrentCoops, HouseMeeting, MemberCommitteeAttendance
+from conditional.models.models import MajorProject, MemberHouseMeetingAttendance, SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.member import get_cm, get_hm, req_cm
+from conditional.util.member import req_cm
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
 
@@ -25,77 +24,115 @@ def display_spring_evals(internal=False, user_dict=None):
 
     active_members = ldap_get_active_members()
 
+    cm_count = dict([tuple(row) for row in MemberCommitteeAttendance.query.join(
+        CommitteeMeeting,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.approved,
+    ).filter(
+        CommitteeMeeting.approved,
+        CommitteeMeeting.timestamp >= start_of_year()
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        func.count(MemberCommitteeAttendance.uid) #pylint: disable=not-callable
+    ).group_by(
+        MemberCommitteeAttendance.uid
+    ).all()])
+
+    hm_missed = dict([tuple(row) for row in MemberHouseMeetingAttendance.query.join(
+        HouseMeeting,
+        MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
+    ).filter(
+        HouseMeeting.date >= start_of_year(),
+        MemberHouseMeetingAttendance.attendance_status == 'Absent'
+    ).with_entities(
+        MemberHouseMeetingAttendance.uid,
+            func.count(MemberHouseMeetingAttendance.uid) #pylint: disable=not-callable
+    ).group_by(
+        MemberHouseMeetingAttendance.uid
+    ).all()])
+
+    major_project_query = MajorProject.query.filter(
+        MajorProject.date >= start_of_year()
+    ).all()
+
+    coop_members = CurrentCoops.query.filter(
+        CurrentCoops.date_created >= start_of_year()
+    ).with_entities(
+        func.array_agg(CurrentCoops.uid)
+    ).scalar()
+
+    major_projects = {}
+
+    for project in major_project_query:
+        if not project.uid in major_projects:
+            major_projects[project.uid] = []
+
+        major_projects.get(project.uid).append({
+            'name': project.name,
+            'status': project.status,
+            'description': project.description
+        })
+
     sp_members = []
     for account in active_members:
         uid = account.uid
+        name = account.cn
+
         spring_entry = SpringEval.query.filter(
-            SpringEval.date_created > start_of_year(),
+            SpringEval.date_created >= start_of_year(),
             SpringEval.uid == uid,
-            SpringEval.active == True).first() # pylint: disable=singleton-comparison
+            SpringEval.active).first() # pylint: disable=singleton-comparison
 
         if spring_entry is None:
             spring_entry = SpringEval(uid)
             db.session.add(spring_entry)
             db.session.flush()
             db.session.commit()
-        elif spring_entry.status != "Pending" and internal:
+        elif spring_entry.status != 'Pending' and internal:
             continue
 
-        eval_data = None
+        member_missed_hms = []
 
-        h_meetings = [m.meeting_id for m in get_hm(account, only_absent=True)]
+        if hm_missed.get(uid, 0) != 0:
+            member_missed_hms = MemberHouseMeetingAttendance.query.join(
+                HouseMeeting,
+                MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
+            ).filter(
+                HouseMeeting.date >= start_of_year(),
+                MemberHouseMeetingAttendance.attendance_status == 'Absent',
+                MemberHouseMeetingAttendance.uid == uid,
+            ).with_entities(
+                func.array_agg(HouseMeeting.date)
+            ).scalar()
+
+        cm_attended_count = cm_count.get(uid, 0)
+        member_major_projects = major_projects.get(uid, [])
+
+        passed_mps = [project for project in member_major_projects if project['status'] == 'Passed']
+
         member = {
-            'name': account.cn,
+            'name': name,
             'uid': uid,
             'status': spring_entry.status,
-            'committee_meetings': len(get_cm(account)),
-            'req_meetings': req_cm(account),
-            'house_meetings_missed':
-                [
-                    {
-                        "date": m.date.strftime("%Y-%m-%d"),
-                        "reason":
-                            MemberHouseMeetingAttendance.query.filter(
-                                MemberHouseMeetingAttendance.uid == uid).filter(
-                                MemberHouseMeetingAttendance.meeting_id == m.id).first().excuse
-                    }
-                    for m in HouseMeeting.query.filter(
-                    HouseMeeting.id.in_(h_meetings)
-                )
-                    ],
-            'major_projects': [
-                {
-                    'name': p.name,
-                    'status': p.status,
-                    'description': p.description
-                } for p in MajorProject.query.filter(
-                    MajorProject.date > start_of_year(),
-                    MajorProject.uid == uid)]
+            'committee_meetings': cm_attended_count,
+            'req_meetings': req_cm(uid, coop_members),
+            'house_meetings_missed': member_missed_hms,
+            'major_projects': member_major_projects
         }
-        member['major_projects_len'] = len(member['major_projects'])
-        member['major_projects_passed'] = [
-            {
-                'name': p.name,
-                'status': p.status,
-                'description': p.description
-            } for p in MajorProject.query.filter(
-                MajorProject.date > start_of_year(),
-                MajorProject.status == "Passed",
-                MajorProject.uid == uid)]
-        member['major_projects_passed_len'] = len(member['major_projects_passed'])
-        member['major_project_passed'] = False
-        for mp in member['major_projects']:
-            if mp['status'] == "Passed":
-                member['major_project_passed'] = True
-                break
 
-        if internal:
-            member['housing_evals'] = eval_data
+        member['major_projects_len'] = len(member['major_projects'])
+        member['major_projects_passed'] = passed_mps
+        member['major_projects_passed_len'] = len(member['major_projects_passed'])
+        member['major_project_passed'] = member['major_projects_passed_len'] > 0
+
         sp_members.append(member)
 
     sp_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
     sp_members.sort(key=lambda x: len(x['house_meetings_missed']))
-    sp_members.sort(key=lambda x: len([p for p in x['major_projects'] if p['status'] == "Passed"]), reverse=True)
+    sp_members.sort(key=lambda x: x['major_projects_passed_len'], reverse=True)
     # return names in 'first last (username)' format
     if internal:
         return sp_members
