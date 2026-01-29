@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import request, session
+from flask import session
 
 from conditional.util.ldap import ldap_get_member, ldap_is_current_student
 
