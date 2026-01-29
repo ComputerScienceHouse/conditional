@@ -2,9 +2,7 @@ from functools import wraps
 
 from flask import request, session
 
-from conditional.util.ldap import ldap_is_active, ldap_is_alumni, \
-    ldap_is_eboard, ldap_is_eval_director, \
-    ldap_is_financial_director, ldap_get_member, ldap_is_current_student
+from conditional.util.ldap import ldap_get_member, ldap_is_current_student
 
 def get_user(func):
     @wraps(func)
