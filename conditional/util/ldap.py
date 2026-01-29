@@ -22,9 +22,8 @@ def _ldap_remove_member_from_group(account: CSHMember, group: str):
 
 
 @service_cache(maxsize=256)
-def _ldap_is_member_of_directorship(account: CSHMember, directorship: str):
-    return account.in_group(f'eboard-{directorship}', dn=True)
-# TODO: try in_group(ldap.get_group(f'eboard-{directorship}')) and profile
+def _ldap_is_member_of_directorship(member: CSHMember, directorship: str):
+    return _ldap_is_member_of_group(member, f'eboard-{directorship}')
 
 @service_cache(maxsize=1024)
 def ldap_get_member(username: str) -> CSHMember:
@@ -81,7 +80,7 @@ def ldap_is_eboard(account) -> bool:
 
 @service_cache(maxsize=128)
 def ldap_is_rtp(account) -> bool:
-    return _ldap_is_member_of_group(account, 'rtp')
+    return _ldap_is_member_of_group(account, 'active_rtp')
 
 
 @service_cache(maxsize=128)
@@ -96,12 +95,12 @@ def ldap_is_onfloor(account) -> bool:
 
 @service_cache(maxsize=128)
 def ldap_is_financial_director(account) -> bool:
-    return _ldap_is_member_of_directorship(account, 'Financial')
+    return _ldap_is_member_of_directorship(account, 'financial')
 
 
 @service_cache(maxsize=128)
 def ldap_is_eval_director(account) -> bool:
-    return _ldap_is_member_of_directorship(account, 'Evaluations')
+    return _ldap_is_member_of_directorship(account, 'evaluations')
 
 
 @service_cache(maxsize=256)
