@@ -22,8 +22,8 @@ def webauth_request(func):
                      "is_active": is_active,
                      "is_alumni": is_alumni,
                      "is_eboard": is_eboard,
-                     "is_financial": is_financial,
-                     "is_eval": is_eval}, *args, **kwargs)
+                     "is_financial_director": is_financial,
+                     "is_eval_director": is_eval}, *args, **kwargs)
 
     return wrapped_func
 
