@@ -17,7 +17,11 @@ Membership Evaluations Slideshow
           <div class="col-xs-12 col-md-4">
             {% set committee_meetings_passed = m['committee_meetings'] >= m['req_meetings'] %}
             <div class="item{% if committee_meetings_passed %} passed{% endif %}" >
-              <span class="icon glyphicon glyphicon-{% if committee_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+              {% if committee_meetings_passed %}
+              <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
+              {% else %}
+              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+              {% endif %}
               <h3>{{m['committee_meetings']}}</h3>
               <p>Meetings</p>
             </div>
@@ -25,7 +29,11 @@ Membership Evaluations Slideshow
           <div class="col-xs-12 col-md-4">
             {% set house_meetings_passed = m['house_meetings_missed']|length == 0 %}
             <div class="item{% if house_meetings_passed %} passed{% endif %}">
-              <span class="icon glyphicon glyphicon-{% if house_meetings_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+              {% if house_meetings_passed %}
+              <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
+              {% else %}
+              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+              {% endif %}
               <h3>{{m['house_meetings_missed']|length}}</h3>
               <p>Absences</p>
             </div>
@@ -33,7 +41,11 @@ Membership Evaluations Slideshow
           <div class="col-xs-12 col-md-4">
             {% set major_projects_passed = m['major_projects_passed_len'] >= 1 %}
             <div class="item{% if major_projects_passed %} passed{% endif %}">
-              <span class="icon glyphicon glyphicon-{% if major_projects_passed %}ok passed{%else%}remove{% endif %}" aria-hidden="true"></span>
+              {% if major_projects_passed %}
+              <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
+              {% else %}
+              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+              {% endif %}
               <h3>{{m['major_projects_passed_len']}}</h3>
               <p>Major Projects</p>
             </div>
@@ -47,7 +59,7 @@ Membership Evaluations Slideshow
         
         <div class="actions" data-uid="{{m['uid']}}" data-cn="{{m['name']}}">
           <button class="pass" type="button">Pass</button>
-          {% if not ( major_projects_passed and house_meetings_passed and committee_meetings_passed %}
+          {% if not ( major_projects_passed and house_meetings_passed and committee_meetings_passed ) %}
           <button class="fail" type="button">Fail</button>
           {% endif %}
         </div>

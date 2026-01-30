@@ -4,7 +4,7 @@ import "whatwg-fetch";
 import FetchUtil from "../utils/fetchUtil";
 import Exception from "../exceptions/exception";
 import FetchException from "../exceptions/fetchException";
-import sweetAlert from "../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js"; // eslint-disable-line max-len
+import sweetAlert from "bootstrap-sweetalert/dev/sweetalert.es6.js";
 
 export default class DatePicker {
   constructor(input) {

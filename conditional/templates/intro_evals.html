@@ -30,14 +30,14 @@ Introductory Evaluations
                             <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
                             {% if m['ldap_account'] %}
                                 {% if m['status'] == "Passed" %}
-                                <span class="glyphicon glyphicon-ok white success eval-user-status"></span>
+                                <i class="bi bi-check2 white success eval-user-status"></i>
                                 {% elif m['status'] == "Pending" %}
-                                <span class="glyphicon glyphicon-hourglass white warning eval-user-status"></span>
+                                <i class="bi bi-hourglass-split white warning eval-user-status"></i>
                                 {% else %}
-                                <span class="glyphicon glyphicon-remove white danger eval-user-status"></span>
+                                <i class="bi bi-x-circle-fill white danger eval-user-status"></i>
                                 {% endif %}
                             {% else %}
-                            <span class="glyphicon glyphicon-hourglass white warning eval-user-status"></span>
+                            <i class="bi bi-hourglass-split white warning eval-user-status"></i>
                             {%  endif %}
 
                         </div>
@@ -58,17 +58,17 @@ Introductory Evaluations
                             <div class="text-center">
                                 {% if m['signatures_missed'] == 0 %}
                                     <div class="eval-info-label">
-                                        <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Signatures Missed
+                                        <i class="bi bi-check-circle-fill green eval-info-status"></i>Signatures Missed
                                         <span class="eval-info-number">{{ m['signatures_missed'] }}</span>
                                     </div>
                                 {% elif m['signatures_missed'] > 0 %}
                                     <div class="eval-info-label">
-                                        <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Signatures Missed
+                                        <i class="bi bi-x-circle-fill red eval-info-status"></i>Signatures Missed
                                         <span class="eval-info-number">{{ m['signatures_missed'] }}</span>
                                     </div>
                                 {% else %}
                                     <div class="eval-info-label">
-                                        <span class="glyphicon glyphicon-hourglass yellow eval-info-status"></span>Packet In Progress
+                                        <i class="bi bi-hourglass-split yellow eval-info-status"></i>Packet In Progress
                                         <span class="eval-info-number">Pending</span>
                                     </div>
                                 {% endif %}
@@ -76,12 +76,12 @@ Introductory Evaluations
                             <div class="text-center">
                                 {% if m['committee_meetings'] < 6 %}
                                     <div class="eval-info-label">
-                                        <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>Directorship Meetings
+                                        <i class="bi bi-x-circle-fill red eval-info-status"></i>Directorship Meetings
                                         <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
                                     </div>
                                     {% else %}
                                     <div class="eval-info-label">
-                                        <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>Directorship Meetings
+                                        <i class="bi bi-check-circle-fill green eval-info-status"></i>Directorship Meetings
                                         <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
                                     </div>
                                 {% endif %}
@@ -90,12 +90,12 @@ Introductory Evaluations
                         <div class="text-center">
                             {% if m['house_meetings_missed']|length > 0 %}
                                         <div class="eval-info-label">
-                                            <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span>House Meetings Missed
+                                            <i class="bi bi-x-circle-fill red eval-info-status"></i>House Meetings Missed
                                             <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
                                         </div>
                                         {% else %}
                                         <div class="eval-info-label">
-                                            <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span>House Meetings Missed
+                                            <i class="bi bi-check-circle-fill green eval-info-status"></i>House Meetings Missed
                                             <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
                                         </div>
                                         {% endif %}
@@ -107,7 +107,7 @@ Introductory Evaluations
             {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['comments'] != "" %}
                 <div class="evals-dropdown">
                     <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}">
-                        <span class="glyphicon glyphicon glyphicon-menu-down"></span>
+                        <i class="bi bi-chevron-down"></i>
                     </span>
                 </div>
             {% endif %}
@@ -169,7 +169,7 @@ Introductory Evaluations
 {% endfor %}
 </div>
 {% else %}
-    <div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign white" style="padding-right:5px"></span> There are currently no active intro members.</div>
+    <div class="alert alert-info" role="alert"><i class="bi bi-info-circle-fill white" style="padding-right:5px"></i> There are currently no active intro members.</div>
 {% endif %}
 
 <div id="eval-table" style="display:none;">
@@ -196,41 +196,41 @@ Introductory Evaluations
                         </td>
                         <td>
                             {% if m['status'] == "Passed" %}
-                            <span class="glyphicon glyphicon-ok green"></span> Passed
+                            <i class="bi bi-check2 green"></i> Passed
                             {% elif m['status'] == "Pending" %}
-                            <span class="glyphicon glyphicon-hourglass yellow"></span> Pending
+                            <i class="bi bi-hourglass-split yellow"></i> Pending
                             {% else %}
-                            <span class="glyphicon glyphicon-remove red"></span> Failed
+                            <i class="bi bi-x-circle-fill red"></i> Failed
                             {% endif %}
                         </td>
                         <td data-sort="{{ m['committee_meetings'] }}">
                             {% if m['committee_meetings'] < 6 %}
-                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['committee_meetings']}}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['committee_meetings']}}
                             {% else %}
-                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['committee_meetings']}}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}}
                             {% endif %}
                         </td>
                         <td data-sort="{{ m['signatures_missed'] }}">
                            {% if m['signatures_missed'] == 0 %}
-                               <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{ m['signatures_missed'] }}
+                               <i class="bi bi-check-circle-fill green eval-info-status"></i> {{ m['signatures_missed'] }}
                                 {% elif m['signatures_missed'] > 0 %}
-                               <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{ m['signatures_missed'] }}
+                               <i class="bi bi-x-circle-fill red eval-info-status"></i> {{ m['signatures_missed'] }}
                                 {% else %}
-                               <span class="glyphicon glyphicon-hourglass yellow eval-info-status"></span> Pending
+                               <i class="bi bi-hourglass-split yellow eval-info-status"></i> Pending
                                 {% endif %}
                         </td>
                         <td data-sort="{{ m['technical_seminars']|length }}">
                             {% if m['technical_seminars']|length >= 2 %}
-                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['technical_seminars']|length}}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['technical_seminars']|length}}
                             {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['technical_seminars']|length}}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['technical_seminars']|length}}
                             {% endif %}
                         </td>
 						<td data-sort="{{ m['house_meetings_missed']|length }}">
                             {% if m['house_meetings_missed']|length == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green eval-info-status"></span> {{m['house_meetings_missed']|length}}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
                             {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red eval-info-status"></span> {{m['house_meetings_missed']|length}}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['house_meetings_missed']|length}}
                             {% endif %}
                         </td>
                     </tr>

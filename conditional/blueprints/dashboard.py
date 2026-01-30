@@ -6,6 +6,8 @@ from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
 from conditional.models.models import MajorProject
 from conditional.models.models import MemberHouseMeetingAttendance
+from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import TechnicalSeminar
 from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
@@ -20,18 +22,24 @@ logger = structlog.get_logger()
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
+def is_seminar_attendance_valid(attendance):
+    seminar = TechnicalSeminar.query.filter(
+        TechnicalSeminar.id == attendance.seminar_id).first()
+    return seminar and seminar.approved and seminar.timestamp > start_of_year()
 
+# pylint: disable=too-many-statements
 @dashboard_bp.route('/dashboard/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_dashboard(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('display dashboard')
 
     # Get the list of voting members.
+
     can_vote = get_voting_members()
 
-    data = dict()
+    data = {}
     data['username'] = user_dict['account'].uid
     data['active'] = ldap_is_active(user_dict['account'])
     data['bad_standing'] = ldap_is_bad_standing(user_dict['account'])
@@ -49,7 +57,7 @@ def display_dashboard(user_dict=None):
     spring = {}
     c_meetings = get_cm(user_dict['account'])
     spring['committee_meetings'] = len(c_meetings)
-    spring['req_meetings'] = req_cm(user_dict['account'])
+    spring['req_meetings'] = req_cm(user_dict['account'].uid)
     h_meetings = [(m.meeting_id, m.attendance_status) for m in get_hm(user_dict['account'])]
     spring['hm_missed'] = len([h for h in h_meetings if h[1] == "Absent"])
     eval_entry = SpringEval.query.filter(SpringEval.uid == user_dict['account'].uid,
@@ -64,7 +72,7 @@ def display_dashboard(user_dict=None):
 
     # only show housing if member has onfloor status
     if ldap_is_onfloor(user_dict['account']):
-        housing = dict()
+        housing = {}
         housing['points'] = user_dict['account'].housingPoints
         housing['room'] = user_dict['account'].roomNumber
         housing['queue_pos'] = get_queue_position(user_dict['account'].uid)
@@ -84,6 +92,18 @@ def display_dashboard(user_dict=None):
                                   MajorProject.date > start_of_year())]
 
     data['major_projects_count'] = len(data['major_projects'])
+
+    # technical seminar total
+    t_seminars = [s.seminar_id for s in
+                  MemberSeminarAttendance.query.filter(
+                      MemberSeminarAttendance.uid == user_dict['account'].uid,
+                  ) if is_seminar_attendance_valid(s)]
+    data['ts_total'] = len(t_seminars)
+    attendance = [m.name for m in TechnicalSeminar.query.filter(
+        TechnicalSeminar.id.in_(t_seminars)
+        )]
+
+    data['ts_list'] = attendance
 
     spring['mp_status'] = "Failed"
     for mp in data['major_projects']:
