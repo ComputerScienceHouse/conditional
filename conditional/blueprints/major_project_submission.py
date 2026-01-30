@@ -71,7 +71,7 @@ def submit_major_project(user_dict=None):
     if name == "" or description == "":
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict["username"], name, description)
-    
+
     # Don't you dare try pinging @channel
     name = name.replace("<!", "<! ")
 
