@@ -462,23 +462,21 @@ def member_management_upgrade_user(user_dict=None):
     db.session.add(new_acct)
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
         db.session.add(MemberCommitteeAttendance(uid, fca.meeting_id))
-        db.session.delete(fca)
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
         db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
-        db.session.delete(fts)
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         # Don't duplicate HM attendance records
         mhm = MemberHouseMeetingAttendance.query.filter(
-            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id and
+            MemberHouseMeetingAttendance.meeting_id == fhm.meeting_id,
             MemberHouseMeetingAttendance.uid == uid).first()
         if mhm is None:
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
+            
         else:
             log.info(f'Duplicate house meeting attendance! fid: {fid}, uid: {uid}, id: {fhm.meeting_id}')
-        db.session.delete(fhm)
 
     new_account = ldap_get_member(uid)
     if acct.onfloor_status:
@@ -487,6 +485,9 @@ def member_management_upgrade_user(user_dict=None):
 
     if acct.room_number:
         ldap_set_roomnumber(new_account, acct.room_number)
+
+    db.session.flush()
+    db.session.commit()
 
     db.session.delete(acct)
 
