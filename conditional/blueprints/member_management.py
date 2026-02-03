@@ -474,7 +474,6 @@ def member_management_upgrade_user(user_dict=None):
         if mhm is None:
             db.session.add(MemberHouseMeetingAttendance(
                 uid, fhm.meeting_id, fhm.excuse, fhm.attendance_status))
-            
         else:
             log.info(f'Duplicate house meeting attendance! fid: {fid}, uid: {uid}, id: {fhm.meeting_id}')
 
