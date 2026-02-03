@@ -17,7 +17,7 @@ PORT = env.get("CONDITIONAL_PORT", 6969)
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
 
 # DB Info
-SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "")
+SQLALCHEMY_DATABASE_URI = "postgresql://conditional:fancypantspassword@conditional-postgres:5432/conditional"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # LDAP config

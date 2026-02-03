@@ -61,6 +61,20 @@ This will run the asset pipeline, start the Python server, and start BrowserSync
 
 To add new dependencies, add them to `requirements.in` and then run `pip-compile requirements.in` to produce a new locked `requirements.txt`. Do not edit `requirements.txt` directly as it will be overwritten by future PRs.
 
+### Local database
+
+You can run the database locally using the docker compose, make sure to upgrade it as explained below
+
+To populate it with dev data for example, you can use the command
+
+```
+PGPASSWORD='[DB PASSWORD]' pg_dump -h postgres.csh.rit.edu -p 5432 -U conditional-dev conditional-dev |  PGPASSWORD='fancypantspassword' psql -h localhost -p 5432 -U conditional conditional
+```
+
+This can be helpful for changing the database schema
+
+NOTE: to use flask db commands with a database running in the compose file, you will have to update your url to point to localhost, not conditional-postgres
+
 ### Database Migrations
 
 If the database schema is changed after initializing the database, you must migrate it to the new schema by running:
