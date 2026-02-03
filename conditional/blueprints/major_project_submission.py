@@ -72,6 +72,9 @@ def submit_major_project(user_dict=None):
         return jsonify({"success": False}), 400
     project = MajorProject(user_dict["username"], name, description)
 
+    # Don't you dare try pinging @channel
+    name = name.replace("<!", "<! ")
+
     username = user_dict["username"]
     send_slack_ping(
         {

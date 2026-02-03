@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import func, or_
 
 from conditional import start_of_year
 from conditional.models.models import CommitteeMeeting
@@ -19,34 +20,6 @@ from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
-
-
-@service_cache(maxsize=1024)
-def get_voting_members():
-
-    if datetime.today() < datetime(start_of_year().year, 12, 31):
-        semester = 'Fall'
-    else:
-        semester = 'Spring'
-
-    active_members = set(member.uid for member in ldap_get_active_members())
-    intro_members = set(member.uid for member in ldap_get_intro_members())
-    on_coop = set(member.uid for member in CurrentCoops.query.filter(
-        CurrentCoops.date_created > start_of_year(),
-        CurrentCoops.semester == semester).all())
-    voting_set = active_members - intro_members - on_coop
-
-    passed_fall = FreshmanEvalData.query.filter(
-        FreshmanEvalData.freshman_eval_result == "Passed",
-        FreshmanEvalData.eval_date > start_of_year()
-    ).distinct()
-
-    for intro_member in passed_fall:
-        voting_set.add(intro_member.uid)
-
-    voting_list = list(username for username in voting_set if gatekeep_status(username)["result"])
-    return voting_list
-
 
 @service_cache(maxsize=1024)
 def get_members_info():
@@ -117,22 +90,25 @@ def get_onfloor_members():
 
 
 def get_cm(member):
+    query_result = CommitteeMeeting.query.join(
+        MemberCommitteeAttendance,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.committee
+    ).filter(
+        CommitteeMeeting.timestamp > start_of_year(),
+        MemberCommitteeAttendance.uid == member.uid,
+        CommitteeMeeting.approved
+    ).all()
+
     c_meetings = [{
         "uid": cm.uid,
         "timestamp": cm.timestamp,
         "committee": cm.committee
-    } for cm in CommitteeMeeting.query.join(
-        MemberCommitteeAttendance,
-        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
-        ).with_entities(
-            MemberCommitteeAttendance.uid,
-            CommitteeMeeting.timestamp,
-            CommitteeMeeting.committee
-            ).filter(
-                CommitteeMeeting.timestamp > start_of_year(),
-                MemberCommitteeAttendance.uid == member.uid,
-                CommitteeMeeting.approved == True # pylint: disable=singleton-comparison
-                ).all()]
+    } for cm in query_result]
+
     return c_meetings
 
 
@@ -150,16 +126,118 @@ def get_hm(member, only_absent=False):
     return h_meetings
 
 
-@service_cache(maxsize=128)
-def req_cm(member):
+# @service_cache(maxsize=128)
+def req_cm(uid, members_on_coop = None):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
-    co_op = CurrentCoops.query.filter(
-        CurrentCoops.uid == member.uid,
-        CurrentCoops.date_created > start_of_year()).first()
-    if co_op:
+    on_coop = False
+    if members_on_coop:
+        on_coop = uid in members_on_coop
+    else:
+        co_op = CurrentCoops.query.filter(
+            CurrentCoops.uid == uid,
+            CurrentCoops.date_created > start_of_year()).first()
+        if co_op:
+            on_coop = True
+    if on_coop:
         return 15
     return 30
+
+@service_cache(maxsize=256)
+def get_voting_members():
+    if datetime.today() < datetime(start_of_year().year, 12, 31):
+        semester = "Fall"
+        semester_start = datetime(start_of_year().year,6,1)
+    else:
+        semester = "Spring"
+        semester_start = datetime(start_of_year().year + 1,1,1)
+
+    active_members = set(ldap_get_active_members())
+    intro_members = set(ldap_get_intro_members())
+
+    coop_members = CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester,
+    ).with_entities(
+        func.array_agg(CurrentCoops.uid)
+    ).scalar()
+
+    # have to do this because if it's none then set constructor screams
+    if coop_members is None:
+        coop_members = set()
+    else:
+        coop_members = set(coop_members)
+
+    passed_fall_members = FreshmanEvalData.query.filter(
+            FreshmanEvalData.freshman_eval_result == "Passed",
+            FreshmanEvalData.eval_date > start_of_year(),
+    ).with_entities(
+        func.array_agg(FreshmanEvalData.uid)
+    ).scalar()
+
+    if passed_fall_members is None:
+        passed_fall_members = set()
+    else:
+        passed_fall_members = set(passed_fall_members)
+
+    active_not_intro = active_members - intro_members
+    active_not_intro = set(map(lambda member: member.uid, active_not_intro))
+
+    elligible_members = (active_not_intro - coop_members) | passed_fall_members
+
+    passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
+        CommitteeMeeting,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.approved,
+    ).filter(
+        CommitteeMeeting.approved,
+        CommitteeMeeting.timestamp >= semester_start
+    ).with_entities(
+        MemberCommitteeAttendance.uid
+    ).group_by(
+        MemberCommitteeAttendance.uid
+    ).having(
+        func.count(MemberCommitteeAttendance.uid) >= 6 #pylint: disable=not-callable
+    ).with_entities(
+        MemberCommitteeAttendance.uid
+    ).all())
+
+    passing_ts = set(member.uid for member in MemberSeminarAttendance.query.join(
+        TechnicalSeminar,
+        MemberSeminarAttendance.seminar_id == TechnicalSeminar.id
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        MemberSeminarAttendance.uid
+    ).group_by(
+        MemberSeminarAttendance.uid
+    ).having(
+        func.count(MemberSeminarAttendance.uid) >= 2 #pylint: disable=not-callable
+    ).all())
+
+    passing_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
+        HouseMeeting,
+        MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
+    ).filter(
+        HouseMeeting.date >= semester_start, or_(
+            MemberHouseMeetingAttendance.attendance_status == 'Attended',
+            # MemberHouseMeetingAttendance.attendance_status == 'Excused'
+        )
+    ).with_entities(
+        MemberHouseMeetingAttendance.uid
+    ).group_by(
+        MemberHouseMeetingAttendance.uid
+    ).having(
+        func.count(MemberHouseMeetingAttendance.uid) >= 6 #pylint: disable=not-callable
+    ).all())
+
+    passing_reqs = passing_dm & passing_ts & passing_hm
+
+    return elligible_members & passing_reqs
 
 def gatekeep_status(username):
     if datetime.today() < datetime(start_of_year().year, 12, 31):
