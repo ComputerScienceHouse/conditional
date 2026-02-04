@@ -233,18 +233,17 @@ def get_voting_members():
         MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
     ).filter(
         HouseMeeting.date >= semester_start, or_(
-            MemberHouseMeetingAttendance.attendance_status == 'Attended',
-            # MemberHouseMeetingAttendance.attendance_status == 'Excused'
+            MemberHouseMeetingAttendance.attendance_status == 'Absent',
         )
     ).with_entities(
         MemberHouseMeetingAttendance.uid
     ).group_by(
         MemberHouseMeetingAttendance.uid
     ).having(
-        func.count(MemberHouseMeetingAttendance.uid) >= 6  # pylint: disable=not-callable
+        func.count(MemberHouseMeetingAttendance.uid) > 1  # pylint: disable=not-callable
     ).all())
 
-    passing_reqs = passing_dm & passing_ts & passing_hm
+    passing_reqs = (passing_dm & passing_ts) - passing_hm
 
     return elligible_members & passing_reqs
 
@@ -319,22 +318,23 @@ def gatekeep_status(username):
         .count()
     )
     # number of house meetings attended in the current semester
-    h_meetings = (
+    h_meetings_missed = (
         MemberHouseMeetingAttendance.query.join(
             HouseMeeting,
             MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id,
         )
         .filter(
+            MemberHouseMeetingAttendance.attendance_status == 'Absent',
             MemberHouseMeetingAttendance.uid == username,
             HouseMeeting.date >= semester_start
         )
         .count()
     )
-    result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings >= 6)
+    result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings_missed < 2)
 
     return {
         "result": result,
-        "h_meetings": h_meetings,
+        "h_meetings": h_meetings_missed,
         "c_meetings": d_meetings,
         "t_seminars": t_seminars,
     }
