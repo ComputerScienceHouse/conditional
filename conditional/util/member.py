@@ -228,7 +228,7 @@ def get_voting_members():
         func.count(MemberSeminarAttendance.uid) >= 2  # pylint: disable=not-callable
     ).all())
 
-    passing_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
+    absent_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
         HouseMeeting,
         MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
     ).filter(
@@ -243,7 +243,7 @@ def get_voting_members():
         func.count(MemberHouseMeetingAttendance.uid) > 1  # pylint: disable=not-callable
     ).all())
 
-    passing_reqs = (passing_dm & passing_ts) - passing_hm
+    passing_reqs = (passing_dm & passing_ts) - absent_hm
 
     return elligible_members & passing_reqs
 
