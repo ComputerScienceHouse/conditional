@@ -183,7 +183,7 @@ def get_voting_members():
     active_not_intro = active_members - intro_members
     active_not_intro = set(map(lambda member: member.uid, active_not_intro))
 
-    elligible_members = (active_not_intro - coop_members) | passed_fall_members
+    eligible_members = (active_not_intro - coop_members) | passed_fall_members
 
     passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
@@ -237,7 +237,7 @@ def get_voting_members():
 
     passing_reqs = passing_dm & passing_ts & passing_hm
 
-    return elligible_members & passing_reqs
+    return eligible_members & passing_reqs
 
 def gatekeep_status(username):
     if datetime.today() < datetime(start_of_year().year, 12, 31):
