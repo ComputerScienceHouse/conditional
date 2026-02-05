@@ -192,7 +192,7 @@ def get_voting_members():
     before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
     before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
     if before_evals_one > 0 or before_evals_two > 0:
-        return elligible_members
+        return eligible_members
 
     passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
