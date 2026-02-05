@@ -256,7 +256,7 @@ def gatekeep_status(username):
     if before_evals_one > 0 or before_evals_two > 0:
         return {
             "result": True,
-            "h_meetings": 0,
+            "h_meetings_missed": 0,
             "c_meetings": 0,
             "t_seminars": 0,
         }
@@ -334,7 +334,7 @@ def gatekeep_status(username):
 
     return {
         "result": result,
-        "h_meetings": h_meetings_missed,
+        "h_meetings_missed": h_meetings_missed,
         "c_meetings": d_meetings,
         "t_seminars": t_seminars,
     }
