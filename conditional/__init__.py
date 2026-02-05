@@ -108,7 +108,7 @@ logger = structlog.get_logger()
 # pylint: disable=wrong-import-order
 from conditional.util import context_processors
 from conditional.util.auth import get_user
-from conditional.util.member import gatekeep_status
+from conditional.util.member import gatekeep_status, get_voting_members
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp
@@ -167,7 +167,7 @@ def health():
 
 
 @app.route("/gatekeep/<username>")
-def gatekeep(username):
+def gatekeep_user(username):
     token = request.headers.get("X-VOTE-TOKEN", "")
     if token != app.config["VOTE_TOKEN"]:
         return "Users cannot access this page", 403
@@ -177,6 +177,13 @@ def gatekeep(username):
         return "", 404
 
     return gatekeep_data, 200
+
+@app.route("/gatekeep")
+def gatekeep_all():
+    token = request.headers.get("X-VOTE-TOKEN", "")
+    if token != app.config["VOTE_TOKEN"]:
+        return "Users cannot access this page", 403
+    return list(get_voting_members()), 200
 
 
 @app.errorhandler(404)
