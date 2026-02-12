@@ -28,7 +28,7 @@
     "bootstrap-sass": "^3.4.1",
     "bootstrap-sweetalert": "^1.0.1",
     "csh-material-bootstrap": "1.0.0",
-    "datatables.net": "^1.10.12",
+    "datatables.net": "^1.13.11",
     "datatables.net-bs": "^1.10.12",
     "dropzone": "^5.9.3",
     "enumify": "^2.0.0",
