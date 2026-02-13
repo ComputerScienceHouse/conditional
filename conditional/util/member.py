@@ -186,13 +186,13 @@ def get_voting_members():
     active_not_intro = active_members - intro_members
     active_not_intro = set(map(lambda member: member.uid, active_not_intro))
 
-    elligible_members = (active_not_intro - coop_members) | passed_fall_members
+    eligible_members = (active_not_intro - coop_members) | passed_fall_members
 
     # Check to see if there's an Intro Evals in the future of this semester. If there is, everyone gets to vote!
     before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
     before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
     if before_evals_one > 0 or before_evals_two > 0:
-        return elligible_members
+        return eligible_members
 
     passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
@@ -245,7 +245,7 @@ def get_voting_members():
 
     passing_reqs = (passing_dm & passing_ts) - absent_hm
 
-    return elligible_members & passing_reqs
+    return eligible_members & passing_reqs
 
 
 def gatekeep_status(username):
