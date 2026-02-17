@@ -42,9 +42,10 @@ from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 
+from conditional.util.member import get_members_info_active_and_onfloor
+
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
-from conditional.util.member import get_members_info, get_onfloor_members
 
 logger = structlog.get_logger()
 
@@ -61,8 +62,7 @@ def display_member_management(user_dict=None):
     if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
         return "must be eval director", 403
 
-    member_list = get_members_info()
-    onfloor_list = get_onfloor_members()
+    member_list, active_members, onfloor_members = get_members_info_active_and_onfloor()
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -90,9 +90,9 @@ def display_member_management(user_dict=None):
                            username=user_dict['username'],
                            active=member_list,
                            num_current=len(member_list),
-                           num_active=len(ldap_get_active_members()),
+                           num_active=len(active_members),
                            num_fresh=len(freshmen_list),
-                           num_onfloor=len(onfloor_list),
+                           num_onfloor=len(onfloor_members),
                            freshmen=freshmen_list,
                            site_lockdown=lockdown,
                            accept_dues_until=accept_dues_until,
