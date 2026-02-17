@@ -35,6 +35,7 @@ ENV PORT=${PORT}
 EXPOSE ${PORT}
 
 COPY conditional /opt/conditional/conditional
+COPY migrations /opt/conditional/migrations
 COPY *.py package.json /opt/conditional
 COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/conditional/static
 
