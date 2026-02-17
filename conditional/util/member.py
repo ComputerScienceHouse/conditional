@@ -17,21 +17,31 @@ from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_active
-from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
 
 
 @service_cache(maxsize=1024)
-def get_members_info():
+def get_members_info_active_and_onfloor():
     members = ldap_get_current_students()
     member_list = []
+
+    onfloor_set = set()
+    active_set = set()
 
     for account in members:
         uid = account.uid
         name = account.cn
-        active = ldap_is_active(account)
-        onfloor = ldap_is_onfloor(account)
+        groups = "".join(account.groups())
+        active = "active" in groups
+        onfloor = "onfloor" in groups
+
+        if active:
+            active_set.add(uid)
+
+        if onfloor:
+            onfloor_set.add(uid)
+
         room = ldap_get_roomnumber(account)
         hp = account.housingPoints
         member_list.append({
@@ -43,8 +53,7 @@ def get_members_info():
             "hp": hp
         })
 
-    return member_list
-
+    return member_list, active_set, onfloor_set
 
 def get_freshman_data(user_name):
     freshman = {}
@@ -83,12 +92,17 @@ def get_freshman_data(user_name):
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
 
+@service_cache(maxsize=1024)
+def get_active_members() -> set[str]:
+    return {members.uid for members in ldap_get_active_members()}
+
+@service_cache(maxsize=1024)
+def get_all_onfloor_members() -> set[str]:
+    return {members.uid for members in ldap_get_onfloor_members()}
 
 @service_cache(maxsize=1024)
 def get_onfloor_members():
-    return [uid for uid in [members.uid for members in ldap_get_active_members()]
-            if uid in [members.uid for members in ldap_get_onfloor_members()]]
-
+    return get_active_members() & get_all_onfloor_members()
 
 def get_cm(member):
     query_result = CommitteeMeeting.query.join(
