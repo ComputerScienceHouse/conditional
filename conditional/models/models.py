@@ -72,7 +72,7 @@ class CommitteeMeeting(db.Model):
 class MemberCommitteeAttendance(db.Model):
     __tablename__ = 'member_committee_attendance'
     id = Column(Integer, primary_key=True)
-    uid = Column(String(32), nullable=False)
+    uid = Column(String(32), nullable=False, index=True)
     meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
 
     def __init__(self, uid, meeting_id):
@@ -83,7 +83,7 @@ class MemberCommitteeAttendance(db.Model):
 class FreshmanCommitteeAttendance(db.Model):
     __tablename__ = 'freshman_committee_attendance'
     id = Column(Integer, primary_key=True)
-    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False)
+    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False, index=True)
     meeting_id = Column(ForeignKey('committee_meetings.id'), nullable=False)
 
     def __init__(self, fid, meeting_id):
@@ -109,7 +109,7 @@ class TechnicalSeminar(db.Model):
 class MemberSeminarAttendance(db.Model):
     __tablename__ = 'member_seminar_attendance'
     id = Column(Integer, primary_key=True)
-    uid = Column(String(32), nullable=False)
+    uid = Column(String(32), nullable=False, index=True)
     seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
 
     def __init__(self, uid, seminar_id):
@@ -120,7 +120,7 @@ class MemberSeminarAttendance(db.Model):
 class FreshmanSeminarAttendance(db.Model):
     __tablename__ = 'freshman_seminar_attendance'
     id = Column(Integer, primary_key=True)
-    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False)
+    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False, index=True)
     seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
 
     def __init__(self, fid, seminar_id):
@@ -132,7 +132,7 @@ class MajorProject(db.Model):
     __tablename__ = 'major_projects'
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
-    uid = Column(String(32), nullable=False)
+    uid = Column(String(32), nullable=False, index=True)
     name = Column(String(64), nullable=False)
     description = Column(Text)
     active = Column(Boolean, nullable=False)
@@ -163,7 +163,7 @@ class HouseMeeting(db.Model):
 class MemberHouseMeetingAttendance(db.Model):
     __tablename__ = 'member_hm_attendance'
     id = Column(Integer, primary_key=True)
-    uid = Column(String(32), nullable=False)
+    uid = Column(String(32), nullable=False, index=True)
     meeting_id = Column(ForeignKey('house_meetings.id'), nullable=False)
     excuse = Column(Text)
     attendance_status = Column(attendance_enum)
@@ -178,7 +178,7 @@ class MemberHouseMeetingAttendance(db.Model):
 class FreshmanHouseMeetingAttendance(db.Model):
     __tablename__ = 'freshman_hm_attendance'
     id = Column(Integer, primary_key=True)
-    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False)
+    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False, index=True)
     meeting_id = Column(ForeignKey('house_meetings.id'), nullable=False)
     excuse = Column(Text)
     attendance_status = Column(attendance_enum)
