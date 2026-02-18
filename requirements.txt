@@ -117,6 +117,7 @@ packaging==25.0
     # via
     #   build
     #   gunicorn
+    #   wheel
 pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.5.1
@@ -201,7 +202,7 @@ werkzeug==3.1.5
     # via
     #   -r requirements.in
     #   flask
-wheel==0.45.1
+wheel==0.46.2
     # via pip-tools
 wrapt==1.17.3
     # via
