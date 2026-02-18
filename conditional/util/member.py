@@ -1,4 +1,5 @@
 from datetime import datetime
+from sys import maxsize
 from sqlalchemy import func, or_
 
 from conditional import start_of_year
@@ -97,6 +98,10 @@ def get_active_members() -> set[str]:
     return {members.uid for members in ldap_get_active_members()}
 
 @service_cache(maxsize=1024)
+def get_intro_members() -> set[str]:
+    return {member.uid for member in ldap_get_intro_members()}
+
+@service_cache(maxsize=1024)
 def get_all_onfloor_members() -> set[str]:
     return {members.uid for members in ldap_get_onfloor_members()}
 
@@ -169,8 +174,8 @@ def get_voting_members():
         semester = "Spring"
         semester_start = datetime(start_of_year().year + 1, 1, 1)
 
-    active_members = set(ldap_get_active_members())
-    intro_members = set(ldap_get_intro_members())
+    active_members = get_active_members()
+    intro_members = get_intro_members()
 
     coop_members = CurrentCoops.query.filter(
         CurrentCoops.date_created > start_of_year(),
@@ -198,7 +203,6 @@ def get_voting_members():
         passed_fall_members = set(passed_fall_members)
 
     active_not_intro = active_members - intro_members
-    active_not_intro = set(map(lambda member: member.uid, active_not_intro))
 
     eligible_members = (active_not_intro - coop_members) | passed_fall_members
 

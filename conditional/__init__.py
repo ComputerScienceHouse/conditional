@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+from pstats import SortKey
 import structlog
 from csh_ldap import CSHLDAP
 from flask import Flask, redirect, render_template, request, g
@@ -33,7 +34,8 @@ migrate = Migrate(app, db)
 if app.config['PROFILING']:
     app.wsgi_app = ProfilerMiddleware(
         app.wsgi_app,
-        restrictions=[30]
+        sort_by=('cumulative',),
+        restrictions=[80]
     )
 
 # Sentry setup
@@ -195,7 +197,7 @@ def route_errors(error, user_dict=None):
 
     # Handle the case where the header isn't present
     if user_dict['username'] is not None:
-        data['username'] = user_dict['account'].uid
+        data['username'] = user_dict['username']
         data['name'] = user_dict['account'].cn
     else:
         data['username'] = "unknown"

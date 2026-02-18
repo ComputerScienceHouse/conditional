@@ -1,3 +1,4 @@
+from conditional.util.user_dict import user_dict_is_current_student, user_dict_is_eval_director, user_dict_is_in_group
 import structlog
 from flask import Blueprint, request, jsonify
 
@@ -43,7 +44,7 @@ def submit_co_op_form(user_dict=None):
     semester = post_data['semester']
     if post_data['semester'] not in valid_semesters:
         return "Invalid semester submitted", 400
-    if not ldap_is_current_student(user_dict['account']):
+    if not user_dict_is_current_student(user_dict):
         return "Must be current student", 403
 
     log.info(f'Submit {semester} Co-Op')
@@ -70,15 +71,15 @@ def submit_co_op_form(user_dict=None):
 def delete_co_op(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     log.info(f'Delete {uid}\'s Co-Op')
 
     # Remove from corresponding co-op ldap group
-    if ldap_is_member_of_group(user_dict['account'], 'fall_coop'):
+    if user_dict_is_in_group(user_dict, 'fall_coop'):
         ldap_remove_member_from_group(user_dict['account'], 'fall_coop')
-    if ldap_is_member_of_group(user_dict['account'], 'spring_coop'):
+    if user_dict_is_in_group(user_dict, 'spring_coop'):
         ldap_remove_member_from_group(user_dict['account'], 'spring_coop')
 
     CurrentCoops.query.filter(CurrentCoops.uid == uid, CurrentCoops.date_created > start_of_year()).delete()
@@ -97,7 +98,7 @@ def display_co_op_management(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Co-Op Management')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     co_op_list = [(member.semester, member.uid)

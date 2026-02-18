@@ -16,6 +16,7 @@ from conditional.models.models import CommitteeMeeting
 from conditional.models.models import TechnicalSeminar
 
 from conditional import db
+from conditional.util.user_dict import user_dict_is_active, user_dict_is_alumni, user_dict_is_eboard, user_dict_is_eval_director, user_dict_is_financial_director, user_dict_is_intromember, user_dict_is_rtp
 
 
 @get_user
@@ -27,13 +28,13 @@ def render_template(template_name, user_dict=None, **kwargs):
         db.session.commit()
     lockdown = EvalSettings.query.first().site_lockdown
     accepting_dues = EvalSettings.query.first().accept_dues_until > date.today()
-    is_active = ldap_is_active(user_dict['account'])
-    is_alumni = ldap_is_alumni(user_dict['account'])
-    is_eboard = ldap_is_eboard(user_dict['account'])
-    is_financial = ldap_is_financial_director(user_dict['account'])
-    is_eval = ldap_is_eval_director(user_dict['account'])
-    is_intromember = ldap_is_intromember(user_dict['account'])
-    is_rtp = ldap_is_rtp(user_dict['account'])
+    is_active = user_dict_is_active(user_dict)
+    is_alumni = user_dict_is_alumni(user_dict)
+    is_eboard = user_dict_is_eboard(user_dict)
+    is_financial = user_dict_is_financial_director(user_dict)
+    is_eval = user_dict_is_eval_director(user_dict)
+    is_intromember = user_dict_is_intromember(user_dict)
+    is_rtp = user_dict_is_rtp(user_dict)
 
     cm_review = len(CommitteeMeeting.query.filter(
         CommitteeMeeting.approved == False).all()) # pylint: disable=singleton-comparison
