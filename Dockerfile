@@ -40,5 +40,5 @@ COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
-CMD ["sh", "-c", "gunicorn conditional:app"]
+CMD ["sh", "-c", "gunicorn"]
 
