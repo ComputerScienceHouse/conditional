@@ -24,11 +24,9 @@ from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
 
-from conditional.util.ldap import ldap_is_eval_director, ldap_is_bad_standing
-from conditional.util.ldap import ldap_is_financial_director
+from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
-from conditional.util.ldap import ldap_is_current_student
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
@@ -46,7 +44,8 @@ from conditional.util.member import get_members_info_active_and_onfloor
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
-from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_current_student, user_dict_is_eval_director, user_dict_is_financial_director
+from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_current_student, \
+    user_dict_is_eval_director, user_dict_is_financial_director
 
 logger = structlog.get_logger()
 

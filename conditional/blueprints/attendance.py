@@ -21,7 +21,6 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eboard
-from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_eval_director
 
 logger = structlog.get_logger()

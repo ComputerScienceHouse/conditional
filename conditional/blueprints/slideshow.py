@@ -11,7 +11,7 @@ from conditional.models.models import FreshmanEvalData
 from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eval_director, ldap_is_intromember, ldap_set_failed, ldap_set_bad_standing, \
+from conditional.util.ldap import ldap_is_intromember, ldap_set_failed, ldap_set_bad_standing, \
     ldap_set_inactive, ldap_get_member, ldap_set_not_intro_member
 from conditional.util.user_dict import user_dict_is_eval_director
 

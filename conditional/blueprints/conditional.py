@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from conditional.util.user_dict import user_dict_is_eval_director
 import structlog
 from flask import Blueprint, request, jsonify, redirect
 
@@ -8,7 +7,7 @@ from conditional import db, auth
 from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.user_dict import user_dict_is_eval_director
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
