@@ -1,5 +1,4 @@
 from datetime import datetime
-from sys import maxsize
 from sqlalchemy import func, or_
 
 from conditional import start_of_year
@@ -16,7 +15,6 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
@@ -43,7 +41,7 @@ def get_members_info_active_and_onfloor():
         if onfloor:
             onfloor_set.add(uid)
 
-        room = ldap_get_roomnumber(account)
+        room = account.roomNumber
         hp = account.housingPoints
         member_list.append({
             "uid": uid,
@@ -106,7 +104,7 @@ def get_all_onfloor_members() -> set[str]:
     return {members.uid for members in ldap_get_onfloor_members()}
 
 @service_cache(maxsize=1024)
-def get_onfloor_members():
+def get_onfloor_members() -> set[str]:
     return get_active_members() & get_all_onfloor_members()
 
 def get_cm(member):

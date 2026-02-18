@@ -1,4 +1,3 @@
-from conditional.util.user_dict import user_dict_is_current_student, user_dict_is_eval_director, user_dict_is_in_group
 import structlog
 from flask import Blueprint, request, jsonify
 
@@ -7,10 +6,9 @@ from conditional.models.models import CurrentCoops
 from conditional.util.member import req_cm
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eval_director, ldap_is_current_student
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
-from conditional.util.ldap import _ldap_is_member_of_group as ldap_is_member_of_group
+from conditional.util.user_dict import user_dict_is_current_student, user_dict_is_eval_director, user_dict_is_in_group
 
 co_op_bp = Blueprint('co_op_bp', __name__)
 

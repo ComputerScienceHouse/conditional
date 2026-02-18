@@ -1,4 +1,3 @@
-from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_rtp
 import structlog
 from flask import Blueprint, request
 
@@ -6,8 +5,7 @@ from conditional import auth
 from conditional.models.models import UserLog
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eboard
-from conditional.util.ldap import ldap_is_rtp
+from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_rtp
 
 logger = structlog.get_logger()
 

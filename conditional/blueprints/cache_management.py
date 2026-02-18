@@ -1,7 +1,6 @@
 import os
 import signal
 
-from conditional.util.user_dict import user_dict_is_eval_director, user_dict_is_rtp
 import structlog
 from flask import Blueprint, request, redirect
 
@@ -14,8 +13,7 @@ from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_is_eval_director
-from conditional.util.ldap import ldap_is_rtp
+from conditional.util.user_dict import user_dict_is_eval_director, user_dict_is_rtp
 
 logger = structlog.get_logger()
 cache_bp = Blueprint('cache_bp', __name__)
