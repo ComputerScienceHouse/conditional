@@ -1,3 +1,4 @@
+from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_rtp
 import structlog
 from flask import Blueprint, request
 
@@ -22,7 +23,7 @@ def display_logs(user_dict=None):
 
     log.info(user_dict['account'].displayName)
 
-    if not ldap_is_eboard(user_dict['account']) and not ldap_is_rtp(user_dict['account']):
+    if not user_dict_is_eboard(user_dict) and not user_dict_is_rtp(user_dict):
         return "must be rtp or eboard", 403
 
     logs = UserLog.query.all()

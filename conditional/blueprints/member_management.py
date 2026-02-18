@@ -46,6 +46,7 @@ from conditional.util.member import get_members_info_active_and_onfloor
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
+from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_current_student, user_dict_is_eval_director, user_dict_is_financial_director
 
 logger = structlog.get_logger()
 
@@ -59,7 +60,7 @@ def display_member_management(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Member Management')
 
-    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict) and not user_dict_is_financial_director(user_dict):
         return "must be eval director", 403
 
     member_list, active_members, onfloor_members = get_members_info_active_and_onfloor()
@@ -105,7 +106,7 @@ def display_member_management(user_dict=None):
 def member_management_eval(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -135,7 +136,7 @@ def member_management_eval(user_dict=None):
 def member_management_financial(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_financial_director(user_dict['account']):
+    if not user_dict_is_financial_director(user_dict):
         return "must be financial director", 403
 
     post_data = request.get_json()
@@ -159,7 +160,7 @@ def member_management_financial(user_dict=None):
 def member_management_adduser(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -185,7 +186,7 @@ def member_management_adduser(user_dict=None):
 def member_management_uploaduser(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     f = request.files['file']
@@ -224,7 +225,7 @@ def member_management_uploaduser(user_dict=None):
 @auth.oidc_auth("default")
 @get_user
 def member_management_edituser(uid, user_dict=None):
-    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict) and not user_dict_is_financial_director(user_dict):
         return "must be eval director", 403
 
     if not uid.isdigit():
@@ -292,7 +293,6 @@ def edit_fid(uid, flask_request):
 
     log.info(f'Edit freshman-{uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Eval: {post_data['evalDate']} SigMiss: {post_data['sigMissed']}') #pylint: disable=line-too-long
 
-
     name = post_data['name']
 
     if post_data['roomNumber'] == "":
@@ -324,7 +324,7 @@ def member_management_getuserinfo(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Get {uid}\'s Information')
 
-    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_financial_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict) and not user_dict_is_financial_director(user_dict):
         return "must be eval or financial director", 403
 
     acct = None
@@ -368,7 +368,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 
     account = ldap_get_member(uid)
 
-    if ldap_is_eval_director(ldap_get_member(user_dict['username'])):
+    if user_dict_is_eval_director(user_dict):
         missed_hm = [
             {
                 'date': get_hm_date(hma.meeting_id),
@@ -409,7 +409,7 @@ def member_management_deleteuser(fid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Delete freshman-{fid}')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     if not fid.isdigit():
@@ -442,7 +442,7 @@ def member_management_deleteuser(fid, user_dict=None):
 def member_management_upgrade_user(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -504,9 +504,9 @@ def member_management_upgrade_user(user_dict=None):
 def member_management_make_user_active(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_current_student(user_dict['account']) \
-            or ldap_is_active(user_dict['account']) \
-            or ldap_is_bad_standing(user_dict['account']):
+    if not user_dict_is_current_student(user_dict) \
+            or user_dict_is_active(user_dict) \
+            or user_dict_is_bad_standing(user_dict):
         return "must be current student, not in bad standing and not active", 403
 
     ldap_set_active(user_dict['account'])
@@ -523,7 +523,7 @@ def get_member(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Get {uid}\'s Information')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     member = ldap_get_member(uid)
@@ -542,7 +542,7 @@ def get_member(uid, user_dict=None):
 def clear_active_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
     # Get the active group.
     members = ldap_get_active_members()
@@ -588,7 +588,7 @@ def export_active_list():
 def remove_current_student(uid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     member = ldap_get_member(uid)
@@ -608,7 +608,7 @@ def new_year(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display New Year Page')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     current_students = ldap_get_current_students()

@@ -22,6 +22,7 @@ from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eboard
 from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_eval_director
 
 logger = structlog.get_logger()
 
@@ -160,7 +161,7 @@ def display_attendance_hm(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display House Meeting Attendance Page')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
     return render_template('attendance_hm.html',
@@ -175,7 +176,7 @@ def display_attendance_hm(user_dict=None):
 def submit_committee_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    approved = ldap_is_eboard(user_dict['account'])
+    approved = user_dict_is_eval_director(user_dict)
     post_data = request.get_json()
 
     committee = post_data['committee']
@@ -211,7 +212,7 @@ def submit_seminar_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Submit Technical Seminar Attendance')
 
-    approved = ldap_is_eboard(user_dict['account'])
+    approved = user_dict_is_eboard(user_dict)
 
     post_data = request.get_json()
 
@@ -248,7 +249,7 @@ def submit_house_attendance(user_dict=None):
 
     # status: Attended | Excused | Absent
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be evals", 403
 
     post_data = request.get_json()
@@ -289,7 +290,7 @@ def submit_house_attendance(user_dict=None):
 def alter_house_attendance(uid, hid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be evals", 403
 
     if not uid.isdigit():
@@ -319,7 +320,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
 def alter_house_excuse(uid, hid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -381,7 +382,7 @@ def attendance_history(user_dict=None):
 
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eboard(user_dict['account']):
+    if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
 
@@ -444,7 +445,7 @@ def alter_committee_attendance(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Edit Committee Meeting Attendance')
 
-    if not ldap_is_eboard(user_dict['account']):
+    if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     post_data = request.get_json()
@@ -476,7 +477,7 @@ def alter_seminar_attendance(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Edit Technical Seminar Attendance')
 
-    if not ldap_is_eboard(user_dict['account']):
+    if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     post_data = request.get_json()
@@ -559,7 +560,7 @@ def get_ts_attendees(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Delete Committee Meeting {cid}')
 
-    if not ldap_is_eboard(user_dict['account']):
+    if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     FreshmanCommitteeAttendance.query.filter(
@@ -582,7 +583,7 @@ def approve_cm(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Approve Committee Meeting {cid} Attendance')
 
-    if not ldap_is_eboard(user_dict['account']):
+    if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     CommitteeMeeting.query.filter(
@@ -600,7 +601,7 @@ def approve_ts(sid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Approve Technical Seminar {sid} Attendance')
 
-    if not ldap_is_eboard(user_dict['account']):
+    if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     TechnicalSeminar.query.filter(

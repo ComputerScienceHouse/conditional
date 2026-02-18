@@ -13,6 +13,7 @@ from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director, ldap_is_intromember, ldap_set_failed, ldap_set_bad_standing, \
     ldap_set_inactive, ldap_get_member, ldap_set_not_intro_member
+from conditional.util.user_dict import user_dict_is_eval_director
 
 logger = structlog.get_logger()
 
@@ -26,7 +27,7 @@ def slideshow_intro_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Slideshow')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
     return render_template('intro_eval_slideshow.html',
@@ -54,7 +55,7 @@ def slideshow_intro_members(user_dict=None):
 def slideshow_intro_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -82,7 +83,7 @@ def slideshow_spring_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Slideshow')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
     return render_template('spring_eval_slideshow.html',
@@ -110,7 +111,7 @@ def slideshow_spring_members(user_dict=None):
 def slideshow_spring_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()

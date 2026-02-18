@@ -1,6 +1,7 @@
 import os
 import signal
 
+from conditional.util.user_dict import user_dict_is_eval_director, user_dict_is_rtp
 import structlog
 from flask import Blueprint, request, redirect
 
@@ -24,7 +25,7 @@ cache_bp = Blueprint('cache_bp', __name__)
 @auth.oidc_auth("default")
 @get_user
 def restart_app(user_dict=None):
-    if not ldap_is_rtp(user_dict['account']):
+    if not user_dict_is_rtp(user_dict):
         return redirect("/dashboard")
 
     log = logger.new(request=request, auth_dict=user_dict)
@@ -37,7 +38,7 @@ def restart_app(user_dict=None):
 @auth.oidc_auth("default")
 @get_user
 def clear_cache(user_dict=None):
-    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_rtp(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict) and not user_dict_is_rtp(user_dict):
         return redirect("/dashboard")
 
     log = logger.new(request=request, auth_dict=user_dict)

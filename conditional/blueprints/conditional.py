@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from conditional.util.user_dict import user_dict_is_eval_director
 import structlog
 from flask import Blueprint, request, jsonify, redirect
 
@@ -44,7 +45,7 @@ def display_conditionals(user_dict=None):
 def create_conditional(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -81,7 +82,7 @@ def create_conditional(user_dict=None):
 def conditional_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -119,7 +120,7 @@ def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Delete conditional-{cid}')
 
-    if ldap_is_eval_director(user_dict['account']):
+    if user_dict_is_eval_director(user_dict):
         Conditional.query.filter(
             Conditional.id == cid
         ).delete()
