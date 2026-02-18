@@ -36,7 +36,7 @@ cryptography==46.0.3
     # via oic
 csh-ldap==2.5.3
     # via -r requirements.in
-ddtrace==4.2.1
+ddtrace==4.4.0
     # via -r requirements.in
 defusedxml==0.7.1
     # via oic
@@ -117,8 +117,6 @@ packaging==25.0
     # via
     #   build
     #   gunicorn
-pip==25.3
-    # via pip-tools
 pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.5.1
@@ -164,10 +162,8 @@ requests==2.32.5
     #   flask-pyoidc
     #   oic
     #   pyjwkest
-sentry-sdk==2.24.1
+sentry-sdk[flask]==2.24.1
     # via -r requirements.in
-setuptools==80.9.0
-    # via pip-tools
 six==1.17.0
     # via
     #   -r requirements.in
