@@ -13,8 +13,7 @@ from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_is_eval_director
-from conditional.util.ldap import ldap_is_rtp
+from conditional.util.user_dict import user_dict_is_eval_director, user_dict_is_rtp
 
 logger = structlog.get_logger()
 cache_bp = Blueprint('cache_bp', __name__)
@@ -24,7 +23,7 @@ cache_bp = Blueprint('cache_bp', __name__)
 @auth.oidc_auth("default")
 @get_user
 def restart_app(user_dict=None):
-    if not ldap_is_rtp(user_dict['account']):
+    if not user_dict_is_rtp(user_dict):
         return redirect("/dashboard")
 
     log = logger.new(request=request, auth_dict=user_dict)
@@ -37,7 +36,7 @@ def restart_app(user_dict=None):
 @auth.oidc_auth("default")
 @get_user
 def clear_cache(user_dict=None):
-    if not ldap_is_eval_director(user_dict['account']) and not ldap_is_rtp(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict) and not user_dict_is_rtp(user_dict):
         return redirect("/dashboard")
 
     log = logger.new(request=request, auth_dict=user_dict)
