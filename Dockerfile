@@ -40,4 +40,5 @@ COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
-CMD ["sh", "-c", "gunicorn conditional:app --bind=0.0.0.0:${PORT} --access-logfile=- --timeout=256"]
+CMD ["sh", "-c", "gunicorn"]
+
