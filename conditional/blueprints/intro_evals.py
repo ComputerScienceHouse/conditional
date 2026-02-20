@@ -76,7 +76,7 @@ def get_intro_members_without_accounts():
         if not row[0] in freshman_ts_attendance_dict:
             freshman_ts_attendance_dict[row[0]] = []
 
-            freshman_ts_attendance_dict[row[0]].append(row[1])
+        freshman_ts_attendance_dict[row[0]].append(row[1])
 
     # freshmen who don't have accounts
     freshman_accounts = list(FreshmanAccount.query.filter(
