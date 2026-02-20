@@ -8,36 +8,13 @@ A comprehensive membership evaluations solution for Computer Science House.
 Development
 -----------
 
-To run the application, you must have the latest version of [Python 3](https://www.python.org/downloads/) and [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) installed. Once you have those installed, create a new virtualenv and install the Python dependencies:
-
-```
-virtualenv .conditionalenv -p `which python3`
-source .conditionalenv/bin/activate
-pip install -r requirements.txt
-export FLASK_APP=app.py
-```
-
-In addition, you must have Node, NPM, and Gulp CLI installed to properly execute the asset pipeline. If you don't have Node installed, we recommending installing with [NVM](https://github.com/creationix/nvm):
-
-```
-nvm install
-nvm use
-npm install -g gulp
-```
-
-Then, install the pipeline and frontend dependencies:
-
-```
-npm install
-```
-
 ### Config
 
-You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.sample.py` for an example.
+You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
 
 #### Add OIDC Config
 Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
-```
+```py
 # OIDC Config
 OIDC_ISSUER = "https://sso.csh.rit.edu/auth/realms/csh"
 OIDC_CLIENT_CONFIG = {
@@ -47,15 +24,66 @@ OIDC_CLIENT_CONFIG = {
 }
 ```
 
-### Run
+#### Database 
+You can either develop using the dev database, or use the local database provided in the docker compose file
 
-Once you have all of the dependencies installed, simply run:
+Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
 
+### Run (Without Docker)
+
+To run the application without using containers, you must have the latest version of [Python 3](https://www.python.org/downloads/) and [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) installed. Once you have those installed, create a new virtualenv and install the Python dependencies:
+
+```sh
+virtualenv .conditionalenv -p `which python3`
+source .conditionalenv/bin/activate
+pip install -r requirements.txt
 ```
-npm start
+
+In addition, you must have Node, NPM, and Weback CLI installed to properly execute the asset pipeline. If you don't have Node installed, we recommending installing with [NVM](https://github.com/creationix/nvm):
+
+```sh
+nvm install
+nvm use
+npm install -g webpack
 ```
 
-This will run the asset pipeline, start the Python server, and start BrowserSync. Your default web browser will open automatically. If it doesn't, navigate to `http://127.0.0.1:3000`. Any changes made to the frontend files in `frontend` or the Jinja templates in `conditional/templates` will cause the browser to reload automatically.
+Then, install the pipeline and frontend dependencies: (do this in the `frontend` directory)
+
+```sh
+npm install
+```
+
+Once you have all of the dependencies installed, run
+
+```sh
+npm webpack
+```
+
+This will build the frontend assets and put them in the correct place for use with flask
+
+Finally, start the flask app with `gunicorn`
+
+```sh
+gunicorn
+```
+
+or 
+
+```sh
+python -m gunicorn
+```
+
+### Run (containerized)
+
+It is likely easier to use containers like `podman` or `docker` or the corresponding compose file
+
+With podman, I have been using 
+
+```sh
+podman compose up --force-recreate --build
+```
+
+Which can be restarted every time changes are made
 
 ### Dependencies
 
@@ -63,17 +91,20 @@ To add new dependencies, add them to `requirements.in` and then run `pip-compile
 
 ### Local database
 
-You can run the database locally using the docker compose, make sure to upgrade it as explained below
+You can run the database locally using the docker compose
 
 To populate it with dev data for example, you can use the command
 
-```
-PGPASSWORD='[DB PASSWORD]' pg_dump -h postgres.csh.rit.edu -p 5432 -U conditional-dev conditional-dev |  PGPASSWORD='fancypantspassword' psql -h localhost -p 5432 -U conditional conditional
+```sh
+PGPASSWORD='[DB PASSWORD]' pg_dump -h postgres.csh.rit.edu -p 5432 -U conditionaldev conditionaldev |  PGPASSWORD='fancypantspassword' psql -h localhost -p 5432 -U conditional conditional
 ```
 
 This can be helpful for changing the database schema
 
-NOTE: to use flask db commands with a database running in the compose file, you will have to update your url to point to localhost, not conditional-postgres
+To run migration commands in the local database, you can run the commands inside the docker container. Any migrations created will also be in the local repository since migrations are mounted in the docker compose
+```sh
+podman exec conditional flask db upgrade
+```
 
 ### Database Migrations
 
