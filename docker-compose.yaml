@@ -7,6 +7,8 @@ services:
       - conditional-postgres
     ports:
       - "127.0.0.1:8080:8080"
+    volumes:
+      - ./migrations:/opt/conditional/migrations
   conditional-postgres:
     image: docker.io/postgres
     container_name: conditional-postgres
