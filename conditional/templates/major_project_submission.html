@@ -1,39 +1,102 @@
 {% extends "nav.html" %}
+{% block extraHeader %}
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+{% endblock %}
 {% block title %}
-Major Project Form
+    Major Project Form
 {% endblock %}
 {% block body %}
 
 <div class="container main">
     <h3 class="page-title">Major Project Form</h3>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p class="lead">
+                Welcome to the Major Project submission form! We're excited to read about what you've
+                been working on. For us (E-Board) to best evaluate your project, please give us as much detail as
+                possible. Don't feel pressured to write full paragraphs though, good bullet points are plenty!
+                <br>Generally, a major project is something that you make with the goal of challenging yourself,
+                learning new things, and doing something you would be proud of. Major projects are most likely to
+                pass when they meet at least 2 of the 3
+                <a href="https://wiki.csh.rit.edu/wiki/Major_Project_Pillars">Major Project Pillars</a> -
+                considerable time on your project, benefiting House, and meaningfully applying skills. And of course,
+                after you submit, please try to talk to E-Board members (in-person or over Slack) so we are familiar
+                with your project and can ask you questions!
+            </p>
+        </div>
+    </div>
+
     <form data-module="majorProjectForm">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div class="form-group label-floating is-empty">
-                    <label class="control-label" for="name">Project Name</label>
-                    <input class="form-control" id="name" name="name" type="text" maxlength="64"
-                     placeholder="A clever name for your project, sometimes people will come up with an acronym.">
+                <label class="form-label" for="name">Project Name</label>
+                <input class="form-control" id="name" name="name" type="text" maxlength="64"
+                 placeholder="A clever name for your project, sometimes people will come up with an acronym.">
+
+                <label class="form-label" for="tldr">Short Description / TL;DR</label>
+                <input class="form-control" id="tldr" name="tldr" type="text" maxlength="64" placeholder="A quick, one-sentence pitch for your project and what it does.">
+
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label class="form-label" for="skills-applied">Skills Applied<span>Press Enter or , to separate skills</span></label>
+                        <div class="skills-applied" class="form-control form-skilltags">
+                            <input id="skill-input" name="skill" type="text" maxlength="16" placeholder="Add a skill">
+                            <span class="placeholder">List what skills you meaningfully used while working on this project (at least 2!)</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="form-label" for="time-commitment">Time Commitment</label>
+                        <textarea id="time-commitment" name="time-commitment" class="form-control form-textarea" rows="5" wrap="hard" placeholder="We're looking for a considerable amount of time spent on your major project, we suggest ~5 hours minimum">
+                        </textarea>
+                    </div>
+                </div>
+                <label class="form-label" for="description">Detailed Description</label>
+                <textarea id="description" name="description" class="form-control form-textarea" rows="10"
+                        placeholder="Tell us everything! More information is better than less.">
+                </textarea>
+
+                <div class="row">
+                    <div class="col-lg-5">
+                        <label class="form-label" for="links">Project Links</label>
+                        <textarea id="links" name="links" class="form-control form-textarea" rows="2" 
+                            placeholder="If you have links (GitHub, YouTube, etc.), put them here!">
+                        </textarea>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dropzone" id="project_files">
+                            <div class="dz-message" style="margin: 15px 0 0;">
+                                <img src="../images/photo_video.svg" width="72px">
+                                <div class="upload-title">Upload Media</div>
+                                <div class="upload-sub">Drag files here or click to upload.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-body" style="padding-top:20px;">
-                <div class="form-group label-floating is-empty">
-                    <label class="control-label" for="description">Description</label>
-                    <textarea name="description" class="form-control" rows="3" id="description"
-                     placeholder="A 'two liner' description of what your project is. If you have source materials like a GitHub repo publicly available, it's also useful to include links to them."></textarea>
-                </div>
-            </div>
-        </div>
-        <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit" value="Submit Major Project">
+        <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit" 
+                value="Submit Major Project">
     </form>
+
+    <script>
+        Dropzone.options.projectFiles = {
+            // autoQueue: false,
+            url: "/major_project/upload",
+            parallelUploads: 2,
+            uploadMultiple: true,
+            acceptedFiles: "audio/*,photo/*,video/*,.pdf,.doc,.docx"
+        }
+    </script>
+
     <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
-    <=0 %} <div class="panel panel-default">
+    <=0 %} 
+    <div class="panel panel-default">
         <div class="panel-body">
             <p class="text-center">No Pending Major Projects</p>
         </div>
-</div>
-{% else %}
+    </div>
+    {% else %}
 
     {% for p in major_projects %}
     <div class="panel panel-default">

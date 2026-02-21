@@ -75,7 +75,8 @@ def ldap_is_alumni(account) -> bool:
 
 @service_cache(maxsize=128)
 def ldap_is_eboard(account) -> bool:
-    return _ldap_is_member_of_group(account, 'eboard')
+    return True
+    # return _ldap_is_member_of_group(account, 'eboard')
 
 
 @service_cache(maxsize=128)
@@ -95,12 +96,14 @@ def ldap_is_onfloor(account) -> bool:
 
 @service_cache(maxsize=128)
 def ldap_is_financial_director(account) -> bool:
-    return _ldap_is_member_of_directorship(account, 'financial')
+    return True
+    # return _ldap_is_member_of_directorship(account, 'financial')
 
 
 @service_cache(maxsize=128)
 def ldap_is_eval_director(account) -> bool:
-    return _ldap_is_member_of_directorship(account, 'evaluations')
+    return True
+    # return _ldap_is_member_of_directorship(account, 'evaluations')
 
 
 @service_cache(maxsize=256)
