@@ -79,7 +79,9 @@ def submit_major_project(user_dict=None):
     send_slack_ping(
         {
             "text": f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
-            f" submitted their major project, *{name}*!"
+            f" submitted their major project, *{name}*! Please be sure to reach out"
+            f" to E-Board members to answer any questions they may have regarding"
+            f" your project!"
         }
     )
     db.session.add(project)
