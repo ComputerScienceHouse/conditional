@@ -134,20 +134,26 @@ class MajorProject(db.Model):
     date = Column(Date, nullable=False)
     uid = Column(String(32), nullable=False)
     name = Column(String(64), nullable=False)
-    description = Column(Text)
+    tldr = Column(String(128), nullable=True)
+    description = Column(Text, nullable=False)
     active = Column(Boolean, nullable=False)
     status = Column(Enum('Pending', 'Passed', 'Failed',
                          name="major_project_enum"),
                     nullable=False)
 
-    def __init__(self, uid, name, desc):
+    def __init__(self, uid, name, desc, tldr):
         self.uid = uid
         self.date = datetime.now()
         self.name = name
+        self.tldr = tldr
         self.description = desc
         self.status = 'Pending'
         self.active = True
 
+class MajorProjectSkill(db.Model):
+    __tablename__ = "major_project_skills"
+    project_id = Column(Integer, ForeignKey('major_projects.id', ondelete="cascade"), nullable=False, primary_key=True)
+    skill = Column(Text, nullable=False, primary_key=True)
 
 class HouseMeeting(db.Model):
     __tablename__ = 'house_meetings'
