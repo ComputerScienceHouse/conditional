@@ -174,8 +174,10 @@ def major_project_review(user_dict=None):
 
     print(post_data)
     MajorProject.query.filter(MajorProject.id == pid).update({"status": status})
+
     db.session.flush()
     db.session.commit()
+    
     return jsonify({"success": True}), 200
 
 
@@ -191,8 +193,10 @@ def major_project_delete(pid, user_dict=None):
 
     if creator == user_dict["username"] or ldap_is_eval_director(user_dict["account"]):
         MajorProject.query.filter(MajorProject.id == pid).delete()
+        
         db.session.flush()
         db.session.commit()
+        
         return jsonify({"success": True}), 200
 
     return "Must be project owner to delete!", 401
