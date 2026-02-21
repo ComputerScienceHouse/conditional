@@ -58,8 +58,30 @@ def display_major_project(user_dict=None):
         "major_project_submission.html",
         major_projects=major_projects,
         major_projects_len=major_projects_len,
-        username=user_dict["username"],
-    )
+        username=user_dict["username"])
+
+@major_project_bp.route("/major_project/upload", methods=["POST"])
+@auth.oidc_auth("default")
+@get_user
+def upload_major_project_files(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Uploading Major Project File(s)')
+
+    if len(list(request.files.keys())) <1:
+        return "No file", 400
+    
+    # Temporarily save files to a place, to be uploaded on submit
+
+    for _, file in request.files.lists():
+        file = file[0]
+        safe_name = secure_filename(file.filename)
+        filename = f"/tmp/{user_dict['username']}/{safe_name}"
+
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        file.save(filename)
+    
+    return jsonify({"success": True}), 200
+
 
 
 @major_project_bp.route("/major_project/submit", methods=["POST"])
@@ -70,25 +92,68 @@ def submit_major_project(user_dict=None):
     log.info("Submit Major Project")
 
     post_data = request.get_json()
+
+    print(post_data) # TODO: Remove this later
+
     name = post_data["projectName"]
+    tldr = post_data['projectTldr']
+    time_spent = post_data['projectTimeSpent']
+    skills = post_data['projectSkills']
     description = post_data["projectDescription"]
 
-    if name == "" or description == "":
-        return jsonify({"success": False}), 400
-    project = MajorProject(user_dict["username"], name, description)
+    user_id = user_dict['username']
 
-    # Don't you dare try pinging @channel
+    print(f"Skills: {skills}")
+
+    # All fields are required in order to be able to submit the form
+    # TODO: Do we want any of the fields to have enforced min or max lengths?
+    if name == "" or tldr == "" or time_spent == "" or skills == "" or description == "":
+        return jsonify({"success": False}), 400
+    
+    # TODO: Ensure all the information is being passed to the object
+    project = MajorProject(user_id, name, tldr, time_spent, description)
+
+    # Save the info to the database
+    db.session.add(project)
+    db.session.commit()
+
+    project = MajorProject.query.filter(
+        MajorProject.name == name and MajorProject.uid == user_id
+    ).first()
+
+    # Fail if attempting to retreive non-existent project
+    if project is None:
+        return jsonify({"success": False}), 500
+    
+    # Sanitize input so that the Slackbot cannot ping @channel
     name = name.replace("<!", "<! ")
 
-    username = user_dict["username"]
+    # Send the slack ping only after we know that the data was properly saved to the DB
+    # TODO: Maybe add more info to the slack ping?
     send_slack_ping(
         {
-            "text": f"<!subteam^S5XENJJAH> *{get_member_name(username)}* ({username})"
+            "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
             f" submitted their major project, *{name}*!"
         }
     )
-    db.session.add(project)
-    db.session.commit()
+
+    # Connect to S3 bucket
+    s3 = boto3.resource("s3", endpoint_url="https://s3.csh.rit.edu")
+    bucket = s3.create_bucket(Bucket="major-project-media")
+
+    # Collect all the locally cached files and put them in the bucket
+    for file in os.listdir(f"/tmp/{user_id}"):
+        filepath = f"/tmp/{user_id}/{file}"
+
+        # TODO: Remove this later
+        print(f"Filepath in S3: {filepath}")
+
+        bucket.upload_file(filepath, f"{project.id}--{file}")
+        os.remove(filepath)
+        
+    # Delete the temp directory once all the files have been stored in S3
+    os.rmdir(f"/tmp/{user_id}")
+
     return jsonify({"success": True}), 200
 
 
