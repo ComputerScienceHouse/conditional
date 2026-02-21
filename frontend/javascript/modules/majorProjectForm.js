@@ -7,7 +7,7 @@ export default class MajorProjectForm {
         this.form = form;
         this.endpoint = '/major_project/submit';
         this.tags_written = false;
-        this.tag_keys = ["Enter", "Comma"];
+        this.tag_keys = ["Enter", "Comma", "Tab"];
         this.render();
     }
 
@@ -39,8 +39,6 @@ export default class MajorProjectForm {
         let skills = document.getElementsByClassName("skill-tag")
         skills.item(skills.length - 1).addEventListener('click', e => this.onRemoveTag(e));
         input.value = "";
-        input.focus();
-
     }
 
     onRemoveTag(e) {
