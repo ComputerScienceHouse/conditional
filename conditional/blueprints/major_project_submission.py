@@ -5,19 +5,20 @@ import requests
 import requests
 import boto3
 
+from config import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import redirect
 
-from sqlalchemy import desc
+from sqlalchemy import func
 
 import structlog
 from werkzeug.utils import secure_filename
 
 from conditional.util.context_processors import get_member_name
 
-from conditional.models.models import MajorProject
+from conditional.models.models import MajorProject, MajorProjectSkill
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
@@ -37,19 +38,33 @@ def display_major_project(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info("Display Major Project Page")
 
+    # There is probably a better way to do this, but it does work
+    proj_list = db.session.query(
+        MajorProject.id,
+        MajorProject.name,
+        MajorProject.uid,
+        MajorProject.tldr,
+        MajorProject.timeSpent,
+        MajorProject.description,
+        MajorProject.status,
+        func.array_agg(MajorProjectSkill.skill).label("skills")
+    ).outerjoin(MajorProjectSkill,
+        MajorProject.id == MajorProjectSkill.project_id
+    ).group_by(MajorProject.id).all()
+
     major_projects = [
         {
-            "username": p.uid,
-            "name": ldap_get_member(p.uid).cn,
-            "proj_name": p.name,
-            "status": p.status,
-            "description": p.description,
             "id": p.id,
-            "is_owner": bool(user_dict["username"] == p.uid),
+            "username": p.uid,
+            "name": p.name,
+            "tldr": p.tldr,
+            "time_spent": p.timeSpent,
+            "skills": p.skills,
+            "desc": p.description,
+            "status": p.status,
+            "is_owner": bool(user_dict["username"] == p.uid)
         }
-        for p in MajorProject.query.filter(
-            MajorProject.date > start_of_year()
-        ).order_by(desc(MajorProject.id))
+        for p in proj_list
     ]
 
     major_projects_len = len(major_projects)
@@ -93,7 +108,7 @@ def submit_major_project(user_dict=None):
 
     post_data = request.get_json()
 
-    print(post_data) # TODO: Remove this later
+    print(f"Post Data: {post_data}") # TODO: Remove this later
 
     name = post_data["projectName"]
     tldr = post_data['projectTldr']
@@ -117,9 +132,18 @@ def submit_major_project(user_dict=None):
     db.session.add(project)
     db.session.commit()
 
+
     project = MajorProject.query.filter(
-        MajorProject.name == name and MajorProject.uid == user_id
-    ).first()
+            MajorProject.name == name and MajorProject.uid == user_id
+        ).first()
+    
+    for skill in skills:
+        skill = skill.strip()
+        if skill != "":
+            mp_skill = MajorProjectSkill(project.id, skill)
+            db.session.add(mp_skill)
+
+    db.session.commit()
 
     # Fail if attempting to retreive non-existent project
     if project is None:
@@ -128,17 +152,14 @@ def submit_major_project(user_dict=None):
     # Sanitize input so that the Slackbot cannot ping @channel
     name = name.replace("<!", "<! ")
 
-    # Send the slack ping only after we know that the data was properly saved to the DB
-    # TODO: Maybe add more info to the slack ping?
-    send_slack_ping(
-        {
-            "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
-            f" submitted their major project, *{name}*!"
-        }
+    # Connect to S3 bucket
+    s3 = boto3.resource(
+        "s3", 
+        endpoint_url="https://s3.csh.rit.edu",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
     )
 
-    # Connect to S3 bucket
-    s3 = boto3.resource("s3", endpoint_url="https://s3.csh.rit.edu")
     bucket = s3.create_bucket(Bucket="major-project-media")
 
     # Collect all the locally cached files and put them in the bucket
@@ -153,6 +174,16 @@ def submit_major_project(user_dict=None):
         
     # Delete the temp directory once all the files have been stored in S3
     os.rmdir(f"/tmp/{user_id}")
+
+
+    # Send the slack ping only after we know that the data was properly saved to the DB
+    # TODO: Maybe add more info to the slack ping?
+    # send_slack_ping(
+    #     {
+    #         "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
+    #         f" submitted their major project, *{name}*!"
+    #     }
+    # )
 
     return jsonify({"success": True}), 200
 

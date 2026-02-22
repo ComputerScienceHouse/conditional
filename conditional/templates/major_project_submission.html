@@ -149,6 +149,20 @@
             </button>
             <div class="collapse major-project-desc" id="evalsCollapse-{{p['id']}}">
                 {{p['description']}}
+                <div>
+                    <p>Time Spent:</p>
+                    {{p['time_spent']}}
+                </div>
+
+                <div>
+                    <p>Skills</p>
+
+                    <ul>
+                    {% for s in p['skills'] %}
+                        <li class="">{{s}}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
