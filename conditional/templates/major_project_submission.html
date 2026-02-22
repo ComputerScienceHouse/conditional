@@ -103,7 +103,8 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="col-xs-8 col-sm-10">
-                <h4>{{p['proj_name']}}</h4>
+                <!-- Make the project name bigger -->
+                <h4 style="font-size: 2em;">{{p['proj_name']}}</h4>
                 <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
                 {{p['name']}} ({{p['username']}})
             </div>
@@ -148,11 +149,12 @@
                 <i class="bi bi-chevron-down"></i>
             </button>
             <div class="collapse major-project-desc" id="evalsCollapse-{{p['id']}}">
-                {{p['description']}}
-                <div>
-                    <p>Time Spent:</p>
-                    {{p['time_spent']}}
+                <div class="tldr">
+                    <h5 style="line-height: 0.5em;">TLDR</h5>
+                    <p style="font-size: 1.25em; line-height: 0.5em;">{{p['tldr']}}</p>
                 </div>
+                {{p['description']}}
+           
 
                 <div>
                     <p>Skills</p>

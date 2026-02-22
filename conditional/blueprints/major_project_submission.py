@@ -56,7 +56,8 @@ def display_major_project(user_dict=None):
         {
             "id": p.id,
             "username": p.uid,
-            "name": p.name,
+            "name": ldap_get_member(p.uid).cn,
+            "proj_name": p.name,
             "tldr": p.tldr,
             "time_spent": p.timeSpent,
             "skills": p.skills,
@@ -81,6 +82,8 @@ def display_major_project(user_dict=None):
 def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
+
+    log.info(f"user_dict: {user_dict}")
 
     if len(list(request.files.keys())) <1:
         return "No file", 400
@@ -118,6 +121,7 @@ def submit_major_project(user_dict=None):
 
     user_id = user_dict['username']
 
+    log.info(user_dict['name'])
     print(f"Skills: {skills}")
 
     # All fields are required in order to be able to submit the form
