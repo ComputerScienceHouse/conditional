@@ -76,7 +76,7 @@ importlib-metadata==8.7.1
     # via opentelemetry-api
 importlib-resources==6.5.2
     # via flask-pyoidc
-isort==4.3.21
+isort==6.1.0
     # via
     #   -r requirements.in
     #   pylint
