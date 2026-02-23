@@ -5,8 +5,7 @@ from conditional import auth
 from conditional.models.models import UserLog
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eboard
-from conditional.util.ldap import ldap_is_rtp
+from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_rtp
 
 logger = structlog.get_logger()
 
@@ -22,7 +21,7 @@ def display_logs(user_dict=None):
 
     log.info(user_dict['account'].displayName)
 
-    if not ldap_is_eboard(user_dict['account']) and not ldap_is_rtp(user_dict['account']):
+    if not user_dict_is_eboard(user_dict) and not user_dict_is_rtp(user_dict):
         return "must be rtp or eboard", 403
 
     logs = UserLog.query.all()
