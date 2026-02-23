@@ -103,7 +103,7 @@ markupsafe==3.0.3
     #   mako
     #   sentry-sdk
     #   werkzeug
-mccabe==0.6.1
+mccabe==0.7.0
     # via
     #   -r requirements.in
     #   pylint
