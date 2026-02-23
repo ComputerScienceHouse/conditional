@@ -15,9 +15,10 @@ APP_NAME = "conditional"
 IP = env.get("CONDITIONAL_IP", "0.0.0.0")
 PORT = env.get("CONDITIONAL_PORT", 6969)
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
+PROFILING = env.get("CONDITIONAL_PROFILING", "false").lower() == "true"
 
 # DB Info
-SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "")
+SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "postgresql://conditional:fancypantspassword@conditional-postgres:5432/conditional")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # LDAP config
@@ -37,14 +38,20 @@ SENTRY_ENV = env.get("CONDITIONAL_SENTRY_ENV", "local-development")
 
 # OIDC Config
 OIDC_ISSUER = env.get("CONDITIONAL_OIDC_ISSUER", "https://sso.csh.rit.edu/auth/realms/csh")
+
 OIDC_CLIENT_CONFIG = {
     'client_id': env.get("CONDITIONAL_OIDC_CLIENT_ID", "conditional"),
     'client_secret': env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
-    'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:6969/logout")]
+    'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:8080/logout")],
 }
+
+OIDC_REDIRECT_URI = env.get("CONDITIONAL_OIDC_REDIRECT_URI", "http://localhost:8080/redirect_uri")
 
 # Openshift secret
 SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex(16)))
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
+
+# Vote config
+VOTE_TOKEN = env.get("CONDITIONAL_VOTE_TOKEN", "")

@@ -1,14 +1,11 @@
-import {Enum} from 'enumify';
+import { Enumify } from 'enumify';
 
-class FetchException extends Enum {
-}
+export default class FetchException extends Enumify {
+  REQUEST_FAILED = new FetchException("Unable to retrieve data from server");
+  _ = FetchException.closeEnum();
 
-FetchException.initEnum({
-  REQUEST_FAILED: {
-    get message() {
-      return "Unable to retrieve data from server";
-    }
+  constructor(message) {
+    super();
+    this.message = message;
   }
-});
-
-export default FetchException;
+}

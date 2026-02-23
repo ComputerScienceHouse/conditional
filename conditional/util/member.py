@@ -1,7 +1,8 @@
 from datetime import datetime
+from sqlalchemy import func, or_
 
 from conditional import start_of_year
-from conditional.models.models import CommitteeMeeting
+from conditional.models.models import CommitteeMeeting, FreshmanAccount
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import HouseMeeting
@@ -14,50 +15,33 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_active
-from conditional.util.ldap import ldap_is_onfloor
+from conditional.util.ldap import ldap_is_intromember
+from conditional.util.ldap import ldap_get_member
 
 
 @service_cache(maxsize=1024)
-def get_voting_members():
-
-    if datetime.today() < datetime(start_of_year().year, 12, 31):
-        semester = 'Fall'
-    else:
-        semester = 'Spring'
-
-    active_members = set(member.uid for member in ldap_get_active_members())
-    intro_members = set(member.uid for member in ldap_get_intro_members())
-    on_coop = set(member.uid for member in CurrentCoops.query.filter(
-        CurrentCoops.date_created > start_of_year(),
-        CurrentCoops.semester == semester).all())
-
-    voting_list = list(active_members - intro_members - on_coop)
-
-    passed_fall = FreshmanEvalData.query.filter(
-        FreshmanEvalData.freshman_eval_result == "Passed",
-        FreshmanEvalData.eval_date > start_of_year()
-    ).distinct()
-
-    for intro_member in passed_fall:
-        if intro_member.uid not in voting_list:
-            voting_list.append(intro_member.uid)
-
-    return voting_list
-
-
-@service_cache(maxsize=1024)
-def get_members_info():
+def get_members_info_active_and_onfloor():
     members = ldap_get_current_students()
     member_list = []
+
+    onfloor_set = set()
+    active_set = set()
 
     for account in members:
         uid = account.uid
         name = account.cn
-        active = ldap_is_active(account)
-        onfloor = ldap_is_onfloor(account)
-        room = ldap_get_roomnumber(account)
+        groups = "".join(account.groups())
+        active = "active" in groups
+        onfloor = "onfloor" in groups
+
+        if active:
+            active_set.add(uid)
+
+        if onfloor:
+            onfloor_set.add(uid)
+
+        room = account.roomNumber
         hp = account.housingPoints
         member_list.append({
             "uid": uid,
@@ -68,8 +52,7 @@ def get_members_info():
             "hp": hp
         })
 
-    return member_list
-
+    return member_list, active_set, onfloor_set
 
 def get_freshman_data(user_name):
     freshman = {}
@@ -83,18 +66,18 @@ def get_freshman_data(user_name):
                   MemberCommitteeAttendance.query.filter(
                       MemberCommitteeAttendance.uid == user_name
                   ) if CommitteeMeeting.query.filter(
-                      CommitteeMeeting.id == m.meeting_id).first().approved]
+            CommitteeMeeting.id == m.meeting_id).first().approved]
     freshman['committee_meetings'] = len(c_meetings)
     # technical seminar total
     t_seminars = [s.seminar_id for s in
                   MemberSeminarAttendance.query.filter(
                       MemberSeminarAttendance.uid == user_name
                   ) if TechnicalSeminar.query.filter(
-                      TechnicalSeminar.id == s.seminar_id).first().approved]
+            TechnicalSeminar.id == s.seminar_id).first().approved]
     freshman['ts_total'] = len(t_seminars)
     attendance = [m.name for m in TechnicalSeminar.query.filter(
         TechnicalSeminar.id.in_(t_seminars)
-        )]
+    )]
 
     freshman['ts_list'] = attendance
 
@@ -108,54 +91,266 @@ def get_freshman_data(user_name):
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
 
+@service_cache(maxsize=1024)
+def get_active_members() -> set[str]:
+    return {members.uid for members in ldap_get_active_members()}
 
 @service_cache(maxsize=1024)
-def get_onfloor_members():
-    return [uid for uid in [members.uid for members in ldap_get_active_members()]
-            if uid in [members.uid for members in ldap_get_onfloor_members()]]
+def get_intro_members() -> set[str]:
+    return {member.uid for member in ldap_get_intro_members()}
 
+@service_cache(maxsize=1024)
+def get_all_onfloor_members() -> set[str]:
+    return {members.uid for members in ldap_get_onfloor_members()}
+
+@service_cache(maxsize=1024)
+def get_onfloor_members() -> set[str]:
+    return get_active_members() & get_all_onfloor_members()
 
 def get_cm(member):
+    query_result = CommitteeMeeting.query.join(
+        MemberCommitteeAttendance,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.committee
+    ).filter(
+        CommitteeMeeting.timestamp > start_of_year(),
+        MemberCommitteeAttendance.uid == member.uid,
+        CommitteeMeeting.approved
+    ).all()
+
     c_meetings = [{
         "uid": cm.uid,
         "timestamp": cm.timestamp,
         "committee": cm.committee
-    } for cm in CommitteeMeeting.query.join(
-        MemberCommitteeAttendance,
-        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
-        ).with_entities(
-            MemberCommitteeAttendance.uid,
-            CommitteeMeeting.timestamp,
-            CommitteeMeeting.committee
-            ).filter(
-                CommitteeMeeting.timestamp > start_of_year(),
-                MemberCommitteeAttendance.uid == member.uid,
-                CommitteeMeeting.approved == True # pylint: disable=singleton-comparison
-                ).all()]
+    } for cm in query_result]
+
     return c_meetings
 
 
 def get_hm(member, only_absent=False):
     h_meetings = MemberHouseMeetingAttendance.query.outerjoin(
-                  HouseMeeting,
-                  MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
-                      MemberHouseMeetingAttendance.meeting_id,
-                      MemberHouseMeetingAttendance.attendance_status,
-                      HouseMeeting.date).filter(
-                          HouseMeeting.date > start_of_year(),
-                          MemberHouseMeetingAttendance.uid == member.uid)
+        HouseMeeting,
+        MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id).with_entities(
+        MemberHouseMeetingAttendance.meeting_id,
+        MemberHouseMeetingAttendance.attendance_status,
+        HouseMeeting.date).filter(
+        HouseMeeting.date > start_of_year(),
+        MemberHouseMeetingAttendance.uid == member.uid)
     if only_absent:
         h_meetings = h_meetings.filter(MemberHouseMeetingAttendance.attendance_status == "Absent")
     return h_meetings
 
 
-@service_cache(maxsize=128)
-def req_cm(member):
+# @service_cache(maxsize=128)
+def req_cm(uid, members_on_coop=None):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
-    co_op = CurrentCoops.query.filter(
-        CurrentCoops.uid == member.uid,
-        CurrentCoops.date_created > start_of_year()).first()
-    if co_op:
+    on_coop = False
+    if members_on_coop:
+        on_coop = uid in members_on_coop
+    else:
+        co_op = CurrentCoops.query.filter(
+            CurrentCoops.uid == uid,
+            CurrentCoops.date_created > start_of_year()).first()
+        if co_op:
+            on_coop = True
+    if on_coop:
         return 15
     return 30
+
+
+@service_cache(maxsize=256)
+def get_voting_members():
+    today = datetime.today()
+    if today < datetime(start_of_year().year, 12, 31):
+        semester = "Fall"
+        semester_start = datetime(start_of_year().year, 6, 1)
+    else:
+        semester = "Spring"
+        semester_start = datetime(start_of_year().year + 1, 1, 1)
+
+    active_members = get_active_members()
+    intro_members = get_intro_members()
+
+    coop_members = CurrentCoops.query.filter(
+        CurrentCoops.date_created > start_of_year(),
+        CurrentCoops.semester == semester,
+    ).with_entities(
+        func.array_agg(CurrentCoops.uid)
+    ).scalar()
+
+    # have to do this because if it's none then set constructor screams
+    if coop_members is None:
+        coop_members = set()
+    else:
+        coop_members = set(coop_members)
+
+    passed_fall_members = FreshmanEvalData.query.filter(
+        FreshmanEvalData.freshman_eval_result == "Passed",
+        FreshmanEvalData.eval_date > start_of_year(),
+    ).with_entities(
+        func.array_agg(FreshmanEvalData.uid)
+    ).scalar()
+
+    if passed_fall_members is None:
+        passed_fall_members = set()
+    else:
+        passed_fall_members = set(passed_fall_members)
+
+    active_not_intro = active_members - intro_members
+
+    eligible_members = (active_not_intro - coop_members) | passed_fall_members
+
+    # Check to see if there's an Intro Evals in the future of this semester. If there is, everyone gets to vote!
+    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
+    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
+    if before_evals_one > 0 or before_evals_two > 0:
+        return eligible_members
+
+    passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
+        CommitteeMeeting,
+        MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
+    ).with_entities(
+        MemberCommitteeAttendance.uid,
+        CommitteeMeeting.timestamp,
+        CommitteeMeeting.approved,
+    ).filter(
+        CommitteeMeeting.approved,
+        CommitteeMeeting.timestamp >= semester_start
+    ).with_entities(
+        MemberCommitteeAttendance.uid
+    ).group_by(
+        MemberCommitteeAttendance.uid
+    ).having(
+        func.count(MemberCommitteeAttendance.uid) >= 6  # pylint: disable=not-callable
+    ).with_entities(
+        MemberCommitteeAttendance.uid
+    ).all())
+
+    passing_ts = set(member.uid for member in MemberSeminarAttendance.query.join(
+        TechnicalSeminar,
+        MemberSeminarAttendance.seminar_id == TechnicalSeminar.id
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        MemberSeminarAttendance.uid
+    ).group_by(
+        MemberSeminarAttendance.uid
+    ).having(
+        func.count(MemberSeminarAttendance.uid) >= 2  # pylint: disable=not-callable
+    ).all())
+
+    absent_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
+        HouseMeeting,
+        MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
+    ).filter(
+        HouseMeeting.date >= semester_start, or_(
+            MemberHouseMeetingAttendance.attendance_status == 'Absent',
+        )
+    ).with_entities(
+        MemberHouseMeetingAttendance.uid
+    ).group_by(
+        MemberHouseMeetingAttendance.uid
+    ).having(
+        func.count(MemberHouseMeetingAttendance.uid) > 1  # pylint: disable=not-callable
+    ).all())
+
+    passing_reqs = (passing_dm & passing_ts) - absent_hm
+
+    return eligible_members & passing_reqs
+
+
+def gatekeep_status(username):
+    today = datetime.today()
+    # Check to see if there's an Intro Evals in the future of this semester. If there is, everyone gets to vote!
+    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
+    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
+    if before_evals_one > 0 or before_evals_two > 0:
+        return {
+            "result": True,
+            "h_meetings_missed": 0,
+            "c_meetings": 0,
+            "t_seminars": 0,
+        }
+    if today < datetime(start_of_year().year, 12, 31):
+        semester = "Fall"
+        semester_start = datetime(start_of_year().year, 6, 1)
+    else:
+        semester = "Spring"
+        semester_start = datetime(start_of_year().year + 1, 1, 1)
+
+    # groups
+    ldap_member = ldap_get_member(username)
+    is_intro_member = ldap_is_intromember(ldap_member)
+    is_active_member = ldap_is_active(ldap_member) and not is_intro_member
+
+    is_on_coop = (
+            CurrentCoops.query.filter(
+                CurrentCoops.date_created > start_of_year(),
+                CurrentCoops.semester == semester,
+                CurrentCoops.uid == username,
+            ).first()
+            is not None
+    )
+
+    passed_fall = (
+            FreshmanEvalData.query.filter(
+                FreshmanEvalData.freshman_eval_result == "Passed",
+                FreshmanEvalData.eval_date > start_of_year(),
+                FreshmanEvalData.uid == username,
+            ).first()
+            is not None
+    )
+    eligibility_of_groups = (is_active_member and not is_on_coop) or passed_fall
+
+    # number of directorship meetings attended in the current semester
+    d_meetings = (
+        MemberCommitteeAttendance.query.join(
+            CommitteeMeeting,
+            MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id,
+        )
+        .filter(
+            MemberCommitteeAttendance.uid == username,
+            bool(CommitteeMeeting.approved),
+            CommitteeMeeting.timestamp >= semester_start,
+        )
+        .count()
+    )
+    # number of technical seminars attended in the current semester
+    t_seminars = (
+        MemberSeminarAttendance.query.join(
+            TechnicalSeminar,
+            MemberSeminarAttendance.seminar_id == TechnicalSeminar.id,
+        )
+        .filter(
+            MemberSeminarAttendance.uid == username,
+            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.timestamp >= semester_start,
+        )
+        .count()
+    )
+    # number of house meetings attended in the current semester
+    h_meetings_missed = (
+        MemberHouseMeetingAttendance.query.join(
+            HouseMeeting,
+            MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id,
+        )
+        .filter(
+            MemberHouseMeetingAttendance.attendance_status == 'Absent',
+            MemberHouseMeetingAttendance.uid == username,
+            HouseMeeting.date >= semester_start
+        )
+        .count()
+    )
+    result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings_missed < 2) # pylint: disable=chained-comparison
+
+    return {
+        "result": result,
+        "h_meetings_missed": h_meetings_missed,
+        "c_meetings": d_meetings,
+        "t_seminars": t_seminars,
+    }

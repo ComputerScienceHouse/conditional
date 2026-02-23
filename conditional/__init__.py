@@ -1,17 +1,20 @@
 import os
 from datetime import datetime
 
+from pstats import SortKey
 import structlog
 from csh_ldap import CSHLDAP
-from flask import Flask, redirect, render_template, g
+from flask import Flask, redirect, render_template, request, g
 from flask_migrate import Migrate
 from flask_gzip import Gzip
 from flask_pyoidc.flask_pyoidc import OIDCAuthentication
+from flask_pyoidc.provider_configuration import ProviderConfiguration, ClientMetadata
 from flask_sqlalchemy import SQLAlchemy
 
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+from werkzeug.middleware.profiler import ProfilerMiddleware
 
 app = Flask(__name__)
 gzip = Gzip(app)
@@ -28,6 +31,13 @@ if os.path.exists(_pyfile_config):
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+if app.config['PROFILING']:
+    app.wsgi_app = ProfilerMiddleware(
+        app.wsgi_app,
+        sort_by=('cumulative',),
+        restrictions=[80]
+    )
+
 # Sentry setup
 sentry_sdk.init(
     dsn=app.config['SENTRY_DSN'],
@@ -39,8 +49,10 @@ ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],
                ro=app.config['LDAP_RO'])
 
-auth = OIDCAuthentication(app, issuer=app.config["OIDC_ISSUER"],
-                          client_registration_info=app.config["OIDC_CLIENT_CONFIG"])
+provider_config = ProviderConfiguration(
+    app.config['OIDC_ISSUER'],
+    client_metadata=ClientMetadata(**app.config['OIDC_CLIENT_CONFIG']))
+auth = OIDCAuthentication({'default': provider_config}, app)
 
 app.secret_key = app.config["SECRET_KEY"]
 
@@ -54,7 +66,6 @@ def start_of_year():
 
 # pylint: disable=C0413
 from .models.models import UserLog
-
 
 # Configure Logging
 def request_processor(logger, log_method, event_dict):  # pylint: disable=unused-argument, redefined-outer-name
@@ -99,6 +110,7 @@ logger = structlog.get_logger()
 # pylint: disable=wrong-import-order
 from conditional.util import context_processors
 from conditional.util.auth import get_user
+from conditional.util.member import gatekeep_status, get_voting_members
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp
@@ -137,7 +149,7 @@ def static_proxy(path):
 
 
 @app.route('/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 def default_route():
     return redirect('/dashboard')
 
@@ -156,16 +168,36 @@ def health():
     return {'status': 'ok'}
 
 
+@app.route("/gatekeep/<username>")
+def gatekeep_user(username):
+    token = request.headers.get("X-VOTE-TOKEN", "")
+    if token != app.config["VOTE_TOKEN"]:
+        return "Users cannot access this page", 403
+    try:
+        gatekeep_data = gatekeep_status(username)
+    except KeyError:
+        return "", 404
+
+    return gatekeep_data, 200
+
+@app.route("/gatekeep")
+def gatekeep_all():
+    token = request.headers.get("X-VOTE-TOKEN", "")
+    if token != app.config["VOTE_TOKEN"]:
+        return "Users cannot access this page", 403
+    return list(get_voting_members()), 200
+
+
 @app.errorhandler(404)
 @app.errorhandler(500)
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def route_errors(error, user_dict=None):
-    data = dict()
+    data = {}
 
     # Handle the case where the header isn't present
     if user_dict['username'] is not None:
-        data['username'] = user_dict['account'].uid
+        data['username'] = user_dict['username']
         data['name'] = user_dict['account'].cn
     else:
         data['username'] = "unknown"

@@ -26,5 +26,18 @@ div {
     .col-sm-7 {
       width: 100%;
     }
+    
+    th.sorting::after {
+      font-family: "bootstrap-icons" !important;
+      content: "\F127";
+    }
+
+    th.sorting_asc::after {
+      content: "\F57B";
+    }
+
+    th.sorting_desc::after {
+      content: "\F575";
+    }
   }
 }

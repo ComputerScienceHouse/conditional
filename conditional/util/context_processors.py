@@ -33,7 +33,9 @@ def check_current_student(username):
 
 @app.context_processor
 def utility_processor():
-    return dict(
-        get_csh_name=get_csh_name, get_freshman_name=get_freshman_name, get_member_name=get_member_name,
-        check_current_student=check_current_student
-    )
+    return {
+            "get_csh_name": get_csh_name,
+            "get_freshman_name": get_freshman_name,
+            "get_member_name": get_member_name,
+            "check_current_student": check_current_student
+            }

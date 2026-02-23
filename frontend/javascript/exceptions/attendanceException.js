@@ -1,14 +1,11 @@
-import {Enum} from 'enumify';
+import { Enumify } from 'enumify';
 
-class AttendanceException extends Enum {
-}
+export default class AttendanceException extends Enumify {
+  NO_SRC_ATTRIBUTE = AttendanceException("Unable to find data source for attendance module");
+  _ = AttendanceException.closeEnum();
 
-AttendanceException.initEnum({
-  NO_SRC_ATTRIBUTE: {
-    get message() {
-      return "Unable to find data source for attendance module";
-    }
+  constructor(message) {
+    super();
+    this.message = message;
   }
-});
-
-export default AttendanceException;
+}

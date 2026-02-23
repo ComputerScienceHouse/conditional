@@ -1,19 +1,12 @@
-import {Enum} from 'enumify';
+import { Enumify } from 'enumify';
 
-class HmSearchException extends Enum {
-}
+export default class HmSearchException extends Enumify {
+  TARGET_REQUIRED = HmSearchException("A target selector is required to use HouseMeetingSearch");
+  NOT_A_TABLE = HmSearchException("The HouseMeetingSearch module requires the target to be a table");
+  _ = HmSearchException.closeEnum();
 
-HmSearchException.initEnum({
-  TARGET_REQUIRED: {
-    get message() {
-      return "A target selector is required to use HouseMeetingSearch";
-    }
-  },
-  NOT_A_TABLE: {
-    get message() {
-      return "The HouseMeetingSearch module requires the target to be a table";
-    }
+  constructor(message) {
+    super()
+    this.message = message;
   }
-});
-
-export default HmSearchException;
+}

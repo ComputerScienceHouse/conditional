@@ -14,19 +14,20 @@ from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_is_eval_director, ldap_is_intromember, ldap_set_failed, ldap_set_bad_standing, \
     ldap_set_inactive, ldap_get_member, ldap_set_not_intro_member, ldap_get_housingpoints, ldap_set_housingpoints
 
+
 logger = structlog.get_logger()
 
 slideshow_bp = Blueprint('slideshow_bp', __name__)
 
 
 @slideshow_bp.route('/slideshow/intro')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_intro_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Slideshow')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
     return render_template('intro_eval_slideshow.html',
@@ -36,7 +37,7 @@ def slideshow_intro_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_intro_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -49,19 +50,19 @@ def slideshow_intro_members(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/intro/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_intro_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
     uid = post_data['uid']
     status = post_data['status']
 
-    log.info('Intro Eval for {}: {}'.format(uid, status))
+    log.info(f'Intro Eval for {uid}: {status}')
     FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == uid and
         FreshmanEvalData.active). \
@@ -76,13 +77,13 @@ def slideshow_intro_review(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_spring_display(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Slideshow')
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
     return render_template('spring_eval_slideshow.html',
@@ -92,7 +93,7 @@ def slideshow_spring_display(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/members')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_spring_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -105,19 +106,19 @@ def slideshow_spring_members(user_dict=None):
 
 
 @slideshow_bp.route('/slideshow/spring/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def slideshow_spring_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
     uid = post_data['uid']
     status = post_data['status']
 
-    log.info('Spring Eval for {}: {}'.format(uid, status))
+    log.info(f'Spring Eval for {uid}: {status}')
 
     SpringEval.query.filter(
         SpringEval.uid == uid and

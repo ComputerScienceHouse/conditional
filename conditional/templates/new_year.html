@@ -7,12 +7,12 @@ New Year Guide
     <div id="new-welcome">
         <h3 class="page-title">Welcome!</h3>
         <p>Is it that time of year already? Before we get started, please <strong>be careful and ready everything before continuing</strong>. Some actions taken in the next few steps can be detrimental if followed in the middle of the year. Once you are ready to proceed, click 'Begin' below.</p>
-        <a href="#" data-module="newYear" data-step="welcome" class="btn btn-primary btn-new-next center-block"><span class="glyphicon glyphicon-ok"></span> Begin</a>
+        <a href="#" data-module="newYear" data-step="welcome" class="btn btn-primary btn-new-next center-block"><i class="bi bi-check-circle-fill"></i> Begin</a>
     </div>
     <div id="new-clear" style="display: none;">
         <h3 class="page-title">Clear Active Members and Floor Roster</h3>
         <p>This is the scary part. In order to get everything ready for next year, we need to clear everyone from Active status and then clear the housing board. Once we get a fresh start, we will forward you onto the housing page to fill out the new housing board.</p>
-        <a href="#" data-module="newYear" data-step="clear" class="btn btn-primary btn-new-next center-block"><span class="glyphicon glyphicon-erase"></span> Clear Active Group and Housing Board</a>
+        <a href="#" data-module="newYear" data-step="clear" class="btn btn-primary btn-new-next center-block"><i class="bi bi-eraser"></i> Clear Active Group and Housing Board</a>
     </div>
     <div id="new-current" style="display: none;">
         <h3 class="page-title">Prune Current Students Group</h3>
@@ -30,20 +30,20 @@ New Year Guide
                 <td id="row-{{student.uid}}">{{student.displayName}}</td>
                 <td width=100px>
                     <a href="#" data-module="newYear" data-uid="{{student.uid}}">
-                        <span id="rem-{{student.uid}}" class="glyphicon glyphicon-remove red align-center" style="width: 100%"></span>
-                        <span id="add-{{student.uid}}" class="glyphicon glyphicon-plus green align-center" style="width: 100%; display: none;"></span>
+                        <i id="rem-{{student.uid}}" class="bi bi-x-circle-fill red align-center" style="width: 100%"></i>
+                        <i id="add-{{student.uid}}" class="bi bi-plus-circle green align-center" style="width: 100%; display: none;"></i>
                     </a>
                 </td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
-        <a href="#" data-module="newYear" data-step="current" class="btn btn-primary btn-new-next center-block"><span class="glyphicon glyphicon-ok"></span> Next Step</a>
+        <a href="#" data-module="newYear" data-step="current" class="btn btn-primary btn-new-next center-block"><i class="bi bi-check-circle-fill"></i> Next Step</a>
     </div>
     <div id="new-housing" style="display: none;">
         <h3 class="page-title">That was easy!</h3>
         <p>The next and final step is to go through and populate the housing board; the button below will even take you there. Just a note: adding people will automatically mark them as active, since they will be charged dues.</p>
-        <a href="/housing" class="btn btn-primary btn-new-next center-block"><span class="glyphicon glyphicon-ok"></span> Onward and Upward!</a>
+        <a href="/housing" class="btn btn-primary btn-new-next center-block"><i class="bi bi-check-circle-fill"></i> Onward and Upward!</a>
     </div>
 </div>
 {% endblock %}

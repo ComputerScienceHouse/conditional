@@ -15,12 +15,22 @@ Dashboard
                     <h5 class="email">{{username}}@csh.rit.edu</h5>
                     <div class="profile-badges">
                         {% if active %}
-                        <span class="label label-success">Active</span> {% else %}
-                        <span class="label label-danger">Inactive</span> {% endif %} {% if onfloor %}
-                        <span class="label label-primary">On-floor Status</span> {% else %}
-                        <span class="label label-default">Off-floor Status</span> {% endif %} {% if voting %}
-                        <span class="label label-primary">Voting</span> {% else %}
-                        <span class="label label-default">Non-Voting</span> {% endif %}
+                            <span class="label label-success">Active</span> 
+                        {% else %}
+                            <span class="label label-danger">Inactive</span> 
+                        {% endif %} 
+
+                        {% if onfloor %}
+                            <span class="label label-primary">On-floor Status</span> 
+                        {% else %}
+                            <span class="label label-default">Off-floor Status</span> 
+                        {% endif %} 
+
+                        {% if voting %}
+                            <span class="label label-primary">Voting</span> 
+                        {% else %}
+                            <span class="label label-default">Non-Voting</span> 
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -34,11 +44,11 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Freshman Evaluations
                         {% if freshman['status'] == "Passed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                        <span class="pull-right"><i class="bi bi-check-circle-fill green"></i> Passed</span>
                         {% elif freshman['status'] == "Pending" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                        <span class="pull-right"><i class="bi bi-hourglass-split yellow"></i> Pending</span>
                         {% else %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
+                        <span class="pull-right"><i class="bi bi-x-circle-fill red"></i> Failed</span>
                         {% endif %}
                     </h3>
                 </div>
@@ -53,8 +63,8 @@ Dashboard
                             <td class="title">Signatures Missed</td>
                             <td><span class="pull-right">
                                 {% if freshman['sig_missed'] == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> None {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {{freshman['sig_missed']}} {% endif %}
+                                <i class="bi bi-check-circle-fill green"></i> None {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {{freshman['sig_missed']}} {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -62,8 +72,8 @@ Dashboard
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if freshman['committee_meetings'] >= 6 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{freshman['committee_meetings']}} / 6
+                                <i class="bi bi-check-circle-fill green"></i> {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {% endif %} {{freshman['committee_meetings']}} / 6
                                 </span>
                             </td>
                         </tr>
@@ -71,8 +81,8 @@ Dashboard
                             <td class="title">House Meetings Missed</td>
                             <td><span class="pull-right">
                                 {% if freshman['hm_missed'] == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> None {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {{ freshman['hm_missed'] }} {% endif %}
+                                <i class="bi bi-check-circle-fill green"></i> None {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {{ freshman['hm_missed'] }} {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -101,13 +111,28 @@ Dashboard
                 <div class="panel-heading">
                     <h3 class="panel-title">Membership Evaluations
                         {% if spring['status'] == "Passed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-ok-sign green"></span> Passed</span>
+                        <span class="pull-right"><i class="bi bi-check-circle-fill green"></i> Passed</span>
                         {% elif spring['status'] == "Failed" %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-remove-sign red"></span> Failed</span>
+                        <span class="pull-right"><i class="bi bi-x-circle-fill red"></i> Failed</span>
                         {% elif active %}
-                        <span class="pull-right"><span class="glyphicon glyphicon-hourglass yellow"></span> Pending</span>
+                        <span class="pull-right"><i class="bi bi-hourglass-split yellow"></i> Pending</span>
                         {% endif %}
                     </h3>
+                </div>
+                <div class="panel-body" style="padding:0px 0px 8px 8px">
+                    <b>Technical Seminars</b> {% if ts_total == 0 %}
+                    <div class="panel-body">
+                        <div class="alert alert-warning" role="alert">You have not attended any technical seminars.</div>
+                    </div>
+                    {% else %}
+                    <div class="panel-body table-fill">
+                        <ul>
+                            {% for ts in ts_list %}
+                            <li>{{ts}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="panel-body table-fill">
                     <table class="table table-striped table-responsive no-bottom-margin">
@@ -116,16 +141,16 @@ Dashboard
                             <td class="title">Directorship Meetings</td>
                             <td><span class="pull-right">
                                 {% if spring['committee_meetings'] >= spring['req_meetings'] %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> {% endif %} {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}</span>
+                                <i class="bi bi-check-circle-fill green"></i> {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {% endif %} {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="title">House Meetings Missed</td>
                             <td><span class="pull-right">
                                 {% if spring['hm_missed'] == 0 %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> None {% else %}
-                                <span><span class="glyphicon glyphicon-remove-sign red"></span> {{spring['hm_missed']}}</span>
+                                <i class="bi bi-check-circle-fill green"></i> None {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> {{spring['hm_missed']}}</span>
                                 {% endif %}
                                 </span>
                             </td>
@@ -135,9 +160,9 @@ Dashboard
                             <td>
                                 <span class="pull-right">
                                 {% if spring['mp_status'] == "Passed" %}
-                                <span class="glyphicon glyphicon-ok-sign green"></span> Passed {% elif spring['mp_status'] == "Pending" %}
-                                <span class="glyphicon glyphicon-hourglass yellow"></span> Pending {% else %}
-                                <span class="glyphicon glyphicon-remove-sign red"></span> None {% endif %}
+                                <i class="bi bi-check-circle-fill green"></i> Passed {% elif spring['mp_status'] == "Pending" %}
+                                <i class="bi bi-hourglass-split yellow"></i> Pending {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> None {% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -168,9 +193,9 @@ Dashboard
                                 <td>{{c['description']}}</td>
                                 <td>
                                     {% if c['status'] == "Passed" %}
-                                    <span style="padding-left:15px; padding-top:15px;" class="glyphicon glyphicon-ok-sign green"></span> {% elif c['status'] == "Pending" %}
-                                    <span class="glyphicon glyphicon-hourglass yellow"></span> <span class="mobile-hide">Pending</span> {% else %}
-                                    <span class="glyphicon glyphicon-minus-sign red"></span> <span class="mobile-hide">Failed</span> {% endif %}
+                                    <i style="padding-left:15px; padding-top:15px;" class="bi bi-check-circle-fill green"></i> {% elif c['status'] == "Pending" %}
+                                    <i class="bi bi-hourglass-split yellow"></i> <span class="mobile-hide">Pending</span> {% else %}
+                                    <i class="bi bi-x-circle-fill red"></i> <span class="mobile-hide">Failed</span> {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -210,7 +235,7 @@ Dashboard
 
 
             {% if major_projects_count == 0 and not active%}
-            <div class="alert alert-warning" role="alert"> <span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"> </span> You have no major projects.</div>
+            <div class="alert alert-warning" role="alert"> <i class="bi bi-exclamation-circle white" style="padding-right:5px"> </i> You have no major projects.</div>
             {% elif major_projects_count > 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -220,14 +245,17 @@ Dashboard
                 {% for p in major_projects %}
                     <div class="mp-container">
                         {% if p['status'] == "Passed" %}
-                        <div class="title"><span class="glyphicon glyphicon-ok-sign green"></span> {{p['name']}}</div>
+                        <div class="title"><i class="bi bi-check-circle-fill green"></i> {{p['name']}}</div>
                         {% elif p['status'] == "Pending" %}
                         <div class="title">
-                            <span class="glyphicon glyphicon-hourglass yellow"></span> {{p['name']}}
-                            <button class="btn-xs btn-danger pull-right" data-module="majorProjectStatus" data-id="{{p['id']}}"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                            <i class="bi bi-hourglass-split yellow"></i> {{p['name']}}
+                            <button class="btn-xs btn-danger pull-right" data-module="majorProjectStatus" data-id="{{p['id']}}">
+                                <i class="bi bi-trash3"></i>
+                                Delete
+                            </button>
                         </div>
                         {% else %}
-                        <div class="title"><span class="glyphicon glyphicon-minus-sign red"></span> {{p['name']}}</div>
+                        <div class="title"><i class="bi bi-dash-circle red"></i> {{p['name']}}</div>
                         {% endif %}
                         <div class="mp-description">{{p['description']}}</div>
                     </div>
@@ -292,7 +320,7 @@ Dashboard
 
             {% if hm_attendance_len == 0 and active%}
             <div class="alert alert-success">
-                <span class="glyphicon glyphicon-ok-sign white" style="padding-right:5px"> </span> You haven't missed any house meetings.
+                <i class="bi bi-check-circlce white" style="padding-right:5px"> </i> You haven't missed any house meetings.
             </div>
             {% elif hm_attendance_len > 0 %}
             <div class="panel panel-default">
@@ -319,7 +347,7 @@ Dashboard
             {% endif %}
 
             {% if cm_attendance_len == 0 and active%}
-            <div class="alert alert-warning"><span class="glyphicon glyphicon-exclamation-sign white" style="padding-right:5px"></span> You have not attended any directorship meetings.</div>
+            <div class="alert alert-warning"><i class="bi bi-exclamation-circle white" style="padding-right:5px"></i>You have not attended any directorship meetings.</div>
             {% elif cm_attendance_len > 0 %}
             <div class="panel panel-default">
                 <div class="panel-heading">

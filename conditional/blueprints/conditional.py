@@ -7,7 +7,7 @@ from conditional import db, auth
 from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.user_dict import user_dict_is_eval_director
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
 
@@ -15,7 +15,7 @@ logger = structlog.get_logger()
 
 
 @conditionals_bp.route('/conditionals/')
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def display_conditionals(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
@@ -39,12 +39,12 @@ def display_conditionals(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/create', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def create_conditional(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -52,7 +52,7 @@ def create_conditional(user_dict=None):
     uid = post_data['uid']
     description = post_data['description']
     due_date = datetime.strptime(post_data['dueDate'], "%Y-%m-%d")
-    log.info('Create a new conditional for {}'.format(uid))
+    log.info(f'Create a new conditional for {uid}')
     if post_data['evaluation'] == 'spring':
         current_eval = SpringEval.query.filter(SpringEval.status == "Pending",
                                                SpringEval.uid == uid,
@@ -76,19 +76,19 @@ def create_conditional(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/review', methods=['POST'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def conditional_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
     cid = post_data['id']
     status = post_data['status']
 
-    log.info('Updated conditional-{} to {}'.format(cid, status))
+    log.info(f'Updated conditional-{cid} to {status}')
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
 
@@ -113,13 +113,13 @@ def conditional_review(user_dict=None):
 
 
 @conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
-@auth.oidc_auth
+@auth.oidc_auth("default")
 @get_user
 def conditional_delete(cid, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
-    log.info('Delete conditional-{}'.format(cid))
+    log.info(f'Delete conditional-{cid}')
 
-    if ldap_is_eval_director(user_dict['account']):
+    if user_dict_is_eval_director(user_dict):
         Conditional.query.filter(
             Conditional.id == cid
         ).delete()

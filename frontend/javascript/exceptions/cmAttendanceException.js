@@ -1,14 +1,12 @@
-import {Enum} from 'enumify';
+import { Enumify } from 'enumify';
 
-class CmAttendanceException extends Enum {
+export default class CmAttendanceException extends Enumify {
+  SUBMIT_BEFORE_RENDER = CmAttendanceException("Cannot submit updated attendance before the modal renders.");
+  _ = CmAttendanceException.closeEnum();
+
+  constructor(message) {
+    super();
+    this.message = message;
+  }
 }
 
-CmAttendanceException.initEnum({
-  SUBMIT_BEFORE_RENDER: {
-    get message() {
-      return "Cannot submit updated attendance before the modal renders.";
-    }
-  }
-});
-
-export default CmAttendanceException;

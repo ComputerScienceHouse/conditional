@@ -1,2 +1,4 @@
 Dockerfile
 .gitignore
+node_modules
+venv
