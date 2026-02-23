@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+from pstats import SortKey
 import structlog
 from csh_ldap import CSHLDAP
 from flask import Flask, redirect, render_template, request, g
@@ -33,7 +34,8 @@ migrate = Migrate(app, db)
 if app.config['PROFILING']:
     app.wsgi_app = ProfilerMiddleware(
         app.wsgi_app,
-        restrictions=[30]
+        sort_by=('cumulative',),
+        restrictions=[80]
     )
 
 # Sentry setup
@@ -108,7 +110,7 @@ logger = structlog.get_logger()
 # pylint: disable=wrong-import-order
 from conditional.util import context_processors
 from conditional.util.auth import get_user
-from conditional.util.member import gatekeep_status
+from conditional.util.member import gatekeep_status, get_voting_members
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
 from .blueprints.major_project_submission import major_project_bp
@@ -167,7 +169,7 @@ def health():
 
 
 @app.route("/gatekeep/<username>")
-def gatekeep(username):
+def gatekeep_user(username):
     token = request.headers.get("X-VOTE-TOKEN", "")
     if token != app.config["VOTE_TOKEN"]:
         return "Users cannot access this page", 403
@@ -177,6 +179,13 @@ def gatekeep(username):
         return "", 404
 
     return gatekeep_data, 200
+
+@app.route("/gatekeep")
+def gatekeep_all():
+    token = request.headers.get("X-VOTE-TOKEN", "")
+    if token != app.config["VOTE_TOKEN"]:
+        return "Users cannot access this page", 403
+    return list(get_voting_members()), 200
 
 
 @app.errorhandler(404)
@@ -188,7 +197,7 @@ def route_errors(error, user_dict=None):
 
     # Handle the case where the header isn't present
     if user_dict['username'] is not None:
-        data['username'] = user_dict['account'].uid
+        data['username'] = user_dict['username']
         data['name'] = user_dict['account'].cn
     else:
         data['username'] = "unknown"

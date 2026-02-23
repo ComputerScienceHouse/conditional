@@ -2,19 +2,20 @@ from functools import wraps
 
 from flask import session
 
-from conditional.util.ldap import ldap_get_member, ldap_is_current_student
+from conditional.util.ldap import ldap_get_member
 
 def get_user(func):
     @wraps(func)
     def wrapped_function(*args, **kwargs):
         username = str(session["userinfo"].get("preferred_username", ""))
         account = ldap_get_member(username)
-        current_student = ldap_is_current_student(account)
+
+        print(session["userinfo"])
 
         user_dict = {
             'username': username,
             'account': account,
-            'student': current_student
+            'groups': session["userinfo"]["groups"],
         }
 
         kwargs["user_dict"] = user_dict
