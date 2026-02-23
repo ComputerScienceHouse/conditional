@@ -170,7 +170,6 @@ six==1.17.0
     #   -r requirements.in
     #   pyjwkest
     #   python-dateutil
-    #   structlog
 sqlalchemy==2.0.45
     # via
     #   -r requirements.in
@@ -178,7 +177,7 @@ sqlalchemy==2.0.45
     #   flask-sqlalchemy
 srvlookup==3.0.0
     # via csh-ldap
-structlog==18.1.0
+structlog==25.5.0
     # via -r requirements.in
 tomlkit==0.14.0
     # via pylint
