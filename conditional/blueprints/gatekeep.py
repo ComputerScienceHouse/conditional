@@ -3,7 +3,8 @@ from flask import Blueprint, request
 from sqlalchemy import func
 
 from conditional import start_of_year, auth
-from conditional.models.models import CommitteeMeeting, CurrentCoops, HouseMeeting, MemberCommitteeAttendance, MemberSeminarAttendance, TechnicalSeminar
+from conditional.models.models import CommitteeMeeting, HouseMeeting, MemberCommitteeAttendance, \
+    MemberSeminarAttendance, TechnicalSeminar
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
