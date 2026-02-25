@@ -88,9 +88,9 @@ Gatekeep Results
 
                 {% if m['house_meetings_missed']|length > 0%}
                     <div class="evals-dropdown">
-                        <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse{{m['uid']}}">
+                        <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse{{m['uid']}}">
                             <i class="bi bi-chevron-down"></i>
-                        </span>
+                        </button>
                     </div>
                 {% endif %}
                 <div class="collapse" id="evalsCollapse{{m['uid']}}">

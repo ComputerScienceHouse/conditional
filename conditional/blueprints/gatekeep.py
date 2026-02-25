@@ -25,7 +25,7 @@ def display_spring_evals(internal=False, user_dict=None):
     _, semester_start = get_semester_info()
     active_members = ldap_get_active_members()
 
-    cm_count = dict([tuple(row) for row in MemberCommitteeAttendance.query.join(
+    cm_count = {row[0]: row[1] for row in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
         MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
     ).with_entities(
@@ -40,9 +40,9 @@ def display_spring_evals(internal=False, user_dict=None):
         func.count(MemberCommitteeAttendance.uid) #pylint: disable=not-callable
     ).group_by(
         MemberCommitteeAttendance.uid
-    ).all()])
+    ).all()}
 
-    ts_count = dict([tuple(row) for row in MemberSeminarAttendance.query.join(
+    ts_count = {row[0]: row[1] for row in MemberSeminarAttendance.query.join(
         TechnicalSeminar,
         MemberSeminarAttendance.seminar_id == TechnicalSeminar.id
     ).with_entities(
@@ -57,9 +57,9 @@ def display_spring_evals(internal=False, user_dict=None):
         func.count(MemberSeminarAttendance.uid) #pylint: disable=not-callable
     ).group_by(
         MemberSeminarAttendance.uid
-    ).all()])
+    ).all()}
 
-    hm_missed = dict([tuple(row) for row in MemberHouseMeetingAttendance.query.join(
+    hm_missed = {row[0]: row[1] for row in MemberHouseMeetingAttendance.query.join(
         HouseMeeting,
         MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
     ).filter(
@@ -70,7 +70,7 @@ def display_spring_evals(internal=False, user_dict=None):
             func.count(MemberHouseMeetingAttendance.uid) #pylint: disable=not-callable
     ).group_by(
         MemberHouseMeetingAttendance.uid
-    ).all()])
+    ).all()}
 
     gk_members = []
     for account in active_members:

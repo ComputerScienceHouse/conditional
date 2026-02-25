@@ -353,7 +353,6 @@ def gatekeep_values(username):
         .count()
     )
 
-    h_meetings_missed = 1
     result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings_missed < 2) # pylint: disable=chained-comparison
 
     return {
