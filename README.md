@@ -29,13 +29,16 @@ You can either develop using the dev database, or use the local database provide
 
 Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
 
+#### Forcing evals/rtp or anything else
+All of the role checking is done in `conditional/utils/user_dict.py`, and you can change the various functions to `return True` for debugging
+
 ### Run (Without Docker)
 
 To run the application without using containers, you must have the latest version of [Python 3](https://www.python.org/downloads/) and [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) installed. Once you have those installed, create a new virtualenv and install the Python dependencies:
 
 ```sh
-virtualenv .conditionalenv -p `which python3`
-source .conditionalenv/bin/activate
+virtualenv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -89,7 +92,9 @@ Which can be restarted every time changes are made
 
 To add new dependencies, add them to `requirements.in` and then run `pip-compile requirements.in` to produce a new locked `requirements.txt`. Do not edit `requirements.txt` directly as it will be overwritten by future PRs.
 
-### Local database
+### Database Stuff
+
+#### Local database
 
 You can run the database locally using the docker compose
 
@@ -106,18 +111,23 @@ To run migration commands in the local database, you can run the commands inside
 podman exec conditional flask db upgrade
 ```
 
-### Database Migrations
+#### Database Migrations
 
 If the database schema is changed after initializing the database, you must migrate it to the new schema by running:
 
-```
+```sh
 flask db upgrade
+# or, to run it inside the container for use with local databases (DO THIS
+podman exec conditional flask db upgrade
 ```
+
 
 At the same time, if you change the database schema, you must generate a new migration by running:
 
-```
+```sh
 flask db migrate
+# or, to run it inside the container for use with local databases (DO THIS
+podman exec conditional flask db migrate
 ```
 
 The new migration script in `migrations/versions` should be verified before being committed, as Alembic may not detect every change you make to the models.
@@ -128,7 +138,7 @@ For more information, refer to the [Flask-Migrate](https://flask-migrate.readthe
 
 Conditional includes a utility to facilitate data migrations from the old Evals DB. This isn't necessary to run Conditional. To perform this migration, run the following commands before starting the application:
 
-```
+```sh
 pip install pymysql
 flask zoo
 ```
