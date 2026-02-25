@@ -166,7 +166,7 @@ def is_gatekeep_active():
     before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
     before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
 
-    return not (before_evals_one or before_evals_two)
+    return not (before_evals_one > 0 or before_evals_two > 0)
 
 
 def get_semester_info() -> tuple[str, datetime]:

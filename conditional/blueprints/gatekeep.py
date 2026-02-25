@@ -8,7 +8,7 @@ from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_active_members
-from conditional.util.member import get_semester_info
+from conditional.util.member import get_semester_info, is_gatekeep_active
 
 gatekeep_bp = Blueprint('gatekeep_bp', __name__)
 
@@ -120,8 +120,11 @@ def display_spring_evals(internal=False, user_dict=None):
     if internal:
         return gk_members
 
+    gatekeep_active = is_gatekeep_active()
+
     return render_template('gatekeep.html',
                            username=user_dict['username'],
                            members=gk_members,
+                           gatekeep_active=gatekeep_active,
                            req_meetings=6,
                            req_seminars=2)
