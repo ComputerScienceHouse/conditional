@@ -35,6 +35,10 @@ def get_all_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Technical Seminar Attendance List')
 
+
+    members = [10]
+    print(list(members))
+
     members = ldap_get_current_students()
 
     named_members = [
