@@ -6,8 +6,18 @@ name: Python application
 on:
   push:
     branches: [master, develop]
+    paths:
+      - *.py
+      - requirements.txt
+      - requirements.in
+      - .github/workflows/python-app.yml
   pull_request:
     branches: [master, develop]
+    paths:
+      - *.py
+      - requirements.txt
+      - requirements.in
+      - .github/workflows/python-app.yml
 
 jobs:
   lint:
