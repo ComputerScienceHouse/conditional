@@ -94,7 +94,7 @@ def get_intro_members_without_accounts():
                     HouseMeeting,
                     FreshmanHouseMeetingAttendance.meeting_id == HouseMeeting.id
             ).filter(
-                    HouseMeeting.date >= semester_start, # TODO: this needs to be fixed
+                    HouseMeeting.date >= semester_start,
                     FreshmanHouseMeetingAttendance.attendance_status == 'Absent',
                     FreshmanHouseMeetingAttendance.fid == freshman_account.id,
             ).with_entities(
