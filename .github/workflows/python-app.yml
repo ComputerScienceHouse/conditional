@@ -1,5 +1,5 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# For more indocker-compose.tformation see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: Python application
 
@@ -10,6 +10,8 @@ on:
       - *.py
       - requirements.txt
       - requirements.in
+      - .eslintrc
+      - .pylintrc
       - .github/workflows/python-app.yml
   pull_request:
     branches: [master, develop]
@@ -17,6 +19,8 @@ on:
       - *.py
       - requirements.txt
       - requirements.in
+      - .eslintrc
+      - .pylintrc
       - .github/workflows/python-app.yml
 
 jobs:
@@ -37,8 +41,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install uv
+          if [ -f requirements.txt ]; then uv pip install -r requirements.txt --system; fi
       - name: Lint with pylint
         run: |
           pylint conditional
