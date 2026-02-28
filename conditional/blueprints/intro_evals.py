@@ -19,12 +19,14 @@ from conditional.models.models import TechnicalSeminar
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import ldap_get_intro_members
+from conditional.util.member import get_semester_info
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)
 
 logger = structlog.get_logger()
 
 def get_intro_members_without_accounts():
+    _, semester_start = get_semester_info()
     freshman_cm_count = dict([tuple(row) for row in FreshmanCommitteeAttendance.query.join(
         CommitteeMeeting,
         FreshmanCommitteeAttendance.meeting_id == CommitteeMeeting.id
@@ -34,7 +36,7 @@ def get_intro_members_without_accounts():
         CommitteeMeeting.approved,
     ).filter(
         CommitteeMeeting.approved,
-        CommitteeMeeting.timestamp >= start_of_year()
+        CommitteeMeeting.timestamp >= semester_start
     ).with_entities(
         FreshmanCommitteeAttendance.fid,
         func.count(FreshmanCommitteeAttendance.fid) #pylint: disable=not-callable
@@ -64,7 +66,7 @@ def get_intro_members_without_accounts():
         TechnicalSeminar.approved
     ).filter(
         TechnicalSeminar.approved,
-        TechnicalSeminar.timestamp >= start_of_year()
+        TechnicalSeminar.timestamp >= semester_start
     ).with_entities(
         FreshmanSeminarAttendance.fid,
         TechnicalSeminar.name
@@ -80,7 +82,7 @@ def get_intro_members_without_accounts():
 
     # freshmen who don't have accounts
     freshman_accounts = list(FreshmanAccount.query.filter(
-        FreshmanAccount.eval_date > start_of_year(),
+        FreshmanAccount.eval_date > semester_start,
         FreshmanAccount.eval_date > datetime.now()))
 
     ie_members = []
@@ -92,7 +94,7 @@ def get_intro_members_without_accounts():
                     HouseMeeting,
                     FreshmanHouseMeetingAttendance.meeting_id == HouseMeeting.id
             ).filter(
-                    HouseMeeting.date >= start_of_year(), # TODO: this needs to be fixed
+                    HouseMeeting.date >= semester_start,
                     FreshmanHouseMeetingAttendance.attendance_status == 'Absent',
                     FreshmanHouseMeetingAttendance.fid == freshman_account.id,
             ).with_entities(
@@ -135,6 +137,8 @@ def display_intro_evals(internal=False, user_dict=None):
 
     ie_members = get_intro_members_without_accounts()
 
+    _, semester_start = get_semester_info()
+
     account_cm_count = dict([tuple(row) for row in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
         MemberCommitteeAttendance.meeting_id == CommitteeMeeting.id
@@ -144,7 +148,7 @@ def display_intro_evals(internal=False, user_dict=None):
         CommitteeMeeting.approved,
     ).filter(
         CommitteeMeeting.approved,
-        CommitteeMeeting.timestamp >= start_of_year()
+        CommitteeMeeting.timestamp >= semester_start
     ).with_entities(
         MemberCommitteeAttendance.uid,
         func.count(MemberCommitteeAttendance.uid) #pylint: disable=not-callable
@@ -156,7 +160,7 @@ def display_intro_evals(internal=False, user_dict=None):
         HouseMeeting,
         MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
     ).filter(
-        HouseMeeting.date >= start_of_year(),
+        HouseMeeting.date >= semester_start,
         MemberHouseMeetingAttendance.attendance_status == 'Absent'
     ).with_entities(
         MemberHouseMeetingAttendance.uid,
@@ -174,7 +178,7 @@ def display_intro_evals(internal=False, user_dict=None):
         TechnicalSeminar.approved
     ).filter(
         TechnicalSeminar.approved,
-        TechnicalSeminar.timestamp >= start_of_year()
+        TechnicalSeminar.timestamp >= semester_start
     ).with_entities(
         MemberSeminarAttendance.uid,
         TechnicalSeminar.name
@@ -186,14 +190,14 @@ def display_intro_evals(internal=False, user_dict=None):
         if not row[0] in account_ts_attendance_dict:
             account_ts_attendance_dict[row[0]] = []
 
-            account_ts_attendance_dict[row[0]].append(row[1])
+        account_ts_attendance_dict[row[0]].append(row[1])
 
     # freshmen who have accounts
     for member in members:
         uid = member.uid
         name = member.cn
         freshman_data = FreshmanEvalData.query.filter(
-            FreshmanEvalData.eval_date > start_of_year(),
+            FreshmanEvalData.eval_date > semester_start,
             FreshmanEvalData.uid == uid).first()
 
         if freshman_data is None:
@@ -208,7 +212,7 @@ def display_intro_evals(internal=False, user_dict=None):
                 HouseMeeting,
                 MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
             ).filter(
-                HouseMeeting.date >= start_of_year(),
+                HouseMeeting.date >= semester_start,
                 MemberHouseMeetingAttendance.attendance_status == 'Absent',
                 MemberHouseMeetingAttendance.uid == uid,
             ).with_entities(
