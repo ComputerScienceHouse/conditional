@@ -82,8 +82,7 @@ def get_intro_members_without_accounts():
 
     # freshmen who don't have accounts
     freshman_accounts = list(FreshmanAccount.query.filter(
-        FreshmanAccount.eval_date > semester_start,
-        FreshmanAccount.eval_date > datetime.now()))
+        FreshmanAccount.eval_date >= semester_start))
 
     ie_members = []
 
@@ -123,6 +122,8 @@ def get_intro_members_without_accounts():
             'status': "Pending"
         }
         ie_members.append(freshman)
+
+    print(ie_members)
 
     return ie_members
 
@@ -197,7 +198,7 @@ def display_intro_evals(internal=False, user_dict=None):
         uid = member.uid
         name = member.cn
         freshman_data = FreshmanEvalData.query.filter(
-            FreshmanEvalData.eval_date > semester_start,
+            FreshmanEvalData.eval_date >= semester_start,
             FreshmanEvalData.uid == uid).first()
 
         if freshman_data is None:
