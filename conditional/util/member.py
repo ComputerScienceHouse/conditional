@@ -129,7 +129,6 @@ def get_cm(member):
 
     return c_meetings
 
-
 def get_hm(member, only_absent=False):
     h_meetings = MemberHouseMeetingAttendance.query.outerjoin(
         HouseMeeting,
@@ -144,7 +143,7 @@ def get_hm(member, only_absent=False):
     return h_meetings
 
 
-# @service_cache(maxsize=128)
+@service_cache(maxsize=128)
 def req_cm(uid, members_on_coop=None):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
@@ -162,8 +161,15 @@ def req_cm(uid, members_on_coop=None):
     return 30
 
 
-@service_cache(maxsize=256)
-def get_voting_members():
+def is_gatekeep_active():
+    today = datetime.today()
+    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
+    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
+
+    return not (before_evals_one > 0 or before_evals_two > 0)
+
+
+def get_semester_info() -> tuple[str, datetime]:
     today = datetime.today()
     if today < datetime(start_of_year().year, 12, 31):
         semester = "Fall"
@@ -171,6 +177,12 @@ def get_voting_members():
     else:
         semester = "Spring"
         semester_start = datetime(start_of_year().year + 1, 1, 1)
+
+    return (semester, semester_start)
+
+@service_cache(maxsize=256)
+def get_voting_members():
+    semester, semester_start = get_semester_info()
 
     active_members = get_active_members()
     intro_members = get_intro_members()
@@ -205,9 +217,7 @@ def get_voting_members():
     eligible_members = (active_not_intro - coop_members) | passed_fall_members
 
     # Check to see if there's an Intro Evals in the future of this semester. If there is, everyone gets to vote!
-    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
-    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
-    if before_evals_one > 0 or before_evals_two > 0:
+    if not is_gatekeep_active():
         return eligible_members
 
     passing_dm = set(member.uid for member in MemberCommitteeAttendance.query.join(
@@ -265,23 +275,19 @@ def get_voting_members():
 
 
 def gatekeep_status(username):
-    today = datetime.today()
-    # Check to see if there's an Intro Evals in the future of this semester. If there is, everyone gets to vote!
-    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
-    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
-    if before_evals_one > 0 or before_evals_two > 0:
+    if not is_gatekeep_active():
         return {
             "result": True,
             "h_meetings_missed": 0,
             "c_meetings": 0,
             "t_seminars": 0,
         }
-    if today < datetime(start_of_year().year, 12, 31):
-        semester = "Fall"
-        semester_start = datetime(start_of_year().year, 6, 1)
-    else:
-        semester = "Spring"
-        semester_start = datetime(start_of_year().year + 1, 1, 1)
+
+    return gatekeep_values(username)
+
+
+def gatekeep_values(username):
+    semester, semester_start = get_semester_info()
 
     # groups
     ldap_member = ldap_get_member(username)
@@ -346,6 +352,7 @@ def gatekeep_status(username):
         )
         .count()
     )
+
     result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings_missed < 2) # pylint: disable=chained-comparison
 
     return {

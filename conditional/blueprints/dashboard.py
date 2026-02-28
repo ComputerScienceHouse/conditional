@@ -12,7 +12,8 @@ from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.housing import get_queue_position
-from conditional.util.member import get_active_members, get_freshman_data, get_voting_members, get_cm, get_hm, req_cm
+from conditional.util.member import gatekeep_values, get_active_members, get_freshman_data, get_voting_members, \
+    get_cm, get_hm, is_gatekeep_active, req_cm
 from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_intromember, \
     user_dict_is_onfloor
 
@@ -145,5 +146,19 @@ def display_dashboard(user_dict=None):
     data['cm_attendance_len'] = len(c_meetings)
     data['hm_attendance'] = hm_attendance
     data['hm_attendance_len'] = len(hm_attendance)
+
+    gatekeep_info = gatekeep_values(uid)
+    gatekeep_result = 'disenfranchised'
+
+    if gatekeep_info['result']:
+        gatekeep_result = 'passing'
+
+    data['gatekeep_active'] = is_gatekeep_active()
+    data['gatekeep'] = {
+        'status': gatekeep_result,
+        'committee_meetings': gatekeep_info['c_meetings'],
+        'technical_seminars': gatekeep_info['t_seminars'],
+        'hm_missed': gatekeep_info['h_meetings_missed']
+    }
 
     return render_template('dashboard.html', **data)

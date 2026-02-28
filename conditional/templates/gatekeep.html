@@ -1,0 +1,188 @@
+{% extends "nav_protected.html" %}
+{% block title %}
+Gatekeep Results
+{% endblock %}
+{% block body %}
+<div class="container main">
+    <div class="row mobile-hide">
+    <div class="col-sm-10">
+        <h3 class="page-title">Gatekeep Results</h3>
+    </div>
+    <div class="col-sm-2">
+        <div class="material-switch align-center">
+            <div class="switch-label">Table View</div>
+                <input id="evalToggle" name="evalToggle" type="checkbox" data-module="evalToggle"/>
+                <label for="evalToggle" class="label-primary"></label>
+            </div>
+        </div>
+    </div>
+    <div id="eval-blocks">
+    {% for m in members %}
+    <div class="panel panel-default">
+        <div class="panel-body eval-panel">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-2 col-md-2 col-lg-2">
+                        <div style="margin:auto; width:100px">
+                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
+
+                            {% if m['status'] == "passed" %}
+                                <i class="bi bi-check-circle-fill white success eval-user-status"></i>
+                            {% elif not gatekeep_active %}
+                                <i class="bi bi-hourglass-split white warning eval-user-status"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle-fill white danger eval-user-status"></i>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-4 col-lg-6">
+                        <h4 class="eval-name">{{m['name']}}</h4>
+                        <h6 class="eval-uid">{{m['uid']}}</h6>
+                    </div>
+
+                    <div class="col-sm-5 col-md-6 col-lg-4">
+                        <div class="spring-info row">
+                            <div class="text-center">
+                                {% if m['committee_meetings'] < req_meetings %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>Directorship Meetings
+                                    <span class="eval-info-number">{{m['committee_meetings']}} / {{ req_meetings }}</span>
+                                </div>
+                                {% else %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>Directorship Meetings
+                                    <span class="eval-info-number">{{m['committee_meetings']}} / {{ req_meetings }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="text-center">
+                                {% if m['technical_seminars'] < req_seminars %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars
+                                    <span class="eval-info-number">{{m['technical_seminars']}} / {{ req_seminars }}</span>
+                                </div>
+                                {% else %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars
+                                    <span class="eval-info-number">{{m['technical_seminars']}} / {{ req_seminars }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="text-center">
+                                {% if m['house_meetings_missed']|length > 1 %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>House Meetings Missed
+                                    <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
+                                </div>
+                                {% else %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>House Meetings Missed
+                                    <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if m['house_meetings_missed']|length > 0%}
+                    <div class="evals-dropdown">
+                        <button class="btn-expand-panel" data-toggle="collapse" data-target="#evalsCollapse{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse{{m['uid']}}">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                {% endif %}
+                <div class="collapse" id="evalsCollapse{{m['uid']}}">
+                    {% if m['house_meetings_missed']|length > 0 %}
+                    <!-- VV only display if missing house meetings VV -->
+                    <hr class="eval-hr">
+                    <h4>Missed House Meetings</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for hm_missed in m['house_meetings_missed'] %}
+                            <tr>
+                                <td>{{hm_missed}}</td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                    <!-- ^^ HOUSE MEETINGS TABLE -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% endfor %}
+    </div>
+    <div id="eval-table" style="display:none;">
+    <div class="panel panel-default">
+        <div class="panel-body table-fill">
+	<div class="panel-body table-fill">
+            <div class="table-responsive">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="4" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Result</th>
+                        <th>Directorship Meetings</th>
+                        <th>Technical Seminars</th>
+                        <th>House Meetings Missed</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for m in members %}
+                    <tr>
+                        <td>
+                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" height="30" /> {{m['name']}} ({{m['uid']}})
+                        </td>
+                        <td>
+                            {% if m['status'] == "passed" %}
+                            <i class="bi bi-check-circle-fill green"></i> Ok!
+                            {% elif not gatekeep_active %}
+                            <i class="bi bi-hourglass-split yellow"></i> Pending
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red"></i> Disenfranchised
+                            {% endif %}
+                        </td>
+                        <td data-sort="{{ m['committee_meetings'] }}">
+                            {% if m['committee_meetings'] < req_meetings %}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['committee_meetings']}} / {{ req_meetings }}
+                            {% else %}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}} / {{ req_meetings }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if m['technical_seminars'] < req_seminars %}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
+                            {% else %}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
+                            {% endif %}
+                        </td>
+						<td data-sort="{{ m['house_meetings_missed']|length }}">
+                            {% if m['house_meetings_missed']|length <= 1 %}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
+                            {% else %}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['house_meetings_missed']|length}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
