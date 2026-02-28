@@ -143,11 +143,12 @@ def get_hm(member, only_absent=False):
     return h_meetings
 
 
-@service_cache(maxsize=128)
+# @service_cache(maxsize=128) # Can't hash because members_on_coop is a list
 def req_cm(uid, members_on_coop=None):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
     on_coop = False
+
     if members_on_coop:
         on_coop = uid in members_on_coop
     else:
@@ -162,9 +163,9 @@ def req_cm(uid, members_on_coop=None):
 
 
 def is_gatekeep_active():
-    today = datetime.today()
-    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
-    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
+    today = datetime.today().date()
+    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date >= today).limit(1).all())
+    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date >= today).limit(1).all())
 
     return not (before_evals_one > 0 or before_evals_two > 0)
 
