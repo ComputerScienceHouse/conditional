@@ -143,11 +143,12 @@ def get_hm(member, only_absent=False):
     return h_meetings
 
 
-@service_cache(maxsize=128)
+# @service_cache(maxsize=128) # Can't hash because members_on_coop is a list
 def req_cm(uid, members_on_coop=None):
     # Get the number of required committee meetings based on if the member
     # is going on co-op in the current operating session.
     on_coop = False
+
     if members_on_coop:
         on_coop = uid in members_on_coop
     else:

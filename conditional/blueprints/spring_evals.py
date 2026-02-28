@@ -112,13 +112,14 @@ def display_spring_evals(internal=False, user_dict=None):
         member_major_projects = major_projects.get(uid, [])
 
         passed_mps = [project for project in member_major_projects if project['status'] == 'Passed']
+        cms = req_cm(uid, coop_members)
 
         member = {
             'name': name,
             'uid': uid,
             'status': spring_entry.status,
             'committee_meetings': cm_attended_count,
-            'req_meetings': req_cm(uid, coop_members),
+            'req_meetings': cms,
             'house_meetings_missed': member_missed_hms,
             'major_projects': member_major_projects
         }
