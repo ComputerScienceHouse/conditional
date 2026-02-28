@@ -162,9 +162,9 @@ def req_cm(uid, members_on_coop=None):
 
 
 def is_gatekeep_active():
-    today = datetime.today()
-    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date > today).limit(1).all())
-    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date > today).limit(1).all())
+    today = datetime.today().date()
+    before_evals_one = len(FreshmanAccount.query.filter(FreshmanAccount.eval_date >= today).limit(1).all())
+    before_evals_two = len(FreshmanEvalData.query.filter(FreshmanEvalData.eval_date >= today).limit(1).all())
 
     return not (before_evals_one > 0 or before_evals_two > 0)
 
