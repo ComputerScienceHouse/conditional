@@ -48,6 +48,7 @@ def display_major_project(user_dict=None):
         MajorProject.tldr,
         MajorProject.timeSpent,
         MajorProject.description,
+        MajorProject.links,
         MajorProject.status,
         func.array_agg(MajorProjectSkill.skill).label("skills")
     ).outerjoin(MajorProjectSkill,
@@ -67,6 +68,7 @@ def display_major_project(user_dict=None):
             "time_spent": p.timeSpent,
             "skills": p.skills,
             "desc": p.description,
+            "links": p.links,
             "status": p.status,
             "is_owner": bool(user_dict["username"] == p.uid)
         }
@@ -123,6 +125,7 @@ def submit_major_project(user_dict=None):
     time_spent = post_data['projectTimeSpent']
     skills = post_data['projectSkills']
     description = post_data["projectDescription"]
+    links = post_data['projectLinks']
 
     user_id = user_dict['username']
 
@@ -134,7 +137,7 @@ def submit_major_project(user_dict=None):
         return jsonify({"success": False}), 400
     
     # TODO: Ensure all the information is being passed to the object
-    project = MajorProject(user_id, name, tldr, time_spent, description)
+    project = MajorProject(user_id, name, tldr, time_spent, description, links)
 
     # Save the info to the database
     db.session.add(project)

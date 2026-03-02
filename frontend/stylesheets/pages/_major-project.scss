@@ -1,9 +1,22 @@
-.major-project-desc {
-  white-space: pre-line;
+.mp-form-intro {
+  background-color: #fff;
+  box-shadow: 1px 1px 2px grey;
+  padding: 1em;
+  padding-bottom: 0.25em;
+  margin-bottom: 2em;
 }
 
+.mp-form {
+  background-color: #fff;
+  box-shadow: 1px 1px 2px grey;
+  margin-bottom: 2em;
+  padding: 1em;
+}
+
+.form-control {
+  margin-bottom: 1em;
+}
 .form-label {
-  margin-bottom: 0;
   margin-top: 1.25rem;
   font-size: 2rem;
 }
@@ -22,6 +35,10 @@
   border-radius: 0;
   padding: 0 0 10px;
   height: fit-content;
+}
+
+.mb-extra {
+  margin-bottom: 2em;
 }
 
 .placeholder {

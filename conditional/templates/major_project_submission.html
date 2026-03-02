@@ -1,181 +1,325 @@
 {% extends "nav.html" %}
+
 {% block extraHeader %}
-    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 {% endblock %}
+
 {% block title %}
-    Major Project Form
+Major Project Form
 {% endblock %}
+
 {% block body %}
 
-<div class="container main">
-    <h3 class="page-title">Major Project Form</h3>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <p class="lead">
+<div class="container my-5">
+
+    <h3 class="mb-4">Major Project Form</h3>
+
+    <div class="card mb-4 mp-form-intro">
+        <div class="card-body">
+            <p class="lead mb-0">
                 Welcome to the Major Project submission form! We're excited to read about what you've
                 been working on. For us (E-Board) to best evaluate your project, please give us as much detail as
                 possible. Don't feel pressured to write full paragraphs though, good bullet points are plenty!
-                <br>Generally, a major project is something that you make with the goal of challenging yourself,
+                <br><br>
+                Generally, a major project is something that you make with the goal of challenging yourself,
                 learning new things, and doing something you would be proud of. Major projects are most likely to
                 pass when they meet at least 2 of the 3
-                <a href="https://wiki.csh.rit.edu/wiki/Major_Project_Pillars">Major Project Pillars</a> -
-                considerable time on your project, benefiting House, and meaningfully applying skills. And of course,
-                after you submit, please try to talk to E-Board members (in-person or over Slack) so we are familiar
-                with your project and can ask you questions!
+                <a href="https://wiki.csh.rit.edu/wiki/Major_Project_Pillars">
+                    Major Project Pillars
+                </a>
+                - considerable time on your project, benefiting House, and meaningfully applying skills.
+                And of course, after you submit, please try to talk to E-Board members (in-person or over Slack)
+                so we are familiar with your project and can ask you questions!
             </p>
         </div>
     </div>
 
     <form data-module="majorProjectForm">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <label class="form-label" for="name">Project Name</label>
-                <input class="form-control" id="name" name="name" type="text" maxlength="64"
-                 placeholder="A clever name for your project, sometimes people will come up with an acronym.">
+        <div class="card mb-4 mp-form">
+            <div class="card-body">
+                <label for="name" class="form-label d-block h5 mt-4">
+                    Project Name
+                </label>
 
-                <label class="form-label" for="tldr">Short Description / TL;DR</label>
-                <input class="form-control" id="tldr" name="tldr" type="text" maxlength="64" placeholder="A quick, one-sentence pitch for your project and what it does.">
+                <input
+                    class="form-control mb-4"
+                    id="name"
+                    name="name"
+                    type="text"
+                    maxlength="64"
+                    placeholder="A clever name for your project, sometimes people will come up with an acronym."
+                >
 
+                <label for="tldr" class="d-block h5 mt-4 mb-2">
+                    Short Description / TL;DR
+                </label>
 
-                <div class="row">
+                <input
+                    class="form-control"
+                    id="tldr"
+                    name="tldr"
+                    type="text"
+                    maxlength="64"
+                    placeholder="A quick, one-sentence pitch for your project and what it does."
+                >
+
+                <div class="row mt-3">
                     <div class="col-lg-6">
-                        <label class="form-label" for="skills-applied">Skills Applied<span>Press Enter or , to separate skills</span></label>
-                        <div class="skills-applied" class="form-control form-skilltags">
-                            <input id="skill-input" name="skill" type="text" maxlength="16" placeholder="Add a skill">
-                            <span class="placeholder">List what skills you meaningfully used while working on this project (at least 2!)</span>
+
+                        <label class="d-block h5 mt-4 mb-2">
+                            Skills Applied &MediumSpace;
+                            <small class="text-muted d-block">
+                                Press Enter or , to separate skills
+                            </small>
+                        </label>
+
+                        <div class="form-control border-0 border-bottom rounded-0 p-2">
+                            <input
+                                id="skill-input"
+                                name="skill"
+                                type="text"
+                                maxlength="16"
+                                placeholder="Add a skill"
+                                class="border-0 w-100"
+                            >
+                            <small class="text-muted">
+                                List what skills you meaningfully used while working on this project (at least 2!)
+                            </small>
                         </div>
                     </div>
+
                     <div class="col-lg-6">
-                        <label class="form-label" for="time-commitment">Time Commitment</label>
-                        <textarea id="time-commitment" name="time-commitment" class="form-control form-textarea" rows="5" wrap="hard" placeholder="We're looking for a considerable amount of time spent on your major project, we suggest ~5 hours minimum">
-                        </textarea>
+                        <label for="time-commitment" class="d-block h5 mt-4 mb-2">
+                            Time Commitment
+                        </label>
+
+                        <textarea
+                            id="time-commitment"
+                            name="time-commitment"
+                            rows="4"
+                            class="form-control form-textarea"
+                            placeholder="We're looking for a considerable amount of time spent on your major project, we suggest ~10 hours minimum"
+                        ></textarea>
                     </div>
                 </div>
-                <label class="form-label" for="description">Detailed Description</label>
-                <textarea id="description" name="description" class="form-control form-textarea" rows="10"
-                        placeholder="Tell us everythinzg! More information is better than less.">
-                </textarea>
 
-                <div class="row">
+                <label for="description" class="d-block h5 mt-4 mb-2">
+                    Detailed Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="6"
+                    class="form-control mb-extra"
+                    placeholder="Tell us everything! More information is better than less."
+                ></textarea>
+
+                <div class="row mt-3">
                     <div class="col-lg-5">
-                        <label class="form-label" for="links">Project Links</label>
-                        <textarea id="links" name="links" class="form-control form-textarea" rows="2" 
-                            placeholder="If you have links (GitHub, YouTube, etc.), put them here!">
-                        </textarea>
+                        <label class="d-block h5 mt-4 mb-2">
+                            Project Links
+                        </label>
+
+                        <textarea
+                            id="links"
+                            name="links"
+                            rows="2"
+                            class="form-control"
+                            placeholder="If you have links (GitHub, YouTube, etc.), put them here!"
+                        ></textarea>
                     </div>
-                    <div class="col-lg-5">
-                        <div class="dropzone" id="project_files">
-                            <div class="dz-message" style="margin: 15px 0 0;">
-                                <img src="../images/photo_video.svg" width="72px">
-                                <div class="upload-title">Upload Media</div>
-                                <div class="upload-sub">Drag files here or click to upload.</div>
+
+                    <div class="col-lg-5 mt-4">
+                        <div class="border rounded text-center p-4" id="project_files">
+                            <img src="../images/photo_video.svg" width="72">
+
+                            <div class="font-weight-bold mt-2">
+                                Upload Media
                             </div>
+
+                            <small class="text-muted">
+                                Drag files here or click to upload.
+                            </small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <input class="btn btn-raised btn-primary" style="width:100%;margin-bottom:20px;" type="submit" 
-                value="Submit Major Project">
+
+        <input
+            type="submit"
+            value="Submit Major Project"
+            class="btn btn-primary btn-block mb-4"
+        >
+
+        <script>
+            Dropzone.options.projectFiles = {
+                url: "/major_project/upload",
+                parallelUploads: 2,
+                uploadMultiple: true,
+                acceptedFiles: "audio/*,image/*,video/*,.pdf,.doc,.docx",
+                previewsContainer: null
+            }
+        </script>
     </form>
 
-    <script>
-        Dropzone.options.projectFiles = {
-            // autoQueue: false,
-            url: "/major_project/upload",
-            parallelUploads: 2,
-            uploadMultiple: true,
-            acceptedFiles: "audio/*,image/*,video/*,.pdf,.doc,.docx",
-            previewsContainer: null
-        }
-    </script>
+    <!-- All Major Projects -->
 
-    <h3 class="page-title">All Major Projects</h3> {% if major_projects_len
-    <=0 %} 
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <p class="text-center">No Pending Major Projects</p>
+    <h3 class="mb-3">All Major Projects</h3>
+
+    {% if major_projects_len <= 0 %}
+
+    <div class="card">
+        <div class="card-body text-center">
+            No Pending Major Projects
         </div>
     </div>
+
     {% else %}
 
     {% for p in major_projects %}
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="col-xs-8 col-sm-10">
-                <!-- Make the project name bigger -->
-                <h4 style="font-size: 2em;">{{p['proj_name']}}</h4>
-                <img class="table-img" src="https://profiles.csh.rit.edu/image/{{p['username']}}">
-                {{p['name']}} ({{p['username']}})
-            </div>
-            <div class="col-xs-4 col-sm-2">
 
-            {% if is_eval_director %}
+    <div class="card mb-3">
 
-                <div class="btn-group" data-module="majorProjectStatus" data-id="{{p['id']}}">
-                    <a href="#" class="btn {% if p['status'] == 'Passed' %}btn-success{% elif p['status'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
-                        {{p['status']}}
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="#" data-option="Passed"><i class="bi bi-check-circle-fill green"></i> Passed</a>
-                        </li>
-                        <li>
-                            <a href="#" data-option="Pending"><i class="bi bi-hourglass-split yellow"></i> Pending</a>
-                        </li>
-                        <li>
-                            <a href="#" data-option="Failed"><i class="bi bi-x-circle-fill red"></i> Failed</a>
-                        </li>
-                        <li>
-                            <a href="#" data-option="Delete"><i class="bi bi-trash3 red"></i> Delete</a>
-                        </li>
-                    </ul>
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-start">
+
+                <div>
+
+                    <h4 class="mb-1">{{p['proj_name']}}</h4>
+
+                    <img
+                        class="rounded mr-2"
+                        width="40"
+                        src="https://profiles.csh.rit.edu/image/{{p['username']}}"
+                    >
+
+                    {{p['name']}} ({{p['username']}})
+
                 </div>
-            {% else %}
-                {% if p['status'] == 'Passed' %}
-                <h5 style="padding:15px 20px;float:right"><i class="bi bi-check-circle-fill green"></i></h5>
-                {% elif p['status'] == 'Failed' %}
-                <h5 style="padding:15px 20px;float:right"><i class="bi bi-x-circle-fill red"></i></h5>
-                {% else %}
-                <h5 style="padding:15px 20px;float:right"><i class="bi bi-hourglass-split yellow"></i></h5>
-                {% endif %}
-                {% if p.is_owner and p['status'] == 'Pending' %}
-                <button class="btn btn-danger btn-mp" data-module="majorProjectStatus" data-id="{{p['id']}}"><i class="bi bi-trash3"></i> Delete</button>
-                {% endif %}
-            {% endif %}
+
+                <div>
+
+                    {% if is_eval_director %}
+
+                    <div
+                        class="btn-group"
+                        data-module="majorProjectStatus"
+                        data-id="{{p['id']}}"
+                    >
+
+                        <button
+                            class="btn dropdown-toggle
+                            {% if p['status']=='Passed' %}
+                                btn-success
+                            {% elif p['status']=='Failed' %}
+                                btn-danger
+                            {% else %}
+                                btn-warning
+                            {% endif %}"
+                            data-toggle="dropdown"
+                        >
+                            {{p['status']}}
+                        </button>
+
+                        <div class="dropdown-menu">
+
+                            <a class="dropdown-item" href="#" data-option="Passed">
+                                Passed
+                            </a>
+
+                            <a class="dropdown-item" href="#" data-option="Pending">
+                                Pending
+                            </a>
+
+                            <a class="dropdown-item" href="#" data-option="Failed">
+                                Failed
+                            </a>
+
+                            <a class="dropdown-item text-danger" href="#" data-option="Delete">
+                                Delete
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    {% else %}
+
+                        <span class="badge
+                        {% if p['status']=='Passed' %}
+                            badge-success
+                        {% elif p['status']=='Failed' %}
+                            badge-danger
+                        {% else %}
+                            badge-warning
+                        {% endif %}
+                        ">
+                            {{p['status']}}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
             </div>
-            <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}">
-                <i class="bi bi-chevron-down"></i>
+
+            <!-- Collapse button -->
+
+            <button
+                class="btn btn-link p-0 mt-2"
+                data-toggle="collapse"
+                data-target="#evalsCollapse-{{p['id']}}"
+            >
+                Expand
             </button>
-            <div class="collapse major-project-desc" id="evalsCollapse-{{p['id']}}">
 
-                <section>
-                    <h6>
-                        <b>TLDR</b>: {{p['tldr']}}
-                    </h6>
-                </section>
-                
-                <section>
-                    <h6>Description</h6>
-                    <p>{{p['desc']}}</p>
-                </section>
+            <!-- Collapse content -->
 
-                <section>
-                    <p>Skills</p>
+            <div class="collapse mt-3" id="evalsCollapse-{{p['id']}}">
+
+                <p>
+                    <strong>TLDR:</strong> {{p['tldr']}}
+                </p>
+
+                <div class="mb-2">
+
+                    <strong>Skills:</strong>
+
                     {% for s in p['skills'] %}
-                        <p class="skill-tag">{{s}}</p>
+                        <span class="badge badge-pill badge-secondary mr-1">
+                            {{s}}
+                        </span>
                     {% endfor %}
-                    </ul>
 
-                    <p>chom</p>
-                </section>
+                </div>
+
+                <p>
+                    <strong>Time Commitment:</strong>
+                    {{p['time_spent']}}
+                </p>
+
+                <p>
+                    <strong>Links:</strong>
+                    {{p['links']}}
+                </p>
+
+                <p>
+                    <strong>Description:</strong><br>
+                    {{p['desc']}}
+                </p>
+
             </div>
-        </div>
-    </div>
-    {% endfor %}
 
-{% endif %}
+        </div>
+
+    </div>
+
+    {% endfor %}
+    {% endif %}
 
 </div>
+
 {% endblock %}

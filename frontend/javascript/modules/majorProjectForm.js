@@ -57,7 +57,8 @@ export default class MajorProjectForm {
             projectTldr: this.form.querySelector('input[name=tldr]').value,
             projectTimeSpent: this.form.querySelector('textarea[name=time-commitment]').value,
             projectSkills: skills,
-            projectDescription: this.form.querySelector('textarea[name=description]').value
+            projectDescription: this.form.querySelector('textarea[name=description]').value,
+            projectLinks: this.form.querySelector('textarea[name=links]').value
         };
 
         console.log(payload)
