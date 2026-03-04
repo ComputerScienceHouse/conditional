@@ -10,8 +10,9 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
+    name: Sonarqube Analysis
     runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') }}
     
     steps:
       - uses: actions/checkout@v4
