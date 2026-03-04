@@ -83,6 +83,11 @@ It is likely easier to use containers like `podman` or `docker` or the correspon
 With podman, I have been using 
 
 ```sh
+podman compose up --watch
+```
+
+If you want, you can run without compose support using
+```sh
 podman compose up --force-recreate --build
 ```
 
