@@ -9,12 +9,12 @@ services:
       - "127.0.0.1:8080:8080"
     volumes:
       - ./migrations:/opt/conditional/migrations
-    develop: 
+    develop:
       watch:
         - action: sync+restart
           path: ./conditional
           target: /opt/conditional/conditional
-          ignore: 
+          ignore:
             - __pycache__
         - action: sync+restart
           path: ./config.py
