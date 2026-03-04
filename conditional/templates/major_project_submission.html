@@ -265,25 +265,24 @@ Major Project Form
 
         <!-- COLLAPSE CONTENT -->
         <div class="collapse mt-3" id="evalsCollapse-{{p['id']}}">
-
             <div class="container-fluid px-0 border-top pt-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><strong>TLDR</strong></h5>
+                        <p class="h6 mb-0">{{p['tldr']}}</p>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <h5><strong>Time Commitment</strong></h5>
+                        <p class="h6 mb-0">{{p['time_spent']}}</p>
+                    </div>
+                </div>
 
                 <div class="row">
-
                     <div class="col-md-6 mb-3">
-                        <h6><strong>TL;DR</strong></h6>
-                        <p class="mb-0">{{p['tldr']}}</p>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <strong>Time Commitment</strong>
-                        <p class="mb-0">{{p['time_spent']}}</p>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <strong>Skills</strong><br>
+                        <h5><strong>Skills</strong></h5>
                         {% for s in p['skills'] %}
-                            <span class="skill-display mr-1 mb-1">
+                            <span class="h6 skill-display p-2 mr-1 mb-1">
                                 {{s}}
                             </span>
                         {% endfor %}
@@ -293,18 +292,16 @@ Major Project Form
                         <strong>Links</strong>
                         <p class="mb-0">{{p['links']}}</p>
                     </div>
+                </div>
 
+                <div class="row">
                     <div class="col-md-9 ">
                         <strong>Description</strong>
                         <p class="mb-0">{{p['desc']}}</p>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 </div>
 
