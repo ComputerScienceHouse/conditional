@@ -130,7 +130,7 @@ Major Project Form
                         ></textarea>
                     </div>
 
-                    <div class="col-lg-5 mt-4">
+                    <div class="col-lg-5 mt-4 dropzone">
                         <div class="border rounded text-center p-4" id="project_files">
                             <img src="../images/photo_video.svg" width="72">
 
@@ -164,162 +164,152 @@ Major Project Form
         </script>
     </form>
 
-    <!-- All Major Projects -->
+   <hr class="my-5">
 
-    <h3 class="mb-3">All Major Projects</h3>
+<h3 class="mb-4">All Major Projects</h3>
 
-    {% if major_projects_len <= 0 %}
+{% if major_projects_len <= 0 %}
 
-    <div class="card">
-        <div class="card-body text-center">
-            No Pending Major Projects
+<div class="row">
+    <div class="col">
+        <div class="card shadow-sm">
+            <div class="card-body text-center text-muted">
+                No Pending Major Projects
+            </div>
         </div>
     </div>
+</div>
 
-    {% else %}
+{% else %}
 
-    {% for p in major_projects %}
+{% for p in major_projects %}
 
-    <div class="card mb-3">
+<div class="card shadow-lg bg-white mb-4">
+    <div class="card-body mb-extra px-5">
 
-        <div class="card-body">
+        <div class="container-fluid px-0 px-extra">
 
-            <div class="d-flex justify-content-between align-items-start">
-
-                <div>
-
-                    <h4 class="mb-1">{{p['proj_name']}}</h4>
+            <!-- HEADER ROW -->
+            <div class="row d-flex align-items-center">
+                <!-- Title -->
+                <div class="col-md-11" style="margin-bottom: 1em;">
+                    <h4 class="font-weight-bold mb-1">
+                        <strong>{{p['proj_name']}}</strong>
+                    </h4>
 
                     <img
-                        class="rounded mr-2"
-                        width="40"
+                        class="rounded-circle mr-2"
+                        width="36"
                         src="https://profiles.csh.rit.edu/image/{{p['username']}}"
                     >
 
-                    {{p['name']}} ({{p['username']}})
-
+                    <small>
+                        {{p['name']}} ({{p['username']}})
+                    </small>
                 </div>
 
-                <div>
-
+                <!-- Status -->
+                <div class="col-md-1">
                     {% if is_eval_director %}
-
                     <div
-                        class="btn-group"
+                        class="btn-group btn-group-sm"
                         data-module="majorProjectStatus"
                         data-id="{{p['id']}}"
                     >
-
-                        <button
-                            class="btn dropdown-toggle
-                            {% if p['status']=='Passed' %}
-                                btn-success
-                            {% elif p['status']=='Failed' %}
-                                btn-danger
-                            {% else %}
-                                btn-warning
-                            {% endif %}"
-                            data-toggle="dropdown"
-                        >
+                         <a href="#" class="btn {% if p['status'] == 'Passed' %}btn-success{% elif p['status'] == 'Failed' %}btn-danger{% else %}btn-warning{% endif %} dropdown-toggle btn-mp" data-toggle="dropdown" aria-expanded="false">
                             {{p['status']}}
-                        </button>
+                            <span class="caret"></span>
+                        </a>
 
-                        <div class="dropdown-menu">
-
-                            <a class="dropdown-item" href="#" data-option="Passed">
-                                Passed
-                            </a>
-
-                            <a class="dropdown-item" href="#" data-option="Pending">
-                                Pending
-                            </a>
-
-                            <a class="dropdown-item" href="#" data-option="Failed">
-                                Failed
-                            </a>
-
-                            <a class="dropdown-item text-danger" href="#" data-option="Delete">
-                                Delete
-                            </a>
-
-                        </div>
-
+                        <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" data-option="Passed"><i class="bi bi-check-circle-fill green"></i> Passed</a>
+                        </li>
+                        <li>
+                            <a href="#" data-option="Pending"><i class="bi bi-hourglass-split yellow"></i> Pending</a>
+                        </li>
+                        <li>
+                            <a href="#" data-option="Failed"><i class="bi bi-x-circle-fill red"></i> Failed</a>
+                        </li>
+                        <li>
+                            <a href="#" data-option="Delete"><i class="bi bi-trash3 red"></i> Delete</a>
+                        </li>
+                    </ul>
                     </div>
 
                     {% else %}
-
-                        <span class="badge
+                    <div class="h3 align-items-center">
+                        <!-- Status indicator -->
                         {% if p['status']=='Passed' %}
-                            badge-success
+                        <div><i class="bi bi-check-circle-fill green"></i></div>
                         {% elif p['status']=='Failed' %}
-                            badge-danger
+                        <div><i class="bi bi-x-circle-fill red"></i></div>
                         {% else %}
-                            badge-warning
+                        <div><i class="bi bi-hourglass-split yellow"></i></div>
                         {% endif %}
-                        ">
-                            {{p['status']}}
-                        </span>
-
+                    </div>
                     {% endif %}
-
                 </div>
-
             </div>
 
-            <!-- Collapse button -->
+            <!-- TOGGLE -->
+            <div class="row justify-content-center mt-3">
+                <div class="col">
+                    <button class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{p['id']}}" aria-expanded="false" aria-controls="evalsCollapse-{{p['id']}}">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
 
-            <button
-                class="btn btn-link p-0 mt-2"
-                data-toggle="collapse"
-                data-target="#evalsCollapse-{{p['id']}}"
-            >
-                Expand
-            </button>
+        </div>
 
-            <!-- Collapse content -->
+        <!-- COLLAPSE CONTENT -->
+        <div class="collapse mt-3" id="evalsCollapse-{{p['id']}}">
 
-            <div class="collapse mt-3" id="evalsCollapse-{{p['id']}}">
+            <div class="container-fluid px-0 border-top pt-3">
 
-                <p>
-                    <strong>TLDR:</strong> {{p['tldr']}}
-                </p>
+                <div class="row">
 
-                <div class="mb-2">
+                    <div class="col-md-6 mb-3">
+                        <h6><strong>TL;DR</strong></h6>
+                        <p class="mb-0">{{p['tldr']}}</p>
+                    </div>
 
-                    <strong>Skills:</strong>
+                    <div class="col-md-6 mb-3">
+                        <strong>Time Commitment</strong>
+                        <p class="mb-0">{{p['time_spent']}}</p>
+                    </div>
 
-                    {% for s in p['skills'] %}
-                        <span class="badge badge-pill badge-secondary mr-1">
-                            {{s}}
-                        </span>
-                    {% endfor %}
+                    <div class="col-md-6 mb-3">
+                        <strong>Skills</strong><br>
+                        {% for s in p['skills'] %}
+                            <span class="skill-display mr-1 mb-1">
+                                {{s}}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <strong>Links</strong>
+                        <p class="mb-0">{{p['links']}}</p>
+                    </div>
+
+                    <div class="col-md-9 ">
+                        <strong>Description</strong>
+                        <p class="mb-0">{{p['desc']}}</p>
+                    </div>
 
                 </div>
-
-                <p>
-                    <strong>Time Commitment:</strong>
-                    {{p['time_spent']}}
-                </p>
-
-                <p>
-                    <strong>Links:</strong>
-                    {{p['links']}}
-                </p>
-
-                <p>
-                    <strong>Description:</strong><br>
-                    {{p['desc']}}
-                </p>
 
             </div>
 
         </div>
 
     </div>
+</div>
 
-    {% endfor %}
-    {% endif %}
-
+{% endfor %}
+{% endif %}
 </div>
 
 {% endblock %}

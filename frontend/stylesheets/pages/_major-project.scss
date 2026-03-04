@@ -1,3 +1,12 @@
+.bg-white {
+  background-color: #fff;
+}
+
+.px-extra {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
 .mp-form-intro {
   background-color: #fff;
   box-shadow: 1px 1px 2px grey;
@@ -41,6 +50,15 @@
   margin-bottom: 2em;
 }
 
+.proj-listing {
+  background-color: #fff;
+  padding: 0.5em;
+}
+
+.rounded-circle {
+  border-radius: 50%;
+}
+
 .placeholder {
   color: #bbb;
   font-size: 16px;
@@ -65,6 +83,17 @@
   padding: 0 4px;
   margin: 3px 0 10px 7px;
   font-size: 10px;
+}
+
+.skill-display {
+  display: block;
+  float: left;
+  background: #d979e3;
+  padding: 4px 8px 4px 8px;
+  margin: 2px 3px;
+  color: #444;
+  border-radius: 5px;
+  transition: .5s all;
 }
 
 .skill-tag:hover {
