@@ -68,7 +68,7 @@ future==1.0.0
     # via pyjwkest
 greenlet==3.3.0
     # via sqlalchemy
-gunicorn==22.0.0
+gunicorn==25.1.0
     # via -r requirements.in
 idna==3.11
     # via requests
