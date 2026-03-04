@@ -20,7 +20,6 @@ oic~=1.6.1
 pip-tools~=7.4.1
 psycopg2-binary~=2.9.3
 pylint~=3.3.6
-python-dateutil~=2.6.1
 python-editor~=1.0.3
 sentry-sdk[flask]~=2.24.1
 six~=1.17.0
