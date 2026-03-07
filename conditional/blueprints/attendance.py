@@ -175,7 +175,7 @@ def display_attendance_hm(user_dict=None):
 def submit_committee_attendance(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    approved = user_dict_is_eval_director(user_dict)
+    approved = user_dict_is_eboard(user_dict)
     post_data = request.get_json()
 
     committee = post_data['committee']
