@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 8182939744c8
+Revision ID: 6c4cf35d7c0c
 Revises: f1d08673b870
-Create Date: 2026-03-01 10:04:50.175588
+Create Date: 2026-03-06 15:42:50.323042
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '8182939744c8'
+revision = '6c4cf35d7c0c'
 down_revision = 'f1d08673b870'
 
 from alembic import op
@@ -23,6 +23,8 @@ def upgrade():
     sa.PrimaryKeyConstraint('project_id', 'skill')
     )
     op.add_column('major_projects', sa.Column('tldr', sa.String(length=128), nullable=True))
+    op.add_column('major_projects', sa.Column('timeSpent', sa.Text(), nullable=True))
+    op.add_column('major_projects', sa.Column('links', sa.Text(), nullable=True))
     op.alter_column('major_projects', 'description',
                existing_type=sa.TEXT(),
                nullable=False)
@@ -34,6 +36,8 @@ def downgrade():
     op.alter_column('major_projects', 'description',
                existing_type=sa.TEXT(),
                nullable=True)
+    op.drop_column('major_projects', 'links')
+    op.drop_column('major_projects', 'timeSpent')
     op.drop_column('major_projects', 'tldr')
     op.drop_table('major_project_skills')
     # ### end Alembic commands ###

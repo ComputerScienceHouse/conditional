@@ -1,10 +1,9 @@
 import json
 import os
 import requests
-
-import requests
 import boto3
 
+from conditional.models.models import MajorProject, MajorProjectSkill
 from config import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from flask import Blueprint
 from flask import request
@@ -17,8 +16,6 @@ import structlog
 from werkzeug.utils import secure_filename
 
 from conditional.util.context_processors import get_member_name
-
-from conditional.models.models import MajorProject, MajorProjectSkill
 
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_get_member
@@ -55,7 +52,7 @@ def display_major_project(user_dict=None):
         MajorProject.id == MajorProjectSkill.project_id
     ).group_by(MajorProject.id
     ).where(MajorProject.date >= start_of_year()
-    ).order_by(desc(MajorProject.date))
+    ).order_by(MajorProject.date)
 
     major_projects = [
         {
@@ -133,7 +130,7 @@ def submit_major_project(user_dict=None):
 
     # All fields are required in order to be able to submit the form
     # TODO: Do we want any of the fields to have enforced min or max lengths?
-    if name == "" or tldr == "" or time_spent == "" or skills == "" or description == "":
+    if not name or not tldr or not time_spent or not description:
         return jsonify({"success": False}), 400
     
     # TODO: Ensure all the information is being passed to the object
@@ -144,11 +141,13 @@ def submit_major_project(user_dict=None):
     db.session.commit()
 
 
+    # project_id = project.id
     project = MajorProject.query.filter(
-        MajorProject.name == name and MajorProject.uid == user_id
+        MajorProject.name == name,
+        MajorProject.uid == user_id
     ).first()
     
-    skills_list = filter(lambda x: x != 'None', skills)
+    skills_list = list(filter(lambda x: x != 'None', skills))
     print(f"Skills: {list(skills_list)}")
 
     for skill in skills_list:

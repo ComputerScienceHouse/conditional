@@ -35,8 +35,8 @@ ENV PORT=${PORT}
 EXPOSE ${PORT}
 
 COPY conditional /opt/conditional/conditional
-COPY *.py package.json /opt/conditional
-COPY --from=build-frontend /opt/conditional/conditional/static /opt/conditional/conditional/static
+COPY *.py package.json /opt/conditional/
+COPY --from=build-frontend /opt/conditional/conditional/static/ /opt/conditional/conditional/static/
 
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
