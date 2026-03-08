@@ -4,6 +4,7 @@ import requests
 import boto3
 
 from conditional.models.models import MajorProject, MajorProjectSkill
+from conditional.util.user_dict import user_dict_is_eval_director
 from config import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from flask import Blueprint
 from flask import request
@@ -65,7 +66,7 @@ def display_major_project(user_dict=None):
             "time_spent": p.timeSpent,
             "skills": p.skills,
             "desc": p.description,
-            "links": p.links,
+            "links": list(filter(None, p.links.split("\n"))),
             "status": p.status,
             "is_owner": bool(user_dict["username"] == p.uid)
         }
@@ -208,7 +209,7 @@ def submit_major_project(user_dict=None):
 def major_project_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict["account"]):
+    if not user_dict_is_eval_director(user_dict["account"]):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -236,7 +237,7 @@ def major_project_delete(pid, user_dict=None):
     major_project = MajorProject.query.filter(MajorProject.id == pid).first()
     creator = major_project.uid
 
-    if creator == user_dict["username"] or ldap_is_eval_director(user_dict["account"]):
+    if creator == user_dict["username"] or user_dict_is_eval_director(user_dict["account"]):
         MajorProject.query.filter(MajorProject.id == pid).delete()
         
         db.session.flush()

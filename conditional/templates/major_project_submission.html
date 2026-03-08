@@ -125,7 +125,7 @@ Major Project Form
                             id="links"
                             name="links"
                             rows="2"
-                            class="form-control"
+                            class="form-control form-textarea"
                             placeholder="If you have links (GitHub, YouTube, etc.), put them here!"
                         ></textarea>
                     </div>
@@ -184,7 +184,7 @@ Major Project Form
 
 {% for p in major_projects %}
 
-<div class="card shadow-lg bg-white mb-4">
+<div class="card shadow-lg proj-listing bg-white mb-4">
     <div class="card-body mb-extra px-5">
 
         <div class="container-fluid px-0 px-extra">
@@ -192,7 +192,7 @@ Major Project Form
             <!-- HEADER ROW -->
             <div class="row d-flex align-items-center">
                 <!-- Title -->
-                <div class="col-md-11" style="margin-bottom: 1em;">
+                <div class="col-md-10" style="margin-bottom: 1em;">
                     <h4 class="font-weight-bold mb-1">
                         <strong>{{p['proj_name']}}</strong>
                     </h4>
@@ -209,10 +209,10 @@ Major Project Form
                 </div>
 
                 <!-- Status -->
-                <div class="col-md-1">
+                <div class="col-md-2">
                     {% if is_eval_director %}
                     <div
-                        class="btn-group btn-group-sm"
+                        class="btn-group btn-group-md"
                         data-module="majorProjectStatus"
                         data-id="{{p['id']}}"
                     >
@@ -281,23 +281,31 @@ Major Project Form
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <h5><strong>Skills</strong></h5>
-                        {% for s in p['skills'] %}
-                            <span class="h6 skill-display p-2 mr-1 mb-1">
-                                {{s}}
-                            </span>
-                        {% endfor %}
+                        <div class="skill-group">
+                            {% for s in p['skills'] %}
+                                <span class="h6 skill-display p-2 mr-1 mb-1">
+                                    {{s}}
+                                </span>
+                            {% endfor %}
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <strong>Links</strong>
-                        <p class="mb-0">{{p['links']}}</p>
+                        <h5><strong>Links</strong></h5>
+                        {% for l in p['links'] %}
+                            {% set href = l %}
+                            {% if not href.startswith('http://') and not href.startswith('https://') %}
+                                {% set href = 'https://' + href %}
+                            {% endif %}
+                            <p class="line-short h6"><a href="{{ href }}" class="mb-0">{{ href }}</a></p>
+                        {% endfor %}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-9 ">
-                        <strong>Description</strong>
-                        <p class="mb-0">{{p['desc']}}</p>
+                        <h5><strong>Description</strong></h5>
+                        <p class="mb-0 h6 line-med">{{p['desc']}}</p>
                     </div>
                 </div>
             </div>

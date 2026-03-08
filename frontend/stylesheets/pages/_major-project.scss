@@ -52,7 +52,7 @@
 
 .proj-listing {
   background-color: #fff;
-  padding: 0.5em;
+  box-shadow: 1px 1px 2px grey;
 }
 
 .rounded-circle {
@@ -67,10 +67,10 @@
 .skill-tag {
   display: block;
   float: left;
-  background: #d979e3;
+  background: #b0197e;
   padding: 4px 30px 4px 8px;
   margin: 2px 3px;
-  color: #444;
+  color: #fff;
   border-radius: 5px;
   transition: .5s all;
 }
@@ -88,14 +88,28 @@
 .skill-display {
   display: block;
   float: left;
-  background: #d979e3;
+  background: #b0197e;
   padding: 4px 8px 4px 8px;
   margin: 2px 3px;
-  color: #444;
+  color: #fff;
+  font-weight: 600;
   border-radius: 5px;
   transition: .5s all;
 }
 
 .skill-tag:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.skill-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.line-short {
+  line-height: 0.5em;
+}
+
+.line-med {
+  line-height: 1.5em;
 }
