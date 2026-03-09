@@ -83,6 +83,8 @@ def display_major_project(user_dict=None):
             aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
             endpoint_url=app.config['S3_URI']
         )
+    
+    bucket = app.config['S3_BUCKET_ID']
 
     major_projects = [
         {
@@ -98,7 +100,7 @@ def display_major_project(user_dict=None):
             "links": list(filter(None, p.links.split("\n"))),
             "status": p.status,
             "is_owner": bool(user_dict["username"] == p.uid),
-            "files": list_files_in_folder("major-project-media", f"{p.id}/")
+            "files": list_files_in_folder(bucket, f"{p.id}/")
         }
         for p in proj_list
     ]
@@ -117,8 +119,6 @@ def display_major_project(user_dict=None):
 def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
-
-    # log.info(f"user_dict: {user_dict}")
 
     if len(list(request.files.keys())) <1:
         return "No file", 400
@@ -146,8 +146,6 @@ def submit_major_project(user_dict=None):
 
     post_data = request.get_json()
 
-    print(f"Post Data: {post_data}") # TODO: Remove this later
-
     name = post_data["projectName"]
     tldr = post_data['projectTldr']
     time_spent = post_data['projectTimeSpent']
@@ -164,8 +162,7 @@ def submit_major_project(user_dict=None):
     if not name or not tldr or not time_spent or not description:
         return jsonify({"success": False}), 400
     
-    # TODO: Ensure all the information is being passed to the object
-    project = MajorProject(user_id, name, tldr, time_spent, description, links)
+    project: MajorProject = MajorProject(user_id, name, tldr, time_spent, description, links)
 
     # Save the info to the database
     db.session.add(project)
@@ -178,8 +175,7 @@ def submit_major_project(user_dict=None):
         MajorProject.uid == user_id
     ).first()
     
-    skills_list = list(filter(lambda x: x != 'None', skills))
-    print(f"Skills: {list(skills_list)}")
+    skills_list: list = list(filter(lambda x: x != 'None', skills))
 
     for skill in skills_list:
         skill = skill.strip()
@@ -219,12 +215,12 @@ def submit_major_project(user_dict=None):
 
     # Send the slack ping only after we know that the data was properly saved to the DB
     # TODO: Maybe add more info to the slack ping?
-    # send_slack_ping(
-    #     {
-    #         "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
-    #         f" submitted their major project, *{name}*!"
-    #     }
-    # )
+    send_slack_ping(
+        {
+            "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
+            f" submitted their major project, *{name}*!"
+        }
+    )
 
     return jsonify({"success": True}), 200
 
