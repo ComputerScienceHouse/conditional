@@ -142,7 +142,7 @@ class MajorProject(db.Model):
                          name="major_project_enum"),
                     nullable=False)
 
-    def __init__(self, uid, name, tldr, time_spent, description, links):
+    def __init__(self, uid, name, tldr, time_spent, description, links): # pylint: disable=too-many-positional-arguments
         self.uid = uid
         self.date = datetime.now()
         self.name = name

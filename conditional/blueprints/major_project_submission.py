@@ -1,30 +1,29 @@
+import collections
 import json
 import os
-import botocore
-import requests
-import boto3
 
-from conditional.models.models import MajorProject, MajorProjectSkill
-from conditional.util.user_dict import user_dict_is_eval_director
 from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import redirect
 
-from sqlalchemy import func, desc
-
+import botocore
+import requests
+import boto3
 import structlog
+
+from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
 
-from conditional.util.context_processors import get_member_name
+from conditional import db, start_of_year, get_user, auth, app
+from conditional.models.models import MajorProject
+from conditional.models.models import MajorProjectSkill
 
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.context_processors import get_member_name
 from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
+from conditional.util.user_dict import user_dict_is_eval_director
 
-from conditional import db, start_of_year, get_user, auth, app
-
-import collections
 collections.Callable = collections.abc.Callable
 
 logger = structlog.get_logger()
@@ -33,20 +32,20 @@ major_project_bp = Blueprint("major_project_bp", __name__)
 
 def list_files_in_folder(bucket_name, folder_prefix):
 
-    s3 = boto3.client( 
+    s3 = boto3.client(
         service_name="s3",
-        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'], 
+        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
         aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
         endpoint_url=app.config['S3_URI']
     )
-     
+
     try:
         response = s3.list_objects(Bucket=bucket_name, Prefix=folder_prefix)
         if 'Contents' in response:
             return [obj['Key'] for obj in response['Contents']]
-        else:
-            return []
-        
+
+        return []
+
     except botocore.exceptions.ClientError as e:
         print(f"Error listing files in the folder: {e}")
         return []
@@ -77,13 +76,6 @@ def display_major_project(user_dict=None):
     ).where(MajorProject.date >= start_of_year()
     ).order_by(desc(MajorProject.date), desc(MajorProject.id))
 
-    s3 = boto3.client( 
-            service_name="s3",
-            aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'], 
-            aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
-            endpoint_url=app.config['S3_URI']
-        )
-    
     bucket = app.config['S3_BUCKET_ID']
 
     major_projects = [
@@ -112,7 +104,6 @@ def display_major_project(user_dict=None):
         major_projects=major_projects,
         major_projects_len=major_projects_len,
         username=user_dict["username"])
-
 @major_project_bp.route("/major_project/upload", methods=["POST"])
 @auth.oidc_auth("default")
 @get_user
@@ -122,7 +113,7 @@ def upload_major_project_files(user_dict=None):
 
     if len(list(request.files.keys())) <1:
         return "No file", 400
-    
+
     # Temporarily save files to a place, to be uploaded on submit
 
     for _, file in request.files.lists():
@@ -132,7 +123,7 @@ def upload_major_project_files(user_dict=None):
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         file.save(filename)
-    
+
     return jsonify({"success": True}), 200
 
 
@@ -161,7 +152,7 @@ def submit_major_project(user_dict=None):
     # TODO: Do we want any of the fields to have enforced min or max lengths?
     if not name or not tldr or not time_spent or not description:
         return jsonify({"success": False}), 400
-    
+
     project: MajorProject = MajorProject(user_id, name, tldr, time_spent, description, links)
 
     # Save the info to the database
@@ -174,31 +165,31 @@ def submit_major_project(user_dict=None):
         MajorProject.name == name,
         MajorProject.uid == user_id
     ).first()
-    
+
     skills_list: list = list(filter(lambda x: x != 'None', skills))
 
     for skill in skills_list:
         skill = skill.strip()
-        
-        if skill != "" and skill != 'None':
+
+        if skill not in ("", 'None'):
             mp_skill = MajorProjectSkill(project.id, skill)
             db.session.add(mp_skill)
 
     db.session.commit()
-    
+
     # Fail if attempting to retreive non-existent project
     if project is None:
         return jsonify({"success": False}), 500
-    
+
     # Sanitize input so that the Slackbot cannot ping @channel
     name = name.replace("<!", "<! ")
 
     # Connect to S3 bucket
-    s3 = boto3.client("s3", 
+    s3 = boto3.client("s3",
                         aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
                         aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
                         endpoint_url=app.config['S3_URI'])
-    
+
     # Collect all the locally cached files and put them in the bucket
     temp_dir = f"/tmp/{user_id}"
     if os.path.exists(temp_dir):
@@ -206,9 +197,9 @@ def submit_major_project(user_dict=None):
             filepath = f"{temp_dir}/{file}"
 
             s3.upload_file(filepath, 'major-project-media', f"{project.id}/{file}")
-            
+
             os.remove(filepath)
-        
+
         # Delete the temp directory once all the files have been stored in S3
         os.rmdir(temp_dir)
 
@@ -245,7 +236,7 @@ def major_project_review(user_dict=None):
 
     db.session.flush()
     db.session.commit()
-    
+
     return jsonify({"success": True}), 200
 
 
@@ -261,10 +252,10 @@ def major_project_delete(pid, user_dict=None):
 
     if creator == user_dict["username"] or user_dict_is_eval_director(user_dict["account"]):
         MajorProject.query.filter(MajorProject.id == pid).delete()
-        
+
         db.session.flush()
         db.session.commit()
-        
+
         return jsonify({"success": True}), 200
 
     return "Must be project owner to delete!", 401

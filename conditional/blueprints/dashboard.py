@@ -99,7 +99,7 @@ def display_dashboard(user_dict=None):
     ).group_by(MajorProject.id
     ).where(MajorProject.date >= start_of_year()
     ).order_by(desc(MajorProject.date), desc(MajorProject.id))
-    
+
     data['major_projects'] = [
         {
             "id": p.id,
