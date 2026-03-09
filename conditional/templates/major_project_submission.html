@@ -43,12 +43,12 @@ Major Project Form
                 </label>
                 
                 <input
-                class="form-control mb-4"
-                id="name"
-                name="name"
-                type="text"
-                maxlength="64"
-                placeholder="A clever name for your project, sometimes people will come up with an acronym."
+                    class="form-control mb-4"
+                    id="name"
+                    name="name"
+                    type="text"
+                    maxlength="64"
+                    placeholder="A clever name for your project, sometimes people will come up with an acronym."
                 >
                 
                 <label for="tldr" class="d-block h5 mt-4 mb-2">
@@ -56,12 +56,12 @@ Major Project Form
                 </label>
                 
                 <input
-                class="form-control"
-                id="tldr"
-                name="tldr"
-                type="text"
-                maxlength="64"
-                placeholder="A quick, one-sentence pitch for your project and what it does."
+                    class="form-control"
+                    id="tldr"
+                    name="tldr"
+                    type="text"
+                    maxlength="64"
+                    placeholder="A quick, one-sentence pitch for your project and what it does."
                 >
                 
                 <div class="row mt-3">
@@ -118,7 +118,7 @@ Major Project Form
                 
                 <div class="row mt-3">
                     <div class="col-lg-5">
-                        <label class="d-block h5 mt-4 mb-2">
+                        <label for="links" class="d-block h5 mt-4 mb-2">
                             Project Links
                         </label>
                         
@@ -134,7 +134,7 @@ Major Project Form
                     <div class="col-lg-5 mt-4">
                         <div class="dropzone border rounded text-center p-4" id="project-files">
                             <div class="dz-message">
-                                <img src="../images/photo_video.svg" width="72">
+                                <img src="../images/photo_video.svg" width="72" alt="">
                                 
                                 <div class="font-weight-bold mt-2">
                                     Upload Media
@@ -198,9 +198,10 @@ Major Project Form
                         </h4>
                         
                         <img
-                        class="rounded-circle mr-2"
-                        width="36"
-                        src="https://profiles.csh.rit.edu/image/{{p['username']}}"
+                            class="rounded-circle mr-2"
+                            width="36"
+                            alt="User profile picture of the submitter"
+                            src="https://profiles.csh.rit.edu/image/{{p['username']}}"
                         >
                         
                         <small>
@@ -317,7 +318,10 @@ Major Project Form
                             <p class="mb-0 h6 line-med no-imgs">No images uploaded</p>
                         {% else %}
                             {% for f in p['files'] %}
-                                <img class="proj-img" src="https://assets.csh.rit.edu/major-project-media/{{ f }}"/>
+                                <img 
+                                    class="proj-img" 
+                                    src="https://assets.csh.rit.edu/major-project-media/{{ f }}"
+                                    alt="User submitted image for the project"/>
                             {% endfor %}
                         {% endif %}
                     </div>
