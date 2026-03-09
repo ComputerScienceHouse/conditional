@@ -1,11 +1,9 @@
-from sqlalchemy import desc, func
 import structlog
 from flask import Blueprint, request
 
-from conditional import db, start_of_year, auth
-from conditional.models.models import Conditional, MajorProjectSkill
+from conditional import start_of_year, auth
+from conditional.models.models import Conditional
 from conditional.models.models import HouseMeeting
-from conditional.models.models import MajorProject
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import TechnicalSeminar
@@ -13,6 +11,7 @@ from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.housing import get_queue_position
+from conditional.util.major_project import get_project_list
 from conditional.util.member import gatekeep_values, get_active_members, get_freshman_data, get_voting_members, \
     get_cm, get_hm, is_gatekeep_active, req_cm
 from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_intromember, \
@@ -83,22 +82,7 @@ def display_dashboard(user_dict=None):
 
     data['housing'] = housing
 
-    proj_list = db.session.query(
-        MajorProject.id,
-        MajorProject.date,
-        MajorProject.uid,
-        MajorProject.name,
-        MajorProject.tldr,
-        MajorProject.time_spent,
-        MajorProject.description,
-        MajorProject.links,
-        MajorProject.status,
-        func.array_agg(MajorProjectSkill.skill).label("skills")
-    ).outerjoin(MajorProjectSkill,
-        MajorProject.id == MajorProjectSkill.project_id
-    ).group_by(MajorProject.id
-    ).where(MajorProject.date >= start_of_year()
-    ).order_by(desc(MajorProject.date), desc(MajorProject.id))
+    proj_list = get_project_list()
 
     data['major_projects'] = [
         {

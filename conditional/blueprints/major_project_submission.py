@@ -7,48 +7,28 @@ from flask import request
 from flask import jsonify
 from flask import redirect
 
-import botocore
 import requests
 import boto3
 import structlog
 
-from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
 
-from conditional import db, start_of_year, get_user, auth, app
+from conditional import db, get_user, auth, app
 from conditional.models.models import MajorProject
 from conditional.models.models import MajorProjectSkill
 
 from conditional.util.context_processors import get_member_name
 from conditional.util.ldap import ldap_get_member
 from conditional.util.flask import render_template
+from conditional.util.s3 import list_files_in_folder
 from conditional.util.user_dict import user_dict_is_eval_director
+from conditional.util.major_project import get_project_list
 
 collections.Callable = collections.abc.Callable
 
 logger = structlog.get_logger()
 
 major_project_bp = Blueprint("major_project_bp", __name__)
-
-def list_files_in_folder(bucket_name, folder_prefix):
-
-    s3 = boto3.client(
-        service_name="s3",
-        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
-        endpoint_url=app.config['S3_URI']
-    )
-
-    try:
-        response = s3.list_objects(Bucket=bucket_name, Prefix=folder_prefix)
-        if 'Contents' in response:
-            return [obj['Key'] for obj in response['Contents']]
-
-        return []
-
-    except botocore.exceptions.ClientError as e:
-        print(f"Error listing files in the folder: {e}")
-        return []
 
 @major_project_bp.route("/major_project/")
 @auth.oidc_auth("default")
@@ -58,23 +38,7 @@ def display_major_project(user_dict=None):
     log.info("Display Major Project Page")
 
     # There is probably a better way to do this, but it does work
-
-    proj_list = db.session.query(
-        MajorProject.id,
-        MajorProject.date,
-        MajorProject.uid,
-        MajorProject.name,
-        MajorProject.tldr,
-        MajorProject.time_spent,
-        MajorProject.description,
-        MajorProject.links,
-        MajorProject.status,
-        func.array_agg(MajorProjectSkill.skill).label("skills")
-    ).outerjoin(MajorProjectSkill,
-        MajorProject.id == MajorProjectSkill.project_id
-    ).group_by(MajorProject.id
-    ).where(MajorProject.date >= start_of_year()
-    ).order_by(desc(MajorProject.date), desc(MajorProject.id))
+    proj_list = get_project_list()
 
     bucket = app.config['S3_BUCKET_ID']
 
@@ -104,6 +68,7 @@ def display_major_project(user_dict=None):
         major_projects=major_projects,
         major_projects_len=major_projects_len,
         username=user_dict["username"])
+
 @major_project_bp.route("/major_project/upload", methods=["POST"])
 @auth.oidc_auth("default")
 @get_user
@@ -115,7 +80,6 @@ def upload_major_project_files(user_dict=None):
         return "No file", 400
 
     # Temporarily save files to a place, to be uploaded on submit
-
     for _, file in request.files.lists():
         file = file[0]
         safe_name = secure_filename(file.filename)
@@ -149,7 +113,6 @@ def submit_major_project(user_dict=None):
     log.info(user_id)
 
     # All fields are required in order to be able to submit the form
-    # TODO: Do we want any of the fields to have enforced min or max lengths?
     if not name or not tldr or not time_spent or not description:
         return jsonify({"success": False}), 400
 
@@ -159,8 +122,6 @@ def submit_major_project(user_dict=None):
     db.session.add(project)
     db.session.commit()
 
-
-    # project_id = project.id
     project = MajorProject.query.filter(
         MajorProject.name == name,
         MajorProject.uid == user_id
@@ -205,7 +166,6 @@ def submit_major_project(user_dict=None):
 
 
     # Send the slack ping only after we know that the data was properly saved to the DB
-    # TODO: Maybe add more info to the slack ping?
     send_slack_ping(
         {
             "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
