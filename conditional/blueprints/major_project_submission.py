@@ -38,11 +38,11 @@ def display_major_project(user_dict=None):
     log.info("Display Major Project Page")
 
     # There is probably a better way to do this, but it does work
-    proj_list = get_project_list()
+    proj_list: list = get_project_list()
 
-    bucket = app.config['S3_BUCKET_ID']
+    bucket: str = app.config['S3_BUCKET_ID']
 
-    major_projects = [
+    major_projects: list[dict] = [
         {
             "id": p.id,
             "date": p.date,
@@ -61,12 +61,11 @@ def display_major_project(user_dict=None):
         for p in proj_list
     ]
 
-    major_projects_len = len(major_projects)
     # return names in 'first last (username)' format
     return render_template(
         "major_project_submission.html",
         major_projects=major_projects,
-        major_projects_len=major_projects_len,
+        major_projects_len=len(major_projects),
         username=user_dict["username"])
 
 @major_project_bp.route("/major_project/upload", methods=["POST"])
@@ -82,7 +81,7 @@ def upload_major_project_files(user_dict=None):
     # Temporarily save files to a place, to be uploaded on submit
     for _, file in request.files.lists():
         file = file[0]
-        safe_name = secure_filename(file.filename)
+        safe_name: str = secure_filename(file.filename)
         filename = f"/tmp/{user_dict['username']}/{safe_name}"
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -152,7 +151,7 @@ def submit_major_project(user_dict=None):
                         endpoint_url=app.config['S3_URI'])
 
     # Collect all the locally cached files and put them in the bucket
-    temp_dir = f"/tmp/{user_id}"
+    temp_dir: str = f"/tmp/{user_id}"
     if os.path.exists(temp_dir):
         for file in os.listdir(temp_dir):
             filepath = f"{temp_dir}/{file}"
