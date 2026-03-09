@@ -134,7 +134,7 @@ class MajorProject(db.Model):
     uid = Column(String(32), nullable=False, index=True)
     name = Column(String(64), nullable=False)
     tldr = Column(String(128), nullable=True)
-    timeSpent = Column(Text, nullable=True)
+    time_spent = Column(Text, nullable=True)
     description = Column(Text, nullable=False)
     links = Column(Text, nullable=True)
     active = Column(Boolean, nullable=False)
@@ -147,7 +147,7 @@ class MajorProject(db.Model):
         self.date = datetime.now()
         self.name = name
         self.tldr = tldr
-        self.timeSpent = time_spent
+        self.time_spent = time_spent
         self.description = description
         self.links = links
         self.status = 'Pending'
