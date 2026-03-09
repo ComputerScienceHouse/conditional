@@ -1,8 +1,9 @@
+from sqlalchemy import desc, func
 import structlog
 from flask import Blueprint, request
 
-from conditional import start_of_year, auth
-from conditional.models.models import Conditional
+from conditional import db, start_of_year, auth
+from conditional.models.models import Conditional, MajorProjectSkill
 from conditional.models.models import HouseMeeting
 from conditional.models.models import MajorProject
 from conditional.models.models import MemberHouseMeetingAttendance
@@ -82,15 +83,38 @@ def display_dashboard(user_dict=None):
 
     data['housing'] = housing
 
+    proj_list = db.session.query(
+        MajorProject.id,
+        MajorProject.date,
+        MajorProject.uid,
+        MajorProject.name,
+        MajorProject.tldr,
+        MajorProject.timeSpent,
+        MajorProject.description,
+        MajorProject.links,
+        MajorProject.status,
+        func.array_agg(MajorProjectSkill.skill).label("skills")
+    ).outerjoin(MajorProjectSkill,
+        MajorProject.id == MajorProjectSkill.project_id
+    ).group_by(MajorProject.id
+    ).where(MajorProject.date >= start_of_year()
+    ).order_by(desc(MajorProject.date), desc(MajorProject.id))
+    
     data['major_projects'] = [
         {
-            'id': p.id,
-            'name': p.name,
-            'status': p.status,
-            'description': p.description
-        } for p in
-        MajorProject.query.filter(MajorProject.uid == uid,
-                                  MajorProject.date > start_of_year())]
+            "id": p.id,
+            "date": p.date,
+            "name": p.name,
+            "proj_name": p.name,
+            "tldr": p.tldr,
+            "time_spent": p.timeSpent,
+            "skills": p.skills,
+            "desc": p.description,
+            "links": list(filter(None, p.links.split("\n"))),
+            "status": p.status,
+        }
+        for p in proj_list
+    ]
 
     data['major_projects_count'] = len(data['major_projects'])
 
