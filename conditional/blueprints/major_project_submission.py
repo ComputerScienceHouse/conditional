@@ -1,11 +1,11 @@
 import json
 import os
+import botocore
 import requests
 import boto3
 
 from conditional.models.models import MajorProject, MajorProjectSkill
 from conditional.util.user_dict import user_dict_is_eval_director
-from config import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -24,10 +24,32 @@ from conditional.util.flask import render_template
 
 from conditional import db, start_of_year, get_user, auth, app
 
+import collections
+collections.Callable = collections.abc.Callable
+
 logger = structlog.get_logger()
 
 major_project_bp = Blueprint("major_project_bp", __name__)
 
+def list_files_in_folder(bucket_name, folder_prefix):
+
+    s3 = boto3.client( 
+        service_name="s3",
+        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'], 
+        aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
+        endpoint_url=app.config['S3_URI']
+    )
+     
+    try:
+        response = s3.list_objects(Bucket=bucket_name, Prefix=folder_prefix)
+        if 'Contents' in response:
+            return [obj['Key'] for obj in response['Contents']]
+        else:
+            return []
+        
+    except botocore.exceptions.ClientError as e:
+        print(f"Error listing files in the folder: {e}")
+        return []
 
 @major_project_bp.route("/major_project/")
 @auth.oidc_auth("default")
@@ -53,7 +75,14 @@ def display_major_project(user_dict=None):
         MajorProject.id == MajorProjectSkill.project_id
     ).group_by(MajorProject.id
     ).where(MajorProject.date >= start_of_year()
-    ).order_by(MajorProject.date)
+    ).order_by(desc(MajorProject.date), desc(MajorProject.id))
+
+    s3 = boto3.client( 
+            service_name="s3",
+            aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'], 
+            aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
+            endpoint_url=app.config['S3_URI']
+        )
 
     major_projects = [
         {
@@ -68,7 +97,8 @@ def display_major_project(user_dict=None):
             "desc": p.description,
             "links": list(filter(None, p.links.split("\n"))),
             "status": p.status,
-            "is_owner": bool(user_dict["username"] == p.uid)
+            "is_owner": bool(user_dict["username"] == p.uid),
+            "files": list_files_in_folder("major-project-media", f"{p.id}/")
         }
         for p in proj_list
     ]
@@ -88,7 +118,7 @@ def upload_major_project_files(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Uploading Major Project File(s)')
 
-    log.info(f"user_dict: {user_dict}")
+    # log.info(f"user_dict: {user_dict}")
 
     if len(list(request.files.keys())) <1:
         return "No file", 400
@@ -168,27 +198,23 @@ def submit_major_project(user_dict=None):
     name = name.replace("<!", "<! ")
 
     # Connect to S3 bucket
-    s3 = boto3.resource(
-        "s3", 
-        endpoint_url="https://s3.csh.rit.edu",
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
-    )
-
-    bucket = s3.create_bucket(Bucket="major-project-media")
-
+    s3 = boto3.client("s3", 
+                        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                        aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'],
+                        endpoint_url=app.config['S3_URI'])
+    
     # Collect all the locally cached files and put them in the bucket
-    for file in os.listdir(f"/tmp/{user_id}"):
-        filepath = f"/tmp/{user_id}/{file}"
+    temp_dir = f"/tmp/{user_id}"
+    if os.path.exists(temp_dir):
+        for file in os.listdir(temp_dir):
+            filepath = f"{temp_dir}/{file}"
 
-        # TODO: Remove this later
-        print(f"Filepath in S3: {filepath}")
-
-        bucket.upload_file(filepath, f"{project.id}--{file}")
-        os.remove(filepath)
+            s3.upload_file(filepath, 'major-project-media', f"{project.id}/{file}")
+            
+            os.remove(filepath)
         
-    # Delete the temp directory once all the files have been stored in S3
-    os.rmdir(f"/tmp/{user_id}")
+        # Delete the temp directory once all the files have been stored in S3
+        os.rmdir(temp_dir)
 
 
     # Send the slack ping only after we know that the data was properly saved to the DB

@@ -27,8 +27,11 @@ LDAP_BIND_DN = env.get("CONDITIONAL_LDAP_BIND_DN", "cn=conditional,ou=Apps,dc=cs
 LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
 
 # S3 information
+S3_URI = env.get("S3_URI", "")
+S3_BUCKET_ID = env.get("S3_BUCKET_ID", "")
 AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
+
 
 # Sentry config
 # Not required for local development, but if you set it, make sure the

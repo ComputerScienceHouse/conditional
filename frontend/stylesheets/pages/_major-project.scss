@@ -113,3 +113,23 @@
 .line-med {
   line-height: 1.5em;
 }
+
+.proj-img {
+  max-width: 30%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.img-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+
+.img-header {
+  margin-left: 1em;
+}
+
+.no-imgs {
+  margin-left: 0.2em;
+}
