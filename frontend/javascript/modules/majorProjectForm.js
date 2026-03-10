@@ -50,7 +50,9 @@ export default class MajorProjectForm {
 
         let skills = [];
 
-        Array.from(this.form.getElementsByClassName('skill-tag')).forEach(tag => skills.push(tag.firstChild.data))
+        for (const tag of this.form.getElementsByClassName('skill-tag')) {
+            skills.push(tag.textContent);
+        }
         
         let payload = {
             projectName: this.form.querySelector('input[name=name]').value,
