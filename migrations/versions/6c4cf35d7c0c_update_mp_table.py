@@ -1,4 +1,4 @@
-"""empty message
+"""Add new Major Project data for improved MP form
 
 Revision ID: 6c4cf35d7c0c
 Revises: f1d08673b870

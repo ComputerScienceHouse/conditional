@@ -1,4 +1,4 @@
-"""empty message
+"""Add time spent to mp table
 
 Revision ID: 95538b39976f
 Revises: 6c4cf35d7c0c
