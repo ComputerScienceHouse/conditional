@@ -34,7 +34,7 @@ export default class MajorProjectForm {
             this.tags_written = true
             document.getElementsByClassName("placeholder").item(0).remove()
         }
-        let txt = input.value.replace(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
+        let txt = input.value.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
         if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
         let skills = this.form.getElementsByClassName("skill-tag")
         skills.item(skills.length - 1).addEventListener('click', e => this.onRemoveTag(e));
