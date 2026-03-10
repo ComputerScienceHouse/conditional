@@ -28,8 +28,8 @@ OIDC_CLIENT_CONFIG = {
 An S3 bucket is used to store files that users upload (currently just for major project submissions). In order to have this work properly, you need to provide some credentials to the app.
 
 There are 2 ways that you can get the needed credentials. 
-1. Reach out to an RTP
-2. Create a bucket using [DEaDASS](https://deadass.csh.rit.edu/), and the site will give you the credentials you need. 
+1. Reach out to an RTP for creds to the dev bucket
+2. Create your own bucket using [DEaDASS](https://deadass.csh.rit.edu/), and the site will give you the credentials you need. 
 
 ```py
 S3_URI = env.get("S3_URI", "https://s3.csh.rit.edu")
