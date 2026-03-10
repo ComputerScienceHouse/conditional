@@ -24,6 +24,20 @@ OIDC_CLIENT_CONFIG = {
 }
 ```
 
+#### Add S3 Config
+An S3 bucket is used to store files that users upload (currently just for major project submissions). In order to have this work properly, you need to provide some credentials to the app.
+
+There are 2 ways that you can get the needed credentials. 
+1. Reach out to an RTP
+2. Create a bucket using [DEaDASS](https://deadass.csh.rit.edu/), and the site will give you the credentials you need. 
+
+```py
+S3_URI = env.get("S3_URI", "https://s3.csh.rit.edu")
+S3_BUCKET_ID = env.get("S3_BUCKET_ID", "major-project-media")
+AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
+```
+
 #### Database 
 You can either develop using the dev database, or use the local database provided in the docker compose file
 
