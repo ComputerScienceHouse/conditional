@@ -32,8 +32,11 @@ export default class MajorProjectForm {
         let input = document.getElementById("skill-input")
         if (!this.tags_written) {
             this.tags_written = true
-            document.getElementsByClassName("placeholder").item(0).remove()
+
+            const firstTag = document.getElementsByClassName("skill-tag").item(0);
+            if (firstTag) firstTag.remove();
         }
+        
         let txt = input.value.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
         if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
         let skills = this.form.getElementsByClassName("skill-tag")
