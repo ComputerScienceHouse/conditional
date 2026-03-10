@@ -1,6 +1,6 @@
 import boto3
 import botocore
-from flask import app
+from conditional import app
 
 
 def list_files_in_folder(bucket_name, folder_prefix):
