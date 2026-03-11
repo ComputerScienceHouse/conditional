@@ -29,5 +29,5 @@ six~=1.17.0
 SQLAlchemy~=2.0.48
 structlog~=25.5.0
 Werkzeug~=3.1.6
-wrapt~=1.17.2
+wrapt~=2.1.2
 click~=8.1
