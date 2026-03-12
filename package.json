@@ -43,7 +43,7 @@
     "@babel/preset-env": "^7.28.5",
     "babel-loader": "^10.0.0",
     "bootstrap-icons": "^1.13.1",
-    "copy-webpack-plugin": "^13.0.1",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
     "eslint-config-google": "^0.14.0",
     "expose-loader": "^5.0.1",
@@ -51,7 +51,7 @@
     "sass": "^1.93.3",
     "sass-loader": "^16.0.6",
     "style-loader": "^4.0.0",
-    "webpack": "^5.102.1",
+    "webpack": "^5.105.3",
     "webpack-cli": "^6.0.1"
   }
 }

@@ -127,26 +127,40 @@ class FreshmanSeminarAttendance(db.Model):
         self.fid = fid
         self.seminar_id = seminar_id
 
-
 class MajorProject(db.Model):
     __tablename__ = 'major_projects'
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
     uid = Column(String(32), nullable=False, index=True)
     name = Column(String(64), nullable=False)
-    description = Column(Text)
+    tldr = Column(String(128), nullable=True)
+    time_spent = Column(Text, nullable=True)
+    description = Column(Text, nullable=False)
+    links = Column(Text, nullable=True)
     active = Column(Boolean, nullable=False)
     status = Column(Enum('Pending', 'Passed', 'Failed',
                          name="major_project_enum"),
                     nullable=False)
 
-    def __init__(self, uid, name, desc):
+    def __init__(self, uid, name, tldr, time_spent, description, links): # pylint: disable=too-many-positional-arguments
         self.uid = uid
         self.date = datetime.now()
         self.name = name
-        self.description = desc
+        self.tldr = tldr
+        self.time_spent = time_spent
+        self.description = description
+        self.links = links
         self.status = 'Pending'
         self.active = True
+
+class MajorProjectSkill(db.Model):
+    __tablename__ = "major_project_skills"
+    project_id = Column(Integer, ForeignKey('major_projects.id', ondelete="cascade"), nullable=False, primary_key=True)
+    skill = Column(Text, nullable=False, primary_key=True)
+
+    def __init__(self, project_id, skill):
+        self.project_id = project_id
+        self.skill = skill
 
 
 class HouseMeeting(db.Model):

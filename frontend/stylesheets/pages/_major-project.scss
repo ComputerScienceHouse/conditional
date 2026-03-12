@@ -1,3 +1,135 @@
-.major-project-desc {
-  white-space: pre-line;
+.bg-white {
+  background-color: #fff;
+}
+
+.px-extra {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.mp-form-intro {
+  background-color: #fff;
+  box-shadow: 1px 1px 2px grey;
+  padding: 1em;
+  padding-bottom: 0.25em;
+  margin-bottom: 2em;
+}
+
+.mp-form {
+  background-color: #fff;
+  box-shadow: 1px 1px 2px grey;
+  margin-bottom: 2em;
+  padding: 1em;
+}
+
+.form-control {
+  margin-bottom: 1em;
+}
+.form-label {
+  margin-top: 1.25rem;
+  font-size: 2rem;
+}
+
+.form-label span {
+  font-size: 1rem;
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-skilltags {
+  box-shadow: inset 0 -1px 0 #ddd;
+  border: none;
+  border-radius: 0;
+  padding: 0 0 10px;
+  height: fit-content;
+}
+
+.mb-extra {
+  margin-bottom: 2em;
+}
+
+.proj-listing {
+  background-color: #fff;
+  box-shadow: 1px 1px 2px grey;
+}
+
+.rounded-circle {
+  border-radius: 50%;
+}
+
+.placeholder {
+  color: #bbb;
+  font-size: 16px;
+}
+
+.skill-tag {
+  display: block;
+  float: left;
+  background: #b0197e;
+  padding: 4px 30px 4px 8px;
+  margin: 2px 3px;
+  color: #fff;
+  border-radius: 5px;
+  transition: .5s all;
+}
+
+.skill-tag:after {
+  position: absolute;
+  content: "×";
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 0 4px;
+  margin: 3px 0 10px 7px;
+  font-size: 10px;
+}
+
+.skill-display {
+  display: block;
+  float: left;
+  background: #b0197e;
+  padding: 4px 8px 4px 8px;
+  margin: 2px 3px;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 5px;
+  transition: .5s all;
+}
+
+.skill-tag:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.skill-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.line-short {
+  line-height: 0.5em;
+}
+
+.line-med {
+  line-height: 1.5em;
+}
+
+.proj-img {
+  max-width: 30%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.img-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+
+.img-header {
+  margin-left: 1em;
+}
+
+.no-imgs {
+  margin-left: 0.2em;
 }
