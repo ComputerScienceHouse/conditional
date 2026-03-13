@@ -174,7 +174,7 @@ def submit_major_project(user_dict=None):
                 f" submitted their major project, *{name}*!"
             }
         )
-    
+
 
     return jsonify({"success": True}), 200
 
