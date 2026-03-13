@@ -133,3 +133,10 @@
 .no-imgs {
   margin-left: 0.2em;
 }
+
+label:has(+ input:required):after,
+label:has(+ textarea:required):after,
+label:has(+ div input[name="skill"]:required)::after {
+  content: ' *';
+  color: red;
+}
