@@ -165,12 +165,16 @@ def submit_major_project(user_dict=None):
 
 
     # Send the slack ping only after we know that the data was properly saved to the DB
-    send_slack_ping(
-        {
-            "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
-            f" submitted their major project, *{name}*!"
-        }
-    )
+    if app.config['DEV_DISABLE_SLACK_PING']:
+        log.info("Slack ping skipped due to environment override")
+    else:
+        send_slack_ping(
+            {
+                "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
+                f" submitted their major project, *{name}*!"
+            }
+        )
+    
 
     return jsonify({"success": True}), 200
 
