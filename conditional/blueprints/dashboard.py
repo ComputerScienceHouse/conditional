@@ -2,7 +2,7 @@ import structlog
 from flask import Blueprint, request
 
 from conditional import start_of_year, auth
-from conditional.models.models import Conditional
+from conditional.models.models import Conditional, MajorProject
 from conditional.models.models import HouseMeeting
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
@@ -82,8 +82,6 @@ def display_dashboard(user_dict=None):
 
     data['housing'] = housing
 
-    proj_list = get_project_list()
-
     data['major_projects'] = [
         {
             "id": p.id,
@@ -97,7 +95,7 @@ def display_dashboard(user_dict=None):
             "links": list(filter(None, p.links.split("\n"))),
             "status": p.status,
         }
-        for p in proj_list
+        for p in get_project_list().filter(MajorProject.uid == uid)
     ]
 
     data['major_projects_count'] = len(data['major_projects'])
