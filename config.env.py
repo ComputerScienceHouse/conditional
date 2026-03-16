@@ -15,6 +15,7 @@ APP_NAME = "conditional"
 IP = env.get("CONDITIONAL_IP", "0.0.0.0")
 PORT = env.get("CONDITIONAL_PORT", 6969)
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
+DEV_DISABLE_SLACK_PING = env.get("DEV_DISABLE_SLACK_PING", "false") == "true"
 PROFILING = env.get("CONDITIONAL_PROFILING", "false").lower() == "true"
 
 # DB Info
