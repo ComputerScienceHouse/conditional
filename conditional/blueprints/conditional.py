@@ -7,6 +7,7 @@ from conditional import db, auth
 from conditional.models.models import Conditional, SpringEval, FreshmanEvalData
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
+from conditional.util.ldap import ldap_get_member, ldap_set_housingpoints
 from conditional.util.user_dict import user_dict_is_eval_director
 
 conditionals_bp = Blueprint('conditionals_bp', __name__)
@@ -88,9 +89,11 @@ def conditional_review(user_dict=None):
     cid = post_data['id']
     status = post_data['status']
 
+    print(post_data)
     log.info(f'Updated conditional-{cid} to {status}')
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
+    uid = cond_obj.uid
 
     conditional.update(
         {
@@ -101,6 +104,12 @@ def conditional_review(user_dict=None):
             {
                 'status': status
             })
+
+        if status == 'Passed':
+            account = ldap_get_member(uid)
+            hp = account.housingPoints
+            ldap_set_housingpoints(account, hp + 2)
+
     elif cond_obj.i_evaluation:
         FreshmanEvalData.query.filter(FreshmanEvalData.id == cond_obj.i_evaluation).update(
             {

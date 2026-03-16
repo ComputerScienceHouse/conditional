@@ -137,7 +137,7 @@ def slideshow_spring_review(user_dict=None):
     if status == "Passed":
         if ldap_is_intromember(account):
             ldap_set_not_intro_member(account)
-        
+
         hp = account.housingPoints
         ldap_set_housingpoints(account, hp + 2)
     elif status == "Failed":
