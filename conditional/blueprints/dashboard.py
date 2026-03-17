@@ -92,7 +92,7 @@ def display_dashboard(user_dict=None):
             "time_spent": p.time_spent,
             "skills": p.skills,
             "desc": p.description,
-            "links": list(filter(None, p.links.split("\n"))),
+            "links": [] if p.links is None else list(filter(None, p.links.split("\n"))),
             "status": p.status,
         }
         for p in get_project_list().filter(MajorProject.uid == uid)
