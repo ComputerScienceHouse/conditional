@@ -53,7 +53,7 @@ def display_major_project(user_dict=None):
             "time_spent": p.time_spent,
             "skills": p.skills,
             "desc": p.description,
-            "links": list(filter(None, p.links.split("\n"))),
+            "links": [] if p.links is None else list(filter(None, p.links.split("\n"))),
             "status": p.status,
             "is_owner": bool(user_dict["username"] == p.uid),
             "files": list_files_in_folder(bucket, f"{p.id}/")
