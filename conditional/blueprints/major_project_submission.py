@@ -157,7 +157,9 @@ def submit_major_project(user_dict=None):
         for file in os.listdir(temp_dir):
             filepath = f"{temp_dir}/{file}"
 
-            s3.upload_file(filepath, app.config['S3_BUCKET_ID'], f"{project.id}/{file}")
+            s3.upload_file(filepath, app.config['S3_BUCKET_ID'], f"{project.id}/{file}", {
+                'ExpectedBucketOwner': app.config['S3_BUCKET_ID']
+            })
 
             os.remove(filepath)
 
