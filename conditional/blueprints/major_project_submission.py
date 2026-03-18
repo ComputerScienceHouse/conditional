@@ -65,6 +65,7 @@ def display_major_project(user_dict=None):
     return render_template(
         "major_project_submission.html",
         major_projects=major_projects,
+        bucket_name=bucket,
         major_projects_len=len(major_projects),
         username=user_dict["username"])
 
@@ -156,12 +157,17 @@ def submit_major_project(user_dict=None):
         for file in os.listdir(temp_dir):
             filepath = f"{temp_dir}/{file}"
 
-            s3.upload_file(filepath, 'major-project-media', f"{project.id}/{file}")
+            s3.upload_file(filepath, app.config['S3_BUCKET_ID'], f"{project.id}/{file}", ExtraArgs={
+                'ExpectedBucketOwner': app.config['S3_BUCKET_ID']
+            })
 
             os.remove(filepath)
 
         # Delete the temp directory once all the files have been stored in S3
         os.rmdir(temp_dir)
+    else:
+        log.error("Could not create temp directory for uploading files")
+        return jsonify({"success": False}), 500
 
 
     # Send the slack ping only after we know that the data was properly saved to the DB
