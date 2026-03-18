@@ -165,9 +165,6 @@ def submit_major_project(user_dict=None):
 
         # Delete the temp directory once all the files have been stored in S3
         os.rmdir(temp_dir)
-    else:
-        log.error("Could not create temp directory for uploading files")
-        return jsonify({"success": False}), 500
 
 
     # Send the slack ping only after we know that the data was properly saved to the DB
