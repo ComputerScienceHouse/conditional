@@ -188,7 +188,7 @@ def submit_major_project(user_dict=None):
 def major_project_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not user_dict_is_eval_director(user_dict["account"]):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -197,7 +197,6 @@ def major_project_review(user_dict=None):
 
     log.info(f"{status} Major Project ID: {pid}")
 
-    print(post_data)
     MajorProject.query.filter(MajorProject.id == pid).update({"status": status})
 
     db.session.flush()
