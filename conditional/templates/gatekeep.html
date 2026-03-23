@@ -161,14 +161,14 @@ Gatekeep Results
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}} / {{ req_meetings }}
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-sort="{{ m['technical_seminars'] }}">
                             {% if m['technical_seminars'] < req_seminars %}
                                 <i class="bi bi-x-circle-fill red eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
                             {% else %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
                             {% endif %}
                         </td>
-						<td data-sort="{{ m['house_meetings_missed']|length }}">
+                        <td data-sort="{{ m['house_meetings_missed']|length }}">
                             {% if m['house_meetings_missed']|length <= 1 %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
                             {% else %}
