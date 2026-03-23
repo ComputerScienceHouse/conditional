@@ -16,7 +16,7 @@ COPY frontend /opt/conditional/frontend
 
 RUN npm run webpack
 
-FROM docker.io/python:3.12-slim-bookworm
+FROM astral/uv:python3.12-bookworm-slim
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 WORKDIR /opt/conditional
@@ -24,9 +24,9 @@ WORKDIR /opt/conditional
 COPY requirements.txt /opt/conditional
 
 RUN apt-get -yq update && \
-    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make && \
-    pip install -r requirements.txt && \
-    apt-get -yq clean all
+    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make
+RUN uv pip install --system -r requirements.txt
+RUN apt-get -yq clean all
 
 ARG PORT=8080
 ENV PORT=${PORT}
