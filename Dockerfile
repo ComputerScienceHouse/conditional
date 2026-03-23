@@ -1,11 +1,11 @@
 FROM node:25-bookworm-slim AS build-frontend
 
-RUN mkdir /opt/conditional
+RUN mkdir /opt/conditional 
 
 WORKDIR /opt/conditional
 
 RUN apt-get -yq update && \
-    apt-get -yq install curl git
+    apt-get -yq install curl git 
 
 COPY package.json package-lock.json /opt/conditional/
 
@@ -14,19 +14,20 @@ RUN npm ci
 COPY webpack.config.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
-RUN npm run webpack
+RUN npm run webpack 
 
 FROM astral/uv:python3.12-bookworm-slim
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 WORKDIR /opt/conditional
 
+RUN apt-get -yq update && \
+    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make 
+
 COPY requirements.txt /opt/conditional
 
-RUN apt-get -yq update && \
-    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make
-RUN uv pip install --system -r requirements.txt
-RUN apt-get -yq clean all
+RUN uv pip install --system -r requirements.txt && \
+    apt-get -yq clean all 
 
 ARG PORT=8080
 ENV PORT=${PORT}
