@@ -22,7 +22,7 @@ MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 WORKDIR /opt/conditional
 
 RUN apt-get -yq update && \
-    apt-get -yq install libldap2-dev libldap-common libsasl2-dev libssl-dev gcc g++ make  && \
+    apt-get -yq install gcc g++ libldap2-dev libldap-common libsasl2-dev libssl-dev make  && \
     apt-get -yq clean all 
 
 COPY requirements.txt /opt/conditional
