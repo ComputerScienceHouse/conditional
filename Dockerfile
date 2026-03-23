@@ -22,12 +22,12 @@ MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 WORKDIR /opt/conditional
 
 RUN apt-get -yq update && \
-    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make 
+    apt-get -yq install libldap2-dev libldap-common libsasl2-dev libssl-dev gcc g++ make  && \
+    apt-get -yq clean all 
 
 COPY requirements.txt /opt/conditional
 
-RUN uv pip install --system -r requirements.txt && \
-    apt-get -yq clean all 
+RUN uv pip install --system -r requirements.txt 
 
 ARG PORT=8080
 ENV PORT=${PORT}
