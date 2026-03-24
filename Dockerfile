@@ -1,11 +1,8 @@
-FROM node:25-bookworm-slim AS build-frontend
+FROM node:25-trixie-slim AS build-frontend
 
 RUN mkdir /opt/conditional 
 
 WORKDIR /opt/conditional
-
-RUN apt-get -yq update && \
-    apt-get -yq install curl git 
 
 COPY package.json package-lock.json /opt/conditional/
 
@@ -16,7 +13,7 @@ COPY frontend /opt/conditional/frontend
 
 RUN npm run webpack 
 
-FROM astral/uv:python3.12-bookworm-slim
+FROM astral/uv:python3.13-trixie-slim
 MAINTAINER Computer Science House <webmaster@csh.rit.edu>
 
 WORKDIR /opt/conditional
