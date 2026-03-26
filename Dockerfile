@@ -6,7 +6,7 @@ WORKDIR /opt/conditional
 
 COPY package.json package-lock.json /opt/conditional/
 
-RUN npm ci 
+RUN npm ci --ignore-scripts
 
 COPY webpack.config.js /opt/conditional
 COPY frontend /opt/conditional/frontend
