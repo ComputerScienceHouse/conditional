@@ -6,14 +6,14 @@ WORKDIR /opt/conditional
 
 COPY package.json package-lock.json /opt/conditional/
 
-RUN npm ci 
+RUN npm ci --ignore-scripts
 
 COPY webpack.config.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
 RUN npm run webpack 
 
-FROM astral/uv:python3.13-trixie-slim
+FROM docker.io/astral/uv:python3.13-trixie-slim
 LABEL maintainer="Computer Science House <webmaster@csh.rit.edu>"
 
 WORKDIR /opt/conditional
