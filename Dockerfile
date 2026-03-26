@@ -1,11 +1,8 @@
-FROM node:25-bookworm-slim AS build-frontend
+FROM node:25-trixie-slim AS build-frontend
 
-RUN mkdir /opt/conditional
+RUN mkdir /opt/conditional 
 
 WORKDIR /opt/conditional
-
-RUN apt-get -yq update && \
-    apt-get -yq install curl git
 
 COPY package.json package-lock.json /opt/conditional/
 
@@ -14,19 +11,20 @@ RUN npm ci
 COPY webpack.config.js /opt/conditional
 COPY frontend /opt/conditional/frontend
 
-RUN npm run webpack
+RUN npm run webpack 
 
-FROM docker.io/python:3.12-slim-bookworm
-MAINTAINER Computer Science House <webmaster@csh.rit.edu>
+FROM astral/uv:python3.13-trixie-slim
+LABEL maintainer="Computer Science House <webmaster@csh.rit.edu>"
 
 WORKDIR /opt/conditional
 
+RUN apt-get -yq update && \
+    apt-get -yq --no-install-recommends install g++ gcc libldap-common libldap2-dev libsasl2-dev libssl-dev make && \
+    apt-get -yq clean all 
+
 COPY requirements.txt /opt/conditional
 
-RUN apt-get -yq update && \
-    apt-get -yq install libsasl2-dev libldap2-dev libldap-common libssl-dev gcc g++ make && \
-    pip install -r requirements.txt && \
-    apt-get -yq clean all
+RUN uv pip install --system -r requirements.txt 
 
 ARG PORT=8080
 ENV PORT=${PORT}
