@@ -13,7 +13,7 @@ COPY frontend /opt/conditional/frontend
 
 RUN npm run webpack 
 
-FROM astral/uv:python3.13-trixie-slim
+FROM docker.io/astral/uv:python3.13-trixie-slim
 LABEL maintainer="Computer Science House <webmaster@csh.rit.edu>"
 
 WORKDIR /opt/conditional
