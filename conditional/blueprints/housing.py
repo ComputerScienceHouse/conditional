@@ -1,4 +1,3 @@
-from conditional.util.user_dict import user_dict_is_eval_director
 import structlog
 from flask import Blueprint, request, jsonify
 
@@ -14,6 +13,7 @@ from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_set_active
+from conditional.util.user_dict import user_dict_is_eval_director
 
 logger = structlog.get_logger()
 
