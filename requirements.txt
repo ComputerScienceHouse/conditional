@@ -4,7 +4,7 @@
 #
 #    pip-compile --cert=None --client-cert=None --index-url=None --pip-args=None requirements.in
 #
-alembic==1.15.2
+alembic==1.18.4
     # via
     #   -r requirements.in
     #   flask-migrate
