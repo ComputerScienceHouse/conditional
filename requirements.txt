@@ -133,7 +133,7 @@ packaging==26.0
     #   build
     #   gunicorn
     #   wheel
-pip-tools==7.4.1
+pip-tools==7.5.3
     # via -r requirements.in
 platformdirs==4.9.2
     # via pylint
