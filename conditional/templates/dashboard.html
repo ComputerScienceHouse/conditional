@@ -269,53 +269,60 @@ Dashboard
                 <ul class="list-group list-group-flush">
                     {% for p in major_projects %}
                     <li class="list-group-item">
-                        {% if p['status'] == "Passed" %}
-                        <div class="title">
-                            <h5>
-                                <i class="bi bi-check-circle-fill green"></i> {{p['name']}}
+                        <div class="title d-flex mb-2">
+                            <h5 class="my-1">
+                                {% if p['status'] == "Passed" %}
+                                <i class="bi bi-check-circle-fill green"></i>
+                                {% elif p['status'] == "Pending" %}
+                                <i class="bi bi-hourglass-split yellow"></i>
+                                {% else %}
+                                <i class="bi bi-dash-circle red"></i>
+                                {% endif %}
+                                <span class="ms-1">
+                                    {{ p['name'] }}
+                                </span>
                             </h5>
-                        </div>
-                        {% elif p['status'] == "Pending" %}
-                        <div class="title d-flex justify-content-center">
-                            <h5 class="mb-0">
-                                <i class="bi bi-hourglass-split yellow"></i> {{p['name']}}
-                            </h5>
+
+                            {% if p['status'] == 'Pending' %}
                             <button class="btn btn-sm btn-danger ms-auto" data-module="majorProjectStatus" data-id="{{p['id']}}">
                                 <i class="bi bi-trash3"></i>
                                 Delete
                             </button>
+                            {% endif %}
                         </div>
-                        {% else %}
-                        <div class="title">
-                            <h5>
-                                <i class="bi bi-dash-circle red"></i> {{p['name']}}
-                            </h5>
-                        </div>
-                        {% endif %}
-                        <div class="col mp-tldr">
-                            <h6 class="mb-0 section-header">TLDR</h6> 
+                        <div class="col">
+                            <h6 class="mb-0">TLDR</h6> 
                             
-                            <p>{{p['tldr']}}</p>
+                            <p>
+                                {{ p['tldr'] }}
+                            </p>
                         </div>
                         
-                        <div class="col mp-time">
-                            <h6 class="mb-0 section-header">Time Spent</h6>
+                        <div class="row">
+                            <div class="col-4">
+                                <h6 class="mb-0">Time Spent</h6>
+                                
+                                <p>
+                                    {{ p['time_spent'] }}
+                                </p>
+                            </div>
                             
-                            <p>{{p['time_spent']}}</p>
-                        </div>
-                        
-                        <div class="col mp-skills">
-                            <h6 class="mb-0 section-header">Skills Applied</h6>
-                            
-                            <div class="skill-group">
-                                {% for s in p['skills'] %}
-                                <span class="badge text-bg-primary">{{s}}</span>
-                                {% endfor %}
+                            <div class="col">
+                                <h6 class="mb-0">Skills Applied</h6>
+                                
+                                <div class="skill-group">
+                                    {% for skill in p['skills'] %}
+                                    <span class="badge text-bg-primary">
+                                        {{ skill }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="col mp-links">
-                            <strong class="h6 section-header">Links</strong>
+                        {% if p['links'] | length > 0 %}
+                        <div class="col">
+                            <h6 class="mb-1">Links</h6>
                             
                             {% for l in p['links'] %}
                             {% set href = l %}
@@ -325,10 +332,14 @@ Dashboard
                             <p><a href="{{ href }}">{{ href }}</a></p>
                             {% endfor %}
                         </div>
-                        <div class="col mp-description">
-                            <strong class="h6 section-header">Description</strong>
+                        {% endif %}
+
+                        <div class="col">
+                            <h6 class="mb-1">Description</h6>
                             
-                            <p>{{p['desc']}}</p>
+                            <p class="mb-1">
+                                {{p['desc']}}
+                            </p>
                         </div>
                     </li>
                     {% endfor %}
