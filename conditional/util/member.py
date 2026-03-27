@@ -158,15 +158,15 @@ def req_cm(uid, members_on_coop=None):
             CurrentCoops.date_created > start_of_year()).first()
         if co_op:
             on_coop = True
-            
+
     spring_semester_start = datetime(start_of_year().year + 1, 1, 1)
-    
+
     is_spring_intro = FreshmanEvalData.query.filter(
         FreshmanEvalData.uid == uid,
         FreshmanEvalData.freshman_eval_result == "Passed",
         FreshmanEvalData.eval_date >= spring_semester_start
     ).first() is not None
-    
+
     if on_coop or is_spring_intro:
         return 15
     return 30
