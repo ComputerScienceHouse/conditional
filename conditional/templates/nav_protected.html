@@ -1,108 +1,209 @@
 {% extends "base_protected.html" %}
 {% block nav %}
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+<nav class="navbar navbar-expand-lg bg-primary navbar-fixed-top">
+    <div class="container-lg">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+            <a class="navbar-brand fs-4" href="/dashboard">
+                <img class="object-fit-contain ms-2 me-2" height="32"
+                    src="https://assets.csh.rit.edu/pubsite/csh_logo_square.svg">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation"> 
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="/dashboard"></a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-bar-chart-fill"></i> Evals <span class="caret"></span></a>
+        <div id="navbar" class="navbar-collapse collapse text-light">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown mx-2">
+                    <a href="#" class="dropdown-toggle nav-link link-body-emphasis" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="bi bi-bar-chart-fill"></i> Evals
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/intro_evals"><i class="bi bi-star-fill"></i> Introductory Evaluations</a></li>
-                        <li><a href="/spring_evals"><i class="bi bi-tree-fill"></i> Membership Evaluations</a></li>
-                        <li><a href="/gatekeep_status"><i class="bi-house-lock-fill"></i> Gatekeep</a></li>
-                        <li><a href="/conditionals"><i class="bi bi-exclamation-circle"></i> Current Conditionals</a></li>
+                        <li>
+                            <a href="/intro_evals" class="dropdown-item">
+                                <i class="bi bi-star-fill"></i> Introductory Evaluations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/spring_evals" class="dropdown-item">
+                                <i class="bi bi-tree-fill"></i> Membership Evaluations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/gatekeep_status" class="dropdown-item">
+                                <i class="bi-house-lock-fill"></i> Gatekeep
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/conditionals" class="dropdown-item">
+                                <i class="bi bi-exclamation-circle"></i> Current Conditionals
+                            </a>
+                        </li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-list-ul"></i> Forms <span class="caret"></span></a>
+                <li class="nav-item dropdown mx-2">
+                    <a href="#" class="dropdown-toggle nav-link link-body-emphasis" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="bi bi-list-ul"></i> Forms
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/major_project"><i class="bi bi-star-fill"></i> Major Project</a></li>
+                        <li>
+                            <a href="/major_project" class="dropdown-item">
+                                <i class="bi bi-star-fill"></i> Major Project
+                            </a>
+                        </li>
                         {% if check_current_student(username) %}
-                        <li><a href="/co_op"><i class="bi bi-briefcase-fill"></i> Co-Op Submission</a></li>
+                        <li>
+                            <a href="/co_op" class="dropdown-item">
+                                <i class="bi bi-briefcase-fill"></i> Co-Op Submission 
+                            </a>
+                        </li>
                         {% endif %}
                         {% if is_intromember %}
-                        <li><a href="/intro_evals_form"><i class="bi bi-card-text"></i> Introductory Evaluations</a></li>
+                        <li>
+                            <a href="/intro_evals_form" class="dropdown-item">
+                                <i class="bi bi-card-text"></i> Introductory Evaluations
+                            </a>
+                        </li>
                         {% endif %}
                     </ul>
                 </li>
 
-                <li><a href="/housing"><i class="bi bi-house-door-fill"></i> Housing</a></li>
+                <li class="nav-item mx-2">
+                    <a href="/housing" class="nav-link link-body-emphasis">
+                        <i class="bi bi-house-door-fill"></i> Housing
+                    </a>
+                </li>
 
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-check2"></i> Attendance
-                    {% if is_eboard and pending_review != 0 %}
-                    ({{pending_review}})
-                    {% endif %}
-                    <span class="caret"></span></a>
+                <li class="nav-item dropdown mx-2">
+                    <a href="#" class="dropdown-toggle nav-link link-body-emphasis" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="bi bi-check2"></i> Attendance
+                        {% if is_eboard and pending_review != 0 %}
+                            ({{pending_review}})
+                        {% endif %}
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/attendance_cm"><i class="bi bi-person-fill"></i> Directorship Meeting </a></li>
-                        <li><a href="/attendance_ts"><i class="bi bi-card-text"></i> Technical Seminar</a></li>
+                        <li>
+                            <a href="/attendance_cm" class="dropdown-item">
+                                <i class="bi bi-person-fill"></i> Directorship Meeting 
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/attendance_ts" class="dropdown-item">
+                                <i class="bi bi-card-text"></i> Technical Seminar
+                            </a>
+                        </li>
                         {% if is_eboard %}
-                        <li><a href="/attendance/history"><i class="bi bi-calendar2-check"></i> Attendance History</a></li>
+                        <li>
+                            <a href="/attendance/history" class="dropdown-item">
+                                <i class="bi bi-calendar2-check"></i> Attendance History
+                            </a>
+                        </li>
                         {% endif %}
                         {% if is_eval_director %}
-                        <li><a href="/attendance_hm"><i class="bi bi-house-door-fill"></i> House Meeting</a></li>
+                        <li>
+                            <a href="/attendance_hm" class="dropdown-item">
+                                <i class="bi bi-house-door-fill"></i> House Meeting
+                            </a>
+                        </li>
                         {% endif %}
                     </ul>
                 </li>
 
                 {% if is_eboard or is_rtp%}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="bi bi-wrench"></i> Admin<span class="caret"></span></a>
+                <li class="nav-item dropdown mx-2">
+                    <a href="#" class="dropdown-toggle nav-link link-body-emphasis" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="bi bi-wrench"></i> Admin
+                    </a>
                     <ul class="dropdown-menu">
-
                         {% if is_financial_director or is_eval_director %}
-                            <li><a href="/manage"><i class="bi bi-person-fill"></i> Member Management</a></li>
+                        <li>
+                            <a href="/manage" class="dropdown-item">
+                                <i class="bi bi-person-fill"></i> Member Management
+                            </a>
+                        </li>
                         {% endif %}
 
                         {% if is_eval_director %}
-                            <li><a href="/co_op/manage"><i class="bi bi-briefcase-fill"></i> Co-Op Management</a></li>
-                            <li><a href="/slideshow/intro"><i class="bi bi-eye-fill"></i> Introductory Evaluations Presentation</a></li>
-                            <li><a href="/slideshow/spring"><i class="bi bi-eye-fill"></i> Membership Evaluations Presentation</a></li>
+                        <li>
+                            <a href="/co_op/manage" class="dropdown-item">
+                                <i class="bi bi-briefcase-fill"></i> Co-Op Management
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/slideshow/intro" class="dropdown-item">
+                                <i class="bi bi-eye-fill"></i> Introductory Evaluations Presentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/slideshow/spring" class="dropdown-item">
+                                <i class="bi bi-eye-fill"></i> Membership Evaluations Presentation
+                            </a>
+                        </li>
                         {% endif %}
 
-                        <li><a href="/logs"><i class="bi bi-list-ul"></i> User Logs</a></li>
+                        <li>
+                            <a href="/logs" class="dropdown-item">
+                                <i class="bi bi-list-ul"></i> User Logs
+                            </a>
+                        </li>
 
                         {% if is_eval_director or is_rtp %}
-                            <li><a href="/clearcache"><i class="bi bi-database-fill-x"></i> Clear Cache</a></li>
+                        <li>
+                            <a href="/clearcache" class="dropdown-item">
+                                <i class="bi bi-database-fill-x"></i> Clear Cache
+                            </a>
+                        </li>
                         {% endif %}
 
                         {% if is_rtp %}
-                            <li><a href="/restart"><i class="bi bi-arrow-repeat"></i> Restart Conditional</a></li>
+                        <li>
+                            <a href="/restart" class="dropdown-item">
+                                <i class="bi bi-arrow-repeat"></i> Restart Conditional
+                            </a>
+                        </li>
                         {% endif %}
                     </ul>
                 </li>
 
                 {% endif %}
 
-
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown navbar-user">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <img src="https://profiles.csh.rit.edu/image/{{username}}">
+            <div class="nav navbar-nav ms-auto">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle nav-link link-body-emphasis" data-bs-toggle="dropdown" role="button" aria-expanded="false">
                         {{username}}
+                        <img src="https://profiles.csh.rit.edu/image/{{username}}" class="rounded-circle" width="30px" height="30px">
                         <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/dashboard"><i class="bi bi-display"></i> Dashboard</a></li>
-                        <li><a href="https://profiles.csh.rit.edu/user/{{username}}"><i class="bi bi-person-fill"></i> Profiles</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="https://members.csh.rit.edu/"><i class="bi bi-display"></i> Members Portal</a></li>
-                        <li><a href="https://github.com/ComputerScienceHouse/conditional/issues"><i class="bi bi-exclamation-circle"></i> Report an Issue</a></li>
-                        <li><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    <ul class="dropdown-menu text-small">
+                        <li>
+                            <a href="/dashboard" class="dropdown-item">
+                                <i class="bi bi-display"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://profiles.csh.rit.edu/user/{{username}}" class="dropdown-item">
+                                <i class="bi bi-person-fill"></i> Profiles
+                            </a>
+                        </li>
+                        <li class="divider" role="separator"></li>
+                        <li>
+                            <a href="https://members.csh.rit.edu/" class="dropdown-item">
+                                <i class="bi bi-display"></i> Members Portal
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/ComputerScienceHouse/conditional/issues" class="dropdown-item">
+                                <i class="bi bi-exclamation-circle"></i> Report an Issue
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/logout" class="dropdown-item">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </li>
                     </ul>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </div>
 </nav>

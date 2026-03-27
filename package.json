@@ -23,11 +23,9 @@
   "dependencies": {
     "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
-    "bootstrap": "^3.4.1",
     "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
-    "bootstrap-sass": "^3.4.1",
     "bootstrap-sweetalert": "^1.0.1",
-    "csh-material-bootstrap": "1.0.0",
+    "csh-material-bootstrap": "https://github.com/ComputerScienceHouse/csh-material-bootstrap.git#bootstrap-5",
     "datatables.net-bs": "^2.3.7",
     "dropzone": "^5.9.3",
     "enumify": "^2.0.0",

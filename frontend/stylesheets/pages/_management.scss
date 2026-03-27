@@ -125,23 +125,6 @@
   padding-top: 0;
 }
 
-.dropdown-list-item {
-  display: block;
-  clear: both;
-  padding: 3px 20px;
-  line-height: 1.846;
-  white-space: nowrap;
-  color: #666;
-  font-weight: 400;
-
-  :focus,
-  :hover {
-    background-color: #eee;
-    text-decoration: none;
-    color: #141414;
-  }
-}
-
 .btn-mp {
   float: right;
   margin-top: 20px;
