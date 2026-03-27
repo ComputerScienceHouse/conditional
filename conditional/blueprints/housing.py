@@ -13,6 +13,7 @@ from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_set_active
+from conditional.util.user_dict import user_dict_is_eval_director
 
 logger = structlog.get_logger()
 
@@ -56,7 +57,7 @@ def display_housing(user_dict=None):
     # return names in 'first last (username)' format
     return render_template('housing.html',
                            username=user_dict['username'],
-                           queue=get_housing_queue(ldap_is_eval_director(user_dict['account'])),
+                           queue=get_housing_queue(user_dict_is_eval_director(user_dict)),
                            housing=housing,
                            room_list=sorted(list(room_list)))
 
@@ -67,7 +68,7 @@ def display_housing(user_dict=None):
 def change_queue_state(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     post_data = request.get_json()
@@ -95,7 +96,7 @@ def change_room_numbers(rmnumber, user_dict=None):
 
     update = request.get_json()
 
-    if not ldap_is_eval_director(user_dict['account']):
+    if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
     # Get the current list of people living on-floor.
