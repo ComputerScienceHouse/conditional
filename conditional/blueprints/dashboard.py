@@ -51,9 +51,9 @@ def display_dashboard(user_dict=None):
                             "Active Members": len(get_active_members())}
     # freshman shit
     if user_dict_is_intromember(user_dict):
-        data['freshman'] = get_freshman_data(uid)
+        data['intro'] = get_freshman_data(uid)
     else:
-        data['freshman'] = None
+        data['intro'] = None
 
     spring = {}
     c_meetings = get_cm(user_dict['account'])

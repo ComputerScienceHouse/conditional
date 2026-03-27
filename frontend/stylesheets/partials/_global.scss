@@ -8,19 +8,19 @@
   padding-bottom: 10px;
 }
 
-.table-fill {
-  padding: 0;
-
-  td,
-  th {
-    &:first-of-type {
-      padding-left: 15px !important;
-    }
-    &:last-of-type {
-      padding-right: 15px !important;
-    }
-  }
-}
+// .table-fill {
+//   padding: 0;
+//
+//   td,
+//   th {
+//     &:first-of-type {
+//       padding-left: 15px !important;
+//     }
+//     &:last-of-type {
+//       padding-right: 15px !important;
+//     }
+//   }
+// }
 
 .no-bottom-margin {
   margin-bottom: 0;
