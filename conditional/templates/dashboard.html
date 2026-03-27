@@ -206,42 +206,42 @@ Dashboard
                     </table>
                 </div>
             </div>
-{% endif %}
-{% if conditionals_len != 0 %}
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h5 class="panel-title">Conditionals</h5>
-    </div>
-    <div class="panel-body table-fill">
-        <div class="table-responsive">
-            <table class="table table-striped no-bottom-margin">
-                <tbody>
-                    <tr>
-                        <th>Date Assigned</th>
-                        <th>Date Due</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                    </tr>
-                    {% for c in conditionals %}
-                    <tr>
-                        <td>{{c['date_created']}}</td>
-                        <td>{{c['date_due']}}</td>
-                        <td>{{c['description']}}</td>
-                        <td>
-                            {% if c['status'] == "Passed" %}
-                            <i style="padding-left:15px; padding-top:15px;" class="bi bi-check-circle-fill green"></i> {% elif c['status'] == "Pending" %}
-                            <i class="bi bi-hourglass-split yellow"></i> <span class="mobile-hide">Pending</span> {% else %}
-                            <i class="bi bi-x-circle-fill red"></i> <span class="mobile-hide">Failed</span> {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-        </div>
-    </div>
-</div>
-{% endif %}
+            {% endif %}
+            {% if conditionals_len != 0 %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Conditionals</h5>
+                </div>
+                <div class="panel-body table-fill">
+                    <div class="table-responsive">
+                        <table class="table table-striped no-bottom-margin">
+                            <tbody>
+                                <tr>
+                                    <th>Date Assigned</th>
+                                    <th>Date Due</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                                {% for c in conditionals %}
+                                <tr>
+                                    <td>{{c['date_created']}}</td>
+                                    <td>{{c['date_due']}}</td>
+                                    <td>{{c['description']}}</td>
+                                    <td>
+                                        {% if c['status'] == "Passed" %}
+                                        <i style="padding-left:15px; padding-top:15px;" class="bi bi-check-circle-fill green"></i> {% elif c['status'] == "Pending" %}
+                                        <i class="bi bi-hourglass-split yellow"></i> <span class="mobile-hide">Pending</span> {% else %}
+                                        <i class="bi bi-x-circle-fill red"></i> <span class="mobile-hide">Failed</span> {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
 
 <div class="panel panel-default">
