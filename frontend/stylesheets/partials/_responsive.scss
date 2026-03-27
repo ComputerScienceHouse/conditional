@@ -1,37 +1,37 @@
-@media(max-width: 767px) {
-  .mobile-hide {
-    display: none;
-  }
-  .dashboard-user {
-    text-align: center;
-
-    .profile-image {
-      margin: default;
-    }
-  }
-  hr {
-    margin-top: 25px;
-  }
-}
-
-@media(min-width: 768px) {
-  hr {
-    margin-top: 10px;
-  }
-}
-
-@media(max-width: 767px) {
-  .eval-name,
-  .eval-uid {
-    text-align: center;
-  }
-}
-
-@media(min-width: 991px) {
-  .intro-info {
-    padding: 0 50px 0 0;
-  }
-  .spring-info {
-    padding: 10px 50px 0 0;
-  }
-}
+// @media(max-width: 767px) {
+//   .mobile-hide {
+//     display: none;
+//   }
+//   .dashboard-user {
+//     text-align: center;
+//
+//     .profile-image {
+//       margin: default;
+//     }
+//   }
+//   hr {
+//     margin-top: 25px;
+//   }
+// }
+//
+// @media(min-width: 768px) {
+//   hr {
+//     margin-top: 10px;
+//   }
+// }
+//
+// @media(max-width: 767px) {
+//   .eval-name,
+//   .eval-uid {
+//     text-align: center;
+//   }
+// }
+//
+// @media(min-width: 991px) {
+//   .intro-info {
+//     padding: 0 50px 0 0;
+//   }
+//   .spring-info {
+//     padding: 10px 50px 0 0;
+//   }
+// }
