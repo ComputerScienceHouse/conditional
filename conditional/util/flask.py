@@ -34,7 +34,7 @@ def render_template(template_name, user_dict=None, **kwargs):
     ts_review = len(TechnicalSeminar.query.filter(
         TechnicalSeminar.approved == False).all()) # pylint: disable=singleton-comparison
 
-    admin_warning = True
+    admin_warning = lockdown
 
     if is_eboard or is_rtp:
         lockdown = False

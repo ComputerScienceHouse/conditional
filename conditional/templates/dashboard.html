@@ -7,10 +7,10 @@ Dashboard
     <div class="card mb-4">
         <div class="card-body dashboard-user">
             <div class="row">
-                <div class="col-md-2 col-sm-3 col-xs-12 profile-container">
+                <div class="col-lg-2 col-sm-3 col-xs-12 profile-container">
                     <img class="object-fit-contain rounded-circle w-100 h-100" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div>
-                <div class="col-xs-12 col-sm-9 col-md-9 profile-container">
+                <div class="col-xs-12 col-sm-9 col-md-9 d-flex flex-column justify-content-center">
                     <h3 class="username">{{ get_member_name(username) }}</h3>
                     <h5 class="email">{{username}}@csh.rit.edu</h5>
                     <div class="profile-badges">
@@ -37,6 +37,22 @@ Dashboard
         </div>
     </div>
     <div class="row" data-masonry='{"percentPosition": true }'>
+        {% if accepting_dues and check_current_student(username) and not active and not bad_standing %}
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card" id="becomeActive">
+                <div class="card-header">
+                    <h3 class="panel-title">Become Active</h3>
+                </div>
+                <div class="card-body">
+                    Hey there, you're eligible to become an active member! Click the button below if you'd like to become active and pay dues.
+                </div>
+                <div class="card-footer text-right">
+                    <a href="#" data-module="becomeActive" class="btn btn-sm btn-primary">Become Active</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         {% if intro %}
         <div class="col-12 col-md-6 mb-4">
             <div class="card">
@@ -125,6 +141,7 @@ Dashboard
             </div>
         </div>
         {% endif %}
+
         {% if spring['status'] != None %}
         <div class="col-12 col-md-6 mb-4">
             <div class="card">
@@ -248,25 +265,82 @@ Dashboard
         </div>
         {% endif %}
 
+        {% if active %}
         <div class="col-12 col-md-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title my-0">Member Statistics</h5>
+                    <h5 class="card-title d-flex my-0">
+                        Gatekeep
+                        {% if gatekeep['status'] == "passing" %}
+                        <span class="ms-auto">
+                            <i class="bi bi-check-circle-fill green"></i> Ok! 
+                        </span>
+                        {% elif gatekeep['status'] == "disenfranchised" and gatekeep_active%}
+                        <span class="ms-auto">
+                            <i class="bi bi-x-circle-fill red"></i> Disenfranchised
+                        </span>
+                        {% elif active %}
+                        <span class="ms-auto">
+                            <i class="bi bi-hourglass-split yellow"></i> Pending
+                        </span>
+                        {% endif %}
+                    </h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex fw-semibold">
-                        <div class="col-8"> Category</div>
-                        <div class="col-4 text-end"> Members</div>
-                    </li>
-                    {% for title in voting_count %}
+                    {% if not gatekeep_active %}
                     <li class="list-group-item d-flex">
-                        <div class="col-8"> {{ title }}</div>
-                        <div class="col-4 text-end"> {{ voting_count[title] }}</div>
+                        <div class="col">
+                            Status
+                        </div>
+                        <div class="col text-end">
+                            Gatekeep Inactive Until 6 Weeks
+                        </div>
                     </li>
-                    {% endfor %}
+                    {% endif %}
+                    <li class="list-group-item d-flex">
+                        <div class="col">
+                            Technical Seminars
+                        </div>
+                        <div class="col text-end">
+                            {% if gatekeep['technical_seminars'] >= 2 %}
+                            <i class="bi bi-check-circle-fill green"></i>
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red"></i>
+                            {% endif %}
+                            {{ gatekeep['technical_seminars'] }} / 2
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex">
+                        <div class="col">
+                            Directorship Meetings
+                        </div>
+                        <div class="col text-end">
+                            {% if gatekeep['committee_meetings'] >= 6 %}
+                            <i class="bi bi-check-circle-fill green"></i>
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red"></i>
+                            {% endif %}
+                            {{ gatekeep['committee_meetings'] }} / 6
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex">
+                        <div class="col">
+                            House Meetings Missed
+                        </div>
+                        <div class="col text-end">
+                            {% if gatekeep['hm_missed'] == 0 %}
+                            <i class="bi bi-check-circle-fill green"></i> None
+                            {% elif gatekeep['hm_missed'] <= 1 %}
+                            <i class="bi bi-check-circle-fill green"></i> {{ gatekeep['hm_missed'] }}
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red"></i> {{ gatekeep['hm_missed'] }}
+                            {% endif %}
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
+        {% endif %}
 
         {% if major_projects_count == 0 %}
         <div class="col-12 col-md-6 mb-4">
@@ -363,129 +437,6 @@ Dashboard
         </div>
         {% endif %}
 
-        {% if accepting_dues and check_current_student(username) and not active and not bad_standing %}
-        <div class="col-12 col-md-6 mb-4">
-            <div class="card" id="becomeActive">
-                <div class="card-header">
-                    <h3 class="panel-title">Become Active</h3>
-                </div>
-                <div class="card-body">
-                    Hey there, you're eligible to become an active member! Click the button below if you'd like to become active and pay dues.
-                </div>
-                <div class="card-footer text-right">
-                    <a href="#" data-module="becomeActive" class="btn btn-sm btn-primary">Become Active</a>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if housing %}
-        <div class="col-12 col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title my-0">Housing Status</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex fw-semibold">
-                        <div class="col-8">Housing Points</div>
-                        <div class="col-4 text-end">{{ housing['points'] }}</div>
-                    </li>
-                    {% if housing['room'] != None %}
-                    <li class="list-group-item d-flex">
-                        <div class="col-8">Room Number</div>
-                        <div class="col-4 text-end"> {{ housing['room'] }}</div>
-                    </li>
-                    {% endif %}
-                    {% if housing['queue_pos'][0] != None and housing['room'] == None %}
-                    <li class="list-group-item d-flex">
-                        <div class="col-8">Housing Queue Position</div>
-                        <div class="col-4 text-end"> 
-                            {{ housing['queue_pos'][0] }} / {{ housing['queue_pos'][1] }}
-                        </div>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if active %}
-        <div class="col-12 col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title d-flex my-0">
-                        Gatekeep
-                        {% if gatekeep['status'] == "passing" %}
-                        <span class="ms-auto">
-                            <i class="bi bi-check-circle-fill green"></i> Ok! 
-                        </span>
-                        {% elif gatekeep['status'] == "disenfranchised" and gatekeep_active%}
-                        <span class="ms-auto">
-                            <i class="bi bi-x-circle-fill red"></i> Disenfranchised
-                        </span>
-                        {% elif active %}
-                        <span class="ms-auto">
-                            <i class="bi bi-hourglass-split yellow"></i> Pending
-                        </span>
-                        {% endif %}
-                    </h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% if not gatekeep_active %}
-                    <li class="list-group-item d-flex">
-                        <div class="col">
-                            Status
-                        </div>
-                        <div class="col text-end">
-                            Gatekeep Inactive Until 6 Weeks
-                        </div>
-                    </li>
-                    {% endif %}
-                    <li class="list-group-item d-flex">
-                        <div class="col">
-                            Technical Seminars
-                        </div>
-                        <div class="col text-end">
-                            {% if gatekeep['technical_seminars'] >= 2 %}
-                            <i class="bi bi-check-circle-fill green"></i>
-                            {% else %}
-                            <i class="bi bi-x-circle-fill red"></i>
-                            {% endif %}
-                            {{ gatekeep['technical_seminars'] }} / 2
-                        </div>
-                    </li>
-                    <li class="list-group-item d-flex">
-                        <div class="col">
-                            Directorship Meetings
-                        </div>
-                        <div class="col text-end">
-                            {% if gatekeep['committee_meetings'] >= 6 %}
-                            <i class="bi bi-check-circle-fill green"></i>
-                            {% else %}
-                            <i class="bi bi-x-circle-fill red"></i>
-                            {% endif %}
-                            {{ gatekeep['committee_meetings'] }} / 6
-                        </div>
-                    </li>
-                    <li class="list-group-item d-flex">
-                        <div class="col">
-                            House Meetings Missed
-                        </div>
-                        <div class="col text-end">
-                            {% if gatekeep['hm_missed'] == 0 %}
-                            <i class="bi bi-check-circle-fill green"></i> None
-                            {% elif gatekeep['hm_missed'] <= 1 %}
-                            <i class="bi bi-check-circle-fill green"></i> {{ gatekeep['hm_missed'] }}
-                            {% else %}
-                            <i class="bi bi-x-circle-fill red"></i> {{ gatekeep['hm_missed'] }}
-                            {% endif %}
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        {% endif %}
-
         {% if missed_hm_len == 0 and active %}
         <div class="col-12 col-md-6 mb-4">
             <div class="alert alert-success">
@@ -552,6 +503,56 @@ Dashboard
             </div>
         </div>
         {% endif %}
+
+        {% if housing %}
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title my-0">Housing Status</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex fw-semibold">
+                        <div class="col-8">Housing Points</div>
+                        <div class="col-4 text-end">{{ housing['points'] }}</div>
+                    </li>
+                    {% if housing['room'] != None %}
+                    <li class="list-group-item d-flex">
+                        <div class="col-8">Room Number</div>
+                        <div class="col-4 text-end"> {{ housing['room'] }}</div>
+                    </li>
+                    {% endif %}
+                    {% if housing['queue_pos'][0] != None and housing['room'] == None %}
+                    <li class="list-group-item d-flex">
+                        <div class="col-8">Housing Queue Position</div>
+                        <div class="col-4 text-end"> 
+                            {{ housing['queue_pos'][0] }} / {{ housing['queue_pos'][1] }}
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title my-0">Member Statistics</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex fw-semibold">
+                        <div class="col-8"> Category</div>
+                        <div class="col-4 text-end"> Members</div>
+                    </li>
+                    {% for title in voting_count %}
+                    <li class="list-group-item d-flex">
+                        <div class="col-8"> {{ title }}</div>
+                        <div class="col-4 text-end"> {{ voting_count[title] }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
