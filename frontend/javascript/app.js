@@ -16,6 +16,8 @@ import "jquery";
 import "bootstrap";
 import "./modules";
 
+import "masonry-layout";
+
 // Load fonts
 import "bootstrap-icons/font/fonts/bootstrap-icons.woff"
 import "bootstrap-icons/font/fonts/bootstrap-icons.woff2"

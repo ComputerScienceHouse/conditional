@@ -80,7 +80,7 @@ const webpackConfig = {
             loadPaths: [
               "./node_modules/csh-material-bootstrap/dist",
               "./node_modules/csh-material-bootstrap/dist/css",
-              "./node_modules/datatables.net-bs/css",
+              "./node_modules/datatables.net-bs5/css",
               "./node_modules/bootstrap-material-datetimepicker/css",
               "./node_modules/load-awesome/css",
               "./node_modules/reveal.js/css",

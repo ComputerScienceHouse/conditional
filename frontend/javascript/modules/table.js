@@ -1,5 +1,5 @@
 /* global $ */
-import DataTable from "datatables.net-bs";
+import DataTable from "datatables.net-bs5";
 
 export default class Table {
   constructor(table) {

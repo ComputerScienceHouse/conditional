@@ -150,8 +150,9 @@ def display_dashboard(user_dict=None):
 
     data['cm_attendance'] = c_meetings
     data['cm_attendance_len'] = len(c_meetings)
-    data['hm_attendance'] = hm_attendance
-    data['hm_attendance_len'] = len(hm_attendance)
+
+    data['missed_hm'] = hm_attendance
+    data['missed_hm_len'] = len(hm_attendance)
 
     gatekeep_info = gatekeep_values(uid)
     gatekeep_result = 'disenfranchised'

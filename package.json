@@ -26,13 +26,13 @@
     "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
     "bootstrap-sweetalert": "^1.0.1",
     "csh-material-bootstrap": "https://github.com/ComputerScienceHouse/csh-material-bootstrap.git#bootstrap-5",
-    "datatables.net-bs": "^2.3.7",
+    "datatables.net-bs5": "^2.3.7",
     "dropzone": "^5.9.3",
     "enumify": "^2.0.0",
     "jquery": "^3.7.1",
     "lodash": "4.17.23",
+    "masonry-layout": "^4.2.2",
     "reveal.js": "^5.2.1",
-    "simple-masonry": "1.0.5",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
