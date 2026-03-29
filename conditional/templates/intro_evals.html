@@ -9,164 +9,251 @@ Introductory Evaluations
             <h3 class="page-title">Intro Evaluations</h3>
         </div>
         <div class="col-sm-2">
-            <div class="material-switch align-center">
+            <div class="material-switch">
                 <div class="switch-label">Table View</div>
                 <input id="evalToggle" name="evalToggle" type="checkbox" data-module="evalToggle"/>
                 <label for="evalToggle" class="label-primary"></label>
             </div>
         </div>
     </div>
+
     <div id="eval-blocks">
-    {% if members|length > 0 %}
-    {% for m in members %}
-    <div class="panel panel-default">
-        <div class="panel-body eval-panel">
-
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-2 col-md-2 col-lg-2">
-                        <div style="margin:auto; width:100px">
-                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
-                            {% if m['ldap_account'] %}
-                                {% if m['status'] == "Passed" %}
-                                <i class="bi bi-check2 white success eval-user-status"></i>
-                                {% elif m['status'] == "Pending" %}
-                                <i class="bi bi-hourglass-split white warning eval-user-status"></i>
-                                {% else %}
-                                <i class="bi bi-x-circle-fill white danger eval-user-status"></i>
-                                {% endif %}
+        {% if members|length > 0 %}
+        {% for m in members %}
+        <div class="card">
+            <div class="row">
+                <div class="col-lg-2 col-sm-3 col-xs-12 position-relative pe-0 m-4">
+                    <img class="object-fit-contain rounded-circle w-100 ratio ratio-1x1" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"/>
+                    <span class="position-absolute bottom-0 end-0 p-1 h4 mb-0">
+                        {% if m['ldap_account'] %}
+                            {% if m['status'] == "Passed" %}
+                            <i class="bi bi-check-circle-fill green"></i>
+                            {% elif m['status'] == "Pending" %}
+                            <i class="bi bi-hourglass-split yellow"></i>
                             {% else %}
-                            <i class="bi bi-hourglass-split white warning eval-user-status"></i>
-                            {%  endif %}
-
-                        </div>
-                        <!---->
-                    </div>
-                    <div class="col-sm-5 col-md-4 col-lg-6">
-                        <h4 class="eval-name">{{m['name']}}</h4>
-                            {% if not m['ldap_account'] %}
-                                <span class="label label-default">Internal Account: {{m['uid']}}</span>
-                            {% else %}
-                                <h6 class="eval-uid">{{ m['uid'] }}</h6>
+                            <i class="bi bi-x-circle-fill red"></i>
                             {% endif %}
-
-                    </div>
-                    <!---->
-                    <div class="col-sm-5 col-md-6 col-lg-4">
-                        <div class="intro-info row">
-                            <div class="text-center">
-                                {% if m['signatures_missed'] == 0 %}
-                                    <div class="eval-info-label">
-                                        <i class="bi bi-check-circle-fill green eval-info-status"></i>Signatures Missed
-                                        <span class="eval-info-number">{{ m['signatures_missed'] }}</span>
-                                    </div>
-                                {% elif m['signatures_missed'] > 0 %}
-                                    <div class="eval-info-label">
-                                        <i class="bi bi-x-circle-fill red eval-info-status"></i>Signatures Missed
-                                        <span class="eval-info-number">{{ m['signatures_missed'] }}</span>
-                                    </div>
-                                {% else %}
-                                    <div class="eval-info-label">
-                                        <i class="bi bi-hourglass-split yellow eval-info-status"></i>Packet In Progress
-                                        <span class="eval-info-number">Pending</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="text-center">
-                                {% if m['committee_meetings'] < 6 %}
-                                    <div class="eval-info-label">
-                                        <i class="bi bi-x-circle-fill red eval-info-status"></i>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
-                                    </div>
-                                    {% else %}
-                                    <div class="eval-info-label">
-                                        <i class="bi bi-check-circle-fill green eval-info-status"></i>Directorship Meetings
-                                        <span class="eval-info-number">{{m['committee_meetings']}} / 6</span>
-                                    </div>
-                                {% endif %}
-
-                        </div>
-                        <div class="text-center">
-                            {% if m['house_meetings_missed']|length > 0 %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-x-circle-fill red eval-info-status"></i>House Meetings Missed
-                                            <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
-                                        </div>
-                                        {% else %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-check-circle-fill green eval-info-status"></i>House Meetings Missed
-                                            <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
-                                        </div>
-                                        {% endif %}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['comments'] != "" %}
-                <div class="evals-dropdown">
-                    <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}">
-                        <i class="bi bi-chevron-down"></i>
+                        {% else %}
+                        <i class="bi bi-hourglass-split yellow"></i>
+                        {%  endif %}
                     </span>
                 </div>
-            {% endif %}
-            <div class="collapse" id="evalsCollapse-{{m['uid']}}">
-                {% if m['house_meetings_missed']|length > 0 %}
-                <!-- VV only display if missing house meetings VV -->
+                <div class="col d-flex flex-column justify-content-center align-items-center align-items-lg-start ms-4">
+                    <h3>
+                        {{ m['name'] }} 
+                    </h3>
 
-                <h4>Missed House Meetings</h4>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <h6 class="label label-default">
+                        {% if not m['ldap_account'] %}
+                        Internal Account: {{m['uid']}}
+                        {% else %}
+                        {{ m['uid'] }}
+                        {% endif %}
+                    </h6>
+                </div>
+                <!-- 
+                    Okay this is weird, but I'm picky and I want this to look good
+                    But I also know what it's like to look at code and go WHAT THE HECK
 
-                        {% for hm_missed in m['house_meetings_missed'] %}
-                        <tr>
-                            <td>{{hm_missed['date']}}</td>
-                            <td>{{hm_missed['reason']}}</td>
-                        </tr>
-                        {% endfor %}
+                    So the stats for this was really awkward on a tight space so when it's anything less than
+                    large it goes to the next line
 
-                    </tbody>
-                </table>
-                {% endif %}
-                <!-- ^^ HOUSE MEETINGS TABLE -->
-                {% if m['technical_seminars']|length > 0 %}
+                    But then it was too spaced out so the inner one will center it with a set width which looks fine/good
 
-                <h4>Technical Seminars</h4>
-                <table class="table">
-                    <tbody>
-                        {% for seminar in m['technical_seminars'] %}
-                        <tr>
-                            <td>{{seminar}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% endif %}
-                {% if m['social_events'] != "" %}
+                    If this still makes zero sense you can try and simplify it and then see if it looks okay on all screen sizes
+                    If it does, congrats! you simplified it but this was my best solution
+                    - Noah
+                -->
+                <div class="col-lg-4 col-sm-12 d-flex justify-content-center">
+                    <div class="col-lg-12 col-sm-8 col-xs-12 px-sm-4 pe-5 d-flex flex-column justify-content-center">
+                        <div class="d-flex">
+                            {% if m['signatures_missed'] == 0 %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            Signatures Missed
+                            <span class="ms-auto">{{ m['signatures_missed'] }}</span>
+                            {% elif m['signatures_missed'] > 0 %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>Signatures Missed
+                            <span class="ms-auto">{{ m['signatures_missed'] }}</span>
+                            {% else %}
+                            <i class="bi bi-hourglass-split yellow me-2"></i>Packet In Progress
+                            <span class="ms-auto">Pending</span>
+                            {% endif %}
+                        </div>
 
-                <h4>Social Events</h4>
-                <p>{{m['social_events']}}</p>
-                {% endif %}
+                        <div class="d-flex">
+                            {% if m['committee_meetings'] >= 6 %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            {% endif %}
+                            Directorship Meetings
+                            <span class="ms-auto">{{ m['committee_meetings'] }} / 6</span>
+                        </div>
 
-                {% if m['comments'] != "" %}
+                        <div class="d-flex">
+                            {% if m['technical_seminars'] | length >= 2 %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            {% endif %}
+                            Technical Seminars
+                            <span class="ms-auto">{{ m['technical_seminars'] | length }} / 2</span>
+                        </div>
 
-                <h4>Other Comments</h4>
-                <p>{{m['comments']}}</p>
-                {% endif %}
+                        <div class="d-flex">
+                            {% if m['house_meetings_missed'] | length >= 2 %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            {% endif %}
+                            House Meetings Missed
+                            <span class="ms-auto">{{ m['house_meetings_missed'] | length }}</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
-
+            <!-- <div class="card-body eval-panel"> -->
+            <!--     <div class="container-fluid"> -->
+            <!--         <div class="row"> -->
+            <!--             <div class="col-sm-2 col-md-2 col-lg-2"> -->
+            <!--                 <div style="margin:auto; width:100px"> -->
+            <!--                     <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" /> -->
+            <!--                     {% if m['ldap_account'] %} -->
+            <!--                         {% if m['status'] == "Passed" %} -->
+            <!--                         <i class="bi bi-check2 white success eval-user-status"></i> -->
+            <!--                         {% elif m['status'] == "Pending" %} -->
+            <!--                         <i class="bi bi-hourglass-split white warning eval-user-status"></i> -->
+            <!--                         {% else %} -->
+            <!--                         <i class="bi bi-x-circle-fill white danger eval-user-status"></i> -->
+            <!--                         {% endif %} -->
+            <!--                     {% else %} -->
+            <!--                     <i class="bi bi-hourglass-split white warning eval-user-status"></i> -->
+            <!--                     {%  endif %} -->
+            <!---->
+            <!--                 </div> -->
+            <!--             </div> -->
+            <!--             <div class="col-sm-5 col-md-4 col-lg-6"> -->
+            <!--                 <h4 class="eval-name">{{m['name']}}</h4> -->
+            <!--                     {% if not m['ldap_account'] %} -->
+            <!--                         <span class="label label-default">Internal Account: {{m['uid']}}</span> -->
+            <!--                     {% else %} -->
+            <!--                         <h6 class="eval-uid">{{ m['uid'] }}</h6> -->
+            <!--                     {% endif %} -->
+            <!---->
+            <!--             </div> -->
+            <!--             <div class="col-sm-5 col-md-6 col-lg-4"> -->
+            <!--                 <div class="intro-info row"> -->
+            <!--                     <div class="text-center"> -->
+            <!--                         {% if m['signatures_missed'] == 0 %} -->
+            <!--                             <div class="eval-info-label"> -->
+            <!--                                 <i class="bi bi-check-circle-fill green eval-info-status"></i>Signatures Missed -->
+            <!--                                 <span class="eval-info-number">{{ m['signatures_missed'] }}</span> -->
+            <!--                             </div> -->
+            <!--                         {% elif m['signatures_missed'] > 0 %} -->
+            <!--                             <div class="eval-info-label"> -->
+            <!--                                 <i class="bi bi-x-circle-fill red eval-info-status"></i>Signatures Missed -->
+            <!--                                 <span class="eval-info-number">{{ m['signatures_missed'] }}</span> -->
+            <!--                             </div> -->
+            <!--                         {% else %} -->
+            <!--                             <div class="eval-info-label"> -->
+            <!--                                 <i class="bi bi-hourglass-split yellow eval-info-status"></i>Packet In Progress -->
+            <!--                                 <span class="eval-info-number">Pending</span> -->
+            <!--                             </div> -->
+            <!--                         {% endif %} -->
+            <!--                     </div> -->
+            <!--                     <div class="text-center"> -->
+            <!--                         {% if m['committee_meetings'] < 6 %} -->
+            <!--                             <div class="eval-info-label"> -->
+            <!--                                 <i class="bi bi-x-circle-fill red eval-info-status"></i>Directorship Meetings -->
+            <!--                                 <span class="eval-info-number">{{m['committee_meetings']}} / 6</span> -->
+            <!--                             </div> -->
+            <!--                             {% else %} -->
+            <!--                             <div class="eval-info-label"> -->
+            <!--                                 <i class="bi bi-check-circle-fill green eval-info-status"></i>Directorship Meetings -->
+            <!--                                 <span class="eval-info-number">{{m['committee_meetings']}} / 6</span> -->
+            <!--                             </div> -->
+            <!--                         {% endif %} -->
+            <!---->
+            <!--                 </div> -->
+            <!--                 <div class="text-center"> -->
+            <!--                     {% if m['house_meetings_missed']|length > 0 %} -->
+            <!--                                 <div class="eval-info-label"> -->
+            <!--                                     <i class="bi bi-x-circle-fill red eval-info-status"></i>House Meetings Missed -->
+            <!--                                     <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span> -->
+            <!--                                 </div> -->
+            <!--                                 {% else %} -->
+            <!--                                 <div class="eval-info-label"> -->
+            <!--                                     <i class="bi bi-check-circle-fill green eval-info-status"></i>House Meetings Missed -->
+            <!--                                     <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span> -->
+            <!--                                 </div> -->
+            <!--                                 {% endif %} -->
+            <!--                 </div> -->
+            <!---->
+            <!--             </div> -->
+            <!--         </div> -->
+            <!--     </div> -->
+        <!--         {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['comments'] != "" %} -->
+        <!--             <div class="evals-dropdown"> -->
+        <!--                 <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}"> -->
+        <!--                     <i class="bi bi-chevron-down"></i> -->
+        <!--                 </span> -->
+        <!--             </div> -->
+        <!--         {% endif %} -->
+        <!--         <div class="collapse" id="evalsCollapse-{{m['uid']}}"> -->
+        <!--             {% if m['house_meetings_missed']|length > 0 %} -->
+        <!--             <!-- VV only display if missing house meetings VV --> -->
+        <!---->
+        <!--             <h4>Missed House Meetings</h4> -->
+        <!--             <table class="table"> -->
+        <!--                 <thead> -->
+        <!--                     <tr> -->
+        <!--                         <th>Date</th> -->
+        <!--                         <th>Description</th> -->
+        <!--                     </tr> -->
+        <!--                 </thead> -->
+        <!--                 <tbody> -->
+        <!---->
+        <!--                     {% for hm_missed in m['house_meetings_missed'] %} -->
+        <!--                     <tr> -->
+        <!--                         <td>{{hm_missed['date']}}</td> -->
+        <!--                         <td>{{hm_missed['reason']}}</td> -->
+        <!--                     </tr> -->
+        <!--                     {% endfor %} -->
+        <!---->
+        <!--                 </tbody> -->
+        <!--             </table> -->
+        <!--             {% endif %} -->
+        <!--             <!-- ^^ HOUSE MEETINGS TABLE -->
+        <!--             {% if m['technical_seminars']|length > 0 %} -->
+        <!---->
+        <!--             <h4>Technical Seminars</h4> -->
+        <!--             <table class="table"> -->
+        <!--                 <tbody> -->
+        <!--                     {% for seminar in m['technical_seminars'] %} -->
+        <!--                     <tr> -->
+        <!--                         <td>{{seminar}}</td> -->
+        <!--                     </tr> -->
+        <!--                     {% endfor %} -->
+        <!--                 </tbody> -->
+        <!--             </table> -->
+        <!--             {% endif %} -->
+        <!--             {% if m['social_events'] != "" %} -->
+        <!---->
+        <!--             <h4>Social Events</h4> -->
+        <!--             <p>{{m['social_events']}}</p> -->
+        <!--             {% endif %} -->
+        <!---->
+        <!--             {% if m['comments'] != "" %} -->
+        <!---->
+        <!--             <h4>Other Comments</h4> -->
+        <!--             <p>{{m['comments']}}</p> -->
+        <!--             {% endif %} -->
+        <!--         </div> -->
+        <!--     </div> -->
+        <!-- </div> -->
     </div>
-
-</div>
-{% endfor %}
+    {% endfor %}
 </div>
 {% else %}
     <div class="alert alert-info" role="alert"><i class="bi bi-info-circle-fill white" style="padding-right:5px"></i> There are currently no active intro members.</div>
