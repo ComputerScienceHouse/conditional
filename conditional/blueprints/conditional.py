@@ -89,7 +89,6 @@ def conditional_review(user_dict=None):
     cid = post_data['id']
     status = post_data['status']
 
-    print(post_data)
     log.info(f'Updated conditional-{cid} to {status}')
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
