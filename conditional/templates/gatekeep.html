@@ -126,10 +126,9 @@ Gatekeep Results
     </div>
     <div id="eval-table" style="display:none;">
     <div class="panel panel-default">
-        <div class="panel-body table-fill">
 	<div class="panel-body table-fill">
             <div class="table-responsive">
-                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="true" data-sort-column="4" data-sort-order="asc" data-length-changable="true" data-paginated="false">
+                <table class="table table-striped" data-module="table" data-order="[[ 4, &quot;asc&quot; ]]" data-length-change="true" data-paging="false" data-info="false">
                     <thead>
                     <tr>
                         <th>Name</th>
@@ -161,14 +160,14 @@ Gatekeep Results
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}} / {{ req_meetings }}
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-sort="{{ m['technical_seminars'] }}">
                             {% if m['technical_seminars'] < req_seminars %}
                                 <i class="bi bi-x-circle-fill red eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
                             {% else %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
                             {% endif %}
                         </td>
-						<td data-sort="{{ m['house_meetings_missed']|length }}">
+                        <td data-sort="{{ m['house_meetings_missed']|length }}">
                             {% if m['house_meetings_missed']|length <= 1 %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
                             {% else %}
@@ -180,7 +179,6 @@ Gatekeep Results
                     </tbody>
                 </table>
             </div>
-        </div>
         </div>
     </div>
     </div>

@@ -57,14 +57,32 @@ export default class MajorProjectForm {
             skills.push(tag.textContent);
         }
         
+        let projectName = this.form.querySelector('input[name=name]').value;
+        let projectTldr = this.form.querySelector('input[name=tldr]').value;
+        let projectTimeSpent = this.form.querySelector('textarea[name=time-commitment]').value;
+        let projectDescription = this.form.querySelector('textarea[name=description]').value;
+        let projectLinks = this.form.querySelector('textarea[name=links]').value;
+
+        // For each field, if it is not empty, trim it.
+        if (projectName !== "") projectName = projectName.trim();
+        if (projectTldr !== "") projectTldr = projectTldr.trim();
+        if (projectTimeSpent !== "") projectTimeSpent = projectTimeSpent.trim();
+        if (projectDescription !== "") projectDescription = projectDescription.trim();
+
+        if (!projectName || !projectTldr || !projectTimeSpent || !projectDescription || skills.length === 0) {
+            alert("Error: At least one required field is empty. \n\nProject Name, TLDR, Time Commitment, Description, and at least one skill are required.");
+            return;
+        }
+
         let payload = {
-            projectName: this.form.querySelector('input[name=name]').value,
-            projectTldr: this.form.querySelector('input[name=tldr]').value,
-            projectTimeSpent: this.form.querySelector('textarea[name=time-commitment]').value,
+            projectName: projectName,
+            projectTldr: projectTldr,
+            projectTimeSpent: projectTimeSpent,
             projectSkills: skills,
-            projectDescription: this.form.querySelector('textarea[name=description]').value,
-            projectLinks: this.form.querySelector('textarea[name=links]').value
+            projectDescription: projectDescription,
+            projectLinks: projectLinks
         };
+
 
         console.log(payload)
 

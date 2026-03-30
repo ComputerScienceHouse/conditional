@@ -53,7 +53,7 @@ def display_major_project(user_dict=None):
             "time_spent": p.time_spent,
             "skills": p.skills,
             "desc": p.description,
-            "links": list(filter(None, p.links.split("\n"))),
+            "links": [] if p.links is None else list(filter(None, p.links.split("\n"))),
             "status": p.status,
             "is_owner": bool(user_dict["username"] == p.uid),
             "files": list_files_in_folder(bucket, f"{p.id}/")
@@ -65,6 +65,7 @@ def display_major_project(user_dict=None):
     return render_template(
         "major_project_submission.html",
         major_projects=major_projects,
+        bucket_name=bucket,
         major_projects_len=len(major_projects),
         username=user_dict["username"])
 
@@ -156,7 +157,9 @@ def submit_major_project(user_dict=None):
         for file in os.listdir(temp_dir):
             filepath = f"{temp_dir}/{file}"
 
-            s3.upload_file(filepath, 'major-project-media', f"{project.id}/{file}")
+            s3.upload_file(filepath, app.config['S3_BUCKET_ID'], f"{project.id}/{file}", ExtraArgs={
+                'ExpectedBucketOwner': app.config['S3_BUCKET_ID']
+            })
 
             os.remove(filepath)
 
@@ -165,12 +168,16 @@ def submit_major_project(user_dict=None):
 
 
     # Send the slack ping only after we know that the data was properly saved to the DB
-    send_slack_ping(
-        {
-            "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
-            f" submitted their major project, *{name}*!"
-        }
-    )
+    if app.config['DEV_DISABLE_SLACK_PING']:
+        log.info("Slack ping skipped due to environment override")
+    else:
+        send_slack_ping(
+            {
+                "text": f"<!subteam^S5XENJJAH> *{get_member_name(user_id)}* ({user_id})"
+                f" submitted their major project, *{name}*!"
+            }
+        )
+
 
     return jsonify({"success": True}), 200
 
@@ -181,7 +188,7 @@ def submit_major_project(user_dict=None):
 def major_project_review(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
 
-    if not user_dict_is_eval_director(user_dict["account"]):
+    if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard", code=302)
 
     post_data = request.get_json()
@@ -190,7 +197,6 @@ def major_project_review(user_dict=None):
 
     log.info(f"{status} Major Project ID: {pid}")
 
-    print(post_data)
     MajorProject.query.filter(MajorProject.id == pid).update({"status": status})
 
     db.session.flush()

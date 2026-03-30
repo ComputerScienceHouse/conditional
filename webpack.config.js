@@ -15,6 +15,7 @@ var babelQuery = {
 var webpackConfig = {
   context: jsSrc,
   entry: ["./javascript/app.js"],
+  devtool: "source-map",
   output: {
     path: path.normalize(jsDest),
     filename: 'js/app.js',
