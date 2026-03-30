@@ -121,8 +121,6 @@ def get_intro_members_without_accounts():
         }
         ie_members.append(freshman)
 
-    print(ie_members)
-
     return ie_members
 
 @intro_evals_bp.route('/intro_evals/')
