@@ -7,6 +7,7 @@ from conditional.models.models import HouseMeeting
 from conditional.models.models import MajorProject
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
@@ -100,11 +101,21 @@ def display_dashboard(user_dict=None):
                       MemberSeminarAttendance.uid == uid,
                   ) if is_seminar_attendance_valid(s)]
     data['ts_total'] = len(t_seminars)
+    # technical seminars hosted
+    t_seminars_hosted = [s.seminar_id for s in 
+                         MemberSeminarHost.query.filter(
+                            MemberSeminarHost.uid == uid,
+                         ) if is_seminar_attendance_valid(s)]
+    data['ts_hosted_total'] = len(t_seminars_hosted)
     attendance = [m.name for m in TechnicalSeminar.query.filter(
         TechnicalSeminar.id.in_(t_seminars)
         )]
+    hosted = [m.name for m in TechnicalSeminar.query.filter(
+        TechnicalSeminar.id.in_(t_seminars_hosted)
+    )]
 
     data['ts_list'] = attendance
+    data['ts_hosted'] = hosted
 
     spring['mp_status'] = "Failed"
     for mp in data['major_projects']:
@@ -158,6 +169,7 @@ def display_dashboard(user_dict=None):
         'status': gatekeep_result,
         'committee_meetings': gatekeep_info['c_meetings'],
         'technical_seminars': gatekeep_info['t_seminars'],
+        'technical_seminars_hosted': gatekeep_info['t_seminars_hosted'],
         'hm_missed': gatekeep_info['h_meetings_missed']
     }
 

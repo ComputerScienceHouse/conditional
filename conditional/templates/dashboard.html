@@ -89,7 +89,17 @@ Dashboard
                         </tbody>
                     </table>
                     <div class="panel-body" style="padding:0px 0px 8px 8px">
-                        <b>Technical Seminars</b> {% if freshman['ts_total'] == 0 %}
+                        {% if freshman['ts_hosted_total'] != 0 %}
+                        <b>Technical Seminars - Hosted</b>
+                        <div class="panel-body table-fill">
+                            <ul>
+                                {% for ts in freshman['ts_hosted'] %}
+                                <li>{{ts}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        <b>Technical Seminars - Attendance</b> {% if freshman['ts_total'] == 0 %}
                         <div class="panel-body">
                             <div class="alert alert-warning" role="alert">You have not attended any technical seminars.</div>
                         </div>
@@ -120,7 +130,17 @@ Dashboard
                     </h3>
                 </div>
                 <div class="panel-body" style="padding:0px 0px 8px 8px">
-                    <b>Technical Seminars</b> {% if ts_total == 0 %}
+                    {% if ts_total != 0 %}
+                    <b>Technical Seminars - Hosted</b>
+                    <div class="panel-body table-fill">
+                        <ul>
+                            {% for ts in ts_hosted %}
+                            <li>{{ts}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <b>Technical Seminars - Attendance</b> {% if ts_total == 0 %}
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert">You have not attended any technical seminars.</div>
                     </div>
@@ -347,7 +367,7 @@ Dashboard
                             <td class="title">Technical Seminars</td>
                             <td>
                                 <span class="pull-right">
-                                    {% if gatekeep['technical_seminars'] >= 2 %}
+                                    {% if gatekeep['technical_seminars'] >= 2 or gatekeep['technical_seminars_hosted'] >= 1 %}
                                     <i class="bi bi-check-circle-fill green"></i> 
                                     {% else %}
                                     <i class="bi bi-x-circle-fill red"></i> 

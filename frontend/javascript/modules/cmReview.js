@@ -61,6 +61,14 @@ export default class ReviewMeeting {
       this._deleteMeeting()
     );
 
+    // Host
+    const hostInput = this.modal.querySelector('input[name="host"]');
+    let hostStr = "";
+    this.data.host.forEach(h => {
+      hostStr += h.value + ",";
+    });
+    hostInput.value = hostStr;
+
     // Attendees
     const attendeesInput = this.modal.querySelector('input[name="attendees"]');
     let attendeesStr = "";
@@ -72,6 +80,8 @@ export default class ReviewMeeting {
     // Initialize selector control
     attendeesInput.dataset.src = "cm_members";
     new MemberSelect(attendeesInput); // eslint-disable-line no-new
+    hostInput.dataset.src = "cm_members";
+    new MemberSelect(hostInput); // eslint-disable-line no-new
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
@@ -93,8 +103,13 @@ export default class ReviewMeeting {
       let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
         this.modal.querySelector('input[name="attendees"]').value.split(',')
       );
+      let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
+        this.modal.querySelector('input[name="host"]').value.split(",")
+      );
       payload.freshmen = membersSplit.freshmen;
       payload.members = membersSplit.upperclassmen;
+      payload.freshman_host = hostSplit.freshmen;
+      payload.member_host = hostSplit.upperclassmen;
 
       fetch(this.endpoints.meetingDetails + this.cid + '/approve', {
         method: 'POST',
