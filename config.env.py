@@ -15,6 +15,7 @@ APP_NAME = "conditional"
 IP = env.get("CONDITIONAL_IP", "0.0.0.0")
 PORT = env.get("CONDITIONAL_PORT", 6969)
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
+DEV_DISABLE_SLACK_PING = env.get("DEV_DISABLE_SLACK_PING", "false") == "true"
 PROFILING = env.get("CONDITIONAL_PROFILING", "false").lower() == "true"
 
 # DB Info
@@ -25,6 +26,13 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 LDAP_RO = env.get("CONDITIONAL_LDAP_RO", "true").lower() == "true"
 LDAP_BIND_DN = env.get("CONDITIONAL_LDAP_BIND_DN", "cn=conditional,ou=Apps,dc=csh,dc=rit,dc=edu")
 LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
+
+# S3 information
+S3_URI = env.get("S3_URI", "https://s3.csh.rit.edu") # URL for where the s3 bucket is hosted
+S3_BUCKET_ID = env.get("S3_BUCKET_ID", "major-project-media") # name of the bucket
+AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
+
 
 # Sentry config
 # Not required for local development, but if you set it, make sure the

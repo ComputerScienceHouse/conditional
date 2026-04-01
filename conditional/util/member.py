@@ -158,7 +158,8 @@ def get_hm(member, only_absent=False):
 # @service_cache(maxsize=128) # Can't hash because members_on_coop is a list
 def req_cm(uid, members_on_coop=None):
     # Get the number of required committee meetings based on if the member
-    # is going on co-op in the current operating session.
+    # is going on co-op in the current operating session, or if the member
+    # was a spring intro member.
     on_coop = False
 
     if members_on_coop:
@@ -169,7 +170,16 @@ def req_cm(uid, members_on_coop=None):
             CurrentCoops.date_created > start_of_year()).first()
         if co_op:
             on_coop = True
-    if on_coop:
+
+    spring_semester_start = datetime(start_of_year().year + 1, 1, 1)
+
+    is_spring_intro = FreshmanEvalData.query.filter(
+        FreshmanEvalData.uid == uid,
+        FreshmanEvalData.freshman_eval_result == "Passed",
+        FreshmanEvalData.eval_date >= spring_semester_start
+    ).first() is not None
+
+    if on_coop or is_spring_intro:
         return 15
     return 30
 

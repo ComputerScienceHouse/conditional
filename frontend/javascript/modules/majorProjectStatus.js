@@ -44,7 +44,7 @@ export default class MajorProjectStatus {
           $(dashboardContainer).hide();
         } else {
           // Major projects page button
-          $(this.control.closest(".panel")).fadeOut();
+          $(this.control.closest(".card")).fadeOut();
         }
       });
     } else {

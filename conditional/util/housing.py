@@ -2,7 +2,7 @@ from datetime import datetime
 
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
-from conditional.util.ldap import ldap_get_member, ldap_is_current_student
+from conditional.util.ldap import ldap_get_current_students, ldap_get_member, ldap_is_current_student
 
 
 def get_housing_queue(is_eval_director=False):
@@ -24,7 +24,14 @@ def get_housing_queue(is_eval_director=False):
     }
 
     # CSHMember accounts that are in queue
-    potential_accounts = [ldap_get_member(username) for username in in_queue]
+    potential_accounts = []
+
+    if is_eval_director:
+        potential_accounts = ldap_get_current_students()
+    else:
+        potential_accounts = [ldap_get_member(username) for username in in_queue]
+
+        potential_accounts = [user for user in potential_accounts if ldap_is_current_student(user)]
 
     # Populate a list of dictionaries containing the name, username,
     # and on-floor datetime for each current studetn who has on-floor status
@@ -37,7 +44,7 @@ def get_housing_queue(is_eval_director=False):
             "time": in_queue.get(account.uid, {}).get('time', datetime.now()) or datetime.now(),
             "in_queue": account.uid in in_queue
         } for account in potential_accounts
-        if ldap_is_current_student(account) and (is_eval_director or account.roomNumber is None)
+        if is_eval_director or account.roomNumber is None
     ]
 
     # Sort based on time (ascending) and then points (decending).
