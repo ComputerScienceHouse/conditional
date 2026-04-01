@@ -32,9 +32,9 @@ Introductory Evaluations
         {% for m in members %}
         <div class="card mb-4">
             <div class="row">
-                <div class="col-lg-2 col-sm-3 col-xs-12 position-relative pe-0 m-4">
-                    <img class="object-fit-contain rounded-circle w-100 ratio ratio-1x1" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"/>
-                    <span class="position-absolute bottom-0 end-0 p-1 h4 mb-0">
+                <div class="col-lg-2 col-sm-3 col-xs-12 position-relative p-4">
+                    <img class="object-fit-contain rounded-circle ratio ratio-1x1" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"/>
+                    <span class="position-absolute bottom-0 end-0 p-1 h4 mb-3 me-3">
                         {% if m['ldap_account'] %}
                             {% if m['status'] == "Passed" %}
                             <i class="bi bi-check-circle-fill green"></i>
@@ -48,7 +48,7 @@ Introductory Evaluations
                         {%  endif %}
                     </span>
                 </div>
-                <div class="col d-flex flex-column justify-content-center align-items-center align-items-lg-start ms-4">
+                <div class="col d-flex flex-column justify-content-center align-items-center align-items-sm-start">
                     <h3>
                         {{ m['name'] }} 
                     </h3>
@@ -62,20 +62,17 @@ Introductory Evaluations
                     </h6>
                 </div>
                 <!-- 
-                    Okay this is weird, but I'm picky and I want this to look good
-                    But I also know what it's like to look at code and go WHAT THE HECK
+                    If you look at this and go "why so many spacing styles what", 
+                    it's because I'm picky and want this to look good
 
-                    So the stats for this was really awkward on a tight space so when it's anything less than
-                    large it goes to the next line
+                    It looks weird if it's got less styling and I ended up needing to make a nested div for all of this 
+                    I'm sorry, you can try and simplify it if you want but pls keep it looking nice
 
-                    But then it was too spaced out so the inner one will center it with a set width which looks fine/good
-
-                    If this still makes zero sense you can try and simplify it and then see if it looks okay on all screen sizes
-                    If it does, congrats! you simplified it but this was my best solution
                     - Noah
                 -->
-                <div class="col-lg-4 col-sm-12 d-flex justify-content-center">
-                    <div class="col-lg-12 col-sm-8 col-xs-12 px-sm-4 pe-5 d-flex flex-column justify-content-center">
+                <div class="col-md-5 col-sm-12 d-md-flex justify-content-center">
+                    <hr class="my-0 d-md-none">
+                    <div class="mx-auto col-md-12 col-sm-8 col-xs-12 px-4 ps-md-0 my-2 my-lg-0 d-flex flex-column justify-content-center">
                         <div class="d-flex">
                             {% if m['signatures_missed'] == 0 %}
                             <i class="bi bi-check-circle-fill green me-2"></i> 
