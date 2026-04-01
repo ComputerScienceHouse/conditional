@@ -5,24 +5,25 @@ Introductory Evaluations
 {% block body %}
 <div class="container main" id="eval-parent">
     <div class="row mobile-hide">
-        <div class="col-sm-10">
+        <div class="col-md-8 text-center text-md-start">
             <h3 class="page-title">Intro Evaluations</h3>
         </div>
-        <div class="col-sm-2" id="eval-switch-parent">
-            <!-- <div class="material-switch"> -->
-            <!--     <div class="switch-label">Table View</div> -->
-            <!--     <input id="evalToggle" name="evalToggle" type="checkbox" data-module="evalToggle"/> -->
-            <!--     <label for="evalToggle" class="label-primary"></label> -->
-            <!-- </div> -->
-
-            <button class="btn btn-primary collapse show eval-blocks" data-bs-toggle="collapse" data-bs-target=".eval-table" 
-                    data-bs-parent="#eval-switch-parent" role="button" aria-expanded="false" aria-controls=".eval-table">
-                Table
-            </button>
-            <button class="btn btn-primary collapse eval-table" data-bs-toggle="collapse" data-bs-target=".eval-blocks" 
-                    data-bs-parent="#eval-switch-parent" role="button" aria-expanded="true" aria-controls=".eval-blocks">
-                Blocks
-            </button>
+        <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-end mb-4 mb-md-0" id="eval-switch-parent">
+            <h6 class="my-0">
+                Table view:
+            </h6>
+            <div class="switch d-flex align-items-center justify-content-center position-relative">
+                <div class="collapse collapse-horizontal show eval-blocks">
+                    <div class="filler"></div>
+                </div>
+                <div class="rounded-circle bg-primary flex-shrink-0 btn" data-bs-toggle="collapse" data-bs-target=".eval-blocks" 
+                    role="button" aria-controls=".eval-blocks">
+                </div>
+                <div class="position-absolute d-flex align-items-center justify-content-end z-n1 translate-middle top-50 start-50 h-75 filler">
+                    <div class="bg-light rounded h-50 w-50" style="--bs-bg-opacity: .25;">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -205,7 +206,7 @@ Introductory Evaluations
     </div>
     {% endif %}
 
-    <div class="card collapse eval-table" data-bs-parent="#eval-parent">
+    <div class="card collapse eval-blocks" data-bs-parent="#eval-parent">
         <div class="card-body table-fill">
             <div class="table-responsive">
                 <table class="border rounded table table-striped" data-module="table" data-order="[[ 4, &quot;asc&quot; ]]"
@@ -224,7 +225,7 @@ Introductory Evaluations
                         {% for m in members %}
                         <tr>
                             <td>
-                                <img class="aspect aspect1x1 rounded-circle" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30px" /> 
+                                <img class="aspect aspect1x1 rounded-circle me-2" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30px" /> 
                                 {{m['name']}} ({{m['uid']}})
                             </td>
                             <td>
