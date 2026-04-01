@@ -52,8 +52,8 @@ export default class AttendanceForm {
             let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
               this.fields[field].value.split(',')
             );
-            payload.freshmanHost = hostSplit.freshmen;
-            payload.memberHost = hostSplit.upperclassmen;
+            payload.freshman_host = hostSplit.freshmen;
+            payload.member_host = hostSplit.upperclassmen;
           } else {
             payload[field] = this.fields[field].value;
           }
