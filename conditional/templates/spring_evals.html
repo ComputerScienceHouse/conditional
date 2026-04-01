@@ -3,241 +3,210 @@
 Membership Evaluations
 {% endblock %}
 {% block body %}
-<div class="container main">
+<div class="container main" id="eval-parent">
     <div class="row mobile-hide">
-    <div class="col-sm-10">
-    <h3 class="page-title">Spring Evaluations</h3>
+        <div class="col-md-8 text-center text-md-start">
+            <h3 class="page-title">Spring Evaluations</h3>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-end mb-4 mb-md-0" id="eval-switch-parent">
+            <h6 class="my-0">
+                Table view:
+            </h6>
+            <div class="switch d-flex align-items-center justify-content-center position-relative">
+                <div class="collapse collapse-horizontal show eval-blocks">
+                    <div class="filler"></div>
+                </div>
+                <div class="rounded-circle bg-primary flex-shrink-0 btn" data-bs-toggle="collapse" data-bs-target=".eval-blocks" 
+                    role="button" aria-controls=".eval-blocks">
+                </div>
+                <div class="position-absolute d-flex align-items-center justify-content-end z-n1 translate-middle top-50 start-50 h-75 filler">
+                    <div class="bg-light rounded h-50 w-50" style="--bs-bg-opacity: .25;">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-2">
-		<div class="material-switch align-center">
-            <div class="switch-label">Table View</div>
-			<input id="evalToggle" name="evalToggle" type="checkbox" data-module="evalToggle"/>
-			<label for="evalToggle" class="label-primary"></label>
-		</div>
-    </div>
-    </div>
-    <div id="eval-blocks">
-    {% for m in members %}
-    <div class="panel panel-default">
-        <div class="panel-body eval-panel">
 
+    <div class="collapse show eval-blocks" data-bs-parent="#eval-parent">
+        {% for m in members %}
+        <div class="card mb-4">
+            <div class="row">
+                <div class="col-lg-2 col-sm-3 col-xs-12 position-relative p-4">
+                    <img class="object-fit-contain rounded-circle ratio ratio-1x1" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"/>
+                    <span class="position-absolute bottom-0 end-0 p-1 h4 mb-3 me-3">
+                        {% if m['status'] == "Passed" %}
+                        <i class="bi bi-check-circle-fill green"></i>
+                        {% elif m['status'] == "Pending" %}
+                        <i class="bi bi-hourglass-split yellow"></i>
+                        {% else %}
+                        <i class="bi bi-x-circle-fill red"></i>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="col d-flex flex-column justify-content-center align-items-center align-items-sm-start">
+                    <h3>
+                        {{ m['name'] }} 
+                    </h3>
 
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-2 col-md-2 col-lg-2">
-                        <div style="margin:auto; width:100px">
-                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="100" height="100" />
+                    <h6 class="label label-default">
+                        {{ m['uid'] }}
+                    </h6>
+                </div>
+                <!-- 
+                    If you look at this and go "why so many spacing styles what", 
+                    it's because I'm picky and want this to look good
 
-                            {% if m['status'] == "Passed" %}
-                            <i class="bi bi-check-circle-fill white success eval-user-status"></i>
-                            {% elif m['status'] == "Pending" %}
-                            <i class="bi bi-hourglass-split white warning eval-user-status"></i>
+                    It looks weird if it's got less styling and I ended up needing to make a nested div for all of this 
+                    I'm sorry, you can try and simplify it if you want but pls keep it looking nice
+
+                    - Noah
+                -->
+                <div class="col-md-5 col-sm-12 d-md-flex justify-content-center">
+                    <hr class="my-0 d-md-none">
+                    <div class="mx-auto col-md-12 col-sm-8 col-xs-12 px-4 ps-md-0 my-2 my-lg-0 d-flex flex-column justify-content-center">
+                        <div class="d-flex">
+                            {% if m['committee_meetings'] >= m['req_meetings'] %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
                             {% else %}
-                            <i class="bi bi-x-circle-fill white danger eval-user-status"></i>
+                            <i class="bi bi-x-circle-fill red me-2"></i>
                             {% endif %}
-
-                        </div>
-                        <!---->
-                    </div>
-                    <div class="col-sm-5 col-md-4 col-lg-6">
-                        <h4 class="eval-name">{{m['name']}}</h4>
-                        <h6 class="eval-uid">{{m['uid']}}</h6>
-                    </div>
-                    <!---->
-                    <div class="col-sm-5 col-md-6 col-lg-4">
-                        <div class="spring-info row">
-                            <div class="text-center">
-                                        {% if m['committee_meetings'] < m['req_meetings'] %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-x-circle-fill red eval-info-status"></i>Directorship Meetings
-                                            <span class="eval-info-number">{{m['committee_meetings']}} / {{m['req_meetings']}}</span>
-                                        </div>
-                                        {% else %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-check-circle-fill green eval-info-status"></i>Directorship Meetings
-                                            <span class="eval-info-number">{{m['committee_meetings']}} / {{m['req_meetings']}}</span>
-                                        </div>
-                                        {% endif %}
-
-                                    </div>
-                                    <div class="text-center">
-                                        {% if m['major_project_passed'] %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-check-circle-fill green eval-info-status"></i>Major Project
-                                            <span class="eval-info-number">Passed</span>
-                                        </div>
-                                        {% else %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-x-circle-fill red eval-info-status"></i>Major Project
-                                            <span class="eval-info-number">None</span>
-                                        </div>
-                                        {% endif %}
-
-                                    </div>
-                                    <div class="text-center">
-                                        {% if m['house_meetings_missed']|length > 0 %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-x-circle-fill red eval-info-status"></i>House Meetings Missed
-                                            <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
-                                        </div>
-                                        {% else %}
-                                        <div class="eval-info-label">
-                                            <i class="bi bi-check-circle-fill green eval-info-status"></i>House Meetings Missed
-                                            <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-
-                                </div>
-                            </div>
+                            Directorship Meetings
+                            <span class="ms-auto">{{ m['committee_meetings'] }} / {{ m['req_meetings'] }}</span>
                         </div>
 
-                {% if m['house_meetings_missed']|length > 0 or m['major_projects_len'] > 0 %}
-                    <div class="evals-dropdown">
-                        <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse{{m['uid']}}">
-                            <i class="bi bi-chevron-down"></i>
-                        </span>
+                        <div class="d-flex">
+                            {% if m['major_project_passed'] %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            Major Project
+                            <span class="ms-auto">Passed</span>
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            Major Project
+                            <span class="ms-auto">Done</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex">
+                            {% if m['house_meetings_missed'] | length == 0 %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            {% endif %}
+                            House Meetings Missed
+                            <span class="ms-auto">{{ m['house_meetings_missed'] | length }}</span>
+                        </div>
                     </div>
-                {% endif %}
-                <div class="collapse" id="evalsCollapse{{m['uid']}}">
-                    {% if m['house_meetings_missed']|length > 0 %}
-                    <!-- VV only display if missing house meetings VV -->
-                    <hr class="eval-hr">
-                    <h4>Missed House Meetings</h4>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for hm_missed in m['house_meetings_missed'] %}
-                            <tr>
-                                <td>{{hm_missed}}</td>
-                                <td></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endif %}
-                    <!-- ^^ HOUSE MEETINGS TABLE -->
-                    {% if m['technical_seminars']|length > 0 %}
-                    <hr class="eval-hr">
-                    <h4>Technical Seminars</h4>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Seminar Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                {% for seminar in m['technical_seminars'] %}
-                                <td>{{seminar['date']}}</td>
-                                <td>{{seminar['name']}}</td>
-                                {% endfor %}
-                            </tr>
-                        </tbody>
-                    </table>
-                    {% endif %}
-
-                    {% if m['major_projects_len'] > 0 %}
-                    <h4>Major Projects</h4>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Project Name</th>
-                                <th>Status</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        {% for p in m['major_projects'] %}
-                        <tbody>
-                            <tr>
-                                <td>{{p['name']}}</td>
-                                {% if p['status'] == "Passed" %}
-                                <td><i class="bi bi-check-circle-fill green"></i> Passed</td>
-                                {% elif p['status'] == "Pending" %}
-                                <td><i class="bi bi-hourglass-split yellow"></i> Pending</td>
-                                {% else %}
-                                <td><i class="bi bi-x-circle-fill red"></i> Failed</td>
-                                {% endif %}
-                                <td>{{p['description']}}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-
-                    </table>
-                    {% endif %}
                 </div>
             </div>
 
+            {% if m['house_meetings_missed'] | length != 0 or m['major_projects_len'] > 0 %}
+            <div class="card-footer px-2">
+                <button class="btn w-100 text-center" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
+                        role="button" aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
+                    More Info
+                </button>
+
+                <div class="collapse" id="{{ m['uid'] }}-extra-info">
+                    <div class="px-2 pb-2">
+                        {% if m['house_meetings_missed'] | length > 0 %}
+                        <div class="row">
+                            <div class="col">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <h4 class="mb-0">Missed House Meetings</h4>
+                                    </li>
+                                    {% for date in m['house_meetings_missed'] %}
+                                    <li class="list-group-item">
+                                        {{ date }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if m['major_projects_len'] > 0 %}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <h4 class="mb-0">Major Projects</h4>
+                                    </li>
+                                    {% for p in m['major_projects'] %}
+                                    <li class="list-group-item">
+                                        {{ p['name'] }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
-
+        {% endfor %}
     </div>
 
 
-    {% endfor %}
-    </div>
     <div id="eval-table" style="display:none;">
-    <div class="panel panel-default">
-	<div class="panel-body table-fill">
-            <div class="table-responsive">
-                <table class="table table-striped" data-module="table" data-order="[[ 4, &quot;asc&quot; ]]" data-sort-order="asc" data-length-change="true" data-paging="false" data-info="false">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Result</th>
-                        <th>Meetings</th>
-                        <th>Major Project</th>
-                        <th>House Meetings Missed</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for m in members %}
-                    <tr>
-                        <td>
-                            <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" height="30" /> {{m['name']}} ({{m['uid']}})
-                        </td>
-                        <td>
-                            {% if m['status'] == "Passed" %}
-                            <i class="bi bi-check-circle-fill green"></i> Passed
-                            {% elif m['status'] == "Pending" %}
-                            <i class="bi bi-hourglass-split yellow"></i> Pending
-                            {% else %}
-                            <i class="bi bi-x-circle-fill red"></i> Failed
-                            {% endif %}
-                        </td>
-                        <td data-sort="{{ m['committee_meetings'] }}">
-                            {% if m['committee_meetings'] < m['req_meetings'] %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['committee_meetings']}}
-                            {% else %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if m['major_project_passed'] %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i> Passed
-                            {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i> None
-                            {% endif %}
-                        </td>
-						<td data-sort="{{ m['house_meetings_missed']|length }}">
-                            {% if m['house_meetings_missed']|length == 0 %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
-                            {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['house_meetings_missed']|length}}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+        <div class="panel panel-default">
+            <div class="panel-body table-fill">
+                <div class="table-responsive">
+                    <table class="table table-striped" data-module="table" data-order="[[ 4, &quot;asc&quot; ]]" data-sort-order="asc" data-length-change="true" data-paging="false" data-info="false">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Result</th>
+                            <th>Meetings</th>
+                            <th>Major Project</th>
+                            <th>House Meetings Missed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for m in members %}
+                        <tr>
+                            <td>
+                                <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" height="30" /> {{m['name']}} ({{m['uid']}})
+                            </td>
+                            <td>
+                                {% if m['status'] == "Passed" %}
+                                <i class="bi bi-check-circle-fill green"></i> Passed
+                                {% elif m['status'] == "Pending" %}
+                                <i class="bi bi-hourglass-split yellow"></i> Pending
+                                {% else %}
+                                <i class="bi bi-x-circle-fill red"></i> Failed
+                                {% endif %}
+                            </td>
+                            <td data-sort="{{ m['committee_meetings'] }}">
+                                {% if m['committee_meetings'] < m['req_meetings'] %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['committee_meetings']}}
+                                {% else %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if m['major_project_passed'] %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> Passed
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> None
+                                {% endif %}
+                            </td>
+                                                    <td data-sort="{{ m['house_meetings_missed']|length }}">
+                                {% if m['house_meetings_missed']|length == 0 %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['house_meetings_missed']|length}}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </div>
 {% endblock %}

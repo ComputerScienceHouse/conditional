@@ -118,7 +118,6 @@ Introductory Evaluations
                         </div>
                     </div>
                 </div>
-
             </div>
             {% if m['house_meetings_missed'] | length != 0 or m['technical_seminars'] | length != 0 or m['comments'] != "" %}
             <div class="card-footer px-2">
@@ -127,68 +126,70 @@ Introductory Evaluations
                     More Info
                 </button>
 
-                <div class="collapse mt-2 px-2 pb-2" id="{{ m['uid'] }}-extra-info">
-                    <div class="row">
-                        {% if m['house_meetings_missed'] | length > 0 %}
-                        <div class="col-md-6 col-12">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <h4 class="mb-0">Missed House Meetings</h4>
-                                </li>
-                                {% for date in m['house_meetings_missed'] %}
-                                <li class="list-group-item">
-                                    {{ date }}
-                                </li>
-                                {% endfor %}
-                            </ul>
+                <div class="collapse" id="{{ m['uid'] }}-extra-info">
+                    <div class="px-2 pb-2">
+                        <div class="row">
+                            {% if m['house_meetings_missed'] | length > 0 %}
+                            <div class="col-md-6 col-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <h4 class="mb-0">Missed House Meetings</h4>
+                                    </li>
+                                    {% for date in m['house_meetings_missed'] %}
+                                    <li class="list-group-item">
+                                        {{ date }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            {% if m['technical_seminars'] | length > 0 %}
+                            <div class="col">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <h4 class="mb-0">Technical Seminars</h4>
+                                    </li>
+                                    {% for seminar in m['technical_seminars'] %}
+                                    <li class="list-group-item">
+                                        {{ seminar }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if m['social_events'] != "" %}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <h4 class="mb-0">Social Events</h4>
+                                    </li>
+                                    <li class="list-group-item">
+                                        {{ m['social_events'] }}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         {% endif %}
 
-                        {% if m['technical_seminars'] | length > 0 %}
-                        <div class="col">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <h4 class="mb-0">Technical Seminars</h4>
-                                </li>
-                                {% for seminar in m['technical_seminars'] %}
-                                <li class="list-group-item">
-                                    {{ seminar }}
-                                </li>
-                                {% endfor %}
-                            </ul>
+                        {% if m['comments'] != "" %}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <h4 class="mb-0">Comments</h4>
+                                    </li>
+                                    <li class="list-group-item">
+                                        {{ m['comments'] }}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         {% endif %}
                     </div>
-
-                    {% if m['social_events'] != "" %}
-                    <div class="row mt-3">
-                        <div class="col">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <h4 class="mb-0">Social Events</h4>
-                                </li>
-                                <li class="list-group-item">
-                                    {{ m['social_events'] }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {% if m['comments'] != "" %}
-                    <div class="row mt-3">
-                        <div class="col">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <h4 class="mb-0">Comments</h4>
-                                </li>
-                                <li class="list-group-item">
-                                    {{ m['comments'] }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
             {% endif %}
