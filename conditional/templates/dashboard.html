@@ -38,7 +38,7 @@ Dashboard
     </div>
     <div class="row" data-masonry='{"percentPosition": true }'>
         {% if accepting_dues and check_current_student(username) and not active and not bad_standing %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card" id="becomeActive">
                 <div class="card-header">
                     <h3 class="panel-title">Become Active</h3>
@@ -54,7 +54,7 @@ Dashboard
         {% endif %}
 
         {% if intro %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title d-flex my-0">Introduction Evaluations
@@ -143,7 +143,7 @@ Dashboard
         {% endif %}
 
         {% if spring['status'] != None %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title d-flex my-0">Membership Evaluations
@@ -230,7 +230,7 @@ Dashboard
         {% endif %}
 
         {% if conditionals_len != 0 %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title my-0">Conditionals</h5>
@@ -266,7 +266,7 @@ Dashboard
         {% endif %}
 
         {% if active %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title d-flex my-0">
@@ -343,14 +343,14 @@ Dashboard
         {% endif %}
 
         {% if major_projects_count == 0 %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="alert alert-warning" role="alert">
                 <i class="bi bi-exclamation-circle text-warning me-2"></i>
                 You have no major projects.
             </div>
         </div>
         {% elif major_projects_count > 0 %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Major Projects</h5>
@@ -438,13 +438,13 @@ Dashboard
         {% endif %}
 
         {% if missed_hm_len == 0 and active %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="alert alert-success">
                 <i class="bi bi-check-circlce white" style="padding-right:5px"> </i> You haven't missed any house meetings.
             </div>
         </div>
         {% elif missed_hm_len > 0 and active %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <!-- Yes I'm doing this for grammar -->
@@ -466,14 +466,14 @@ Dashboard
         {% endif %}
 
         {% if cm_attendance_len == 0 and active%}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="alert alert-warning">
                 <i class="bi bi-exclamation-circle text-warning me-2"></i>
                 You have not attended any directorship meetings.
             </div>
         </div>
         {% elif cm_attendance_len > 0 %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Directorship Meeting Attendance</h5>
@@ -505,7 +505,7 @@ Dashboard
         {% endif %}
 
         {% if housing %}
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title my-0">Housing Status</h5>
@@ -534,7 +534,7 @@ Dashboard
         </div>
         {% endif %}
 
-        <div class="col-12 col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title my-0">Member Statistics</h5>
