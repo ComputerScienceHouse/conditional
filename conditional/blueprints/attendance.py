@@ -10,10 +10,12 @@ from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import FreshmanSeminarAttendance
+from conditional.models.models import FreshmanSeminarHost
 from conditional.models.models import HouseMeeting
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
@@ -218,6 +220,8 @@ def submit_seminar_attendance(user_dict=None):
     seminar_name = post_data['name']
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
+    m_host = post_data['member_host']
+    f_host = post_data['freshman_host']
     timestamp = post_data['timestamp']
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
@@ -230,10 +234,16 @@ def submit_seminar_attendance(user_dict=None):
     for m in m_attendees:
         log.info(f'Gave Attendance to {m} for {seminar_name}')
         db.session.add(MemberSeminarAttendance(m, seminar.id))
+    for m in m_host:
+        log.info(f'Gave Host Credit to {m} for {seminar_name}')
+        db.session.add(MemberSeminarHost(m, seminar.id))
 
     for f in f_attendees:
         log.info(f'Gave Attendance to freshman-{f} for {seminar_name}')
         db.session.add(FreshmanSeminarAttendance(f, seminar.id))
+    for f in f_host:
+        log.info(f'Gave Host Credit to freshman-{f} for {seminar_name}')
+        db.session.add(FreshmanSeminarHost(f, seminar.id))
 
     db.session.commit()
     return jsonify({"success": True}), 200
@@ -379,6 +389,18 @@ def attendance_history(user_dict=None):
                              FreshmanAccount.id == freshman).first().name)
         return attendees
 
+    def get_seminar_hosts(meeting_id):
+        hosts = [ldap_get_member(a.uid).displayName for a in
+                 MemberSeminarHost.query.filter(
+                 MemberSeminarHost.seminar_id == meeting_id).all()]
+        
+        for freshman in [a.fid for a in
+                         FreshmanSeminarHost.query.filter(
+                         FreshmanSeminarHost.seminar_id == meeting_id).all()]:
+            hosts.append(FreshmanAccount.query.filter(
+                         FreshmanAccount.id == freshman).first().name)
+        return hosts
+
     log = logger.new(request=request, auth_dict=user_dict)
 
     if not user_dict_is_eboard(user_dict):
@@ -402,6 +424,7 @@ def attendance_history(user_dict=None):
                "name": m.name,
                "dt_obj": m.timestamp,
                "date": m.timestamp.strftime("%a %m/%d/%Y"),
+               "hosts": get_seminar_hosts(m.id),
                "attendees": get_seminar_attendees(m.id),
                "type": "ts"
                } for m in TechnicalSeminar.query.filter(
@@ -419,6 +442,7 @@ def attendance_history(user_dict=None):
                 "name": m.name,
                 "dt_obj": m.timestamp,
                 "date": m.timestamp.strftime("%a %m/%d/%Y"),
+                "hosts": get_seminar_hosts(m.id),
                 "attendees": get_seminar_attendees(m.id)
                } for m in TechnicalSeminar.query.filter(
                    TechnicalSeminar.timestamp > start_of_year(),
@@ -433,6 +457,7 @@ def attendance_history(user_dict=None):
                            history=all_meetings,
                            pending_cm=pend_cm,
                            pending_ts=pend_ts,
+                           all_ts=all_ts,
                            num_pages=total_pages,
                            current_page=int(page))
 
@@ -483,18 +508,32 @@ def alter_seminar_attendance(sid, user_dict=None):
     meeting_id = sid
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
+    m_host = post_data['member_host']
+    f_host = post_data['freshman_host']
 
     FreshmanSeminarAttendance.query.filter(
         FreshmanSeminarAttendance.seminar_id == meeting_id).delete()
 
+    FreshmanSeminarHost.query.filter(
+        FreshmanSeminarHost.seminar_id == meeting_id).delete()
+
     MemberSeminarAttendance.query.filter(
         MemberSeminarAttendance.seminar_id == meeting_id).delete()
+
+    MemberSeminarHost.query.filter(
+        MemberSeminarHost.seminar_id == meeting_id).delete()
 
     for m in m_attendees:
         db.session.add(MemberSeminarAttendance(m, meeting_id))
 
+    for m in m_host:
+        db.session.add(MemberSeminarHost(m, meeting_id))
+
     for f in f_attendees:
         db.session.add(FreshmanSeminarAttendance(f, meeting_id))
+
+    for f in f_host:
+        db.session.add(FreshmanSeminarHost(f, meeting_id))
 
     db.session.flush()
     db.session.commit()
@@ -512,12 +551,25 @@ def get_cm_attendees(sid, user_dict=None):
                      MemberSeminarAttendance.query.filter(
                      MemberSeminarAttendance.seminar_id == sid).all()]
 
+        host = [{"value": a.uid,
+                 "display": ldap_get_member(a.uid).displayName
+                } for a in
+                MemberSeminarHost.query.filter(
+                MemberSeminarHost.seminar_id == sid).all()]
+
         for freshman in [{"value": a.fid,
                           "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
                          } for a in FreshmanSeminarAttendance.query.filter(
                          FreshmanSeminarAttendance.seminar_id == sid).all()]:
             attendees.append(freshman)
-        return jsonify({"attendees": attendees}), 200
+        
+        for freshman in [{"value": a.fid,
+                          "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
+                         } for a in FreshmanSeminarHost.query.filter(
+                         FreshmanSeminarHost.seminar_id == sid).all()]:
+            host.append(freshman)
+
+        return jsonify({"attendees": attendees, "host": host}), 200
 
     log = logger.new(request=request, auth_dict=user_dict)
     log.info(f'Delete Technical Seminar {sid}')
@@ -527,8 +579,12 @@ def get_cm_attendees(sid, user_dict=None):
 
     FreshmanSeminarAttendance.query.filter(
         FreshmanSeminarAttendance.seminar_id == sid).delete()
+    FreshmanSeminarHost.query.filter(
+        FreshmanSeminarHost.seminar_id == sid).delete()
     MemberSeminarAttendance.query.filter(
         MemberSeminarAttendance.seminar_id == sid).delete()
+    MemberSeminarHost.query.filter(
+        MemberSeminarHost.seminar_id == sid).delete()
     TechnicalSeminar.query.filter(
         TechnicalSeminar.id == sid).delete()
 

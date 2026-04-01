@@ -86,8 +86,34 @@ Introductory Evaluations
                                     </div>
                                 {% endif %}
 
-                        </div>
-                        <div class="text-center">
+                            </div>
+                            <div class="text-center">
+                                {% if m['technical_seminars_hosted'] < 1 or m['technical_seminars'] < 2 %}
+                                    <div class="eval-info-label">
+                                        <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars - Hosted
+                                        <span class="eval-info-number">{{m['technical_seminars_hosted']}} / 1</span>
+                                    </div>
+                                    {% else %}
+                                    <div class="eval-info-label">
+                                        <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars - Hosted
+                                        <span class="eval-info-number">{{m['technical_seminars_hosted']}} / 1</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="text-center">
+                                {% if m['technical_seminars'] < 2 or m['technical_seminars_hosted'] < 1 %}
+                                    <div class="eval-info-label">
+                                        <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars - Attended
+                                        <span class="eval-info-number">{{m['technical_seminars_attended']}} / 2</span>
+                                    </div>
+                                    {% else %}
+                                    <div class="eval-info-label">
+                                        <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars - Attended
+                                        <span class="eval-info-number">{{m['technical_seminars']}} / 2</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="text-center">
                             {% if m['house_meetings_missed']|length > 0 %}
                                         <div class="eval-info-label">
                                             <i class="bi bi-x-circle-fill red eval-info-status"></i>House Meetings Missed
@@ -98,13 +124,13 @@ Introductory Evaluations
                                             <i class="bi bi-check-circle-fill green eval-info-status"></i>House Meetings Missed
                                             <span class="eval-info-number">{{m['house_meetings_missed']|length}}</span>
                                         </div>
-                                        {% endif %}
+                            {% endif %}
                         </div>
 
                     </div>
                 </div>
             </div>
-            {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['comments'] != "" %}
+            {% if m['house_meetings_missed']|length != 0 or m['technical_seminars']|length != 0 or m['technical_seminars_hosted']|length != 0 or m['comments'] != "" %}
                 <div class="evals-dropdown">
                     <span class="btn-expand-panel" role="button" data-toggle="collapse" href="#evalsCollapse-{{m['uid']}}" aria-expanded="false" aria-controls="evalsCollapse-{{m['uid']}}">
                         <i class="bi bi-chevron-down"></i>
@@ -136,9 +162,22 @@ Introductory Evaluations
                 </table>
                 {% endif %}
                 <!-- ^^ HOUSE MEETINGS TABLE -->
+                {% if m['technical_seminars_hosted']|length > 0 %}
+
+                <h4>Technical Seminars - Hosted</h4>
+                <table class="table">
+                    <tbody>
+                        {% for seminar in m['technical_seminars_hosted'] %}
+                        <tr>
+                            <td>{{seminar}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
                 {% if m['technical_seminars']|length > 0 %}
 
-                <h4>Technical Seminars</h4>
+                <h4>Technical Seminars - Attended</h4>
                 <table class="table">
                     <tbody>
                         {% for seminar in m['technical_seminars'] %}
@@ -183,8 +222,9 @@ Introductory Evaluations
                         <th>Result</th>
                         <th>Meetings</th>
                         <th>Signatures Missed</th>
-                        <th>Technical Seminars</th>
-                        <th>House Meetings Missed</th>
+                        <th>Technical Seminars - Hosted</th>
+                        <th>Technical Seminars - Attended</th>
+						            <th>House Meetings Missed</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -218,8 +258,15 @@ Introductory Evaluations
                                <i class="bi bi-hourglass-split yellow eval-info-status"></i> Pending
                                 {% endif %}
                         </td>
+                        <td data-sort="{{ m['technical_seminars_hosted']|length }}">
+                            {% if m['technical_seminars_hosted']|length >= 1 or m['technical_seminars']|length >= 2%}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['technical_seminars_hosted']|length}}
+                            {% else %}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['technical_seminars_hosted']|length}}
+                            {% endif %}
+                        </td>
                         <td data-sort="{{ m['technical_seminars']|length }}">
-                            {% if m['technical_seminars']|length >= 2 %}
+                            {% if m['technical_seminars']|length >= 2 or m['technical_seminars_hosted']|length >= 1%}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['technical_seminars']|length}}
                             {% else %}
                                 <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['technical_seminars']|length}}

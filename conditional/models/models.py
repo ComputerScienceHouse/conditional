@@ -106,6 +106,28 @@ class TechnicalSeminar(db.Model):
         self.active = True
 
 
+class MemberSeminarHost(db.Model):
+    __tablename__ = 'member_seminar_host'
+    id = Column(Integer, primary_key=True)
+    uid = Column(String(32), nullable=False, index=True)
+    seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
+
+    def __init__(self, uid, seminar_id):
+        self.uid = uid
+        self.seminar_id = seminar_id
+
+
+class FreshmanSeminarHost(db.Model):
+    __tablename__ = 'freshman_seminar_host'
+    id = Column(Integer, primary_key=True)
+    fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False, index=True)
+    seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
+    
+    def __init__(self, fid, seminar_id):
+        self.fid = fid
+        self.seminar_id = seminar_id
+
+
 class MemberSeminarAttendance(db.Model):
     __tablename__ = 'member_seminar_attendance'
     id = Column(Integer, primary_key=True)

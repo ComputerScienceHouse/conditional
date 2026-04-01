@@ -42,7 +42,12 @@ Attendance History
             		<p>{{seminar["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
-            		<p class="attend-list" id="attendees-{{seminar["id"]}}">
+                    <p class="host-list" id="hosts-{{seminar["id"]}}">Host: 
+                        {% for name in seminar["hosts"] %}
+                        {{name}}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+            		<p class="attend-list" id="attendees-{{seminar["id"]}}">Attendees: 
             			{% for name in seminar["attendees"] %}
             			{{name}}{% if not loop.last %}, {% endif %}
             			{% endfor %}
@@ -68,7 +73,14 @@ Attendance History
             		<p>{{meeting["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
-            		<p class="attend-list" id="attendees-{{meeting["id"]}}">
+                    {% if meeting in all_ts %}
+                    <p class="host-list" id="hosts-{{meeting["id"]}}">Host: 
+                        {% for name in meeting["hosts"] %}
+                        {{name}}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    {% endif %}
+            		<p class="attend-list" id="attendees-{{meeting["id"]}}">Attendees: 
             			{% for name in meeting["attendees"] %}
             			{{name}}{% if not loop.last %}, {% endif %}
             			{% endfor %}
@@ -121,6 +133,10 @@ Attendance History
                 </div>
                 <form method="post">
                     <div class="modal-body">
+                        <div class="row host-edit-row">
+                            <label class="control-label" for="host">Host(s)</label>
+                            <input type="text" name="host" class="form-control" />
+                        </div>
                         <div class="row user-edit-row">
                             <label class="control-label" for="attendees">Attendees</label>
                             <input type="text" name="attendees" class="form-control" />
@@ -146,6 +162,10 @@ Attendance History
                 </div>
                 <form method="post">
                     <div class="modal-body">
+                        <div class="row host-edit-row">
+                            <label class="control-label" for="host">Host(s)</label>
+                            <input type="text" name="host" class="form-control" />
+                        </div>
                         <div class="row user-edit-row">
                             <label class="control-label" for="attendees">Attendees</label>
                             <input type="text" name="attendees" class="form-control" />

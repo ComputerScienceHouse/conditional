@@ -57,14 +57,25 @@ Gatekeep Results
                                 {% endif %}
                             </div>
                             <div class="text-center">
-                                {% if m['technical_seminars'] < req_seminars %}
+                                {% if m['technical_seminars_hosted'] < req_seminars_hosted and m['technical_seminars'] < req_seminars %}
                                 <div class="eval-info-label">
-                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars - Hosted
+                                    <span class="eval-info-number">{{m['technical_seminars_hosted']}} / {{ req_seminars_hosted }}</span>
+                                </div>
+                                {% else %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars - Hosted
+                                    <span class="eval-info-number">{{m['technical_seminars_hosted']}} / {{ req_seminars_hosted }}</span>
+                                </div>
+                                {% endif %}
+                                {% if m['technical_seminars'] < req_seminars and m['technical_seminars_hosted'] < req_seminars_hosted %}
+                                <div class="eval-info-label">
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars - Attended
                                     <span class="eval-info-number">{{m['technical_seminars']}} / {{ req_seminars }}</span>
                                 </div>
                                 {% else %}
                                 <div class="eval-info-label">
-                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars - Attended
                                     <span class="eval-info-number">{{m['technical_seminars']}} / {{ req_seminars }}</span>
                                 </div>
                                 {% endif %}
@@ -134,7 +145,8 @@ Gatekeep Results
                         <th>Name</th>
                         <th>Result</th>
                         <th>Directorship Meetings</th>
-                        <th>Technical Seminars</th>
+                        <th>Technical Seminars - Hosted</th>
+                        <th>Technical Seminars - Attended</th>
                         <th>House Meetings Missed</th>
                     </tr>
                     </thead>
@@ -160,8 +172,15 @@ Gatekeep Results
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}} / {{ req_meetings }}
                             {% endif %}
                         </td>
+                        <td data-sort="{{ m['technical_seminars_hosted'] }}">
+                            {% if m['technical_seminars_hosted'] < req_seminars_hosted and m['technical_seminars'] < req_seminars %}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i> {{ m['technical_seminars_hosted'] }} / {{ req_seminars_hosted }}
+                            {% else %}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i> {{ m['technical_seminars_hosted'] }} / {{ req_seminars_hosted }}
+                            {% endif %}
+                        </td>
                         <td data-sort="{{ m['technical_seminars'] }}">
-                            {% if m['technical_seminars'] < req_seminars %}
+                            {% if m['technical_seminars'] < req_seminars and m['technical_seminars_hosted'] < req_seminars_hosted %}
                                 <i class="bi bi-x-circle-fill red eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}
                             {% else %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i> {{ m['technical_seminars'] }} / {{ req_seminars }}

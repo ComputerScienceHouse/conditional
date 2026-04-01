@@ -18,6 +18,7 @@ export default class AttendanceForm {
     } else if (this.form.dataset.type === "seminar") {
       this.endpoint = '/attendance/submit/ts';
       this.fields.name = this.form.elements.name;
+      this.fields.host = this.form.elements.host;
     }
 
     this.render();
@@ -47,6 +48,12 @@ export default class AttendanceForm {
             );
             payload.freshmen = membersSplit.freshmen;
             payload.members = membersSplit.upperclassmen;
+          } else if (field === "host") {
+            let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
+              this.fields[field].value.split(',')
+            );
+            payload.freshmanHost = hostSplit.freshmen;
+            payload.memberHost = hostSplit.upperclassmen;
           } else {
             payload[field] = this.fields[field].value;
           }
