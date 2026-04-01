@@ -73,6 +73,8 @@ export default class ReviewMeeting {
 
       hostInput.dataset.src = "cm_members";
       new MemberSelect(hostInput); // eslint-disable-line no-new
+    } else { // Hide host section if not technical seminar
+      this.modal.querySelector(".host-edit-row").style.display = "none";
     }
     
 
