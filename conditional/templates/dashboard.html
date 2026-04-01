@@ -364,7 +364,20 @@ Dashboard
                         </tr>
                         {% endif %}
                         <tr>
-                            <td class="title">Technical Seminars</td>
+                            <td class="title">Technical Seminars - Hosted</td>
+                            <td>
+                                <span class="pull-right">
+                                    {% if gatekeep['technical_seminars_hosted'] >= 1 or gatekeep['technical_seminars'] >= 2 %}
+                                    <i class="bi bi-check-circle-fill green"></i> 
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red"></i> 
+                                    {% endif %} 
+                                    {{ gatekeep['technical_seminars_hosted'] }} / 1
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Technical Seminars - Attended</td>
                             <td>
                                 <span class="pull-right">
                                     {% if gatekeep['technical_seminars'] >= 2 or gatekeep['technical_seminars_hosted'] >= 1 %}
