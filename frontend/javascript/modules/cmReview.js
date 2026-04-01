@@ -61,13 +61,20 @@ export default class ReviewMeeting {
       this._deleteMeeting()
     );
 
-    // Host
-    const hostInput = this.modal.querySelector('input[name="host"]');
-    let hostStr = "";
-    this.data.host.forEach(h => {
-      hostStr += h.value + ",";
-    });
-    hostInput.value = hostStr;
+    if (this.meeting == "ts") {
+      // Host
+      const hostInput = this.modal.querySelector('input[name="host"]');
+      let hostStr = "";
+      this.data.host.forEach(h => {
+        hostStr += h.value + ",";
+      });
+      hostInput.value = hostStr;
+
+
+      hostInput.dataset.src = "cm_members";
+      new MemberSelect(hostInput); // eslint-disable-line no-new
+    }
+    
 
     // Attendees
     const attendeesInput = this.modal.querySelector('input[name="attendees"]');
@@ -80,8 +87,6 @@ export default class ReviewMeeting {
     // Initialize selector control
     attendeesInput.dataset.src = "cm_members";
     new MemberSelect(attendeesInput); // eslint-disable-line no-new
-    hostInput.dataset.src = "cm_members";
-    new MemberSelect(hostInput); // eslint-disable-line no-new
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
