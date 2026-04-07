@@ -232,6 +232,9 @@ def submit_seminar_attendance(user_dict=None):
     db.session.refresh(seminar)
 
     for m in m_attendees:
+        if m in m_host:
+            log.info(f'Skipped giving Attendence to {m} for {seminar_name}')
+            continue
         log.info(f'Gave Attendance to {m} for {seminar_name}')
         db.session.add(MemberSeminarAttendance(m, seminar.id))
     for m in m_host:
@@ -239,6 +242,9 @@ def submit_seminar_attendance(user_dict=None):
         db.session.add(MemberSeminarHost(m, seminar.id))
 
     for f in f_attendees:
+        if f in f_host:
+            log.info(f'Skipped giving Attendance to freshman-{f} for {seminar_name}')
+            continue
         log.info(f'Gave Attendance to freshman-{f} for {seminar_name}')
         db.session.add(FreshmanSeminarAttendance(f, seminar.id))
     for f in f_host:
@@ -524,12 +530,16 @@ def alter_seminar_attendance(sid, user_dict=None):
         MemberSeminarHost.seminar_id == meeting_id).delete()
 
     for m in m_attendees:
+        if m in m_host:
+            continue
         db.session.add(MemberSeminarAttendance(m, meeting_id))
 
     for m in m_host:
         db.session.add(MemberSeminarHost(m, meeting_id))
 
     for f in f_attendees:
+        if f in f_host:
+            continue
         db.session.add(FreshmanSeminarAttendance(f, meeting_id))
 
     for f in f_host:
