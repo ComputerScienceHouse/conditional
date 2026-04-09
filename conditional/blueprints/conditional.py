@@ -106,8 +106,8 @@ def conditional_review(user_dict=None):
 
         if status == 'Passed':
             account = ldap_get_member(uid)
-            hp = account.housingPoints
-            ldap_set_housingpoints(account, hp + 2)
+            hp = int(account.housingPoints)
+            ldap_set_housingpoints(account, str(hp + 2))
 
     elif cond_obj.i_evaluation:
         FreshmanEvalData.query.filter(FreshmanEvalData.id == cond_obj.i_evaluation).update(
