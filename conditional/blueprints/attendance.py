@@ -399,7 +399,7 @@ def attendance_history(user_dict=None):
         hosts = [ldap_get_member(a.uid).displayName for a in
                  MemberSeminarHost.query.filter(
                  MemberSeminarHost.seminar_id == meeting_id).all()]
-        
+
         for freshman in [a.fid for a in
                          FreshmanSeminarHost.query.filter(
                          FreshmanSeminarHost.seminar_id == meeting_id).all()]:
@@ -572,7 +572,7 @@ def get_cm_attendees(sid, user_dict=None):
                          } for a in FreshmanSeminarAttendance.query.filter(
                          FreshmanSeminarAttendance.seminar_id == sid).all()]:
             attendees.append(freshman)
-        
+
         for freshman in [{"value": a.fid,
                           "display": FreshmanAccount.query.filter(FreshmanAccount.id == a.fid).first().name
                          } for a in FreshmanSeminarHost.query.filter(

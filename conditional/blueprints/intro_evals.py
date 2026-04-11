@@ -231,11 +231,11 @@ def display_intro_evals(internal=False, user_dict=None):
             account_ts_attendance_dict[row[0]] = []
 
         account_ts_attendance_dict[row[0]].append(row[1])
-    
+
     for row in account_ts_hosted_query:
         if not row[0] in account_ts_hosted_dict:
             account_ts_hosted_dict[row[0]] = []
-        
+
         account_ts_hosted_dict[row[0]].append(row[1])
 
     # freshmen who have accounts

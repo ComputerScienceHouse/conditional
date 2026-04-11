@@ -122,7 +122,7 @@ class FreshmanSeminarHost(db.Model):
     id = Column(Integer, primary_key=True)
     fid = Column(ForeignKey('freshman_accounts.id', ondelete="cascade"), nullable=False, index=True)
     seminar_id = Column(ForeignKey('technical_seminars.id'), nullable=False)
-    
+
     def __init__(self, fid, seminar_id):
         self.fid = fid
         self.seminar_id = seminar_id

@@ -469,7 +469,7 @@ def member_management_upgrade_user(user_dict=None):
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
         db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
-    
+
     for ftsh in FreshmanSeminarHost.query.filter(FreshmanSeminarHost.fid == fid):
         db.session.add(MemberSeminarHost(uid, ftsh.seminar_id))
 

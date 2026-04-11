@@ -112,7 +112,8 @@ def display_spring_evals(internal=False, user_dict=None):
         ts_attended_count = ts_count.get(uid, 0)
         ts_hosted_count = ts_host_count.get(uid, 0)
 
-        passing = len(member_missed_hms) <= 1 and cm_attended_count >= 6 and (ts_attended_count >= 2 or ts_hosted_count >= 1)
+        ts_passing = ts_attended_count >= 2 or ts_hosted_count >= 1
+        passing = len(member_missed_hms) <= 1 and cm_attended_count >= 6 and ts_passing
 
         status = 'disenfranchised'
 

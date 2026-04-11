@@ -108,7 +108,7 @@ def display_dashboard(user_dict=None):
                   ) if is_seminar_attendance_valid(s)]
     data['ts_total'] = len(t_seminars)
     # technical seminars hosted
-    t_seminars_hosted = [s.seminar_id for s in 
+    t_seminars_hosted = [s.seminar_id for s in
                          MemberSeminarHost.query.filter(
                             MemberSeminarHost.uid == uid,
                          ) if is_seminar_attendance_valid(s)]

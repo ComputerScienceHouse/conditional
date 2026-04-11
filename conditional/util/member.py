@@ -77,7 +77,7 @@ def get_freshman_data(user_name):
             TechnicalSeminar.id == s.seminar_id).first().approved]
     freshman['ts_total'] = len(t_seminars)
     # technical seminars hosted
-    t_seminars_hosted = [s.seminar_id for s in 
+    t_seminars_hosted = [s.seminar_id for s in
                          MemberSeminarHost.query.filter(
                             MemberSeminarHost.uid == user_name
                          ) if TechnicalSeminar.query.filter(
@@ -288,7 +288,7 @@ def get_voting_members():
     ).group_by(
         MemberSeminarHost.uid
     ).having(
-        func.count(MemberSeminarHost.uid) >= 1
+        func.count(MemberSeminarHost.uid) >= 1  # pylint: disable=not-callable
     ).all())
 
     absent_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
@@ -404,7 +404,8 @@ def gatekeep_values(username):
         .count()
     )
 
-    result = eligibility_of_groups and (d_meetings >= 6 and (t_seminars >= 2 or t_seminars_hosted >= 1) and h_meetings_missed < 2) # pylint: disable=chained-comparison
+    ts_passed = t_seminars >= 2 or t_seminars_hosted >= 1
+    result = eligibility_of_groups and (d_meetings >= 6 and ts_passed and h_meetings_missed < 2) # pylint: disable=chained-comparison
 
     return {
         "result": result,
