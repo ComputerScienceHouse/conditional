@@ -9,10 +9,12 @@ from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import FreshmanEvalData
 from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import FreshmanSeminarAttendance
+from conditional.models.models import FreshmanSeminarHost
 from conditional.models.models import HouseMeeting
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
@@ -70,13 +72,35 @@ def get_intro_members_without_accounts():
         TechnicalSeminar.name
     ).all()
 
+    freshman_ts_host_query = FreshmanSeminarHost.query.join(
+        TechnicalSeminar,
+        FreshmanSeminarHost.seminar_id == TechnicalSeminar.id
+    ).with_entities(
+        FreshmanSeminarHost.fid,
+        TechnicalSeminar.timestamp,
+        TechnicalSeminar.approved
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        FreshmanSeminarHost.fid,
+        TechnicalSeminar.name
+    ).all()
+
     freshman_ts_attendance_dict = {}
+    freshman_ts_host_dict = {}
 
     for row in freshman_ts_attendance_query:
         if not row[0] in freshman_ts_attendance_dict:
             freshman_ts_attendance_dict[row[0]] = []
 
         freshman_ts_attendance_dict[row[0]].append(row[1])
+
+    for row in freshman_ts_host_query:
+        if not row[0] in freshman_ts_host_dict:
+            freshman_ts_host_dict[row[0]] = []
+
+        freshman_ts_host_dict[row[0]].append(row[1])
 
     # freshmen who don't have accounts
     freshman_accounts = list(FreshmanAccount.query.filter(
@@ -114,6 +138,7 @@ def get_intro_members_without_accounts():
             'committee_meetings_passed': cms_attended >= 6,
             'house_meetings_missed': missed_hms,
             'technical_seminars': freshman_ts_attendance_dict.get(freshman_account.id, []),
+            'technical_seminars_hosted': freshman_ts_host_dict.get(freshman_account.id, []),
             'social_events': '',
             'comments': "",
             'ldap_account': False,
@@ -183,13 +208,35 @@ def display_intro_evals(internal=False, user_dict=None):
         TechnicalSeminar.name
     ).all()
 
+    account_ts_hosted_query = MemberSeminarHost.query.join(
+        TechnicalSeminar,
+        MemberSeminarHost.seminar_id == TechnicalSeminar.id
+    ).with_entities(
+        MemberSeminarHost.uid,
+        TechnicalSeminar.timestamp,
+        TechnicalSeminar.approved
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        MemberSeminarHost.uid,
+        TechnicalSeminar.name
+    ).all()
+
     account_ts_attendance_dict = {}
+    account_ts_hosted_dict = {}
 
     for row in account_ts_attendance_query:
         if not row[0] in account_ts_attendance_dict:
             account_ts_attendance_dict[row[0]] = []
 
         account_ts_attendance_dict[row[0]].append(row[1])
+
+    for row in account_ts_hosted_query:
+        if not row[0] in account_ts_hosted_dict:
+            account_ts_hosted_dict[row[0]] = []
+
+        account_ts_hosted_dict[row[0]].append(row[1])
 
     # freshmen who have accounts
     for member in members:
@@ -229,6 +276,7 @@ def display_intro_evals(internal=False, user_dict=None):
             'committee_meetings_passed': cms_attended >= 6,
             'house_meetings_missed': member_missed_hms,
             'technical_seminars': account_ts_attendance_dict.get(uid, []),
+            'technical_seminars_hosted': account_ts_hosted_dict.get(uid, []),
             'social_events': freshman_data.social_events,
             'comments': freshman_data.other_notes,
             'ldap_account': True,

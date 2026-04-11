@@ -4,7 +4,7 @@ from sqlalchemy import func
 
 from conditional import start_of_year, auth
 from conditional.models.models import CommitteeMeeting, HouseMeeting, MemberCommitteeAttendance, \
-    MemberSeminarAttendance, TechnicalSeminar
+    MemberSeminarAttendance, MemberSeminarHost, TechnicalSeminar
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
@@ -59,6 +59,23 @@ def display_spring_evals(internal=False, user_dict=None):
         MemberSeminarAttendance.uid
     ).all()}
 
+    ts_host_count = {row[0]: row[1] for row in MemberSeminarHost.query.join(
+        TechnicalSeminar,
+        MemberSeminarHost.seminar_id == TechnicalSeminar.id
+    ).with_entities(
+        MemberSeminarHost.uid,
+        TechnicalSeminar.timestamp,
+        TechnicalSeminar.approved,
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        MemberSeminarHost.uid,
+        func.count(MemberSeminarHost.uid) #pylint: disable=not-callable
+    ).group_by(
+        MemberSeminarHost.uid
+    ).all()}
+
     hm_missed = {row[0]: row[1] for row in MemberHouseMeetingAttendance.query.join(
         HouseMeeting,
         MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
@@ -93,8 +110,10 @@ def display_spring_evals(internal=False, user_dict=None):
 
         cm_attended_count = cm_count.get(uid, 0)
         ts_attended_count = ts_count.get(uid, 0)
+        ts_hosted_count = ts_host_count.get(uid, 0)
 
-        passing = len(member_missed_hms) <= 1 and cm_attended_count >= 6 and ts_attended_count >= 2
+        ts_passing = ts_attended_count >= 2 or ts_hosted_count >= 1
+        passing = len(member_missed_hms) <= 1 and cm_attended_count >= 6 and ts_passing
 
         status = 'disenfranchised'
 
@@ -107,8 +126,10 @@ def display_spring_evals(internal=False, user_dict=None):
             'status': status,
             'committee_meetings': cm_attended_count,
             'technical_seminars': ts_attended_count,
+            'technical_seminars_hosted': ts_hosted_count,
             'req_meetings': 6,
             'req_seminars': 2,
+            'req_seminars_hosted': 1,
             'house_meetings_missed': member_missed_hms,
         }
 
@@ -128,4 +149,5 @@ def display_spring_evals(internal=False, user_dict=None):
                            members=gk_members,
                            gatekeep_active=gatekeep_active,
                            req_meetings=6,
-                           req_seminars=2)
+                           req_seminars=2,
+                           req_seminars_hosted=1)

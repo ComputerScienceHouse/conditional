@@ -122,9 +122,29 @@ Membership Evaluations
                     </table>
                     {% endif %}
                     <!-- ^^ HOUSE MEETINGS TABLE -->
+                    {% if m['technical_seminars_hosted']|length > 0 %}
+                    <hr class="eval-hr">
+                    <h4>Technical Seminars - Hosted</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Seminar Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {% for seminar in m['technical_seminars_hosted'] %}
+                                <td>{{seminar['date']}}</td>
+                                <td>{{seminar['name']}}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endif %}
                     {% if m['technical_seminars']|length > 0 %}
                     <hr class="eval-hr">
-                    <h4>Technical Seminars</h4>
+                    <h4>Technical Seminars - Attended</h4>
                     <table class="table">
                         <thead>
                             <tr>

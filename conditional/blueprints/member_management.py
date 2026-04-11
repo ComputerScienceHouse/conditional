@@ -13,7 +13,9 @@ from conditional.models.models import FreshmanEvalData
 from conditional.models.models import FreshmanCommitteeAttendance
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import FreshmanSeminarAttendance
+from conditional.models.models import FreshmanSeminarHost
 from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import MemberSeminarHost
 from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import HouseMeeting
@@ -422,6 +424,9 @@ def member_management_deleteuser(fid, user_dict=None):
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
         db.session.delete(fts)
 
+    for ftsh in FreshmanSeminarHost.query.filter(FreshmanSeminarHost.fid == fid):
+        db.session.delete(ftsh)
+
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         db.session.delete(fhm)
 
@@ -464,6 +469,9 @@ def member_management_upgrade_user(user_dict=None):
 
     for fts in FreshmanSeminarAttendance.query.filter(FreshmanSeminarAttendance.fid == fid):
         db.session.add(MemberSeminarAttendance(uid, fts.seminar_id))
+
+    for ftsh in FreshmanSeminarHost.query.filter(FreshmanSeminarHost.fid == fid):
+        db.session.add(MemberSeminarHost(uid, ftsh.seminar_id))
 
     for fhm in FreshmanHouseMeetingAttendance.query.filter(FreshmanHouseMeetingAttendance.fid == fid):
         # Don't duplicate HM attendance records
