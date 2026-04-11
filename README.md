@@ -8,45 +8,23 @@ A comprehensive membership evaluations solution for Computer Science House.
 Development
 -----------
 
-### Config
+## Running (containerized)
 
-You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
+It is likely easier to use containers like `podman` or `docker` or the corresponding compose file
 
-#### Add OIDC Config
-Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
-```py
-# OIDC Config
-OIDC_ISSUER = "https://sso.csh.rit.edu/auth/realms/csh"
-OIDC_CLIENT_CONFIG = {
-    'client_id': '',
-    'client_secret': '',
-    'post_logout_redirect_uris': ['http://0.0.0.0:6969/logout']
-}
+With podman, I have been using 
+
+```sh
+podman compose up --watch
 ```
 
-#### Add S3 Config
-An S3 bucket is used to store files that users upload (currently just for major project submissions). In order to have this work properly, you need to provide some credentials to the app.
-
-There are 2 ways that you can get the needed credentials. 
-1. Reach out to an RTP for creds to the dev bucket
-2. Create your own bucket using [DEaDASS](https://deadass.csh.rit.edu/), and the site will give you the credentials you need. 
-
-```py
-S3_URI = env.get("S3_URI", "https://s3.csh.rit.edu")
-S3_BUCKET_ID = env.get("S3_BUCKET_ID", "major-project-media")
-AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
-AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
+If you want, you can run without auto rebuild using
+```sh
+podman compose up --force-recreate --build
 ```
+Which can be restarted every time changes are made.
 
-#### Database 
-You can either develop using the dev database, or use the local database provided in the docker compose file
-
-Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
-
-#### Forcing evals/rtp or anything else
-All of the role checking is done in `conditional/utils/user_dict.py`, and you can change the various functions to `return True` for debugging
-
-### Run (Without Docker)
+## Run (Without Docker)
 
 To run the application without using containers, you must have the latest version of [Python 3](https://www.python.org/downloads/) and [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) installed. Once you have those installed, create a new virtualenv and install the Python dependencies:
 
@@ -90,30 +68,53 @@ or
 python -m gunicorn
 ```
 
-### Run (containerized)
+## Config
 
-It is likely easier to use containers like `podman` or `docker` or the corresponding compose file
+You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
 
-With podman, I have been using 
-
-```sh
-podman compose up --watch
+### Add OIDC Config
+Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
+```py
+# OIDC Config
+OIDC_ISSUER = "https://sso.csh.rit.edu/auth/realms/csh"
+OIDC_CLIENT_CONFIG = {
+    'client_id': '',
+    'client_secret': '',
+    'post_logout_redirect_uris': ['http://0.0.0.0:6969/logout']
+}
 ```
 
-If you want, you can run without compose support using
-```sh
-podman compose up --force-recreate --build
+### Add S3 Config
+An S3 bucket is used to store files that users upload (currently just for major project submissions). In order to have this work properly, you need to provide some credentials to the app.
+
+There are 2 ways that you can get the needed credentials. 
+1. Reach out to an RTP for creds to the dev bucket
+2. Create your own bucket using [DEaDASS](https://deadass.csh.rit.edu/), and the site will give you the credentials you need. 
+
+```py
+S3_URI = env.get("S3_URI", "https://s3.csh.rit.edu")
+S3_BUCKET_ID = env.get("S3_BUCKET_ID", "major-project-media")
+AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
 ```
 
-Which can be restarted every time changes are made
+### Database 
+You can either develop using the dev database, or use the local database provided in the docker compose file
 
-### Dependencies
+Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
+
+### Forcing evals/rtp or anything else
+All of the role checking is done in `conditional/utils/user_dict.py`, and you can change the various functions to `return True` for debugging
+
+
+
+## Dependencies
 
 To add new dependencies, add them to `requirements.in` and then run `pip-compile requirements.in` to produce a new locked `requirements.txt`. Do not edit `requirements.txt` directly as it will be overwritten by future PRs.
 
-### Database Stuff
+## Database Stuff
 
-#### Local database
+### Local database
 
 You can run the database locally using the docker compose
 
@@ -130,7 +131,7 @@ To run migration commands in the local database, you can run the commands inside
 podman exec conditional flask db upgrade
 ```
 
-#### Database Migrations
+### Database Migrations
 
 If the database schema is changed after initializing the database, you must migrate it to the new schema by running:
 
