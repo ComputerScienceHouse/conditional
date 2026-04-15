@@ -23,7 +23,6 @@ def display_spring_evals(internal=False, user_dict=None):
     log.info('Display Gatekeep Status Listing')
 
     _, semester_start = get_semester_info()
-    active_members = ldap_get_active_members()
 
     cm_count = {row[0]: row[1] for row in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
@@ -90,7 +89,7 @@ def display_spring_evals(internal=False, user_dict=None):
     ).all()}
 
     gk_members = []
-    for account in active_members:
+    for account in ldap_get_active_members():
         uid = account.uid
         name = account.cn
 
@@ -142,12 +141,10 @@ def display_spring_evals(internal=False, user_dict=None):
     if internal:
         return gk_members
 
-    gatekeep_active = is_gatekeep_active()
-
     return render_template('gatekeep.html',
                            username=user_dict['username'],
                            members=gk_members,
-                           gatekeep_active=gatekeep_active,
+                           gatekeep_active=is_gatekeep_active(),
                            req_meetings=6,
                            req_seminars=2,
                            req_seminars_hosted=1)
