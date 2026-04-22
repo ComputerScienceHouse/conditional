@@ -123,13 +123,14 @@ Dashboard
                             {% endif %} 
                         </div>
                     </li>
+
                     <li class="list-group-item">
                         {% if intro['ts_total']== 0 %}
                         <div class="alert alert-warning my-0" role="alert">
                             <i class="bi bi-exclamation-circle text-warning me-2"></i>
                             You have not attended any technical seminars.</div>
                         {% else %}
-                        <p class="mb-1">Technical Seminars</p>
+                        <p class="mb-1">Technical Seminars - Attendance</p>
                         <ul>
                             {% for ts in intro['ts_list'] %}
                             <li>{{ ts }}</li>
@@ -137,6 +138,17 @@ Dashboard
                         </ul>
                         {% endif %}
                     </li>
+
+                    {% if intro['ts_hosted_total'] != 0 %}
+                    <li class="list-group-item">
+                        <p class="mb-1">Technical Seminars - Hosted</p>
+                        <ul>
+                            {% for ts in intro['ts_hosted'] %}
+                            <li>{{ ts }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -180,6 +192,18 @@ Dashboard
                         </ul>
                     </li>
                     {% endif %}
+
+                    {% if ts_hosted_total != 0 %}
+                    <li class="list-group-item">
+                        <p class="mb-1">Technical Seminars - Hosted</p>
+                        <ul>
+                            {% for ts in ts_hosted %}
+                            <li>{{ ts }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+
                     <li class="list-group-item d-flex">
                         <div class="col">
                             Directorship Meetings
@@ -297,19 +321,41 @@ Dashboard
                         </div>
                     </li>
                     {% endif %}
+
                     <li class="list-group-item d-flex">
                         <div class="col">
-                            Technical Seminars
+                            Technical Seminars - Attendance
                         </div>
                         <div class="col text-end">
                             {% if gatekeep['technical_seminars'] >= 2 %}
                             <i class="bi bi-check-circle-fill green"></i>
+                            {% elif gatekeep['technical_seminars_hosted'] >= 1 %}
+                            <i class="bi bi-x-circle-fill yellow"></i>
                             {% else %}
                             <i class="bi bi-x-circle-fill red"></i>
                             {% endif %}
                             {{ gatekeep['technical_seminars'] }} / 2
                         </div>
                     </li>
+
+                    {% if gatekeep['technical_seminars_hosted'] %}
+                    <li class="list-group-item d-flex">
+                        <div class="col">
+                            Technical Seminars - Hosted
+                        </div>
+                        <div class="col text-end">
+                            {% if gatekeep['technical_seminars_hosted'] >= 1 %}
+                            <i class="bi bi-check-circle-fill green"></i>
+                            {% elif gatekeep['technical_seminars'] >= 2 %}
+                            <i class="bi bi-x-circle-fill yellow"></i>
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red"></i>
+                            {% endif %}
+                            {{ gatekeep['technical_seminars_hosted'] }} / 1
+                        </div>
+                    </li>
+                    {% endif %}
+
                     <li class="list-group-item d-flex">
                         <div class="col">
                             Directorship Meetings

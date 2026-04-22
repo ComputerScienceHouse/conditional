@@ -71,17 +71,31 @@ Gatekeep Results
                             <i class="bi bi-x-circle-fill red me-2"></i>
                             {% endif %}
                             Directorship Meetings
-                            <span class="ms-auto">{{ m['committee_meetings'] }} / 6</span>
+                            <span class="ms-auto">{{ m['committee_meetings'] }} / {{ req_meetings }}</span>
                         </div>
 
                         <div class="d-flex">
                             {% if m['technical_seminars'] >= req_seminars %}
                             <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% elif m['technical_seminars_hosted'] >= req_seminars_hosted %}
+                            <i class="bi bi-x-circle-fill yellow me-2"></i>
                             {% else %}
                             <i class="bi bi-x-circle-fill red me-2"></i>
                             {% endif %}
-                            Technical Seminars
-                            <span class="ms-auto">{{ m['technical_seminars'] }} / 2</span>
+                            Technical Seminars - Attended
+                            <span class="ms-auto">{{ m['technical_seminars'] }} / {{ req_seminars }}</span>
+                        </div>
+
+                        <div class="d-flex">
+                            {% if m['technical_seminars_hosted'] >= req_seminars_hosted %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% elif m['technical_seminars'] >= req_seminars %}
+                            <i class="bi bi-x-circle-fill yellow me-2"></i>
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            {% endif %}
+                            Technical Seminars - Hosted
+                            <span class="ms-auto">{{ m['technical_seminars_hosted'] }} / {{ req_seminars_hosted }}</span>
                         </div>
 
                         <div class="d-flex">
@@ -136,7 +150,7 @@ Gatekeep Results
                                 {% endif %}
                             </td>
                             <td data-sort="{{ m['committee_meetings'] }}">
-                                {% if m['committee_meetings'] < 6 %}
+                                {% if m['committee_meetings'] < req_meetings %}
                                 <i class="bi bi-x-circle-fill red eval-info-status"></i>
                                 {% else %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i>
@@ -144,12 +158,25 @@ Gatekeep Results
                                 {{ m['committee_meetings'] }}
                             </td>
                             <td data-sort="{{ m['technical_seminars'] }}">
-                                {% if m['technical_seminars'] >= 2 %}
+                                {% if m['technical_seminars'] >= req_seminars %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                {% elif m['technical_seminars_hosted'] >= req_seminars_hosted %}
+                                <i class="bi bi-x-circle-fill yellow"></i>
                                 {% else %}
                                 <i class="bi bi-x-circle-fill red eval-info-status"></i>
                                 {% endif %}
+                                Attended: 
                                 {{ m['technical_seminars'] }}
+
+                                {% if m['technical_seminars_hosted'] >= req_seminars_hosted %}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                {% elif m['technical_seminars'] >= req_seminars %}
+                                <i class="bi bi-x-circle-fill yellow"></i>
+                                {% else %}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                {% endif %}
+                                Hosted: 
+                                {{ m['technical_seminars_hosted'] }}
                             </td>
                             <td data-sort="{{ m['house_meetings_missed'] | length }}">
                                 {% if m['house_meetings_missed'] | length == 0 %}
