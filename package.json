@@ -38,7 +38,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.5",
+    "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.28.5",
     "babel-loader": "^10.0.0",
     "bootstrap-icons": "^1.13.1",
