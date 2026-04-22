@@ -52,7 +52,7 @@ Introductory Evaluations Slideshow
               </div>
             </div>
             <div class="col-xs-12 col-md-3">
-              {% set technical_seminars_passed = m['technical_seminars']|length >= 2 %}
+              {% set technical_seminars_passed = m['technical_seminars']|length >= 2 or m['technical_seminars_hosted']|length >= 1 %}
               <div class="item{% if technical_seminars_passed %} passed{% endif %}">
                 {% if technical_seminars_passed %}
                 <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
@@ -60,7 +60,9 @@ Introductory Evaluations Slideshow
                 <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['technical_seminars']|length}}</h3>
-                <p>Seminars</p>
+                <p>Seminars Attended</p>
+                <h3>{{m['technical_seminars_hosted']|length}}</h3>
+                <p>Seminars Hosted</p>
               </div>
             </div>
           </div>

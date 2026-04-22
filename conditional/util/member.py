@@ -9,6 +9,7 @@ from conditional.models.models import HouseMeeting
 from conditional.models.models import MemberCommitteeAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import MemberSeminarAttendance
+from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.cache import service_cache
 from conditional.util.ldap import ldap_get_active_members
@@ -75,11 +76,22 @@ def get_freshman_data(user_name):
                   ) if TechnicalSeminar.query.filter(
             TechnicalSeminar.id == s.seminar_id).first().approved]
     freshman['ts_total'] = len(t_seminars)
+    # technical seminars hosted
+    t_seminars_hosted = [s.seminar_id for s in
+                         MemberSeminarHost.query.filter(
+                            MemberSeminarHost.uid == user_name
+                         ) if TechnicalSeminar.query.filter(
+            TechnicalSeminar.id == s.seminar_id).first().approved]
+    freshman['ts_hosted_total'] = len(t_seminars_hosted)
     attendance = [m.name for m in TechnicalSeminar.query.filter(
         TechnicalSeminar.id.in_(t_seminars)
     )]
+    hosted = [m.name for m in TechnicalSeminar.query.filter(
+        TechnicalSeminar.id.in_(t_seminars_hosted)
+    )]
 
     freshman['ts_list'] = attendance
+    freshman['ts_hosted'] = hosted
 
     h_meetings = [(m.meeting_id, m.attendance_status) for m in
                   MemberHouseMeetingAttendance.query.filter(
@@ -146,7 +158,8 @@ def get_hm(member, only_absent=False):
 # @service_cache(maxsize=128) # Can't hash because members_on_coop is a list
 def req_cm(uid, members_on_coop=None):
     # Get the number of required committee meetings based on if the member
-    # is going on co-op in the current operating session.
+    # is going on co-op in the current operating session, or if the member
+    # was a spring intro member.
     on_coop = False
 
     if members_on_coop:
@@ -157,7 +170,16 @@ def req_cm(uid, members_on_coop=None):
             CurrentCoops.date_created > start_of_year()).first()
         if co_op:
             on_coop = True
-    if on_coop:
+
+    spring_semester_start = datetime(start_of_year().year + 1, 1, 1)
+
+    is_spring_intro = FreshmanEvalData.query.filter(
+        FreshmanEvalData.uid == uid,
+        FreshmanEvalData.freshman_eval_result == "Passed",
+        FreshmanEvalData.eval_date >= spring_semester_start
+    ).first() is not None
+
+    if on_coop or is_spring_intro:
         return 15
     return 30
 
@@ -255,6 +277,20 @@ def get_voting_members():
         func.count(MemberSeminarAttendance.uid) >= 2  # pylint: disable=not-callable
     ).all())
 
+    hosted_ts = set(member.uid for member in MemberSeminarHost.query.join(
+        TechnicalSeminar,
+        MemberSeminarHost.seminar_id == TechnicalSeminar.id
+    ).filter(
+        TechnicalSeminar.approved,
+        TechnicalSeminar.timestamp >= semester_start
+    ).with_entities(
+        MemberSeminarHost.uid
+    ).group_by(
+        MemberSeminarHost.uid
+    ).having(
+        func.count(MemberSeminarHost.uid) >= 1  # pylint: disable=not-callable
+    ).all())
+
     absent_hm = set(member.uid for member in MemberHouseMeetingAttendance.query.join(
         HouseMeeting,
         MemberHouseMeetingAttendance.meeting_id == HouseMeeting.id
@@ -270,7 +306,7 @@ def get_voting_members():
         func.count(MemberHouseMeetingAttendance.uid) > 1  # pylint: disable=not-callable
     ).all())
 
-    passing_reqs = (passing_dm & passing_ts) - absent_hm
+    passing_reqs = (passing_dm & (passing_ts | hosted_ts)) - absent_hm
 
     return eligible_members & passing_reqs
 
@@ -282,6 +318,7 @@ def gatekeep_status(username):
             "h_meetings_missed": 0,
             "c_meetings": 0,
             "t_seminars": 0,
+            "t_seminars_hosted": 0,
         }
 
     return gatekeep_values(username)
@@ -340,6 +377,19 @@ def gatekeep_values(username):
         )
         .count()
     )
+    # number of technical seminars hosted in the current semester
+    t_seminars_hosted = (
+        MemberSeminarHost.query.join(
+            TechnicalSeminar,
+            MemberSeminarHost.seminar_id == TechnicalSeminar.id,
+        )
+        .filter(
+            MemberSeminarHost.uid == username,
+            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.timestamp >= semester_start,
+        )
+        .count()
+    )
     # number of house meetings attended in the current semester
     h_meetings_missed = (
         MemberHouseMeetingAttendance.query.join(
@@ -354,11 +404,13 @@ def gatekeep_values(username):
         .count()
     )
 
-    result = eligibility_of_groups and (d_meetings >= 6 and t_seminars >= 2 and h_meetings_missed < 2) # pylint: disable=chained-comparison
+    ts_passed = t_seminars >= 2 or t_seminars_hosted >= 1
+    result = eligibility_of_groups and (d_meetings >= 6 and ts_passed and h_meetings_missed < 2) # pylint: disable=chained-comparison
 
     return {
         "result": result,
         "h_meetings_missed": h_meetings_missed,
         "c_meetings": d_meetings,
         "t_seminars": t_seminars,
+        "t_seminars_hosted": t_seminars_hosted,
     }

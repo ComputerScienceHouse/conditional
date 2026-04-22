@@ -61,6 +61,23 @@ export default class ReviewMeeting {
       this._deleteMeeting()
     );
 
+    if (this.meeting == "ts") {
+      // Host
+      const hostInput = this.modal.querySelector('input[name="host"]');
+      let hostStr = "";
+      this.data.host.forEach(h => {
+        hostStr += h.value + ",";
+      });
+      hostInput.value = hostStr;
+
+
+      hostInput.dataset.src = "cm_members";
+      new MemberSelect(hostInput); // eslint-disable-line no-new
+    } else { // Hide host section if not technical seminar
+      this.modal.querySelector(".host-edit-row").style.display = "none";
+    }
+    
+
     // Attendees
     const attendeesInput = this.modal.querySelector('input[name="attendees"]');
     let attendeesStr = "";
@@ -93,8 +110,13 @@ export default class ReviewMeeting {
       let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
         this.modal.querySelector('input[name="attendees"]').value.split(',')
       );
+      let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
+        this.modal.querySelector('input[name="host"]').value.split(",")
+      );
       payload.freshmen = membersSplit.freshmen;
       payload.members = membersSplit.upperclassmen;
+      payload.freshman_host = hostSplit.freshmen;
+      payload.member_host = hostSplit.upperclassmen;
 
       fetch(this.endpoints.meetingDetails + this.cid + '/approve', {
         method: 'POST',

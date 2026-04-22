@@ -23,6 +23,8 @@ var/
 .installed.cfg
 *.egg
 
+.env
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -68,6 +70,9 @@ target/
 
 # Cloud9 IDE
 /.c9
+
+# VS Codepy
+.vscode/
 
 # Sensitive project files
 /config.json
