@@ -123,7 +123,7 @@ pip-tools==7.5.3
     # via -r requirements.in
 platformdirs==4.9.6
     # via pylint
-psycopg2-binary==2.9.11
+psycopg2-binary==2.9.12
     # via -r requirements.in
 pyasn1==0.6.3
     # via
