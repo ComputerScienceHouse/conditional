@@ -150,12 +150,12 @@ Membership Evaluations
     </div>
 
 
-    <div id="eval-table">
-        <div class="panel panel-default">
-            <div class="panel-body table-fill">
-                <div class="table-responsive">
-                    <table class="table table-striped" data-module="table" data-order="[[ 4, &quot;asc&quot; ]]" data-sort-order="asc" data-length-change="true" data-paging="false" data-info="false">
-                        <thead>
+    <div class="card collapse eval-blocks" data-bs-parent="#eval-parent">
+        <div class="card-body table-fill">
+            <div class="table-responsive">
+                <table class="border rounded table table-striped" data-module="table" data-order="[[ 4, &quot;asc&quot; ]]" data-sort-order="asc" data-length-change="true" data-paging="false" data-info="false"
+                    style="border-collapse: separate;">
+                    <thead>
                         <tr>
                             <th>Name</th>
                             <th>Result</th>
@@ -163,48 +163,57 @@ Membership Evaluations
                             <th>Major Project</th>
                             <th>House Meetings Missed</th>
                         </tr>
-                        </thead>
-                        <tbody>
+                    </thead>
+                    <tbody>
                         {% for m in members %}
                         <tr>
                             <td>
-                                <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" height="30" /> {{m['name']}} ({{m['uid']}})
+                                <img class="aspect aspect11 rounded-circle me-2" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30" /> 
+                                {{m['name']}} ({{m['uid']}})
                             </td>
                             <td>
                                 {% if m['status'] == "Passed" %}
-                                <i class="bi bi-check-circle-fill green"></i> Passed
+                                <i class="bi bi-check-circle-fill green"></i>
+                                Passed
                                 {% elif m['status'] == "Pending" %}
-                                <i class="bi bi-hourglass-split yellow"></i> Pending
+                                <i class="bi bi-hourglass-split yellow"></i>
+                                Pending
                                 {% else %}
-                                <i class="bi bi-x-circle-fill red"></i> Failed
+                                <i class="bi bi-x-circle-fill red"></i>
+                                Failed
                                 {% endif %}
                             </td>
                             <td data-sort="{{ m['committee_meetings'] }}">
                                 {% if m['committee_meetings'] < m['req_meetings'] %}
-                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['committee_meetings']}}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                {{m['committee_meetings']}}
                                 {% else %}
-                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['committee_meetings']}}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                {{m['committee_meetings']}}
                                 {% endif %}
                             </td>
                             <td>
                                 {% if m['major_project_passed'] %}
-                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> Passed
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                Passed
                                 {% else %}
-                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> None
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                None
                                 {% endif %}
                             </td>
-                                                    <td data-sort="{{ m['house_meetings_missed']|length }}">
+                            <td data-sort="{{ m['house_meetings_missed'] | length }}">
                                 {% if m['house_meetings_missed']|length == 0 %}
-                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> {{m['house_meetings_missed']|length}}
+                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                {{m['house_meetings_missed']|length}}
                                 {% else %}
-                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> {{m['house_meetings_missed']|length}}
+                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                {{m['house_meetings_missed']|length}}
                                 {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
