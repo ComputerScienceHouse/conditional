@@ -194,15 +194,17 @@ Introductory Evaluations
             </div>
             {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %} <!-- for member in members -->
+
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle-fill white me-2"></i> 
+            There are currently no active intro members.
+        </div>
+
+        {% endif %}
     </div>
 
-    {% else %}
-    <div class="alert alert-info" role="alert">
-        <i class="bi bi-info-circle-fill white me-2"></i> 
-        There are currently no active intro members.
-    </div>
-    {% endif %}
 
     <div class="card collapse eval-blocks" data-bs-parent="#eval-parent">
         <div class="card-body table-fill">
