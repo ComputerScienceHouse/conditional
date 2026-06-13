@@ -19,8 +19,7 @@
     </head>
 
     <body>
-        {% block nav %}
-        {% endblock %}
+        {% include "nav.html" %}
         {% if not lockdown %}
             {% block body %}
             {% endblock %}
