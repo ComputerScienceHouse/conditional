@@ -1,10 +1,10 @@
 /* global $ */
-import "bootstrap-material-datetimepicker";
+// import "bootstrap-material-datetimepicker";
 import "whatwg-fetch";
 import FetchUtil from "../utils/fetchUtil";
 import Exception from "../exceptions/exception";
 import FetchException from "../exceptions/fetchException";
-import sweetAlert from "bootstrap-sweetalert/dev/sweetalert.es6.js";
+import Swal from "sweetalert2";
 
 export default class DatePicker {
   constructor(input) {
@@ -44,13 +44,13 @@ export default class DatePicker {
       .then(FetchUtil.parseJSON)
       .then(response => {
         if (!response.hasOwnProperty('success') || !response.success) {
-          sweetAlert("Uh oh...", "We're having trouble submitting this " +
+          Swal.fire("Uh oh...", "We're having trouble submitting this " +
               "form right now. Please try again later.", "error");
           throw new Exception(FetchException.REQUEST_FAILED, response);
         }
       })
       .catch(error => {
-        sweetAlert("Uh oh...", "We're having trouble submitting this " +
+        Swal.fire("Uh oh...", "We're having trouble submitting this " +
             "form right now. Please try again later.", "error");
         throw new Exception(FetchException.REQUEST_FAILED, error);
       });

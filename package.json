@@ -23,8 +23,6 @@
   "dependencies": {
     "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
-    "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
-    "bootstrap-sweetalert": "^1.0.1",
     "csh-material-bootstrap": "https://github.com/ComputerScienceHouse/csh-material-bootstrap.git#bootstrap-5",
     "datatables.net-bs5": "^2.3.7",
     "dropzone": "^5.9.3",
@@ -33,6 +31,7 @@
     "lodash": "4.18.1",
     "masonry-layout": "^4.2.2",
     "reveal.js": "^5.2.1",
+    "sweetalert2": "^11.26.25",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {

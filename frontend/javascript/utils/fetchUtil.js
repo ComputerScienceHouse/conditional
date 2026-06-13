@@ -2,12 +2,12 @@
 import "whatwg-fetch";
 import Exception from "../exceptions/exception";
 import FetchException from "../exceptions/fetchException";
-import sweetAlert from "bootstrap-sweetalert/dev/sweetalert.es6.js";
+import Swal from "sweetalert2";
 
 export default class FetchUtil {
   static checkStatus(response) {
     if (response.status < 200 || response.status > 300) {
-      sweetAlert("Uh oh...", "We're having trouble submitting this form" +
+      Swal.fire("Uh oh...", "We're having trouble submitting this form" +
           "right now. Please try again later.", "error");
       throw new Exception(
         FetchException.REQUEST_FAILED,
@@ -36,10 +36,10 @@ export default class FetchUtil {
         .then(FetchUtil.parseJSON)
         .then(response => {
           if (response.hasOwnProperty('success') && response.success === true) {
-            sweetAlert({
+            Swal.fire({
               title: "Success!",
               text: settings.successText,
-              type: "success",
+              icon: "success",
               confirmButtonText: "OK"
             }, () => {
               if (typeof callback === "function") {
@@ -49,20 +49,20 @@ export default class FetchUtil {
               }
             });
           } else {
-            sweetAlert("Uh oh...", "We're having trouble submitting this " +
+            Swal.fire("Uh oh...", "We're having trouble submitting this " +
                 "form right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, response);
           }
         })
         .catch(error => {
-          sweetAlert("Uh oh...", "We're having trouble submitting this form " +
+          Swal.fire("Uh oh...", "We're having trouble submitting this form " +
               "right now. Please try again later.", "error");
           throw new Exception(FetchException.REQUEST_FAILED, error);
         });
   }
 
   static postWithWarning(endpoint, payload, settings, callback) {
-    sweetAlert({
+    Swal.fire({
       title: "Are you sure?",
       text: settings.warningText,
       type: "warning",
@@ -83,7 +83,7 @@ export default class FetchUtil {
         .then(FetchUtil.parseJSON)
         .then(response => {
           if (response.hasOwnProperty('success') && response.success === true) {
-            sweetAlert({
+            Swal.fire({
               title: "Success!",
               text: settings.successText,
               type: "success",
@@ -96,13 +96,13 @@ export default class FetchUtil {
               }
             });
           } else {
-            sweetAlert("Uh oh...", "We're having trouble submitting this " +
+            Swal.fire("Uh oh...", "We're having trouble submitting this " +
                         "form right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, response);
           }
         })
         .catch(error => {
-          sweetAlert("Uh oh...", "We're having trouble submitting this form " +
+          Swal.fire("Uh oh...", "We're having trouble submitting this form " +
                       "right now. Please try again later.", "error");
           throw new Exception(FetchException.REQUEST_FAILED, error);
         });
@@ -122,7 +122,7 @@ export default class FetchUtil {
         .then(response => {
           if (response.hasOwnProperty('success') &&
               response.success === true) {
-            sweetAlert({
+            Swal.fire({
               title: "Success!",
               text: settings.successText,
               type: "success",
@@ -135,20 +135,20 @@ export default class FetchUtil {
               }
             });
           } else {
-            sweetAlert("Uh oh...", "We're having trouble submitting " +
+            Swal.fire("Uh oh...", "We're having trouble submitting " +
                 "this form right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, response);
           }
         })
         .catch(error => {
-          sweetAlert("Uh oh...", "We're having trouble submitting this " +
+          Swal.fire("Uh oh...", "We're having trouble submitting this " +
               "form right now. Please try again later.", "error");
           throw new Exception(FetchException.REQUEST_FAILED, error);
         });
   }
 
   static fetchWithWarning(endpoint, settings, callback) {
-    sweetAlert({
+    Swal.fire({
       title: "Are you sure?",
       text: settings.warningText,
       type: "warning",
@@ -168,7 +168,7 @@ export default class FetchUtil {
           .then(response => {
             if (response.hasOwnProperty('success') &&
                 response.success === true) {
-              sweetAlert({
+              Swal.fire({
                 title: "Success!",
                 text: settings.successText,
                 type: "success",
@@ -181,13 +181,13 @@ export default class FetchUtil {
                 }
               });
             } else {
-              sweetAlert("Uh oh...", "We're having trouble submitting " +
+              Swal.fire("Uh oh...", "We're having trouble submitting " +
                   "this form right now. Please try again later.", "error");
               throw new Exception(FetchException.REQUEST_FAILED, response);
             }
           })
           .catch(error => {
-            sweetAlert("Uh oh...", "We're having trouble submitting this " +
+            Swal.fire("Uh oh...", "We're having trouble submitting this " +
                 "form right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, error);
           });

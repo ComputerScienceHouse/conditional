@@ -1,5 +1,5 @@
 /* global $ */
-import "bootstrap-material-datetimepicker";
+// import "bootstrap-material-datetimepicker";
 
 export default class DatePicker {
   constructor(input) {
