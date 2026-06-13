@@ -23,7 +23,7 @@
   "dependencies": {
     "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
-    "csh-material-bootstrap": "https://github.com/ComputerScienceHouse/csh-material-bootstrap.git#bootstrap-5",
+    "csh-material-bootstrap": "file:../csh-material-bootstrap",
     "datatables.net-bs5": "^2.3.7",
     "dropzone": "^5.9.3",
     "enumify": "^2.0.0",

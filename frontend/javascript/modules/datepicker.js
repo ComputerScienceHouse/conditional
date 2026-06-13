@@ -9,9 +9,9 @@ export default class DatePicker {
   }
 
   render() {
-    $(this.input).bootstrapMaterialDatePicker({
-      weekStart: 0,
-      time: false
-    });
+    // $(this.input).bootstrapMaterialDatePicker({
+    //   weekStart: 0,
+    //   time: false
+    // });
   }
 }

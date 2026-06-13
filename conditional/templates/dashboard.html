@@ -37,7 +37,7 @@ Dashboard
         </div>
     </div>
     <div class="row" data-masonry='{"percentPosition": true }'>
-        {% if accepting_dues and check_current_student(username) and not active and not bad_standing %}
+        {% if True or accepting_dues and check_current_student(username) and not active and not bad_standing %}
         <div class="col-12 col-lg-6 mb-4">
             <div class="card" id="becomeActive">
                 <div class="card-header">
