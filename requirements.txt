@@ -37,7 +37,7 @@ click==8.3.2
     #   -r requirements.in
     #   flask
     #   pip-tools
-cryptography==46.0.7
+cryptography==48.0.1
     # via oic
 csh-ldap==2.5.3
     # via -r requirements.in
