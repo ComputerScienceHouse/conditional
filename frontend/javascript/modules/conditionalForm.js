@@ -31,6 +31,7 @@ export default class ConditionalForm {
       successText: "The conditional has been created."
     }, () => {
       $(this.form.closest('.modal')).modal('hide');
+      this.form.reset();
       if (location.pathname.split('/')[1] === "slideshow") {
         $('#createConditional').on('hidden.bs.modal', function() {
           var condBtn = $('div[data-uid="' + uid + '"] button')

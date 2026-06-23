@@ -41,7 +41,7 @@ export default class FetchUtil {
             text: settings.successText,
             icon: "success",
             confirmButtonText: "OK"
-          }, () => {
+          }).then(() => {
             if (typeof callback === "function") {
               callback();
             } else {
@@ -69,7 +69,7 @@ export default class FetchUtil {
       showCancelButton: true,
       showLoaderOnConfirm: true,
       preConfirm: async () => {
-        fetch(endpoint, {
+        return fetch(endpoint, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -77,36 +77,35 @@ export default class FetchUtil {
           },
           credentials: "same-origin",
           body: JSON.stringify(payload)
-        })
-          .then(FetchUtil.checkStatus)
+        }).then(FetchUtil.checkStatus)
           .then(FetchUtil.parseJSON)
-          .then(response => {
-            if (response.hasOwnProperty('success') && response.success === true) {
-              SwalMixin.fire({
-                title: "Success!",
-                text: settings.successText,
-                icon: "success",
-                confirmButtonText: "OK"
-              }).then(() => {
-                if (typeof callback === "function") {
-                  callback();
-                } else {
-                  window.location.reload();
-                }
-              });
-            } else {
-              SwalMixin.fire("Uh oh...", "We're having trouble submitting this " +
-                "form right now. Please try again later.", "error");
-              throw new Exception(FetchException.REQUEST_FAILED, response);
-            }
-          })
           .catch(error => {
             SwalMixin.fire("Uh oh...", "We're having trouble submitting this form " +
               "right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, error);
           });
       }
-    });
+    })
+      .then(response => {
+        if (response.value.hasOwnProperty('success') && response.value.success === true) {
+          SwalMixin.fire({
+            title: "Success!",
+            text: settings.successText,
+            icon: "success",
+            confirmButtonText: "OK"
+          }).then(() => {
+            if (typeof callback === "function") {
+              callback();
+            } else {
+              window.location.reload();
+            }
+          });
+        } else {
+          SwalMixin.fire("Uh oh...", "We're having trouble submitting this " +
+            "form right now. Please try again later.", "error");
+          throw new Exception(FetchException.REQUEST_FAILED, response.value);
+        }
+      })
   }
 
   static fetch(endpoint, settings, callback) {
@@ -151,46 +150,44 @@ export default class FetchUtil {
     SwalMixin.fire({
       title: "Are you sure?",
       text: settings.warningText,
-      type: "warning",
+      icon: "warning",
       showCancelButton: true,
-      closeOnConfirm: false,
-      showLoaderOnConfirm: true
-    }, () => {
-      fetch(endpoint, {
-        method: settings.method,
-        headers: {
-          Accept: 'application/json'
-        },
-        credentials: "same-origin"
-      })
-        .then(FetchUtil.checkStatus)
-        .then(FetchUtil.parseJSON)
-        .then(response => {
-          if (response.hasOwnProperty('success') &&
-            response.success === true) {
-            SwalMixin.fire({
-              title: "Success!",
-              text: settings.successText,
-              type: "success",
-              confirmButtonText: "OK"
-            }, () => {
-              if (typeof callback === "function") {
-                callback();
-              } else {
-                window.location.reload();
-              }
-            });
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        return fetch(endpoint, {
+          method: settings.method,
+          headers: {
+            Accept: 'application/json'
+          },
+          credentials: "same-origin"
+        }).then(FetchUtil.checkStatus)
+          .then(FetchUtil.parseJSON)
+          .catch(error => {
+            SwalMixin.fire("Uh oh...", "We're having trouble submitting this " +
+              "form right now. Please try again later.", "error");
+            throw new Exception(FetchException.REQUEST_FAILED, error);
+          });
+      }
+    }).then(response => {
+      if (response.value.hasOwnProperty('success') &&
+        response.value.success === true) {
+        SwalMixin.fire({
+          title: "Success!",
+          text: settings.successText,
+          icon: "success",
+          confirmButtonText: "OK"
+        }).then(() => {
+          if (typeof callback === "function") {
+            callback();
           } else {
-            SwalMixin.fire("Uh oh...", "We're having trouble submitting " +
-              "this form right now. Please try again later.", "error");
-            throw new Exception(FetchException.REQUEST_FAILED, response);
+            window.location.reload();
           }
-        })
-        .catch(error => {
-          SwalMixin.fire("Uh oh...", "We're having trouble submitting this " +
-            "form right now. Please try again later.", "error");
-          throw new Exception(FetchException.REQUEST_FAILED, error);
         });
-    });
+      } else {
+        SwalMixin.fire("Uh oh...", "We're having trouble submitting " +
+          "this form right now. Please try again later.", "error");
+        throw new Exception(FetchException.REQUEST_FAILED, response.value);
+      }
+    })
   }
 }
