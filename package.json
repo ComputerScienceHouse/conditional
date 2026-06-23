@@ -23,7 +23,8 @@
   "dependencies": {
     "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
-    "csh-material-bootstrap": "file:../csh-material-bootstrap",
+    "bootstrap": "5.3.8",
+    "csh-material-bootstrap": "5.3.10",
     "datatables.net-bs5": "^2.3.7",
     "dropzone": "^5.9.3",
     "enumify": "^2.0.0",
