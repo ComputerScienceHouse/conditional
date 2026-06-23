@@ -13,8 +13,7 @@ window.addEventListener('unhandledrejection', err => {
 
 // Load the rest of the modules
 import "jquery";
-import * as bootstrap from "bootstrap";
-console.log(bootstrap);
+import "bootstrap";
 import "./modules";
 
 import "masonry-layout";

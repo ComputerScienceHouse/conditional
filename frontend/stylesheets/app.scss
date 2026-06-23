@@ -1,6 +1,9 @@
 // Third Party
 @use 'pkg:csh-material-bootstrap';
 @use 'dataTables.bootstrap5.css';
+
+@use 'pkg:vanillajs-datepicker/sass/index-bs5';
+
 // @use 'bootstrap-material-datetimepicker.css';
 
 $bootstrap-icons-font-dir: "../fonts/";
