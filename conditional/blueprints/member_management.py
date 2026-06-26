@@ -65,11 +65,16 @@ def display_member_management(user_dict=None):
     active_members = set(ldap_get_active_member_uids())
     onfloor_members = set(ldap_get_onfloor_member_uids())
 
-    member_list = ldap.get_group_member_attributes(groups="current_student", excluded_groups=[], attributes=['uid', 'housingPoints', 'roomNumber'])
+    member_list = ldap.get_group_member_attributes(groups=["current_student"], excluded_groups=[], attributes=['uid', 'housingPoints', 'roomNumber', 'cn'])
 
     for member in member_list:
+        member['name'] = member['cn']
         member['active'] = member['uid'] in active_members
         member['onfloor'] = member['uid'] in onfloor_members
+
+        if 'roomNumber' in member:
+            member['room'] = member['roomNumber']
+
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
