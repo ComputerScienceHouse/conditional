@@ -27,7 +27,8 @@ def display_housing(user_dict=None):
     log.info('Display Housing Board')
 
     housing = {}
-    onfloors = ldap.get_group_member_attributes(groups=['onfloor', 'current_student'], excluded_groups=[], attributes=['cn', 'roomNumber'])
+    onfloors = ldap.get_group_member_attributes(groups=['onfloor', 'current_student'],
+                                                excluded_groups=[], attributes=['cn', 'roomNumber'])
     onfloor_freshmen = FreshmanAccount.query.filter(
         FreshmanAccount.room_number is not None
     )
@@ -35,7 +36,7 @@ def display_housing(user_dict=None):
     room_list = set()
 
     for member in onfloors:
-        if not 'roomNumber' in member:
+        if 'roomNumber' not in member:
             continue
 
         room = member['roomNumber']

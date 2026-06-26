@@ -19,8 +19,6 @@ from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_is_eboard
 from conditional.util.user_dict import user_dict_is_eboard, user_dict_is_eval_director
@@ -37,7 +35,8 @@ def get_all_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Technical Seminar Attendance List')
 
-    members = ldap.get_group_member_attributes(groups=['current_student'], excluded_groups=[], attributes=['uid', 'displayName'])
+    members = ldap.get_group_member_attributes(groups=['current_student'],
+                                               excluded_groups=[], attributes=['uid', 'displayName'])
 
     named_members = [
         {
@@ -66,7 +65,8 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
     log.info('Retrieve House Meeting Attendance List')
 
     # Get all active members as a base house meeting attendance.
-    active_members = ldap.get_group_member_attributes(groups=['active'], excluded_groups=[], attributes=['uid', 'displayName'])
+    active_members = ldap.get_group_member_attributes(groups=['active'],
+                                                      excluded_groups=[], attributes=['uid', 'displayName'])
 
     if datetime.today() < datetime(start_of_year().year, 12, 31):
         semester = 'Fall'
@@ -110,7 +110,8 @@ def get_non_alumni(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Committee Meeting Attendance List')
 
-    current_students = ldap.get_group_member_attributes(groups=['current_student'], excluded_groups=[], attributes=['uid', 'displayName'])
+    current_students = ldap.get_group_member_attributes(groups=['current_student'],
+                                                        excluded_groups=[], attributes=['uid', 'displayName'])
 
     eligible_members = [
         {
