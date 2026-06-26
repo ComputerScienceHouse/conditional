@@ -9,7 +9,6 @@ from conditional.util.flask import render_template
 from conditional.util.housing import get_housing_queue
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
-from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_set_active

@@ -7,7 +7,6 @@ from conditional.models.models import CommitteeMeeting, CurrentCoops, HouseMeeti
 from conditional.models.models import MajorProject, MemberHouseMeetingAttendance, SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_active_members
 from conditional.util.member import req_cm
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)

@@ -18,7 +18,6 @@ from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.member import get_semester_info
 
 intro_evals_bp = Blueprint('intro_evals_bp', __name__)

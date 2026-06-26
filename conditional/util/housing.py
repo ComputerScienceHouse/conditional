@@ -4,8 +4,6 @@ from conditional import ldap
 
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
-from conditional.util.ldap import ldap_get_current_students, ldap_get_member, ldap_is_current_student
-
 
 def get_housing_queue(is_eval_director=False):
 
