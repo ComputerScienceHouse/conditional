@@ -88,28 +88,28 @@ Introductory Evaluations
 
                             </div>
                             <div class="text-center">
-                                {% if m['technical_seminars_hosted'] < 1 or m['technical_seminars'] < 2 %}
+                                {% if m['technical_seminars_hosted']|length < 1 or m['technical_seminars']|length < 2 %}
                                     <div class="eval-info-label">
                                         <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars - Hosted
-                                        <span class="eval-info-number">{{m['technical_seminars_hosted']}} / 1</span>
+                                        <span class="eval-info-number">{{m['technical_seminars_hosted']|length}} / 1</span>
                                     </div>
                                     {% else %}
                                     <div class="eval-info-label">
                                         <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars - Hosted
-                                        <span class="eval-info-number">{{m['technical_seminars_hosted']}} / 1</span>
+                                        <span class="eval-info-number">{{m['technical_seminars_hosted']|length}} / 1</span>
                                     </div>
                                 {% endif %}
                             </div>
                             <div class="text-center">
-                                {% if m['technical_seminars'] < 2 or m['technical_seminars_hosted'] < 1 %}
+                                {% if m['technical_seminars']|length < 2 or m['technical_seminars_hosted']|length < 1 %}
                                     <div class="eval-info-label">
                                         <i class="bi bi-x-circle-fill red eval-info-status"></i>Technical Seminars - Attended
-                                        <span class="eval-info-number">{{m['technical_seminars_attended']}} / 2</span>
+                                        <span class="eval-info-number">{{m['technical_seminars_attended']|length}} / 2</span>
                                     </div>
                                     {% else %}
                                     <div class="eval-info-label">
                                         <i class="bi bi-check-circle-fill green eval-info-status"></i>Technical Seminars - Attended
-                                        <span class="eval-info-number">{{m['technical_seminars']}} / 2</span>
+                                        <span class="eval-info-number">{{m['technical_seminars']|length}} / 2</span>
                                     </div>
                                 {% endif %}
                             </div>

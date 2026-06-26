@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import func, or_
 
-from conditional import start_of_year
+from conditional import start_of_year, ldap
 from conditional.models.models import CommitteeMeeting, FreshmanAccount
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
@@ -12,10 +12,7 @@ from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.cache import service_cache
-from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_intro_members
-from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_is_active
+from conditional.util.ldap import ldap_get_active_member_uids, ldap_get_intro_member_uids, ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
 
@@ -67,21 +64,8 @@ def get_freshman_data(user_name):
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
 
-@service_cache(maxsize=1024)
-def get_active_members() -> set[str]:
-    return {members.uid for members in ldap_get_active_members()}
-
-@service_cache(maxsize=1024)
-def get_intro_members() -> set[str]:
-    return {member.uid for member in ldap_get_intro_members()}
-
-@service_cache(maxsize=1024)
-def get_all_onfloor_members() -> set[str]:
-    return {members.uid for members in ldap_get_onfloor_members()}
-
-@service_cache(maxsize=1024)
 def get_onfloor_members() -> set[str]:
-    return get_active_members() & get_all_onfloor_members()
+    return set(ldap.get_group_member_uids(groups=['onfloor', 'active'], excluded_groups=[]))
 
 def get_cm(member):
     query_result = CommitteeMeeting.query.join(
@@ -171,8 +155,8 @@ def get_semester_info() -> tuple[str, datetime]:
 def get_voting_members():
     semester, semester_start = get_semester_info()
 
-    active_members = get_active_members()
-    intro_members = get_intro_members()
+    active_members = set(ldap_get_active_member_uids())
+    intro_members = set(ldap_get_intro_member_uids())
 
     coop_members = CurrentCoops.query.filter(
         CurrentCoops.date_created > start_of_year(),

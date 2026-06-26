@@ -2,7 +2,7 @@ import structlog
 from flask import Blueprint, request
 from sqlalchemy import func
 
-from conditional import start_of_year, auth
+from conditional import start_of_year, auth, ldap
 from conditional.models.models import CommitteeMeeting
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanCommitteeAttendance
@@ -157,7 +157,7 @@ def display_intro_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Evals Listing')
 
-    members = ldap_get_intro_members()
+    members = ldap.get_group_member_attributes(groups=['intromembers'], excluded_groups=[], attributes=['uid', 'cn'])
 
     ie_members = get_intro_members_without_accounts()
 
@@ -240,8 +240,8 @@ def display_intro_evals(internal=False, user_dict=None):
 
     # freshmen who have accounts
     for member in members:
-        uid = member.uid
-        name = member.cn
+        uid = member['uid']
+        name = member['cn']
         freshman_data = FreshmanEvalData.query.filter(
             FreshmanEvalData.eval_date >= semester_start,
             FreshmanEvalData.uid == uid).first()

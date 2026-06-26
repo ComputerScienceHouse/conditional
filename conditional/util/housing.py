@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from conditional import ldap
+
 from conditional.models.models import InHousingQueue
 from conditional.models.models import OnFloorStatusAssigned
 from conditional.util.ldap import ldap_get_current_students, ldap_get_member, ldap_is_current_student
@@ -23,33 +25,21 @@ def get_housing_queue(is_eval_director=False):
         ).all()
     }
 
-    # CSHMember accounts that are in queue
-    potential_accounts = []
+    queue = ldap.get_group_member_attributes(groups=['current_student'], excluded_groups=[], attributes=['uid', 'housingPoints', 'cn'])
 
-    if is_eval_director:
-        potential_accounts = ldap_get_current_students()
-    else:
-        potential_accounts = [ldap_get_member(username) for username in in_queue]
+    # if the user is not evals, they should only see people in the cue without a room number
+    if not is_eval_director:
+        queue = list(filter(lambda member: member['uid'] in in_queue and member['roomNumber'] is not None, queue))
 
-        potential_accounts = [user for user in potential_accounts if ldap_is_current_student(user)]
 
-    # Populate a list of dictionaries containing the name, username,
-    # and on-floor datetime for each current studetn who has on-floor status
-    # and is not already assigned to a room
-    queue = [
-        {
-            "uid": account.uid,
-            "name": account.cn,
-            "points": account.housingPoints,
-            "time": in_queue.get(account.uid, {}).get('time', datetime.now()) or datetime.now(),
-            "in_queue": account.uid in in_queue
-        } for account in potential_accounts
-        if is_eval_director or account.roomNumber is None
-    ]
+    # set the time they were added to the queue
+    # i'm sorry this is cursed, it's this way because of database structure or something
+    for member in queue:
+        member['time'] = in_queue.get(member['uid'], {}).get('time', datetime.now()) or datetime.now()
 
     # Sort based on time (ascending) and then points (decending).
     queue.sort(key=lambda m: m['time'])
-    queue.sort(key=lambda m: m['points'], reverse=True)
+    queue.sort(key=lambda m: m['housingPoints'], reverse=True)
 
     return queue
 
