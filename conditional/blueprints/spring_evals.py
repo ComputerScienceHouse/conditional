@@ -2,12 +2,11 @@ import structlog
 from flask import Blueprint, request
 from sqlalchemy import func
 
-from conditional import db, start_of_year, auth
+from conditional import db, start_of_year, auth, ldap
 from conditional.models.models import CommitteeMeeting, CurrentCoops, HouseMeeting, MemberCommitteeAttendance
 from conditional.models.models import MajorProject, MemberHouseMeetingAttendance, SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_active_members
 from conditional.util.member import req_cm
 
 spring_evals_bp = Blueprint('spring_evals_bp', __name__)
@@ -22,7 +21,7 @@ def display_spring_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Listing')
 
-    active_members = ldap_get_active_members()
+    active_members = ldap.get_group_member_attributes(groups=['active'], excluded_groups=[], attributes=['uid', 'cn'])
 
     cm_count = dict([tuple(row) for row in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
@@ -78,8 +77,8 @@ def display_spring_evals(internal=False, user_dict=None):
 
     sp_members = []
     for account in active_members:
-        uid = account.uid
-        name = account.cn
+        uid = account['uid']
+        name = account['cn']
 
         spring_entry = SpringEval.query.filter(
             SpringEval.date_created >= start_of_year(),

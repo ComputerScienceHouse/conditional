@@ -1,7 +1,7 @@
 import structlog
 from flask import Blueprint, request, jsonify
 
-from conditional import db, auth
+from conditional import db, auth, ldap
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import InHousingQueue
 from conditional.util.auth import get_user
@@ -9,7 +9,6 @@ from conditional.util.flask import render_template
 from conditional.util.housing import get_housing_queue
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
-from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_set_active
@@ -28,7 +27,8 @@ def display_housing(user_dict=None):
     log.info('Display Housing Board')
 
     housing = {}
-    onfloors = ldap_get_onfloor_members()
+    onfloors = ldap.get_group_member_attributes(groups=['onfloor', 'current_student'],
+                                                excluded_groups=[], attributes=['cn', 'roomNumber'])
     onfloor_freshmen = FreshmanAccount.query.filter(
         FreshmanAccount.room_number is not None
     )
@@ -36,12 +36,15 @@ def display_housing(user_dict=None):
     room_list = set()
 
     for member in onfloors:
-        room = ldap_get_roomnumber(member)
+        if 'roomNumber' not in member:
+            continue
+
+        room = member['roomNumber']
         if room in housing and room is not None:
-            housing[room].append(member.cn)
+            housing[room].append(member['cn'])
             room_list.add(room)
         elif room is not None:
-            housing[room] = [member.cn]
+            housing[room] = [member['cn']]
             room_list.add(room)
 
     for f in onfloor_freshmen:

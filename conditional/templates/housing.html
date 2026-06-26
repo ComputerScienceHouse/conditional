@@ -31,8 +31,8 @@ Housing
                             <tbody>
                                 {% for m in queue %}
                                 <tr{% if not m['in_queue'] %} class="disabled"{% endif %}>
-                                    <td>{{m['name']}}</td>
-                                    <td>{{m['points']}}</td>
+                                    <td>{{m['cn']}}</td>
+                                    <td>{{m['housingPoints']}}</td>
                                     {% if is_eval_director %}
                                     <td class="col-in-queue"><input type="checkbox" data-uid="{{m['uid']}}"{% if m['in_queue'] %} checked="checked"{% endif %}></td>
                                     {% endif %}

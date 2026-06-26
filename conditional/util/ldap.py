@@ -6,6 +6,8 @@ from conditional.util.cache import service_cache
 def _ldap_get_group_members(group: str) -> list[CSHMember]:
     return ldap.get_group(group).get_members()
 
+def _ldap_get_group_member_uids(group: str) -> list[str]:
+    return ldap.get_group(group).get_member_uids()
 
 def _ldap_is_member_of_group(member: CSHMember, group: str) -> bool:
     return ldap.get_group(group).check_member(member)
@@ -20,7 +22,6 @@ def _ldap_remove_member_from_group(account: CSHMember, group: str):
     if _ldap_is_member_of_group(account, group):
         ldap.get_group(group).del_member(account, dn=False)
 
-
 @service_cache(maxsize=256)
 def _ldap_is_member_of_directorship(member: CSHMember, directorship: str):
     return _ldap_is_member_of_group(member, f'eboard-{directorship}')
@@ -33,21 +34,33 @@ def ldap_get_member(username: str) -> CSHMember:
 def ldap_get_active_members() -> list[CSHMember]:
     return _ldap_get_group_members("active")
 
+@service_cache(maxsize=1024)
+def ldap_get_active_member_uids() -> list[str]:
+    return _ldap_get_group_member_uids("active")
 
 @service_cache(maxsize=1024)
 def ldap_get_intro_members() -> list[CSHMember]:
     return _ldap_get_group_members("intromembers")
 
+@service_cache(maxsize=1024)
+def ldap_get_intro_member_uids() -> list[str]:
+    return _ldap_get_group_member_uids("intromembers")
 
 @service_cache(maxsize=1024)
 def ldap_get_onfloor_members() -> list[CSHMember]:
     return _ldap_get_group_members("onfloor")
 
+@service_cache(maxsize=1024)
+def ldap_get_onfloor_member_uids() -> list[str]:
+    return _ldap_get_group_member_uids("onfloor")
 
 @service_cache(maxsize=1024)
 def ldap_get_current_students() -> list[CSHMember]:
     return _ldap_get_group_members("current_student")
 
+@service_cache(maxsize=1024)
+def ldap_get_current_student_uids() -> list[str]:
+    return _ldap_get_group_member_uids("current_student")
 
 @service_cache(maxsize=128)
 def ldap_get_roomnumber(account) -> str:

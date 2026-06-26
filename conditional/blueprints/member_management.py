@@ -6,7 +6,7 @@ from distutils.util import strtobool  # pylint: disable=no-name-in-module,import
 import structlog
 from flask import Blueprint, request, jsonify, make_response
 
-from conditional import app, get_user, auth, db, start_of_year
+from conditional import app, get_user, auth, db, start_of_year, ldap
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -26,7 +26,7 @@ from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
 
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_get_active_member_uids, ldap_get_onfloor_member_uids, ldap_is_eval_director
 from conditional.util.ldap import ldap_is_active
 from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_set_roomnumber
@@ -41,8 +41,6 @@ from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
-
-from conditional.util.member import get_members_info_active_and_onfloor
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
@@ -64,7 +62,20 @@ def display_member_management(user_dict=None):
     if not user_dict_is_eval_director(user_dict) and not user_dict_is_financial_director(user_dict):
         return "must be eval director", 403
 
-    member_list, active_members, onfloor_members = get_members_info_active_and_onfloor()
+    active_members = set(ldap_get_active_member_uids())
+    onfloor_members = set(ldap_get_onfloor_member_uids())
+
+    member_list = ldap.get_group_member_attributes(groups=["current_student"],
+                                    excluded_groups=[], attributes=['uid', 'housingPoints', 'roomNumber', 'cn'])
+
+    for member in member_list:
+        member['name'] = member['cn']
+        member['active'] = member['uid'] in active_members
+        member['onfloor'] = member['uid'] in onfloor_members
+
+        if 'roomNumber' in member:
+            member['room'] = member['roomNumber']
+
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
