@@ -3,7 +3,7 @@ from datetime import datetime
 import structlog
 from flask import Blueprint, jsonify, redirect, request
 
-from conditional import db, start_of_year, auth
+from conditional import db, start_of_year, auth, ldap
 from conditional.models.models import CommitteeMeeting
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanAccount
@@ -37,7 +37,7 @@ def get_all_members(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Technical Seminar Attendance List')
 
-    members = ldap_get_current_students()
+    members = ldap.get_group_member_attributes(groups=['current_student'], excluded_groups=[], attributes=['uid', 'displayName'])
 
     named_members = [
         {
@@ -50,8 +50,8 @@ def get_all_members(user_dict=None):
     for account in members:
         named_members.append(
             {
-                'display': account.displayName,
-                'value': account.uid,
+                'display': account['displayName'],
+                'value': account['uid'],
                 'freshman': False
             })
 
@@ -66,7 +66,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
     log.info('Retrieve House Meeting Attendance List')
 
     # Get all active members as a base house meeting attendance.
-    active_members = ldap_get_active_members()
+    active_members = ldap.get_group_member_attributes(groups=['active'], excluded_groups=[], attributes=['uid', 'displayName'])
 
     if datetime.today() < datetime(start_of_year().year, 12, 31):
         semester = 'Fall'
@@ -86,14 +86,14 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
             FreshmanAccount.eval_date > datetime.now())]
 
     for account in active_members:
-        if account.uid in coop_members:
+        if account['uid'] in coop_members:
             # Members who are on co-op don't need to go to house meeting.
             continue
 
         eligible_members.append(
             {
-                'display': account.displayName,
-                'value': account.uid,
+                'display': account['displayName'],
+                'value': account['uid'],
                 'freshman': False
             })
 
@@ -110,7 +110,7 @@ def get_non_alumni(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Committee Meeting Attendance List')
 
-    current_students = ldap_get_current_students()
+    current_students = ldap.get_group_member_attributes(groups=['current_student'], excluded_groups=[], attributes=['uid', 'displayName'])
 
     eligible_members = [
         {
@@ -123,8 +123,8 @@ def get_non_alumni(user_dict=None):
     for account in current_students:
         eligible_members.append(
             {
-                'display': account.displayName,
-                'value': account.uid,
+                'display': account['displayName'],
+                'value': account['uid'],
                 'freshman': False
             })
 
