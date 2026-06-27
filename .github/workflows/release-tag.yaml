@@ -15,6 +15,7 @@ jobs:
   update-tag:
     runs-on: ubuntu-latest
     if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
+    environment: release
     
     steps:
       - name: Checkout the release commit
