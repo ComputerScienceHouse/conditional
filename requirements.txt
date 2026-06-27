@@ -166,7 +166,7 @@ requests==2.34.2
     #   pyjwkest
 s3transfer==0.10.4
     # via boto3
-sentry-sdk[flask]==2.58.0
+sentry-sdk[flask]==2.63.0
     # via -r requirements.in
 six==1.17.0
     # via
