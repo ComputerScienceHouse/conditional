@@ -100,11 +100,25 @@ Introductory Evaluations
                         <div class="d-flex">
                             {% if m['technical_seminars'] | length >= 2 %}
                             <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% elif m['technical_seminars_hosted'] | length >= 1 %}
+                            <i class="bi bi-x-circle-fill yellow me-2"></i>
                             {% else %}
                             <i class="bi bi-x-circle-fill red me-2"></i>
                             {% endif %}
                             Technical Seminars
                             <span class="ms-auto">{{ m['technical_seminars'] | length }} / 2</span>
+                        </div>
+
+                        <div class="d-flex">
+                            {% if m['technical_seminars_hosted'] | length >= 1 %}
+                            <i class="bi bi-check-circle-fill green me-2"></i> 
+                            {% elif m['technical_seminars'] | length >= 2 %}
+                            <i class="bi bi-x-circle-fill yellow me-2"></i>
+                            {% else %}
+                            <i class="bi bi-x-circle-fill red me-2"></i>
+                            {% endif %}
+                            Technical Seminars Hosted
+                            <span class="ms-auto">{{ m['technical_seminars_hosted'] | length }} / 1</span>
                         </div>
 
                         <div class="d-flex">
@@ -223,58 +237,77 @@ Introductory Evaluations
                     </thead>
                     <tbody>
                         {% for m in members %}
-                        <tr>
-                            <td>
-                                <img class="aspect aspect1x1 rounded-circle me-2" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30px" /> 
-                                {{m['name']}} ({{m['uid']}})
+                        <tr style="height: 1px"> <!-- have to do this so that h-100 works -->
+                            <td class="h-100">
+                                <div class="d-flex justify-content-start align-items-center gap-2 h-100">
+                                    <img class="aspect aspect1x1 rounded-circle me-2" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30px" /> 
+                                    {{m['name']}} ({{m['uid']}})
+                                </div>
                             </td>
-                            <td>
-                                {% if m['status'] == "Passed" %}
-                                <i class="bi bi-check2 green"></i>
-                                Passed
-                                {% elif m['status'] == "Pending" %}
-                                <i class="bi bi-hourglass-split yellow"></i>
-                                Pending
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red"></i>
-                                Failed
-                                {% endif %}
+                            <td class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['status'] == "Passed" %}
+                                    <i class="bi bi-check2 green"></i>
+                                    Passed
+                                    {% elif m['status'] == "Pending" %}
+                                    <i class="bi bi-hourglass-split yellow"></i>
+                                    Pending
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red"></i>
+                                    Failed
+                                    {% endif %}
+                                </div>
                             </td>
-                            <td data-sort="{{ m['committee_meetings'] }}">
-                                {% if m['committee_meetings'] < 6 %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% else %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% endif %}
-                                {{ m['committee_meetings'] }}
+                            <td data-sort="{{ m['committee_meetings'] }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['committee_meetings'] < 6 %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                    {% else %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                    {% endif %}
+                                    {{ m['committee_meetings'] }}
+                                </div>
                             </td>
-                            <td data-sort="{{ m['signatures_missed'] }}">
-                                {% if m['signatures_missed'] == 0 %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i> 
-                                {{ m['signatures_missed'] }}
-                                {% elif m['signatures_missed'] > 0 %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i> 
-                                {{ m['signatures_missed'] }}
-                                {% else %}
-                                <i class="bi bi-hourglass-split yellow eval-info-status"></i>
-                                Pending
-                                {% endif %}
+                            <td data-sort="{{ m['signatures_missed'] }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['signatures_missed'] == 0 %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i> 
+                                    {{ m['signatures_missed'] }}
+                                    {% elif m['signatures_missed'] > 0 %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i> 
+                                    {{ m['signatures_missed'] }}
+                                    {% else %}
+                                    <i class="bi bi-hourglass-split yellow eval-info-status"></i>
+                                    Pending
+                                    {% endif %}
+                                </div>
                             </td>
-                            <td data-sort="{{ m['technical_seminars'] | length }}">
-                                {% if m['technical_seminars'] | length >= 2 %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% endif %}
-                                {{ m['technical_seminars'] | length }}
+                            <td data-sort="{{ m['technical_seminars'] | length + m['technical_seminars_hosted'] | length }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['technical_seminars'] | length >= 2  or m['technical_seminars_hosted'] | length >= 1 %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                    {% endif %}
+                                    <div>
+                                        <div>
+                                            Attended: {{ m['technical_seminars'] | length }}
+                                        </div>
+                                        <div>
+                                            Hosted: {{ m['technical_seminars'] | length }}
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
-                            <td data-sort="{{ m['house_meetings_missed'] | length }}">
-                                {% if m['house_meetings_missed'] | length == 0 %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% endif %}
-                                {{m['house_meetings_missed'] | length}}
+                            <td data-sort="{{ m['house_meetings_missed'] | length }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['house_meetings_missed'] | length == 0 %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                    {% endif %}
+                                    {{m['house_meetings_missed'] | length}}
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

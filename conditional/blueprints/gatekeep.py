@@ -2,13 +2,12 @@ import structlog
 from flask import Blueprint, request
 from sqlalchemy import func
 
-from conditional import start_of_year, auth
+from conditional import start_of_year, auth, ldap
 from conditional.models.models import CommitteeMeeting, HouseMeeting, MemberCommitteeAttendance, \
     MemberSeminarAttendance, MemberSeminarHost, TechnicalSeminar
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_active_members
 from conditional.util.member import get_semester_info, is_gatekeep_active
 
 gatekeep_bp = Blueprint('gatekeep_bp', __name__)
@@ -89,9 +88,9 @@ def display_spring_evals(internal=False, user_dict=None):
     ).all()}
 
     gk_members = []
-    for account in ldap_get_active_members():
-        uid = account.uid
-        name = account.cn
+    for account in ldap.get_group_member_attributes(groups=['active'], excluded_groups=[], attributes=['uid', 'cn']):
+        uid = account['uid']
+        name = account['cn']
 
         member_missed_hms = []
 

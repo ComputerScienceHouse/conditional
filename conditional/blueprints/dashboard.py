@@ -12,8 +12,9 @@ from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.housing import get_queue_position
+from conditional.util.ldap import ldap_get_active_member_uids
 from conditional.util.major_project import get_project_list
-from conditional.util.member import gatekeep_values, get_active_members, get_freshman_data, get_voting_members, \
+from conditional.util.member import gatekeep_values, get_freshman_data, get_voting_members, \
     get_cm, get_hm, is_gatekeep_active, req_cm
 from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_intromember, \
     user_dict_is_onfloor
@@ -49,7 +50,7 @@ def display_dashboard(user_dict=None):
     data['voting'] = bool(uid in can_vote)
 
     data['voting_count'] = {"Voting Members": len(can_vote),
-                            "Active Members": len(get_active_members())}
+                            "Active Members": len(ldap_get_active_member_uids())}
     # freshman shit
     if user_dict_is_intromember(user_dict):
         data['intro'] = get_freshman_data(uid)

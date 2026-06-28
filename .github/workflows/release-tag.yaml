@@ -1,0 +1,38 @@
+name: Tag Release
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: release-tag
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update-tag:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
+    environment: release
+    
+    steps:
+      - name: Checkout the release commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 1
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "latest github tag bot"
+          git config user.email "webmaster@csh.rit.edu"
+
+      - name: Move "latest" to the release commit
+        run: |
+          set -euo pipefail
+          target_sha="$(git rev-parse "HEAD^{commit}")" # parses tag to git sha hash
+          echo "Release ${{ github.event.release.tag_name }} -> ${target_sha}"
+          git tag --force latest "${target_sha}"
+          git push --force origin refs/tags/latest
