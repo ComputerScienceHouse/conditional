@@ -132,59 +132,64 @@ Gatekeep Results
                     </thead>
                     <tbody>
                         {% for m in members %}
-                        <tr>
-                            <td>
-                                <img class="aspect aspect1x1 rounded-circle me-2" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30px" /> 
-                                {{m['name']}} ({{m['uid']}})
+                        <tr style="height: 1px"> <!-- have to do this so that h-100 works -->
+                            <td class="h-100">
+                                <div class="d-flex justify-content-start align-items-center gap-2 h-100">
+                                    <img class="aspect aspect1x1 rounded-circle me-2" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" width="30px" /> 
+                                    {{m['name']}} ({{m['uid']}})
+                                </div>
                             </td>
-                            <td data-sort="{{ m['status_int'] }}">
-                                {% if m['status'] == "passed" %}
-                                <i class="bi bi-check-circle-fill green"></i>
-                                Ok!
-                                {% elif not gatekeep_active %}
-                                <i class="bi bi-hourglass-split yellow"></i>
-                                Pending
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red"></i>
-                                Disenfranchised
-                                {% endif %}
+                            <td data-sort="{{ m['status_int'] }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['status'] == "passed" %}
+                                    <i class="bi bi-check-circle-fill green"></i>
+                                    Ok!
+                                    {% elif not gatekeep_active %}
+                                    <i class="bi bi-hourglass-split yellow"></i>
+                                    Pending
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red"></i>
+                                    Disenfranchised
+                                    {% endif %}
+                                </div>
                             </td>
-                            <td data-sort="{{ m['committee_meetings'] }}">
-                                {% if m['committee_meetings'] < req_meetings %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% else %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% endif %}
-                                {{ m['committee_meetings'] }}
+                            <td data-sort="{{ m['committee_meetings'] }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['committee_meetings'] < req_meetings %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                    {% else %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                    {% endif %}
+                                    {{ m['committee_meetings'] }}
+                                </div>
                             </td>
-                            <td data-sort="{{ m['technical_seminars'] }}">
-                                {% if m['technical_seminars'] >= req_seminars %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% elif m['technical_seminars_hosted'] >= req_seminars_hosted %}
-                                <i class="bi bi-x-circle-fill yellow"></i>
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% endif %}
-                                Attended: 
-                                {{ m['technical_seminars'] }}
+                            <td data-sort="{{ m['technical_seminars'] }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['technical_seminars'] >= req_seminars or m['technical_seminars_hosted'] >= req_seminars_hosted %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                    {% endif %}
 
-                                {% if m['technical_seminars_hosted'] >= req_seminars_hosted %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% elif m['technical_seminars'] >= req_seminars %}
-                                <i class="bi bi-x-circle-fill yellow"></i>
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% endif %}
-                                Hosted: 
-                                {{ m['technical_seminars_hosted'] }}
+                                    <div>
+                                        <div>
+                                            Attended: {{ m['technical_seminars'] }}
+                                        </div>
+                                        <div>
+                                            Hosted: {{ m['technical_seminars_hosted'] }}
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
-                            <td data-sort="{{ m['house_meetings_missed'] | length }}">
-                                {% if m['house_meetings_missed'] | length == 0 %}
-                                <i class="bi bi-check-circle-fill green eval-info-status"></i>
-                                {% else %}
-                                <i class="bi bi-x-circle-fill red eval-info-status"></i>
-                                {% endif %}
-                                {{m['house_meetings_missed'] | length }}
+                            <td data-sort="{{ m['house_meetings_missed'] | length }}" class="h-100">
+                                <div class="d-flex justify-content-end align-items-center gap-2 h-100">
+                                    {% if m['house_meetings_missed'] | length == 0 %}
+                                    <i class="bi bi-check-circle-fill green eval-info-status"></i>
+                                    {% else %}
+                                    <i class="bi bi-x-circle-fill red eval-info-status"></i>
+                                    {% endif %}
+                                    {{m['house_meetings_missed'] | length }}
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

@@ -192,7 +192,7 @@ Membership Evaluations
                                 {{m['committee_meetings']}}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td data-sort="{{ m['major_project_passed'] }}">
                                 {% if m['major_project_passed'] %}
                                 <i class="bi bi-check-circle-fill green eval-info-status"></i>
                                 Passed
