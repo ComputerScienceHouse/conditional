@@ -180,7 +180,7 @@ sqlalchemy==2.0.51
     #   flask-sqlalchemy
 srvlookup==3.0.0
     # via csh-ldap
-structlog==25.5.0
+structlog==26.1.0
     # via -r requirements.in
 tomlkit==0.15.0
     # via pylint
