@@ -122,10 +122,7 @@ def submit_major_project(user_dict=None):
     db.session.add(project)
     db.session.commit()
 
-    project = MajorProject.query.filter(
-        MajorProject.name == name,
-        MajorProject.uid == user_id
-    ).first()
+    project = MajorProject.query.get(project.id)
 
     skills_list: list = list(filter(lambda x: x != 'None', skills))
 
