@@ -206,5 +206,5 @@ werkzeug==3.1.8
     #   flask
 wheel==0.47.0
     # via pip-tools
-wrapt==2.1.2
+wrapt==2.2.2
     # via -r requirements.in
