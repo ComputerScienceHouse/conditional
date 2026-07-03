@@ -7,32 +7,28 @@ Co-Op Submission
     <h3 class="page-title">Co-Op Submission</h3>
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body" style="padding-top:25px">
+            <div class="card">
+                <div class="card-body">
                     {% if not on_coop %}
                     <p>Please select one of the following options below if you are going to be on co-op during either semester this year. In the case you are going to be on co-op for both semesters, please contact the Evaluations Director and have them remove you from Active status.</p>
                     <p>By selecting an option and submitting this form you are forfeiting your right to vote in house matters during the selected period. You are not required to attend house meetings but are still eligible for directorship meeting attendance.</p>
                     <form data-module="coopSubmitForm">
-                        <div class="co-op-group">
+                        <div class="row">
                             <div class="col-xs-12 col-sm-6">
-                                <div class="radio co-op-radio">
-                                    <label>
-                                        <input type="radio" name="semester" id="fall" value="Fall">
-                                        <div class="co-op-option">
+                                <div class="d-flex align-items-center px-3">
+                                    <input type="radio" name="semester" id="fall" value="Fall">
+                                    <label for="fall" class="ms-3">
                                         <h4 class="list-group-item-heading">Fall Semester</h4>
-                                        <p class='co-op-description'>August - December {{year}}</p>
-                                        </div>
+                                        <p class="">August - December {{year}}</p>
                                     </label>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-6">
-                                <div class="radio co-op-radio">
-                                    <label>
-                                        <input type="radio" name="semester" id="spring" value="Spring">
-                                        <div class="co-op-option">
+                                <div class="d-flex align-items-center px-3">
+                                    <input type="radio" name="semester" id="spring" value="Spring">
+                                    <label for="spring" class="ms-3">
                                         <h4 class="list-group-item-heading">Spring Semester</h4>
-                                        <p class='co-op-description'>January - May {{year + 1}}</p>
-                                        </div>
+                                        <p class="">January - May {{year + 1}}</p>
                                     </label>
                                 </div>
                             </div>

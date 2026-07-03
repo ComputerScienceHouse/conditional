@@ -58,7 +58,6 @@ def submit_co_op_form(user_dict=None):
     db.session.add(co_op)
     db.session.flush()
     db.session.commit()
-    req_cm.cache_clear()
 
     return jsonify({"success": True}), 200
 
