@@ -320,12 +320,14 @@ Major Project Form
                         {% if p['files']|length == 0 %}
                             <p class="h6 no-imgs">No images uploaded</p>
                         {% else %}
-                            {% for f in p['files'] %}
-                                <img 
-                                    class="proj-img" 
-                                    src="https://assets.csh.rit.edu/{{ bucket_name }}/{{ f }}"
-                                    alt="User submitted image for the project"/>
-                            {% endfor %}
+                            <div class="row">
+                                {% for f in p['files'] %}
+                                    <img 
+                                        class="col-sm-4" 
+                                        src="https://assets.csh.rit.edu/{{ bucket_name }}/{{ f }}"
+                                        alt="User submitted image for the project"/>
+                                {% endfor %}
+                            </div>
                         {% endif %}
                     </div>
                     
@@ -333,6 +335,9 @@ Major Project Form
             </div>
         </div>
     </div>
+
+    <script>
+    </script>
 
     {% endfor %}
     {% endif %}
