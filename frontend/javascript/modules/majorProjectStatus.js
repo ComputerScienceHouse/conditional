@@ -74,7 +74,7 @@ export default class MajorProjectStatus {
 
               const caret = document.createElement('span');
               caret.classList.add('caret');
-              toggle.text = option + " ";
+              toggle.textContent = option + " ";
               toggle.appendChild(caret);
 
               if (option === "Passed") {

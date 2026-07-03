@@ -75,15 +75,18 @@
 //   transition: .5s all;
 // }
 //
-// .skill-tag:after {
-//   position: absolute;
-//   content: "×";
-//   border: 1px solid;
-//   border-radius: 10px;
-//   padding: 0 4px;
-//   margin: 3px 0 10px 7px;
-//   font-size: 10px;
-// }
+
+.skill-tag:hover {
+  cursor: pointer;
+}
+
+.skill-tag:after {
+  content: "\F623";
+  font-family: "bootstrap-icons" !important;
+  padding-left: 5px;
+  top: 2px;
+  position: relative;
+}
 //
 // .skill-display {
 //   display: block;
