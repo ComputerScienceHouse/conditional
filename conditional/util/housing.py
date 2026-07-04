@@ -27,7 +27,8 @@ def get_housing_queue(is_eval_director=False):
 
     # if the user is not evals, they should only see people in the cue without a room number
     if not is_eval_director:
-        queue = list(filter(lambda member: member['uid'] in in_queue and member['roomNumber'] is not None, queue))
+        queue = list(filter(lambda member: member['uid'] in in_queue 
+                            and 'roomNumber' in member and member['roomNumber'] is not None, queue))
 
 
     # set the time they were added to the queue

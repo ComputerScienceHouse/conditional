@@ -4,59 +4,40 @@ Directorship Meeting Attendance
 {% endblock %}
 {% block body %}
 <div class="container main mt-4">
-    <h3 class="page-title">Meeting Attendance</h3>
+    <h3 class="page-title">Directorship Meeting Attendance</h3>
     <form data-module="attendanceForm" data-type="committee">
-        <!-- Meeting Type -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:10px;">
-                        <div class="form-group">
-                            <label for="committee" class="control-label">Meeting Type</label>
-                            <select name="committee" class="form-control">
-                                <option value="Chairman">Chairman</option>
-                                <option value="Ad-Hoc">Ad-Hoc</option>
-                                <option value="Evaluations">Evaluations</option>
-                                <option value="Financial">Financial</option>
-                                <option value="R&D">Research and Development</option>
-                                <option value="House Improvements">House Improvements</option>
-                                <option value="Opcomm">OpComm</option>
-                                <option value="History">History</option>
-                                <option value="Social">Social</option>
-                                <option value="Public Relations">Public Relations</option>
-                            </select>
-                        </div>
-                    </div>
+        <div class="card">
+            <div class="card-body">
+                <!-- Meeting Type -->
+                <div class="form-group mb-3">
+                    <label for="committee" class="form-label">Meeting Type</label>
+                    <select name="committee" class="form-control">
+                        <option value="Chairman">Chairman</option>
+                        <option value="Ad-Hoc">Ad-Hoc</option>
+                        <option value="Evaluations">Evaluations</option>
+                        <option value="Financial">Financial</option>
+                        <option value="R&D">Research and Development</option>
+                        <option value="House Improvements">House Improvements</option>
+                        <option value="Opcomm">OpComm</option>
+                        <option value="History">History</option>
+                        <option value="Social">Social</option>
+                        <option value="Public Relations">Public Relations</option>
+                    </select>
                 </div>
+                <!-- Date -->
+                <div class="form-group mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="text" name="date" class="form-control" value="{{date}}" data-module="datepicker"/>
+                </div>
+                <!-- Attendees -->
+                <div class="form-group mb-4">
+                    <label for="attendees" class="form-label" id="attendeeLabel">Attendees</label>
+                    <input type="text" name="attendees" class="form-control" data-module="memberSelect" data-src="cm_members"/>
+                </div>
+
+                <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
             </div>
         </div>
-        <!-- Date -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:10px;">
-                        <div class="form-group is-empty">
-                            <label for="date" class=" control-label">Date</label>
-                            <input type="text" name="date" class="form-control" value="{{date}}" data-module="datepicker"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Attendees -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group is-empty">
-                            <label for="attendees" class=" control-label" id="attendeeLabel">Attendees</label>
-                            <input type="text" name="attendees" class="form-control" data-module="memberSelect" data-src="cm_members"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
     </form>
 </div>
 {% endblock %}
