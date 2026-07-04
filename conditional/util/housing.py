@@ -23,8 +23,7 @@ def get_housing_queue(is_eval_director=False):
         ).all()
     }
 
-    queue = ldap.get_group_member_attributes(groups=['current_student'],
-                                             excluded_groups=[], attributes=['uid', 'housingPoints', 'cn'])
+    queue = ldap.get_group_member_attributes(groups=['current_student'], attributes=['uid', 'housingPoints', 'cn'])
 
     # if the user is not evals, they should only see people in the cue without a room number
     if not is_eval_director:
@@ -35,10 +34,13 @@ def get_housing_queue(is_eval_director=False):
     # i'm sorry this is cursed, it's this way because of database structure or something
     for member in queue:
         member['time'] = in_queue.get(member['uid'], {}).get('time', datetime.now()) or datetime.now()
+        member['in_queue'] = member['uid'] in in_queue.keys()
 
     # Sort based on time (ascending) and then points (decending).
     queue.sort(key=lambda m: m['time'])
     queue.sort(key=lambda m: m['housingPoints'], reverse=True)
+
+    print(queue)
 
     return queue
 
