@@ -39,7 +39,7 @@ click==8.4.2
     #   pip-tools
 cryptography==49.0.0
     # via oic
-csh-ldap==2.5.5
+csh-ldap==2.5.7
     # via -r requirements.in
 defusedxml==0.7.1
     # via oic
