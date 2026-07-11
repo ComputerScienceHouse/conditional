@@ -1,6 +1,5 @@
 /* global fetch */
 import "whatwg-fetch";
-// import "@selectize/selectize";
 import Choices from "choices.js";
 import FetchUtil from "../utils/fetchUtil";
 import Exception from "../exceptions/exception";
@@ -41,6 +40,7 @@ export default class MemberSelect {
       removeItemButton: true,
       searchFloor: -1,
       searchRenderSelectedChoices: false,
+      resetScrollPosition: true,
       classNames: {
         containerOuter: ['choices', 'dropdown'],
         containerInner: ['_choices__inner', 'form-control'],
@@ -75,6 +75,12 @@ export default class MemberSelect {
       }
     });
 
+    element.addEventListener('addItem', () => {
+      requestAnimationFrame(() => {
+        target.choiceList.element.scrollTop = 0;
+      });
+    });
+
     target.containerOuter.element.addEventListener('keydown', event => {
       // only make tab do stuff if it's actually tab and the dropdown is donw
       // otherwise people will get angryyyy
@@ -84,7 +90,7 @@ export default class MemberSelect {
       const enterEvent = new KeyboardEvent('keydown', {
         key: 'Enter',
         code: 'Enter',
-        keyCode: 13,   // deprecated, but Choices' internal check still reads this
+        keyCode: 13,
         which: 13,
         bubbles: true,
         cancelable: true,
@@ -93,35 +99,8 @@ export default class MemberSelect {
       target.containerOuter.element.dispatchEvent(enterEvent);
 
       event.preventDefault();
-
-      // const highlighted = target.choiceList.element.querySelector(".is-highlighted");
-      // if (highlighted) {
-      //   const value = highlighted.dataset.value;
-      //   if (value) {
-      //     target.setChoiceByValue(value);
-      //
-      //     target.containerOuter.element.querySelector("input.choices__input").value = "";
-      //
-      //     event.preventDefault();
-      //   }
-      // }
     });
 
-    console.log(target);
     return target;
-
-    // $(this.element).selectize({
-    //   maxItems: null,
-    //   // persist: false,
-    //   // openOnFocus: false,
-    //   // closeAfterSelect: true,
-    //   // plugins: ['remove_button'],
-    //   valueField: 'value',
-    //   labelField: 'display',
-    //   searchField: 'display',
-    //   // selectOnTab: true,
-    //   create: false,
-    //   options: this.members
-    // });
   }
 }
