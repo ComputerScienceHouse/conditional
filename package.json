@@ -24,6 +24,7 @@
     "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
     "bootstrap": "5.3.8",
+    "choices.js": "^11.2.3",
     "csh-material-bootstrap": "5.3.10",
     "datatables.net-bs5": "^2.3.7",
     "dropzone": "^5.9.3",

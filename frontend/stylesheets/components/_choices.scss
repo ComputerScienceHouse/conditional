@@ -1,0 +1,41 @@
+@import "choices.js/src/styles/choices";
+
+.choices__input {
+  background-color: unset;
+}
+
+._choices__inner .choices__list .choices__item {
+  background-color: rgba(var(--bs-primary-rgb), 1);
+
+  border: none;
+}
+
+.choices__item.choices__item--selectable {
+  margin-bottom: 0px;
+}
+
+.choices__list--multipple {
+  display: inline flow-root list-item;
+}
+
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+  background-color: var(--bs-dropdown-bg);
+}
+
+.choices__button.btn-close {
+  --bs-btn-close-color: var(--bs-body-color);
+  background-image: var(--bs-btn-close-bg)!important;
+}
+
+.choices__list.choices__list--dropdown.dropdown-menu {
+  border: var(--bs-dropdown-border-width) solid var(--bs-dropdown-border-color);
+}
+
+.choices__list--dropdown .choices__item--selectable.is-selected,
+.choices__list[aria-expanded] .choices__item--selectable.is-selected,
+.choices__list--dropdown .choices__item--selectable.is-highlighted,
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+  background-color: var(--bs-dropdown-link-hover-bg);
+  color: var(--bs-dropdown-link-hover-color)
+}

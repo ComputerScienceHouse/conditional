@@ -43,14 +43,16 @@ export default class AttendanceForm {
 
         Object.keys(this.fields).forEach(field => {
           if (field === "attendees") {
-            let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
-              this.fields[field].value.split(',')
-            );
+            const selectedMembers = Array.from(this.fields[field].selectedOptions).map((opt) => opt.value);
+
+            let membersSplit = MemberUtil.splitFreshmenUpperclassmen(selectedMembers);
             payload.freshmen = membersSplit.freshmen;
             payload.members = membersSplit.upperclassmen;
           } else if (field === "host") {
+            const selectedMembers = Array.from(this.fields[field].selectedOptions).map((opt) => opt.value);
+
             let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
-              this.fields[field].value.split(',')
+              selectedMembers
             );
             payload.freshman_host = hostSplit.freshmen;
             payload.member_host = hostSplit.upperclassmen;

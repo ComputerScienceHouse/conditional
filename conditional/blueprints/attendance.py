@@ -40,7 +40,7 @@ def get_all_members(user_dict=None):
 
     named_members = [
         {
-            'display': f.name,
+            'label': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
@@ -49,7 +49,7 @@ def get_all_members(user_dict=None):
     for account in members:
         named_members.append(
             {
-                'display': account['displayName'],
+                'label': account['displayName'],
                 'value': account['uid'],
                 'freshman': False
             })
@@ -79,7 +79,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
     eligible_members = [
         {
-            'display': f.name,
+            'label': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
@@ -92,7 +92,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
         eligible_members.append(
             {
-                'display': account['displayName'],
+                'label': account['displayName'],
                 'value': account['uid'],
                 'freshman': False
             })
@@ -115,7 +115,7 @@ def get_non_alumni(user_dict=None):
 
     eligible_members = [
         {
-            'display': f.name,
+            'label': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
@@ -124,7 +124,7 @@ def get_non_alumni(user_dict=None):
     for account in current_students:
         eligible_members.append(
             {
-                'display': account['displayName'],
+                'label': account['displayName'],
                 'value': account['uid'],
                 'freshman': False
             })
