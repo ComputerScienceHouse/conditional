@@ -6,121 +6,153 @@ Attendance History
 <div class="container main">
     {% if pending_cm|length != 0 and current_page == 1 %}
     <h3 class="page-title">Pending Submissions</h3>
-    {% for meeting in pending_cm %}
-    <div class="panel panel-default">
-        <div class="panel-body eval-panel">
-            <div class="container-fluid">
-            	<div class="col-xs-12 col-sm-3 vcenter">
-            		<h5>{{meeting["name"]}}</h5>
-            		<p>{{meeting["date"]}}<p>
-            	</div><!--
-                --><div class="com-xs-12 col-sm-7 vcenter">
-            		<p class="attend-list" id="attendees-{{meeting["id"]}}">
-            			{% for name in meeting["attendees"] %}
-            			{{name}}{% if not loop.last %}, {% endif %}
-            			{% endfor %}
-            		</p>
-            	</div><!--
-                --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{meeting["id"]}}" data-meeting="cm">
-            		<i class="bi bi-eye attend-edit-icon"></i> Review
-            		</button>
-            	</div>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% if pending_ts|length != 0 and current_page == 1 %}
-    <h3 class="page-title">Pending Seminars</h3>
-    {% for seminar in pending_ts %}
-    <div class="panel panel-default">
-        <div class="panel-body eval-panel">
-            <div class="container-fluid">
-            	<div class="col-xs-12 col-sm-3 vcenter">
-            		<h5>{{seminar["name"]}}</h5>
-            		<p>{{seminar["date"]}}<p>
-            	</div><!--
-                --><div class="com-xs-12 col-sm-7 vcenter">
-                    <p class="host-list" id="hosts-{{seminar["id"]}}">Host: 
-                        {% for name in seminar["hosts"] %}
-                        {{name}}{% if not loop.last %}, {% endif %}
+    <div class="list-group">
+        {% for meeting in pending_cm %}
+        <div class="list-group-item container-fluid px-3 py-2">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3 d-flex flex-column justify-content-center">
+                    <h5 class="mb-0">
+                        {{ meeting["name"] }}
+                    </h5>
+                    <p class="mb-0">
+                        {{ meeting["date"] }}
+                    </p>
+                </div>
+                <div class="col-xs-12 col-sm-7 d-flex flex-column justify-content-center">
+                    <p class="mb-0" id="attendees-{{meeting["id"]}}">
+                        {% for name in meeting["attendees"] %}
+                        {{ name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </p>
-            		<p class="attend-list" id="attendees-{{seminar["id"]}}">Attendees: 
-            			{% for name in seminar["attendees"] %}
-            			{{name}}{% if not loop.last %}, {% endif %}
-            			{% endfor %}
-            		</p>
-            	</div><!--
-                --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{seminar["id"]}}" data-meeting="ts">
-            		<i class="bi bi-eye attend-edit-icon"></i> Review
-            		</button>
-            	</div>
+                </div>
+                <div class="col-xs-12 col-sm-2 text-center d-flex flex-column justify-content-center">
+                    <button type="button" class="btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{meeting["id"]}}" data-meeting="cm">
+                        <i class="bi bi-eye attend-edit-icon"></i>
+                        Review
+                    </button>
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+    {% endif %}
+    {% if pending_ts | length != 0 and current_page == 1 %}
+    <h3 class="page-title">Pending Seminars</h3>
+    <div class="list-group">
+        {% for seminar in pending_ts %}
+        <div class="list-group-item container-fluid px-3 py-2">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3 d-flex flex-column justify-content-center">
+                    <h5 class="mb-0">
+                        {{ seminar["name"] }}
+                    </h5>
+                    <p class="mb-0">
+                        {{ seminar["date"] }}
+                    </p>
+                </div>
+                <div class="com-xs-12 col-sm-7 d-flex flex-column justify-content-center">
+                    <p class="my-1" id="hosts-{{seminar["id"]}}">
+                        Host: 
+                        {% for name in seminar["hosts"] %}
+                        {{ name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    <p class="my-1" id="attendees-{{seminar["id"]}}">
+                        Attendees: 
+                        {% for name in seminar["attendees"] %}
+                        {{ name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <div class="col-xs-12 col-sm-2 d-flex flex-column justify-content-center text-center">
+                    <button type="button" class="btn" data-module="cmReview" data-modal="reviewMeeting" data-cid="{{seminar["id"]}}" data-meeting="ts">
+                        <i class="bi bi-eye attend-edit-icon"></i>
+                        Review
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
     <h3 class="page-title">Attendance History</h3>
-    {% for meeting in history %}
-    <div class="panel panel-default">
-        <div class="panel-body eval-panel">
-            <div class="container-fluid">
-            	<div class="col-xs-12 col-sm-3 vcenter">
-            		<h5>{{meeting["name"]}}</h5>
-            		<p>{{meeting["date"]}}<p>
-            	</div><!--
-                --><div class="com-xs-12 col-sm-7 vcenter">
-                    {% if meeting in all_ts %}
-                    <p class="host-list" id="hosts-{{meeting["id"]}}">Host: 
+    <div class="list-group">
+        {% for meeting in history %}
+        <div class="list-group-item container-flluid px-3 py-2">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3 d-flex flex-column justify-content-center">
+                    <h5 class="mb-0">
+                        {{ meeting["name"] }}
+                    </h5>
+                    <p class="mb-0">
+                        {{ meeting["date"] }}
+                    </p>
+                </div>
+                <div class="com-xs-12 col-sm-7 d-flex flex-column justify-content-center">
+                    {% if meeting["type"] == "ts" %}
+                    <p class="my-1" id="hosts-{{meeting["id"]}}">
+                        Host: 
                         {% for name in meeting["hosts"] %}
-                        {{name}}{% if not loop.last %}, {% endif %}
+                        {{ name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </p>
                     {% endif %}
-            		<p class="attend-list" id="attendees-{{meeting["id"]}}">Attendees: 
-            			{% for name in meeting["attendees"] %}
-            			{{name}}{% if not loop.last %}, {% endif %}
-            			{% endfor %}
-            		</p>
-            	</div><!--
-                --><div class="col-xs-12 col-sm-2 vcenter text-center">
-            		<button type="button" class="btn btn-default navbar-btn" data-module="cmReview" data-modal="editMeeting" data-cid="{{meeting["id"]}}" data-meeting="{{meeting["type"]}}">
-            		<i class="bi bi-pencil-square attend-edit-icon"></i> Edit
-            		</button>
-            	</div>
+                    <p class="my-1" id="attendees-{{meeting["id"]}}">
+                        Attendees: 
+                        {% for name in meeting["attendees"] %}
+                        {{ name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <div class="col-xs-12 col-sm-2 d-flex flex-column justify-content-center text-center">
+                    <button type="button" class="btn" data-module="cmReview" data-modal="editMeeting" data-cid="{{meeting["id"]}}" data-meeting="{{meeting["type"]}}">
+                        <i class="bi bi-pencil-square attend-edit-icon"></i>
+                        Edit
+                    </button>
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-    {% if num_pages > 1 or current_page > 1%}
 
-    <nav aria-label="Page navigation" class="align-center">
-	  <ul class="pagination">
-	    <li {%if current_page == 1 %}class="disabled"{% endif %}>
-	        {%if current_page != 1 %}
-                <a href="?page={{ current_page - 1 }}" aria-label="Previous">
-	      	{% endif %}
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
+    {% if num_pages > 1 or current_page > 1 %}
+
+    <nav class="py-4" aria-label="Page navigation">
+	<ul class="pagination justify-content-center">
+            <li class="page-item {% if current_page == 1 %} disabled {% endif %}">
+                <a class="page-link" href="?page={{ current_page - 1 }}" aria-label="Previous"
+                    {% if current_page == 1 %}
+                    tab-index="-1"
+                    {% endif %}>
+
+	            &laquo;
+                </a>
 	    </li>
+
 	    {% for number in range(1, num_pages+1) %}
-    		<li {% if number == current_page %} class="active" {% endif %}>
-                <a href="?page={{ number }}">{{ number }}</a>
-    		</li>
-    	{% endfor %}
-	    <li {%if current_page == num_pages %}class="disabled"{% endif %}>
-	        {%if current_page != num_pages %}
-                <a href="?page={{ current_page + 1 }}" aria-label="Next">
-	      	{% endif %}
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
+            <li class="page-item {% if number == current_page %} active {% endif %}">
+                <a class="page-link" href="?page={{ number }}"
+                    {% if current_page == 1 %}
+                    tab-index="-1"
+                    {% endif %}>
+
+                    {{ number }}
+                </a>
+            </li>
+            {% endfor %}
+
+            <li class="page-item {% if current_page == num_pages %} disabled {% endif %}">
+                <a class="page-link" href="?page={{ current_page + 1 }}" aria-label="Previous"
+                    {% if current_page == num_pages %}
+                    tab-index="-1"
+                    {% endif %}>
+
+	            &raquo;
+                </a>
 	    </li>
-	  </ul>
-	</nav>
-	{% endif %}
+	</ul>
+    </nav>
+    {% endif %}
 </div>
 
 <div class="modal fade" id="editMeeting" tabindex="-1">

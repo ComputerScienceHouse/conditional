@@ -51,32 +51,13 @@ table.dataTable tr:last-child td {
 }
 
 .page-title {
-  margin: 20px 0 30px;
+  margin: 20px 0;
 }
 
 tr {
   &.disabled {
     opacity: .5;
   }
-}
-
-.footer-version {
-  display: block;
-  opacity: .3;
-  margin: 50px auto 20px;
-  text-align: center;
-  color: #000;
-  font-size: .9em;
-  &:hover {
-    text-decoration: none;
-    color: #000;
-  }
-}
-
-.vcenter {
-  display: inline-block;
-  float: none;
-  vertical-align: middle;
 }
 
 .hidden {
