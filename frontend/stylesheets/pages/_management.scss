@@ -77,16 +77,6 @@
 
   pointer-events: none;
 }
-.modal-content {
-  // To center horizontally
-  margin: 0 auto;
-  // Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it
-  width: inherit;
-  height: inherit;
-
-  pointer-events: all;
-}
-
 .hp-input {
   display: inline-block;
   width: 50px;
@@ -124,10 +114,6 @@
   background-color: #f5f5f5;
 }
 
-
-.modal-body {
-  padding-top: 0;
-}
 
 .btn-mp {
   float: right;

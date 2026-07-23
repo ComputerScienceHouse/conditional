@@ -433,9 +433,11 @@ def attendance_history(user_dict=None):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
     page = request.args.get('page', 1)
+    page_size = int(request.args.get('size', 10))
+
     log.info('View Past Attendance Submitions')
-    offset = 0 if int(page) == 1 else ((int(page)-1)*10)
-    limit = int(page)*10
+    offset = 0 if int(page) == 1 else ((int(page) - 1) * 10)
+    limit = int(page) * page_size
     all_cm = [{"id": m.id,
                "name": m.committee,
                "dt_obj": m.timestamp,
@@ -477,10 +479,35 @@ def attendance_history(user_dict=None):
                    TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
 
     all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
-    if len(all_cm) % 10 != 0:
-        total_pages = int(len(all_cm) / 10) + 1
+    if len(all_cm) % page_size != 0:
+        total_pages = int(len(all_cm) / page_size) + 1
     else:
-        total_pages = int(len(all_cm) / 10)
+        total_pages = int(len(all_cm) / page_size)
+
+    page_size_options = [
+        {
+            'value': 10,
+            'label': '10'
+        },
+        {
+            'value': 25,
+            'label': '25'
+        },
+        {
+            'value': 50,
+            'label': '50'
+        },
+        {
+            'value': 100,
+            'label': '100'
+        },
+        {
+            'value': -1,
+            'label': 'all'
+        }
+    ]
+
+    selected_page_size = list(filter(lambda opt: opt['value'] == page_size, page_size_options))[0]
 
     return render_template('attendance_history.html',
                            username=user_dict['username'],
@@ -488,8 +515,9 @@ def attendance_history(user_dict=None):
                            pending_cm=pend_cm,
                            pending_ts=pend_ts,
                            num_pages=total_pages,
-                           current_page=int(page))
-
+                           page_size=selected_page_size,
+                           current_page=int(page),
+                           page_sizes=page_size_options)
 
 @attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
 @auth.oidc_auth("default")

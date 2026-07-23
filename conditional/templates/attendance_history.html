@@ -115,12 +115,11 @@ Attendance History
         {% endfor %}
     </div>
 
-    {% if num_pages > 1 or current_page > 1 %}
-
-    <nav class="py-4" aria-label="Page navigation">
+    <nav class="py-4 d-flex justify-content-between" aria-label="Page navigation">
+        <div style="flex: 1 0 0;"></div>
 	<ul class="pagination justify-content-center">
             <li class="page-item {% if current_page == 1 %} disabled {% endif %}">
-                <a class="page-link" href="?page={{ current_page - 1 }}" aria-label="Previous"
+                <a class="page-link" href="?page={{ current_page - 1 }}&size={{ page_size['value'] }}" aria-label="Previous"
                     {% if current_page == 1 %}
                     tab-index="-1"
                     {% endif %}>
@@ -131,7 +130,7 @@ Attendance History
 
 	    {% for number in range(1, num_pages+1) %}
             <li class="page-item {% if number == current_page %} active {% endif %}">
-                <a class="page-link" href="?page={{ number }}"
+                <a class="page-link" href="?page={{ number }}&size={{ page_size['value'] }}"
                     {% if current_page == 1 %}
                     tab-index="-1"
                     {% endif %}>
@@ -142,7 +141,7 @@ Attendance History
             {% endfor %}
 
             <li class="page-item {% if current_page == num_pages %} disabled {% endif %}">
-                <a class="page-link" href="?page={{ current_page + 1 }}" aria-label="Previous"
+                <a class="page-link" href="?page={{ current_page + 1 }}&size={{ page_size['value'] }}" aria-label="Previous"
                     {% if current_page == num_pages %}
                     tab-index="-1"
                     {% endif %}>
@@ -151,8 +150,26 @@ Attendance History
                 </a>
 	    </li>
 	</ul>
+        <div style="flex: 1 0 0;">
+            <div class="dropdown float-end">
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Page Size: {{ page_size['label'] }}
+                </button>
+                <ul class="dropdown-menu">
+                    {% for page_size_option in page_sizes %}
+                        <li>
+                            <a class="dropdown-item" href="?page=1&size={{ page_size_option['value'] }}"
+                            {% if page_size_option['value'] == page_size['value'] %}
+                                active
+                            {% endif %}
+                            >{{ page_size_option['label'] }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </nav>
-    {% endif %}
 </div>
 
 <div class="modal fade" id="editMeeting" tabindex="-1">
