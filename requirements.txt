@@ -125,7 +125,7 @@ platformdirs==4.10.0
     # via pylint
 psycopg2-binary==2.9.12
     # via -r requirements.in
-pyasn1==0.6.3
+pyasn1==0.6.4
     # via
     #   pyasn1-modules
     #   python-ldap
