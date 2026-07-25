@@ -5,40 +5,34 @@ Co-Op Management
 {% block body %}
 <div class="container main">
     {% if is_eval_director%}
-       <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Co-Op Management</h3>
-        </div>
-        <div class="panel-body table-fill">
-            <div class="table-responsive">
-                <table class="table table-striped no-bottom-margin" data-module="table" data-searchable="false" data-order="[[ 1, &quot;asc&quot; ]]" data-length-change="true" data-paging="false" data-info="true">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Semester</th>
-                        <th>Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for c in co_op %}
-                    <tr id="coop-{{c[1]}}">
-                        <td>
-                            <img class="table-img mobile-hide" src="https://profiles.csh.rit.edu/image/{{c[1]}}"> {{ get_member_name(c[1]) }}
-                        </td>
-                        <td>
-                            {{c[0]}}
-                        </td>
-                        <td width=100px>
-                            <a href="#" data-module="coopDelete" data-uid="{{c[1]}}">
-                                <i class="bi bi-trash3 red align-center" style="width: 100%"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <h3 class="page-title">Co-Op Management</h3>
+    <div class="table-responsive">
+        <table class="table table-striped" data-module="table" data-order="[[ 1, &quot;asc&quot; ]]" data-length-change="true" data-paging="false" data-info="true">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Semester</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for c in co_op %}
+            <tr id="coop-{{ c['uid'] }}">
+                <td>
+                    <img class="aspect aspect11 rounded-circle me-2" width="40" src="https://profiles.csh.rit.edu/image/{{ c['uid'] }}"> {{ get_member_name(c['uid']) }}
+                </td>
+                <td>
+                    {{ c['semester'] }}
+                </td>
+                <td width=100px>
+                    <a href="#" data-module="coopDelete" data-uid="{{ c['uid'] }}">
+                        <i class="bi bi-trash3 red align-center"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
     {% endif %}
 </div>
