@@ -182,7 +182,7 @@ Attendance History
             <form method="post">
                 <div class="modal-body">
                     <!-- Host -->
-                    <div class="form-group mb-4">
+                    <div class="form-group mb-4 host-edit-row">
                         <label for="host" class="form-label" id="hostLabel">Host(s)</label>
                         <select name="host" class="form-select" multiple><select/>
                     </div>
@@ -203,30 +203,31 @@ Attendance History
 </div>
 
 <div class="modal fade" id="reviewMeeting" tabindex="-1">
-    <div class="vertical-alignment-helper">
-        <div class="modal-dialog vertical-align-center">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editMeetingTitle">Review Submission</h4>
-                </div>
-                <form method="post">
-                    <div class="modal-body">
-                        <div class="row host-edit-row">
-                            <label class="control-label" for="host">Host(s)</label>
-                            <input type="text" name="host" class="form-control" />
-                        </div>
-                        <div class="row user-edit-row">
-                            <label class="control-label" for="attendees">Attendees</label>
-                            <input type="text" name="attendees" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger delete-btn pull-left">Delete</button>
-                        <input type="submit" class="btn btn-success" value="Approve">
-                    </div>
-                </form>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editMeetingTitle">Review Submission</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form method="post">
+                <div class="modal-body">
+                    <!-- Host -->
+                    <div class="form-group mb-4 host-edit-row">
+                        <label for="host" class="form-label" id="hostLabel">Host(s)</label>
+                        <select name="host" class="form-select" multiple><select/>
+                    </div>
+                    <!-- Attendees -->
+                    <div class="form-group mb-4">
+                        <label for="attendees" class="form-label" id="attendeeLabel">Attendees</label>
+                        <select name="attendees" class="form-select" multiple><select/>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger float-start">Delete</button>
+                    <input type="submit" class="btn btn-success" value="Approve">
+                </div>
+            </form>
         </div>
     </div>
 </div>
