@@ -166,10 +166,14 @@ def display_attendance_hm(user_dict=None):
     if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
+    members = get_non_alumni_non_coop(internal=True)
+
+    print(members)
+
     return render_template('attendance_hm.html',
                            username=user_dict['username'],
                            date=datetime.now().strftime("%Y-%m-%d"),
-                           members=get_non_alumni_non_coop(internal=True))
+                           members=members)
 
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])

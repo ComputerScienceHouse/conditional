@@ -57,38 +57,27 @@ export default class ReviewMeeting {
       });
 
     // Delete Button
-    this.modal.querySelector('button.delete-btn').addEventListener('click', e =>
+    this.modal.querySelector('button.btn-danger').addEventListener('click', e =>
       this._deleteMeeting()
     );
 
     if (this.meeting == "ts") {
       // Host
-      const hostInput = this.modal.querySelector('input[name="host"]');
-      let hostStr = "";
-      this.data.host.forEach(h => {
-        hostStr += h.value + ",";
-      });
-      hostInput.value = hostStr;
-
+      const hostInput = this.modal.querySelector('[name="host"]');
 
       hostInput.dataset.src = "cm_members";
-      new MemberSelect(hostInput); // eslint-disable-line no-new
+      new MemberSelect(hostInput, this.data.host); // eslint-disable-line no-new
     } else { // Hide host section if not technical seminar
       this.modal.querySelector(".host-edit-row").style.display = "none";
     }
     
 
     // Attendees
-    const attendeesInput = this.modal.querySelector('input[name="attendees"]');
-    let attendeesStr = "";
-    this.data.attendees.forEach(attendee => {
-      attendeesStr += attendee.value + ",";
-    });
-    attendeesInput.value = attendeesStr;
+    const attendeesInput = this.modal.querySelector('[name="attendees"]');
 
     // Initialize selector control
     attendeesInput.dataset.src = "cm_members";
-    new MemberSelect(attendeesInput); // eslint-disable-line no-new
+    new MemberSelect(attendeesInput, this.data.attendees); // eslint-disable-line no-new
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
@@ -107,12 +96,12 @@ export default class ReviewMeeting {
 
       // Save details
       let payload = {};
-      let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
-        this.modal.querySelector('input[name="attendees"]').value.split(',')
-      );
-      let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
-        this.modal.querySelector('input[name="host"]').value.split(",")
-      );
+      const selectedMembers = Array.from(this.modal.querySelector('select[name="attendees"]').selectedOptions).map((opt) => opt.value);
+      const selectedHosts = Array.from(this.modal.querySelector('select[name="host"]').selectedOptions).map((opt) => opt.value);
+
+      let membersSplit = MemberUtil.splitFreshmenUpperclassmen(selectedMembers);
+      let hostSplit = MemberUtil.splitFreshmenUpperclassmen(selectedHosts);
+
       payload.freshmen = membersSplit.freshmen;
       payload.members = membersSplit.upperclassmen;
       payload.freshman_host = hostSplit.freshmen;

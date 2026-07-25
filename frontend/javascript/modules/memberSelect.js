@@ -7,7 +7,7 @@ import AttendanceException from "../exceptions/attendanceException";
 import FetchException from "../exceptions/fetchException";
 
 export default class MemberSelect {
-  constructor(element) {
+  constructor(element, selectedMembers = []) {
     this.element = element;
     this.dataSrc = element.dataset.src;
 
@@ -24,6 +24,9 @@ export default class MemberSelect {
         .then(FetchUtil.parseJSON)
         .then(response => {
           this.members = response.members;
+          selectedMembers.forEach((member) => {
+            this.members.find((el) => el.value == member.value).selected = true;
+          });
           this.render(element);
         })
         .catch(error => {
