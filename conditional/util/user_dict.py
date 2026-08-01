@@ -11,7 +11,6 @@ def user_dict_is_alumni(user_dict) -> bool:
     return not user_dict_is_active(user_dict)
 
 def user_dict_is_eboard(user_dict) -> bool:
-    return True
     return user_dict_is_in_group(user_dict, 'eboard')
 
 def user_dict_is_rtp(user_dict) -> bool:
@@ -27,7 +26,6 @@ def user_dict_is_financial_director(user_dict) -> bool:
     return user_dict_is_in_group(user_dict, 'eboard-financial')
 
 def user_dict_is_eval_director(user_dict) -> bool:
-    return True
     return user_dict_is_in_group(user_dict, 'eboard-evaluations')
 
 def user_dict_is_current_student(user_dict) -> bool:
