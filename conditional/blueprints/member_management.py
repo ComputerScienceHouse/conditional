@@ -66,10 +66,10 @@ def display_member_management(user_dict=None):
     onfloor_members = set(ldap_get_onfloor_member_uids())
 
     member_list = ldap.get_group_member_attributes(groups=["current_student"],
-                                    excluded_groups=[], attributes=['uid', 'housingPoints', 'roomNumber', 'cn'])
+                                    excluded_groups=[], attributes=['uid', 'housingPoints', 'roomNumber', 'displayName'])
 
     for member in member_list:
-        member['name'] = member['cn']
+        member['name'] = member['displayName']
         member['active'] = member['uid'] in active_members
         member['onfloor'] = member['uid'] in onfloor_members
 
@@ -397,7 +397,7 @@ def member_management_getuserinfo(uid, user_dict=None):
                 hms_missed.append(hm)
         return jsonify(
             {
-                'name': account.cn,
+                'name': account.displayName,
                 'room_number': account.roomNumber,
                 'onfloor_status': ldap_is_onfloor(account),
                 'housing_points': account.housingPoints,
@@ -408,7 +408,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 
     return jsonify(
         {
-            'name': account.cn,
+            'name': account.displayName,
             'active_member': ldap_is_active(account),
             'user': 'financial'
         }), 200

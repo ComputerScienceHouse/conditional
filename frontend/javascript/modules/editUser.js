@@ -53,6 +53,9 @@ export default class EditUser {
   _renderModal() {
     // Clone template modal
     let modal = this.modal.cloneNode(true);
+
+    console.log(modal);
+
     modal.setAttribute("id",
         this.modal.getAttribute("id") + "-" + this.uid);
 
@@ -64,7 +67,7 @@ export default class EditUser {
     modal.querySelector('input[name=room]').value = this.data.room_number;
 
     // On-floor Status
-    modal.querySelector('input[name=onfloor]').checked =
+    modal.querySelector('input[name=onFloor]').checked =
         this.data.onfloor_status;
 
     // Dues
@@ -117,7 +120,8 @@ export default class EditUser {
     }
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e => {
+    modal.querySelector('input[type=submit]').addEventListener('click', e => {
+      e.preventDefault();
       this._submitForm("#" + this.modal.getAttribute("id") + "-" + this.uid);
     });
 
@@ -144,7 +148,7 @@ export default class EditUser {
     modal.querySelector('input[name=dues]').checked = this.data.active_member;
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e => {
+    modal.querySelector('button[type=submit]').addEventListener('click', e => {
       this._submitForm("#" + this.modal.getAttribute("id") + "-" + this.uid);
     });
 
@@ -183,7 +187,7 @@ export default class EditUser {
     modal.querySelector('input[name=room]').value = this.data.room_number;
 
     // On-floor Status
-    modal.querySelector('input[name=onfloor]').checked =
+    modal.querySelector('input[name=onFloor]').checked =
         this.data.onfloor_status;
 
     // Evaluation Date
@@ -321,7 +325,7 @@ export default class EditUser {
       // Save user details
       let payload = {
         roomNumber: null,
-        onfloorStatus: modal.querySelector('input[name=onfloor]').checked
+        onfloorStatus: modal.querySelector('input[name=onFloor]').checked
       };
 
       if (this.type === "member") {
