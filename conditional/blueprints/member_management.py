@@ -89,6 +89,8 @@ def display_member_management(user_dict=None):
             "eval_date": freshman_user.eval_date
         })
 
+    print(freshmen_list)
+
     settings = EvalSettings.query.first()
     if settings:
         lockdown = settings.site_lockdown

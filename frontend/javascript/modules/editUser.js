@@ -242,12 +242,12 @@ export default class EditUser {
     }
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e =>
+    modal.querySelector('input[type=submit]').addEventListener('click', e =>
       this._submitForm()
     );
 
     // Delete button
-    modal.querySelector('button.delete-btn').addEventListener('click', e =>
+    modal.querySelector('input[type=button].btn-danger').addEventListener('click', e =>
       this._deleteFreshman()
     );
 

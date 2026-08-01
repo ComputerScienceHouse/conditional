@@ -64,26 +64,26 @@ Administration
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-6 member-form">
+                    <div class="col-md-6">
                         <form data-module="addUser">
-                            <div class="form-group">
-                                <label class="control-label" for="addUserName">Freshman Name</label>
-                                <input class="form-control" id="addUserName" name="name" type="text">
+                            <div class="form-group mb-2">
+                                <label class="form-label" for="addUserName">Freshman Name</label>
+                                <input class="form-control" id="addUserName" name="name" type="text" required>
                             </div>
-                            <div class="col-xs-8 remove-padding">
-                                <div class="form-group">
-                                    <label class="control-label" for="addUserRoom">Room Number</label>
-                                    <input class="form-control" id="addUserRoom" name="room" type="text">
-                                </div>
+
+                            <div class="form-group mb-2">
+                                <label class="form-label" for="addUserRoom">Room Number</label>
+                                <input class="form-control" id="addUserRoom" name="room" type="text">
                             </div>
-                            <div class="col-xs-4 onfloor-box">
-                                <div class="form-group">
-                                    <label>
-                                    <input id="onfloor" name="onfloor" type="checkbox">
-                                    On-Floor</label>
-                                </div>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" value="" name="onFloor" id="onFloor">
+                                <label class="form-check-label" for="onFloor">
+                                    On-Floor
+                                </label>
                             </div>
-                            <input class="btn btn-raised btn-primary user-submit" type="submit" value="Create New User">
+
+                            <input class="btn btn-primary w-100" type="submit" value="Create New User">
                         </form>
                     </div>
                 </div>
@@ -105,28 +105,30 @@ Administration
         </div>
         <div class="card-body table-fill">
             <div class="table-responsive">
-                <table class="table table-striped no-bottom-margin" data-module="table" data-order="[[ 0, &quot;asc&quot' ]]" data-length-change="true">
+                <table class="table table-striped no-bottom-margin" data-module="table" data-order="[[ 0, &quot;asc&quot; ]]" data-length-change="true">
                     <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>On Floor</th>
-                        <th>Room</th>
-                        <th>Evaluation Date</th>
-                    </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>On Floor</th>
+                            <th>Room</th>
+                            <th>Evaluation Date</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% for f in freshmen %}
-                    <tr>
-                        <td>
-                            <a href="#" data-module="editUser" data-modal="editFreshmanModal" data-uid="{{f['id']}}">{{f['name']}}</a>
-                        </td>
-                        <td>
-                            {% if f['onfloor'] %} &#10003; {% endif %}
-                        </td>
-                        <td>{{f['room']}}</td>
-                        <td>{{f['eval_date']}}</td>
-                    </tr>
-                    {% endfor %}
+                        {% for f in freshmen %}
+                        <tr>
+                            <td>
+                                <a href="#" data-module="editUser" data-modal="editFreshmanModal" data-uid="{{f['id']}}">
+                                    {{f['name']}}
+                                </a>
+                            </td>
+                            <td>
+                                {% if f['onfloor'] %} &#10003; {% endif %}
+                            </td>
+                            <td>{{f['room']}}</td>
+                            <td>{{f['eval_date']}}</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -162,7 +164,8 @@ Administration
                         {% for m in active %}
                         <tr>
                             <td>
-                                <img class="aspect aspect11 rounded-circle me-2" width="40" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"> <a href="#" data-module="editUser" data-modal="editUserModal" data-uid="{{m['uid']}}">
+                                <img class="aspect aspect11 rounded-circle me-2" width="40" src="https://profiles.csh.rit.edu/image/{{m['uid']}}">
+                                <a href="#" data-module="editUser" data-modal="editUserModal" data-uid="{{m['uid']}}">
                                     {{m['name']}}
                                 </a>
                             </td>
@@ -249,99 +252,91 @@ Administration
                 </div>
             </div>
             <div class="modal-footer">
-                <input type="submit" class="btn btn-primary" value="Save">
+                <input type="submit" class="btn btn-primary" value="Save" />
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="editFreshmanModal" tabindex="-1" role="dialog" aria-labelledby="editFreshmanTitle" aria-hidden="true" data-type="freshman">
-    <div class="vertical-alignment-helper">
-        <div class="modal-dialog vertical-align-center">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editFreshmanTitle">Edit Freshman Account</h4>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="editFreshmanTitle">Edit Freshman Account</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label" for="freshmanName">Freshman Name</label>
+                    <input class="form-control" id="freshmanName" name="name" type="text">
                 </div>
-                <div class="modal-body">
-                    <div class="row user-edit-row">
-                        <div class="col-xs-8">
-                            <label class="control-label" for="freshmanName">Freshman Name</label>
-                            <input class="form-control" id="freshmanName" name="name" type="text">
-                        </div>
-                        <div class="col-xs-4">
-                            <label class="control-label" for="freshmanRoom">Room</label>
-                            <input class="form-control" id="freshmanRoom" name="room" type="text">
-                        </div>
-                    </div>
-
-                    <div class="row user-edit-row">
-                        <div class="col-xs-4">
-                            <div class="form-group align-center">
-                                <label>
-                                    <input name="onfloor" type="checkbox">
-                                    On-Floor
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-xs-4">
-                            <label class="control-label" for="evalDate">Evaluation Date</label>
-                            <input class="form-control" id="evalDate" name="evalDate" type="text">
-                        </div>
-                        <div class="col-xs-4">
-                            <label class="control-label" for="sigMissed">Signatures Missed</label>
-                            <input class="form-control" id="sigMissed" name="sigMissed" type="number">
-                        </div>
-                    </div>
-
-                    <p class="lead">Missed House Meetings</p>
-                    <div class="alert alert-info no-missed-hm-alert" role="alert"><i class="bi bi-info-circle-fill white" style="padding-right:5px"></i> This member has not missed any house meetings.</div>
-                    <div class="row hm-wrapper missed-hm-tpl">
-                        <div class="col-xs-4">
-                            <h6 class="hm-date">07/31/2016</h6>
-                        </div>
-                        <div class="col-xs-4">
-                            <div class="form-group align-center">
-                                <label>
-                                    <input name="hm-excused" type="checkbox">
-                                    Excused
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-xs-4">
-                            <button type="button" class="btn btn-outline-secondary btn-sm hm-present-btn">
-                                <i class="bi bi-check2 green" style="padding-right:5px"></i>Mark Present
-                            </button>
-                        </div>
-                        <div class="col-xs-12">
-                            <div class="form-group align-center">
-                                <input class="form-control hm-reason" placeholder="Reason" name="reason" type="text">
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="lead">Upgrade Account</p>
-                    <div class="row user-edit-row">
-                        <div class="col-xs-6">
-                            <label class="control-label" for="upgradeUid">Member Account Username</label>
-                            <input class="form-control" id="upgradeUid" name="upgradeUid" type="text">
-                        </div>
-                        <div class="col-xs-6">
-                            <label class="control-label" for="upgradeSigsMissed">Packet Signatures Missed</label>
-                            <input class="form-control" id="upgradeSigsMissed" name="upgradeSigsMissed" type="number">
-                        </div>
-                    </div>
-                    <div class="row user-edit-row">
-                        <div class="col-xs-12">
-                            <button type="button" class="btn btn-info upgrade-btn" style="width:100%;">Upgrade</button>
-                        </div>
-                    </div>
-
+                
+                <div class="mb-3">
+                    <label class="form-label" for="freshmanRoom">Room:</label>
+                    <input class="form-control" id="freshmanRoom" name="room" type="text">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger delete-btn pull-left">Delete</button>
-                    <button type="button" class="btn btn-primary save-btn">Save</button>
+
+                <div class="mb-3">
+                    <label class="form-label" for="evalDate">Evaluation Date:</label>
+                    <input class="form-control" id="evalDate" name="evalDate" type="text">
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="sigMissed">Signatures Missed:</label>
+                    <input class="form-control" id="sigMissed" name="sigMissed" type="number">
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" value="" name="onFloor" id="onFloor">
+                    <label class="form-check-label" for="onFloor">
+                        On-Floor
+                    </label>
+                </div>
+
+                <p class="lead">Missed House Meetings</p>
+
+                <div class="alert alert-info no-missed-hm-alert" role="alert">
+                    <i class="bi bi-info-circle-fill white pe-2"></i>
+                    This member has not missed any house meetings.
+                </div>
+
+                <div class="missed-hm-tpl mb-2">
+                    <div class="d-flex align-items-center mb-1">
+                        <h6 class="hm-date mb-0 flex-grow-1">07/31/2016</h6>
+                        <div class="form-check mb-0 flex-grow-1">
+                            <input class="form-check-input" type="checkbox" value="" name="hm-excused" id="hm-excused">
+                            <label class="form-check-label" for="hm-excused">
+                                Excused
+                            </label>
+                        </div>
+                        <button type="button" class="btn">
+                            <i class="bi bi-check2 green pe-2"></i>
+                            Mark Present
+                        </button>
+                    </div>
+                    <input class="form-control hm-reason" placeholder="Reason" name="reason" type="text" aria-label="Reason">
+                </div>
+
+                <p class="lead">Upgrade Account</p>
+
+                <div class="mb-2">
+                    <label class="form-label" for="upgradeUid">Member Account Username</label>
+                    <input class="form-control" id="upgradeUid" name="upgradeUid" type="text">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="upgradeSigsMissed">Packet Signatures Missed</label>
+                    <input class="form-control" id="upgradeSigsMissed" name="upgradeSigsMissed" type="number">
+                </div>
+
+                <button type="button" class="btn btn-success w-100 upgrade-btn">
+                    Upgrade
+                </button>
+
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" class="btn btn-danger" value="Delete" />
+                <input type="submit" class="btn btn-primary ms-auto" value="Save" />
             </div>
         </div>
     </div>

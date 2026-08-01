@@ -24,7 +24,7 @@
 
         &::after {
           left: 20px;
-          background: inherit;
+          background: var(--bs-primary);
         }
       }
     }
