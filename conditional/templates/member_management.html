@@ -8,7 +8,7 @@ Administration
     <div class="card mb-4">
         <div class="card-body">
             <div class="container-fluid">
-                <div class="row">
+                <div class="row justify-content-center">
                     <div class="col-xs-6 col-sm-2">
                         <div class="stat-number">{{num_current}}</div>
                         <div class="stat-title">Current Students</div>
@@ -139,12 +139,12 @@ Administration
 
     <div class="card mb-2">
         <div class="card-header">
-            <h3 class="card-title">
+            <h3 class="card-title my-0">
                 Member Management
-                <a href="/manage/export_active_list">
-                    <button type="button" class="btn btn-primary btn-sm btn-conditional pull-right">
-                        <i class="bi bi-save-fill"></i> Export Active List
-                    </button>
+
+                <a href="/manage/export_active_list" class="btn btn-primary btn-sm float-end">
+                    <i class="bi bi-save-fill"></i>
+                    Export Active List
                 </a>
             </h3>
         </div>
