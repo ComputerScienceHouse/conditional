@@ -12,11 +12,13 @@ def _ldap_get_group_member_uids(group: str) -> list[str]:
 def _ldap_is_member_of_group(member: CSHMember, group: str) -> bool:
     return ldap.get_group(group).check_member(member)
 
+def _ldap_is_uid_member_of_group(member: str, group: str) -> bool:
+    uids = ldap.get_group(group).get_member_uids()
+    return member in uids
 
 def _ldap_add_member_to_group(account: CSHMember, group: str):
     if not _ldap_is_member_of_group(account, group):
         ldap.get_group(group).add_member(account, dn=False)
-
 
 def _ldap_remove_member_from_group(account: CSHMember, group: str):
     if _ldap_is_member_of_group(account, group):
@@ -69,16 +71,19 @@ def ldap_get_roomnumber(account) -> str:
     except AttributeError:
         return ""
 
-
 @service_cache(maxsize=128)
 def ldap_is_active(account) -> bool:
     return _ldap_is_member_of_group(account, 'active')
 
+def ldap_is_uid_active(uid: str) -> bool:
+    return _ldap_is_uid_member_of_group(uid, 'active')
 
 @service_cache(maxsize=128)
 def ldap_is_bad_standing(account) -> bool:
     return _ldap_is_member_of_group(account, 'bad_standing')
 
+def ldap_is_uid_bad_standing(uid: str) -> bool:
+    return _ldap_is_uid_member_of_group(uid, 'bad_standing')
 
 @service_cache(maxsize=128)
 def ldap_is_alumni(account) -> bool:
