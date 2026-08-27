@@ -286,7 +286,7 @@ export default class EditUser {
       });
     } else {
       // Save missed house meetings
-      let missedHms = modal.querySelectorAll('.hm-wrapper');
+      let missedHms = modal.querySelectorAll('.missed-hm-tpl');
       missedHms.forEach(hm => {
         let payload = {
           id: hm.dataset.id,
