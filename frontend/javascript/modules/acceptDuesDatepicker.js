@@ -1,28 +1,32 @@
 /* global $ */
-import "bootstrap-material-datetimepicker";
 import "whatwg-fetch";
 import FetchUtil from "../utils/fetchUtil";
 import Exception from "../exceptions/exception";
 import FetchException from "../exceptions/fetchException";
-import sweetAlert from "bootstrap-sweetalert/dev/sweetalert.es6.js";
+import Swal from "sweetalert2";
+import { Datepicker } from "vanillajs-datepicker";
 
 export default class DatePicker {
   constructor(input) {
     this.input = input;
+    this.selectedDate = new Date(Datepicker.parseDate(this.input.value, 'yyyy-mm-dd'));
     this.endpoint = '/manage/accept_dues_until';
     this.setting = input.dataset.setting;
     this.render();
   }
 
   render() {
-    $(this.input).bootstrapMaterialDatePicker({
-      weekStart: 0,
-      time: false
-    });
+    new Datepicker(this.input, {
+      buttonClass: 'btn',
+      todayButton: true,
+      format: 'yyyy-mm-dd',
+      autohide: true
+    })
 
-    document.getElementsByClassName('dtp-btn-ok')[0].addEventListener('click',
-    () => {
-      this._updateSetting();
+    this.input.addEventListener("hide", (event) => {
+      if (event.detail.date.getTime() != this.selectedDate.getTime()) {
+        this._updateSetting();
+      }
     });
   }
 
@@ -44,13 +48,15 @@ export default class DatePicker {
       .then(FetchUtil.parseJSON)
       .then(response => {
         if (!response.hasOwnProperty('success') || !response.success) {
-          sweetAlert("Uh oh...", "We're having trouble submitting this " +
+          Swal.fire("Uh oh...", "We're having trouble submitting this " +
               "form right now. Please try again later.", "error");
           throw new Exception(FetchException.REQUEST_FAILED, response);
         }
+
+        this.selectedDate = this.input.datepicker.getDate();
       })
       .catch(error => {
-        sweetAlert("Uh oh...", "We're having trouble submitting this " +
+        Swal.fire("Uh oh...", "We're having trouble submitting this " +
             "form right now. Please try again later.", "error");
         throw new Exception(FetchException.REQUEST_FAILED, error);
       });

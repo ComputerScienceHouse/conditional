@@ -1,64 +1,32 @@
-{% extends "nav.html" %}
+{% extends "base.html" %}
 {% block title %}
 Seminar Attendance
 {% endblock %}
 {% block body %}
-<div class="container main">
+<div class="container main mt-4">
     <h3 class="page-title">Seminar Attendance</h3>
     <form data-module="attendanceForm" data-type="seminar">
         <!-- Meeting Type -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:10px;">
-                        <div class="form-group is-empty">
-                            <label for="name" class="control-label">Seminar Name</label>
-                            <input type="text" name="name" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group mb-3">
+            <label for="name" class="control-label">Seminar Name</label>
+            <input type="text" name="name" class="form-control"/>
         </div>
         <!-- Date -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:10px;">
-                        <div class="form-group is-empty">
-                            <label for="date" class=" control-label">Date</label>
-                            <input type="text" name="date" class="form-control" value="{{date}}" data-module="datepicker"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="text" name="date" class="form-control" value="{{date}}" data-module="datepicker"/>
         </div>
         <!-- Host -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group is-empty">
-                            <label for="host" class="control-label">Host(s)</label>
-                            <input type="text" name="host" class="form-control" data-module="memberSelect" data-src="ts_members"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group mb-4">
+            <label for="host" class="form-label" id="hostLabel">Host(s)</label>
+            <select name="host" class="form-select" data-module="memberSelect" data-src="ts_members" multiple><select/>
         </div>
         <!-- Attendees -->
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="padding-top:20px;">
-                        <div class="form-group is-empty">
-                            <label for="attendees" class="control-label">Attendees</label>
-                            <input type="text" name="attendees" class="form-control" data-module="memberSelect" data-src="ts_members"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group mb-4">
+            <label for="attendees" class="form-label" id="attendeeLabel">Attendees</label>
+            <select name="attendees" class="form-select" data-module="memberSelect" data-src="ts_members" multiple><select/>
         </div>
-        <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
+        <input type="submit" role="button" class="btn btn-primary" style="width:100%;" value="Submit Form"/>
     </form>
 </div>
 {% endblock %}

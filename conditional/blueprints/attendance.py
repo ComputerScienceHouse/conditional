@@ -40,7 +40,7 @@ def get_all_members(user_dict=None):
 
     named_members = [
         {
-            'display': f.name,
+            'label': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
@@ -49,7 +49,7 @@ def get_all_members(user_dict=None):
     for account in members:
         named_members.append(
             {
-                'display': account['displayName'],
+                'label': account['displayName'],
                 'value': account['uid'],
                 'freshman': False
             })
@@ -79,7 +79,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
     eligible_members = [
         {
-            'display': f.name,
+            'label': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
@@ -92,7 +92,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
         eligible_members.append(
             {
-                'display': account['displayName'],
+                'label': account['displayName'],
                 'value': account['uid'],
                 'freshman': False
             })
@@ -115,7 +115,7 @@ def get_non_alumni(user_dict=None):
 
     eligible_members = [
         {
-            'display': f.name,
+            'label': f.name,
             'value': f.id,
             'freshman': True
         } for f in FreshmanAccount.query.filter(
@@ -124,7 +124,7 @@ def get_non_alumni(user_dict=None):
     for account in current_students:
         eligible_members.append(
             {
-                'display': account['displayName'],
+                'label': account['displayName'],
                 'value': account['uid'],
                 'freshman': False
             })
@@ -166,10 +166,14 @@ def display_attendance_hm(user_dict=None):
     if not user_dict_is_eval_director(user_dict):
         return redirect("/dashboard")
 
+    members = get_non_alumni_non_coop(internal=True)
+
+    print(members)
+
     return render_template('attendance_hm.html',
                            username=user_dict['username'],
                            date=datetime.now().strftime("%Y-%m-%d"),
-                           members=get_non_alumni_non_coop(internal=True))
+                           members=members)
 
 
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
@@ -371,41 +375,60 @@ def alter_house_excuse(uid, hid, user_dict=None):
 @auth.oidc_auth("default")
 @get_user
 def attendance_history(user_dict=None):
+    member_names = { member['uid']: member['displayName'] 
+                    for member in ldap.get_group_member_attributes(groups=['current_student'], 
+                                                                   attributes=['uid', 'displayName']) }
+
+    def get_member_name(uid):
+        if uid in member_names:
+            return member_names[uid]
+
+        name = ldap_get_member(uid).displayName
+        member_names[uid] = name
+        return name
 
     def get_meeting_attendees(meeting_id):
-        attendees = [ldap_get_member(a.uid).displayName for a in
+        attendees = [get_member_name(a.uid) for a in
                      MemberCommitteeAttendance.query.filter(
                      MemberCommitteeAttendance.meeting_id == meeting_id).all()]
 
-        for freshman in [a.fid for a in
+        freshmen_attendees = [a.fid for a in
                          FreshmanCommitteeAttendance.query.filter(
-                         FreshmanCommitteeAttendance.meeting_id == meeting_id).all()]:
+                         FreshmanCommitteeAttendance.meeting_id == meeting_id).all()]
+
+        for freshman in freshmen_attendees:
             attendees.append(FreshmanAccount.query.filter(
                              FreshmanAccount.id == freshman).first().name)
+
         return attendees
 
     def get_seminar_attendees(meeting_id):
-        attendees = [ldap_get_member(a.uid).displayName for a in
+        attendees = [get_member_name(a.uid) for a in
                      MemberSeminarAttendance.query.filter(
                      MemberSeminarAttendance.seminar_id == meeting_id).all()]
-
-        for freshman in [a.fid for a in
+        freshmen_attendees = [a.fid for a in
                          FreshmanSeminarAttendance.query.filter(
-                         FreshmanSeminarAttendance.seminar_id == meeting_id).all()]:
+                         FreshmanSeminarAttendance.seminar_id == meeting_id).all()]
+
+        for freshman in freshmen_attendees:
             attendees.append(FreshmanAccount.query.filter(
                              FreshmanAccount.id == freshman).first().name)
+
         return attendees
 
     def get_seminar_hosts(meeting_id):
-        hosts = [ldap_get_member(a.uid).displayName for a in
+        hosts = [get_member_name(a.uid) for a in
                  MemberSeminarHost.query.filter(
                  MemberSeminarHost.seminar_id == meeting_id).all()]
 
-        for freshman in [a.fid for a in
+        freshmen_hosts = [a.fid for a in
                          FreshmanSeminarHost.query.filter(
-                         FreshmanSeminarHost.seminar_id == meeting_id).all()]:
+                         FreshmanSeminarHost.seminar_id == meeting_id).all()]
+
+        for freshman in freshmen_hosts:
             hosts.append(FreshmanAccount.query.filter(
                          FreshmanAccount.id == freshman).first().name)
+
         return hosts
 
     log = logger.new(request=request, auth_dict=user_dict)
@@ -413,11 +436,12 @@ def attendance_history(user_dict=None):
     if not user_dict_is_eboard(user_dict):
         return jsonify({"success": False, "error": "Not EBoard"}), 403
 
-
     page = request.args.get('page', 1)
+    page_size = int(request.args.get('size', 10))
+
     log.info('View Past Attendance Submitions')
-    offset = 0 if int(page) == 1 else ((int(page)-1)*10)
-    limit = int(page)*10
+    offset = 0 if int(page) == 1 else ((int(page) - 1) * 10)
+    limit = int(page) * page_size
     all_cm = [{"id": m.id,
                "name": m.committee,
                "dt_obj": m.timestamp,
@@ -427,6 +451,7 @@ def attendance_history(user_dict=None):
                } for m in CommitteeMeeting.query.filter(
                    CommitteeMeeting.timestamp > start_of_year(),
                    CommitteeMeeting.approved).all()]
+
     all_ts = [{"id": m.id,
                "name": m.name,
                "dt_obj": m.timestamp,
@@ -437,6 +462,7 @@ def attendance_history(user_dict=None):
                } for m in TechnicalSeminar.query.filter(
                    TechnicalSeminar.timestamp > start_of_year(),
                    TechnicalSeminar.approved).all()]
+
     pend_cm = [{"id": m.id,
                 "name": m.committee,
                 "dt_obj": m.timestamp,
@@ -445,6 +471,7 @@ def attendance_history(user_dict=None):
                } for m in CommitteeMeeting.query.filter(
                    CommitteeMeeting.timestamp > start_of_year(),
                    CommitteeMeeting.approved == False).all()] # pylint: disable=singleton-comparison
+
     pend_ts = [{"id": m.id,
                 "name": m.name,
                 "dt_obj": m.timestamp,
@@ -454,20 +481,47 @@ def attendance_history(user_dict=None):
                } for m in TechnicalSeminar.query.filter(
                    TechnicalSeminar.timestamp > start_of_year(),
                    TechnicalSeminar.approved == False).all()] # pylint: disable=singleton-comparison
+
     all_meetings = sorted((all_cm + all_ts), key=lambda k: k['dt_obj'], reverse=True)[offset:limit]
-    if len(all_cm) % 10 != 0:
-        total_pages = int(len(all_cm) / 10) + 1
+    if len(all_cm) % page_size != 0:
+        total_pages = int(len(all_cm) / page_size) + 1
     else:
-        total_pages = int(len(all_cm) / 10)
+        total_pages = int(len(all_cm) / page_size)
+
+    page_size_options = [
+        {
+            'value': 10,
+            'label': '10'
+        },
+        {
+            'value': 25,
+            'label': '25'
+        },
+        {
+            'value': 50,
+            'label': '50'
+        },
+        {
+            'value': 100,
+            'label': '100'
+        },
+        {
+            'value': -1,
+            'label': 'all'
+        }
+    ]
+
+    selected_page_size = list(filter(lambda opt: opt['value'] == page_size, page_size_options))[0]
+
     return render_template('attendance_history.html',
                            username=user_dict['username'],
                            history=all_meetings,
                            pending_cm=pend_cm,
                            pending_ts=pend_ts,
-                           all_ts=all_ts,
                            num_pages=total_pages,
-                           current_page=int(page))
-
+                           page_size=selected_page_size,
+                           current_page=int(page),
+                           page_sizes=page_size_options)
 
 @attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
 @auth.oidc_auth("default")

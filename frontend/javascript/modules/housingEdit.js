@@ -38,12 +38,12 @@ export default class EditHousing {
           },
           credentials: 'same-origin'
         })
-            .then(FetchUtil.checkStatus)
-            .then(FetchUtil.parseJSON)
-            .then(data => {
-              this.data = data;
-              this._renderModal();
-            });
+          .then(FetchUtil.checkStatus)
+          .then(FetchUtil.parseJSON)
+          .then(data => {
+            this.data = data;
+            this._renderModal();
+          });
       }
     });
   }
@@ -52,7 +52,7 @@ export default class EditHousing {
     // Clone template modal
     this.modal = this.modalTpl.cloneNode(true);
     this.modal.setAttribute('id',
-        this.modal.getAttribute('id') + '-' + this.rmnumber);
+      this.modal.getAttribute('id') + '-' + this.rmnumber);
 
     // Submit button
     this.modal.querySelector('input[type="submit"]').addEventListener('click',
@@ -80,10 +80,10 @@ export default class EditHousing {
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
     $(this.modal)
-        .on('hidden.bs.modal', e => {
-          document.getElementsByTagName('body')[0].removeChild(e.target);
-        })
-        .modal('show');
+      .on('hidden.bs.modal', e => {
+        document.getElementsByTagName('body')[0].removeChild(e.target);
+      })
+      .modal('show');
   }
 
   _submitForm() {
@@ -96,15 +96,16 @@ export default class EditHousing {
       let payload = {};
       payload.occupants = this.modal.querySelector('input[name="occupants"]').value.split(','); // eslint-disable-line max-len
       let room = this.modal.querySelector('input[name="rmnumber"]').value;
+      const occupantList = document.getElementById(room);
 
-      FetchUtil.post(this.endpoints.alterRoom + room, payload, {
-        successText: 'Occupants have been updated.'
+      FetchUtil.postWithWarning(this.endpoints.alterRoom + room, payload, {
+        successText: 'Occupants have been updated.',
+        warningText: `Are you sure you want to ${occupantList ? 'update' : 'create'} room ${room}`
       }, () => {
         // Hide the modal.
         $(this.modal).modal('hide');
 
         // Update the DOM to reflect the new occupants.
-        var occupantList = document.getElementById(room);
         if (occupantList) {
           // The room already exists in the list, update it.
           occupantList.innerHTML = '';
@@ -116,14 +117,14 @@ export default class EditHousing {
               },
               credentials: 'same-origin'
             })
-                .then(FetchUtil.checkStatus)
-                .then(FetchUtil.parseJSON)
-                .then(data => {
-                  var newName = document.createElement("li");
-                  newName.appendChild(document.createTextNode(data.name));
-                  newName.setAttribute("class", "room-name");
-                  occupantList.appendChild(newName);
-                });
+              .then(FetchUtil.checkStatus)
+              .then(FetchUtil.parseJSON)
+              .then(data => {
+                var newName = document.createElement("div");
+                newName.appendChild(document.createTextNode(data.name));
+                newName.setAttribute("class", "m-2");
+                occupantList.appendChild(newName);
+              });
           });
         } else {
           // The room is new and needs to be created.
@@ -132,15 +133,15 @@ export default class EditHousing {
           var newRoomNbrCol = document.createElement("td");
           var newRoomNbr = document.createElement("h3");
           newRoomNbr.appendChild(document.createTextNode(room));
-          newRoomNbr.setAttribute("class", "room-number");
+          newRoomNbr.classList.add("mb-0", "text-center");
           newRoomNbrCol.appendChild(newRoomNbr);
-          newRoomNbrCol.setAttribute("class", "new-table-col");
+          newRoomNbr.classList.add("align-middle");
           newRoom.appendChild(newRoomNbrCol);
+
           // Add new occupants to room.
           var newOccupantCol = document.createElement("td");
-          var newOccupantList = document.createElement("ul");
+          var newOccupantList = document.createElement("div");
           newOccupantList.setAttribute("id", room);
-          newOccupantList.setAttribute("class", "occupant-list");
           payload.occupants.forEach(occupant => {
             fetch(this.endpoints.memberDetails + occupant, {
               method: 'GET',
@@ -149,18 +150,19 @@ export default class EditHousing {
               },
               credentials: 'same-origin'
             })
-                .then(FetchUtil.checkStatus)
-                .then(FetchUtil.parseJSON)
-                .then(data => {
-                  var newName = document.createElement("li");
-                  newName.appendChild(document.createTextNode(data.name));
-                  newName.setAttribute("class", "room-name");
-                  newOccupantList.appendChild(newName);
-                });
+              .then(FetchUtil.checkStatus)
+              .then(FetchUtil.parseJSON)
+              .then(data => {
+                var newName = document.createElement("div");
+                newName.appendChild(document.createTextNode(data.name));
+                newName.classList.add("m-2");
+                newOccupantList.appendChild(newName);
+              });
           });
           newOccupantCol.appendChild(newOccupantList);
-          newOccupantCol.setAttribute("class", "new-table-col");
+          newOccupantCol.classList.add("ps-0");
           newRoom.appendChild(newOccupantCol);
+
           // Add edit button for new room.
           var newEditCol = document.createElement("td");
           var editBtn = document.getElementById("rm-edit-btn");
@@ -168,7 +170,7 @@ export default class EditHousing {
           newEditBtn.setAttribute("data-rmnumber", room);
           new EditHousing(newEditBtn); // eslint-disable-no-new
           newEditCol.appendChild(newEditBtn);
-          newEditCol.setAttribute("class", "new-table-col");
+          newEditCol.classList.add("align-middle", "text-center");
           newRoom.appendChild(newEditCol);
           roomTable.appendChild(newRoom);
         }

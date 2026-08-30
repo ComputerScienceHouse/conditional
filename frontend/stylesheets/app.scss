@@ -1,7 +1,10 @@
 // Third Party
-@use 'csh-material-bootstrap.css';
-@use 'dataTables.bootstrap.css';
-@use 'bootstrap-material-datetimepicker.css';
+@use 'pkg:csh-material-bootstrap';
+@use 'dataTables.bootstrap5.css';
+
+@use 'pkg:vanillajs-datepicker/sass/index-bs5';
+
+// @use 'bootstrap-material-datetimepicker.css';
 
 $bootstrap-icons-font-dir: "../fonts/";
 @import "bootstrap-icons/font/bootstrap-icons";
@@ -19,6 +22,7 @@ $bootstrap-icons-font-dir: "../fonts/";
 @import 'components/select';
 @import 'components/dropzone';
 @import 'components/sweet-alert/sweet-alert';
+@import 'components/choices';
 
 // Pages
 @import 'pages/dashboard';
@@ -27,7 +31,5 @@ $bootstrap-icons-font-dir: "../fonts/";
 @import 'pages/major-project';
 @import 'pages/management';
 @import 'pages/hm-attendance';
-@import 'pages/attendance-hist';
 @import 'pages/errors';
-@import 'pages/co-op';
 @import 'components/reveal';

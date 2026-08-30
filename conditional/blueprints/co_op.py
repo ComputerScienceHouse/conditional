@@ -58,7 +58,6 @@ def submit_co_op_form(user_dict=None):
     db.session.add(co_op)
     db.session.flush()
     db.session.commit()
-    req_cm.cache_clear()
 
     return jsonify({"success": True}), 200
 
@@ -84,7 +83,6 @@ def delete_co_op(uid, user_dict=None):
 
     db.session.flush()
     db.session.commit()
-    req_cm.cache_clear()
 
     return jsonify({"success": True}), 200
 
@@ -99,7 +97,7 @@ def display_co_op_management(user_dict=None):
     if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
-    co_op_list = [(member.semester, member.uid)
+    co_op_list = [{ 'semester': member.semester, 'uid': member.uid}
                   for member in CurrentCoops.query.filter(
             CurrentCoops.date_created > start_of_year(),
             CurrentCoops.semester != "Neither")]

@@ -118,10 +118,16 @@ def display_spring_evals(internal=False, user_dict=None):
         if passing:
             status = 'passed'
 
+        status_int = 0
+
+        if passing:
+            status_int = 1
+
         member = {
             'name': name,
             'uid': uid,
             'status': status,
+            'status_int': status_int,
             'committee_meetings': cm_attended_count,
             'technical_seminars': ts_attended_count,
             'technical_seminars_hosted': ts_hosted_count,
@@ -136,6 +142,7 @@ def display_spring_evals(internal=False, user_dict=None):
     gk_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
     gk_members.sort(key=lambda x: x['technical_seminars'], reverse=True)
     gk_members.sort(key=lambda x: len(x['house_meetings_missed']))
+    gk_members.sort(key=lambda x: x['status_int'], reverse=True)
     # return names in 'first last (username)' format
     if internal:
         return gk_members

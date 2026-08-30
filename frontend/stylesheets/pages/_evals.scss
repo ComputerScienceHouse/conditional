@@ -1,95 +1,95 @@
-.eval-info-label {
-  padding: .3em .6em .4em;
-  text-align: left;
-  line-height: 1;
-  color: #444;
-  font-weight: 500;
-}
-
-.eval-info-status {
-  margin: 2px 0 0;
-  padding: 0 5px 0 0;
-}
-
-.eval-info-number {
-  float: right;
-}
-
-.eval-user-img {
-  border-radius: 50%;
-}
-
-.eval-panel {
-  padding: 25px 20px;
-}
-
-.eval-user-status {
-  display: block;
-  position: relative;
-  font-weight: 400;
-  float: right;
-  margin: -25px 5px;
-  border-radius: 50%;
-  padding: 6px;
-  width: 25px;
-  height: 25px;
-
-  &:before {
-    vertical-align: .25em;
-  }
-}
-
-.col-sm-2 {
-  padding-right: 0;
-  padding-left: 0;
-}
-
-.eval-name {
-  margin-bottom: 5px;
-  padding-top: 12px;
-}
-
-.eval-uid {
-  margin-top: 0;
-  color: #808080;
-}
-
-.spring-info {
-  padding-top: 10px;
-}
-
-.btn-expand-panel {
-  &,
-  &:hover,
-  &:focus,
-  &:active {
-    outline: 0;
-    border: 0;
-    background: transparent;
-    width: 100%;
-    text-align: center;
-    display: block;
-  }
-  
-  &[aria-expanded="true"] {
-    i.bi {
-      transform: rotate(180deg);
-    }
-  }
-  
-  i.bi {
-    transition: transform ease-in-out 0.2s;
-    transform: rotate(0deg);
-  }
-}
-
-.btn-conditional {
-  float: right;
-  margin-top: -4px;
-  box-shadow: none;
-  padding: 3px 7px;
-}
-
-.evals-dropdown {
-  text-align: center;
-}
+// .eval-info-label {
+//   padding: .3em .6em .4em;
+//   text-align: left;
+//   line-height: 1;
+//   color: #444;
+//   font-weight: 500;
+// }
+//
+// .eval-info-status {
+//   margin: 2px 0 0;
+//   padding: 0 5px 0 0;
+// }
+//
+// .eval-info-number {
+//   float: right;
+// }
+//
+// .eval-user-img {
+//   border-radius: 50%;
+// }
+//
+// .eval-panel {
+//   padding: 25px 20px;
+// }
+//
+// .eval-user-status {
+//   display: block;
+//   position: relative;
+//   font-weight: 400;
+//   float: right;
+//   margin: -25px 5px;
+//   border-radius: 50%;
+//   padding: 6px;
+//   width: 25px;
+//   height: 25px;
+//
+//   &:before {
+//     vertical-align: .25em;
+//   }
+// }
+//
+// .col-sm-2 {
+//   padding-right: 0;
+//   padding-left: 0;
+// }
+//
+// .eval-name {
+//   margin-bottom: 5px;
+//   padding-top: 12px;
+// }
+//
+// .eval-uid {
+//   margin-top: 0;
+//   color: #808080;
+// }
+//
+// .spring-info {
+//   padding-top: 10px;
+// }
+//
+// .btn-expand-panel {
+//   &,
+//   &:hover,
+//   &:focus,
+//   &:active {
+//     outline: 0;
+//     border: 0;
+//     background: transparent;
+//     width: 100%;
+//     text-align: center;
+//     display: block;
+//   }
+//
+//   &[aria-expanded="true"] {
+//     i.bi {
+//       transform: rotate(180deg);
+//     }
+//   }
+//
+//   i.bi {
+//     transition: transform ease-in-out 0.2s;
+//     transform: rotate(0deg);
+//   }
+// }
+//
+// .btn-conditional {
+//   float: right;
+//   margin-top: -4px;
+//   box-shadow: none;
+//   padding: 3px 7px;
+// }
+//
+// .evals-dropdown {
+//   text-align: center;
+// }

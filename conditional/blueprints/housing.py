@@ -1,6 +1,8 @@
 import structlog
 from flask import Blueprint, request, jsonify
 
+import ldap as python_ldap
+
 from conditional import db, auth, ldap
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import InHousingQueue
@@ -102,11 +104,23 @@ def change_room_numbers(rmnumber, user_dict=None):
     if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
-    # Get the current list of people living on-floor.
-    current_students = ldap_get_current_students()
+    # Get the current list of people living in the room
+    # I'm sorry for the raw ldap
+    current_occupants_result = ldap.__con__.search_s(
+            "dc=csh,dc=rit,dc=edu",
+            python_ldap.SCOPE_SUBTREE,
+            f'roomNumber={rmnumber}',
+            ['uid']
+    )
+
+    current_occupants = [member[1]['uid'][0].decode('utf-8') for member in current_occupants_result]
+
+    # Remove all old occupants
+    for occupant in current_occupants:
+        if occupant not in update["occupants"]:
+            ldap_get_member(occupant).roomNumber = None
 
     # Set the new room number for each person in the list.
-
     for occupant in update["occupants"]:
         if occupant != "":
             account = ldap_get_member(occupant)
@@ -114,12 +128,6 @@ def change_room_numbers(rmnumber, user_dict=None):
             log.info(f'{occupant} assigned to room {rmnumber}')
             ldap_set_active(account)
             log.info(f'{occupant} marked as active because of room assignment')
-    # Delete any old occupants that are no longer in room.
-        for old_occupant in [account for account in current_students
-                             if ldap_get_roomnumber(account) == str(rmnumber)
-                             and account.uid not in update["occupants"]]:
-            log.info(f'{old_occupant.uid} removed from room {old_occupant.roomNumber}')
-            old_occupant.roomNumber = None
 
     return jsonify({"success": True}), 200
 
@@ -129,11 +137,11 @@ def change_room_numbers(rmnumber, user_dict=None):
 def get_occupants(rmnumber):
 
     # Get the current list of people living on-floor.
-    current_students = ldap_get_current_students()
+    current_students = ldap.get_group_member_attributes(groups=['current_student'], attributes=['uid', 'roomNumber', 'cn'])
 
     # Find the current occupants of the specified room.
-    occupants = [account.uid for account in current_students
-                 if ldap_get_roomnumber(account) == str(rmnumber)]
+    occupants = [account['uid'] for account in current_students
+                 if 'roomNumber' in account and account['roomNumber'] == str(rmnumber)]
     return jsonify({"room": rmnumber, "occupants": occupants}), 200
 
 

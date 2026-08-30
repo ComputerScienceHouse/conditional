@@ -1,5 +1,5 @@
 /* global $ */
-import "bootstrap-material-datetimepicker";
+import { Datepicker } from "vanillajs-datepicker";
 
 export default class DatePicker {
   constructor(input) {
@@ -9,9 +9,11 @@ export default class DatePicker {
   }
 
   render() {
-    $(this.input).bootstrapMaterialDatePicker({
-      weekStart: 0,
-      time: false
-    });
+    new Datepicker(this.input, {
+      buttonClass: 'btn',
+      todayButton: true,
+      format: 'yyyy-mm-dd',
+      autohide: true
+    })
   }
 }
