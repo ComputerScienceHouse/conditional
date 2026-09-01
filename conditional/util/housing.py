@@ -24,12 +24,17 @@ def get_housing_queue(is_eval_director=False):
     }
 
     queue = ldap.get_group_member_attributes(groups=['current_student'],
-                                             excluded_groups=[], attributes=['uid', 'housingPoints', 'cn'])
+                                             excluded_groups=[],
+                                             attributes=['uid', 'housingPoints', 'cn', 'roomNumber'])
 
-    # if the user is not evals, they should only see people in the cue without a room number
+    # if the user is not evals, they should only see people in the queue without a room number
     if not is_eval_director:
-        queue = list(filter(lambda member: member['uid'] in in_queue and member['roomNumber'] is not None, queue))
-
+        def member_in_queue(member):
+            return (
+               member['uid'] in in_queue
+               and ('roomNumber' not in member or member['roomNumber'] is not None)
+            )
+        queue = list(filter(member_in_queue, queue))
 
     # set the time they were added to the queue
     # i'm sorry this is cursed, it's this way because of database structure or something
