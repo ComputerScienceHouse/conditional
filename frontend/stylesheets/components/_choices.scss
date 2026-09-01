@@ -24,8 +24,11 @@
 }
 
 .choices__button.btn-close {
-  --bs-btn-close-color: var(--bs-body-color);
+  // this is what bootstrap used to do, the class is deprecated/doesn't exist now but i want white
+  // https://github.com/twbs/bootstrap/blob/12cb8b902d175a0d612f1280f58b386a09921a16/scss/_variables.scss#L1717
+  filter: invert(1) grayscale(100%) brightness(200%);
   background-image: var(--bs-btn-close-bg)!important;
+  border-left-width: 2px!important;
 }
 
 .choices__list.choices__list--dropdown.dropdown-menu {
