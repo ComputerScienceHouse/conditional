@@ -41,8 +41,6 @@ def get_housing_queue(is_eval_director=False):
     queue.sort(key=lambda m: m['time'])
     queue.sort(key=lambda m: m['housingPoints'], reverse=True)
 
-    print(queue)
-
     return queue
 
 
