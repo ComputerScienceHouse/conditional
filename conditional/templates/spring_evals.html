@@ -30,7 +30,7 @@ Membership Evaluations
     <div class="collapse show eval-blocks" data-bs-parent="#eval-parent">
         {% for m in members %}
         <div class="card mb-4">
-            <div class="row">
+            <div class="row position-relative">
                 <div class="col-lg-2 col-sm-3 col-xs-12 position-relative p-4">
                     <img class="object-fit-contain rounded-circle ratio ratio-1x1" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}"/>
                     <span class="position-absolute bottom-0 end-0 p-1 h4 mb-3 me-3">
@@ -51,7 +51,9 @@ Membership Evaluations
                     <h6 class="label label-default">
                         {{ m['uid'] }}
                     </h6>
+
                 </div>
+
                 <!-- 
                     If you look at this and go "why so many spacing styles what", 
                     it's because I'm picky and want this to look good
@@ -97,14 +99,19 @@ Membership Evaluations
                         </div>
                     </div>
                 </div>
+
+                {% if m['house_meetings_missed'] | length != 0 or m['major_projects_len'] > 0 %}
+                <div class="position-absolute bottom-0 d-flex">
+                    <button class="btn text-center mx-auto px-5 py-2 mb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
+                            role="button" aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </button>
+                </div>
+                {% endif %}
             </div>
 
             {% if m['house_meetings_missed'] | length != 0 or m['major_projects_len'] > 0 %}
             <div class="card-footer px-2">
-                <button class="btn w-100 text-center" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
-                        role="button" aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
-                    More Info
-                </button>
 
                 <div class="collapse" id="{{ m['uid'] }}-extra-info">
                     <div class="px-2 pb-2">
@@ -129,12 +136,31 @@ Membership Evaluations
                         <div class="row mt-3">
                             <div class="col">
                                 <ul class="list-group">
-                                    <li class="list-group-item">
-                                        <h4 class="mb-0">Major Projects</h4>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <h4 class="mb-0 col-3">Major Projects</h4>
+                                        <h6 class="mb-0 col-3">Status</h6>
+                                        <h6 class="mb-0 col-6">TLDR</h6>
                                     </li>
                                     {% for p in m['major_projects'] %}
-                                    <li class="list-group-item">
-                                        {{ p['name'] }}
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="col-3">
+                                            {{ p['name'] }}
+                                        </div>
+                                        <div class="col-3">
+                                            {% if p['status'] == "Passed" %}
+                                            <i class="bi bi-check-circle-fill green"></i>
+                                            Passed
+                                            {% elif p['status'] == "Pending" %}
+                                            <i class="bi bi-hourglass-split yellow"></i>
+                                            Pending
+                                            {% else %}
+                                            <i class="bi bi-dash-circle red"></i>
+                                            Failed
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-6">
+                                            {{ p['tldr'] }}
+                                        </div>
                                     </li>
                                     {% endfor %}
                                 </ul>

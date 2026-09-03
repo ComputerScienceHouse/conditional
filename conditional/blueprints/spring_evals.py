@@ -72,7 +72,8 @@ def display_spring_evals(internal=False, user_dict=None):
         major_projects.get(project.uid).append({
             'name': project.name,
             'status': project.status,
-            'description': project.description
+            'description': project.description,
+            'tldr': project.tldr
         })
 
     sp_members = []
