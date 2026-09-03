@@ -1,3 +1,8 @@
+.member-card:has(.card-footer .collapse.show) .toggle-btn,
+.member-card:has(.card-footer .collapsing) .toggle-btn {
+  display: none!important;
+}
+
 // .eval-info-label {
 //   padding: .3em .6em .4em;
 //   text-align: left;
