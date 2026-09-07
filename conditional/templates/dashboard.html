@@ -4,7 +4,7 @@ Dashboard
 {% endblock %}
 {% block body %}
 <div class="container main mt-4">
-    <div class="card mb-4">
+    <div class="card mb-4 bg-body-tertiary">
         <div class="card-body dashboard-user">
             <div class="row">
                 <div class="col-lg-2 col-sm-3 col-xs-12">
@@ -37,17 +37,17 @@ Dashboard
         </div>
     </div>
     <div class="row" data-masonry='{"percentPosition": true }'>
-        {% if accepting_dues and check_current_student(username) and not active and not bad_standing %}
+        {% if True or accepting_dues and check_current_student(username) and not active and not bad_standing %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card" id="becomeActive">
+            <div class="card bg-body-tertiary" id="becomeActive">
                 <div class="card-header">
-                    <h3 class="panel-title">Become Active</h3>
+                    <h3 class="panel-title my-0">Become Active</h3>
                 </div>
                 <div class="card-body">
                     Hey there, you're eligible to become an active member! Click the button below if you'd like to become active and pay dues.
                 </div>
                 <div class="card-footer text-center">
-                    <a href="#" data-module="becomeActive" class="btn btn-sm btn-primary">Become Active</a>
+                    <a href="#" data-module="becomeActive" class="btn btn-sm btn-info">Become Active</a>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@ Dashboard
 
         {% if intro %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title d-flex my-0">Introduction Evaluations
                         {% if intro['status'] == "Passed" %}
@@ -156,7 +156,7 @@ Dashboard
 
         {% if spring['status'] != None %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title d-flex my-0">Membership Evaluations
                         {% if spring['status'] == "Passed" %}
@@ -176,14 +176,14 @@ Dashboard
                 </div>
                 <ul class="list-group list-group-flush">
                     {% if ts_total == 0 %}
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent">
                         <div class="alert alert-warning my-0" role="alert">
                             <i class="bi bi-exclamation-circle text-warning me-2"></i>
                             You have not attended any technical seminars.
                         </div>
                     </li>
                     {% else %}
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent">
                         <p class="mb-1">Technical Seminars</p>
                         <ul>
                             {% for ts in ts_list %}
@@ -194,7 +194,7 @@ Dashboard
                     {% endif %}
 
                     {% if ts_hosted_total != 0 %}
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent">
                         <p class="mb-1">Technical Seminars - Hosted</p>
                         <ul>
                             {% for ts in ts_hosted %}
@@ -204,7 +204,7 @@ Dashboard
                     </li>
                     {% endif %}
 
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             Directorship Meetings
                         </div>
@@ -217,7 +217,7 @@ Dashboard
                             {{ spring['committee_meetings'] }} / {{ spring['req_meetings'] }}
                         </div>
                     </li>
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             House Meetings Missed
                         </div>
@@ -231,7 +231,7 @@ Dashboard
                             {% endif %} 
                         </div>
                     </li>
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             Major Project
                         </div>
@@ -255,19 +255,19 @@ Dashboard
 
         {% if conditionals_len != 0 %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title my-0">Conditionals</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">Date Assigned</div>
                         <div class="col">Date Due</div>
                         <div class="col">Description</div>
                         <div class="col">Status</div>
                     </li>
                     {% for c in conditionals %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">{{ c['date_created'] }}</div>
                         <div class="col">{{ c['date_due'] }}</div>
                         <div class="col">{{ c['description'] }}</div>
@@ -291,7 +291,7 @@ Dashboard
 
         {% if active %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title d-flex my-0">
                         Gatekeep
@@ -312,7 +312,7 @@ Dashboard
                 </div>
                 <ul class="list-group list-group-flush">
                     {% if not gatekeep_active %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             Status
                         </div>
@@ -322,7 +322,7 @@ Dashboard
                     </li>
                     {% endif %}
 
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             Technical Seminars - Attended
                         </div>
@@ -339,7 +339,7 @@ Dashboard
                     </li>
 
                     {% if gatekeep['technical_seminars_hosted'] %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             Technical Seminars - Hosted
                         </div>
@@ -356,7 +356,7 @@ Dashboard
                     </li>
                     {% endif %}
 
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             Directorship Meetings
                         </div>
@@ -369,7 +369,7 @@ Dashboard
                             {{ gatekeep['committee_meetings'] }} / 6
                         </div>
                     </li>
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col">
                             House Meetings Missed
                         </div>
@@ -397,13 +397,13 @@ Dashboard
         </div>
         {% elif major_projects_count > 0 %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Major Projects</h5>
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for p in major_projects %}
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent">
                         <div class="title d-flex mb-2">
                             <h5 class="my-1">
                                 {% if p['status'] == "Passed" %}
@@ -491,7 +491,7 @@ Dashboard
         </div>
         {% elif missed_hm_len > 0 and active %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <!-- Yes I'm doing this for grammar -->
                     {% if missed_hm_len == 1 %}
@@ -502,7 +502,7 @@ Dashboard
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for hm in missed_hm %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         {{ hm['datetime'] }}
                     </li>
                     {% endfor %}
@@ -520,7 +520,7 @@ Dashboard
         </div>
         {% elif cm_attendance_len > 0 %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Directorship Meeting Attendance</h5>
                 </div>
@@ -552,23 +552,23 @@ Dashboard
 
         {% if housing %}
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title my-0">Housing Status</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex fw-semibold">
+                    <li class="list-group-item d-flex fw-semibold bg-transparent">
                         <div class="col-8">Housing Points</div>
                         <div class="col-4 text-end">{{ housing['points'] }}</div>
                     </li>
                     {% if housing['room'] != None %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col-8">Room Number</div>
                         <div class="col-4 text-end"> {{ housing['room'] }}</div>
                     </li>
                     {% endif %}
                     {% if housing['queue_pos'][0] != None and housing['room'] == None %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col-8">Housing Queue Position</div>
                         <div class="col-4 text-end"> 
                             {{ housing['queue_pos'][0] }} / {{ housing['queue_pos'][1] }}
@@ -581,17 +581,17 @@ Dashboard
         {% endif %}
 
         <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
+            <div class="card bg-body-tertiary">
                 <div class="card-header">
                     <h5 class="card-title my-0">Member Statistics</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex fw-semibold">
+                    <li class="list-group-item d-flex fw-semibold bg-transparent">
                         <div class="col-8"> Category</div>
                         <div class="col-4 text-end"> Members</div>
                     </li>
                     {% for title in voting_count %}
-                    <li class="list-group-item d-flex">
+                    <li class="list-group-item d-flex bg-transparent">
                         <div class="col-8"> {{ title }}</div>
                         <div class="col-4 text-end"> {{ voting_count[title] }}</div>
                     </li>
