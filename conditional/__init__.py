@@ -113,7 +113,7 @@ from conditional.util.auth import get_user
 from conditional.util.member import gatekeep_status, get_voting_members
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
 from .blueprints.attendance import attendance_bp
-from .blueprints.major_project_submission import major_project_bp
+from .blueprints.major_project import major_project_bp
 from .blueprints.intro_evals import intro_evals_bp
 from .blueprints.intro_evals_form import intro_evals_form_bp
 from .blueprints.housing import housing_bp
