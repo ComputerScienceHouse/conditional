@@ -49,6 +49,7 @@ def display_major_project(user_dict=None):
             "username": p.uid,
             "name": ldap_get_member(p.uid).cn,
             "proj_name": p.name,
+            "ai_usage": p.ai_usage,
             "tldr": p.tldr,
             "time_spent": p.time_spent,
             "skills": p.skills,
@@ -103,6 +104,7 @@ def submit_major_project(user_dict=None):
 
     name = post_data["projectName"]
     tldr = post_data['projectTldr']
+    ai_usage = post_data['projectAIUsage']
     time_spent = post_data['projectTimeSpent']
     skills = post_data['projectSkills']
     description = post_data["projectDescription"]
@@ -113,10 +115,10 @@ def submit_major_project(user_dict=None):
     log.info(user_id)
 
     # All fields are required in order to be able to submit the form
-    if not name or not tldr or not time_spent or not description:
+    if not name or not tldr or not ai_usage or not time_spent or not description:
         return jsonify({"success": False}), 400
 
-    project: MajorProject = MajorProject(user_id, name, tldr, time_spent, description, links)
+    project: MajorProject = MajorProject(user_id, name, tldr, ai_usage, time_spent, description, links)
 
     # Save the info to the database
     db.session.add(project)
