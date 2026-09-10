@@ -4,8 +4,6 @@
 
 @use 'pkg:vanillajs-datepicker/sass/index-bs5';
 
-// @use 'bootstrap-material-datetimepicker.css';
-
 $bootstrap-icons-font-dir: "../fonts/";
 @import "bootstrap-icons/font/bootstrap-icons";
 
@@ -18,18 +16,12 @@ $bootstrap-icons-font-dir: "../fonts/";
 // Components
 @import 'components/switches';
 @import 'components/flat-buttons';
-@import 'components/date-picker';
-@import 'components/select';
 @import 'components/dropzone';
-@import 'components/sweet-alert/sweet-alert';
+@import 'components/sweet-alert/sweet-alert-animations';
 @import 'components/choices';
 
 // Pages
-@import 'pages/dashboard';
 @import 'pages/evals';
-@import 'pages/housing';
-@import 'pages/major-project';
-@import 'pages/management';
 @import 'pages/hm-attendance';
 @import 'pages/errors';
 @import 'components/reveal';
