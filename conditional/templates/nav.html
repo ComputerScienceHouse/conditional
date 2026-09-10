@@ -10,9 +10,9 @@
         <div id="navbar" class="navbar-collapse collapse text-light">
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item dropdown mx-1">
-                    <a href="#" class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-bar-chart-fill"></i> Evals
-                    </a>
+                    </button>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="/intro_evals" class="dropdown-item">
@@ -37,9 +37,9 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown mx-1">
-                    <a href="#" class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-list-ul"></i> Forms
-                    </a>
+                    </button>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="/major_project" class="dropdown-item">
@@ -70,12 +70,12 @@
                 </li>
 
                 <li class="nav-item dropdown mx-1">
-                    <a href="#" class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-check2"></i> Attendance
                         {% if is_eboard and pending_review != 0 %}
                             ({{pending_review}})
                         {% endif %}
-                    </a>
+                    </button>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="/attendance_cm" class="dropdown-item">
@@ -106,9 +106,9 @@
 
                 {% if is_eboard or is_rtp%}
                 <li class="nav-item dropdown mx-1">
-                    <a href="#" class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-wrench"></i> Admin
-                    </a>
+                    </button>
                     <ul class="dropdown-menu">
                         {% if is_financial_director or is_eval_director %}
                         <li>
@@ -165,29 +165,29 @@
             </ul>
             <div class="navbar-nav ms-auto align-items-center">
                 <div class="nav-item dropdown bd-theme">
-                  <a href="#" class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="theme-icon-active bi bi-circle-half"></i>
-                    <span class="bd-theme-text">
-                      Change Theme
-                    </span>
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="bd-theme">
-                    <button class="dropdown-item" aria-pressed="false" data-bs-theme-value="light">
-                      <i class="bi bi-sun-fill"></i>
-                      Light
+                    <button class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="theme-icon-active bi bi-circle-half"></i>
+                        <span class="bd-theme-text">
+                            Change Theme
+                        </span>
                     </button>
-                    <button class="dropdown-item" aria-pressed="false" data-bs-theme-value="dark">
-                      <i class="bi bi-moon-fill"></i>
-                      Dark
-                    </button>
-                    <button class="dropdown-item" aria-pressed="false" data-bs-theme-value="auto">
-                      <i class="bi bi-circle-half"></i>
-                      Auto
-                    </button>
-                  </ul>
+                    <ul class="dropdown-menu" aria-labelledby="bd-theme">
+                        <button class="dropdown-item" aria-pressed="false" data-bs-theme-value="light">
+                            <i class="bi bi-sun-fill"></i>
+                            Light
+                        </button>
+                        <button class="dropdown-item" aria-pressed="false" data-bs-theme-value="dark">
+                            <i class="bi bi-moon-fill"></i>
+                            Dark
+                        </button>
+                        <button class="dropdown-item" aria-pressed="false" data-bs-theme-value="auto">
+                            <i class="bi bi-circle-half"></i>
+                            Auto
+                        </button>
+                    </ul>
                 </div>
                 <div class="nav-item dropdown">
-                    <a href="#" class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                    <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-expanded="false">
                         <img alt="{{ username }}'s profile" src="https://profiles.csh.rit.edu/image/{{username}}" class="rounded-circle" width="30px" height="30px">
                         <span>
                             {{username}}
