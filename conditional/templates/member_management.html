@@ -164,7 +164,7 @@ Administration
                         {% for m in active %}
                         <tr>
                             <td>
-                                <img class="aspect aspect11 rounded-circle me-2" width="40" src="https://profiles.csh.rit.edu/image/{{m['uid']}}">
+                                <img class="aspect aspect11 rounded-circle me-2" width="40" alt="{{ m['name'] }}'s profile" src="https://profiles.csh.rit.edu/image/{{m['uid']}}">
                                 <a href="#" data-module="editUser" data-modal="editUserModal" data-uid="{{m['uid']}}">
                                     {{m['name']}}
                                 </a>
