@@ -30,7 +30,7 @@ House Meeting Attendance
                     {% for m in members %}
                     <tr>
                         <td>
-                            <img class="aspect aspect11 rounded-circle me-2" width="40" src="https://profiles.csh.rit.edu/image/{{m['value']}}"> {{m['label']}}
+                            <img class="aspect aspect11 rounded-circle me-2" width="40" alt="{{ m['value'] }}'s profile" src="https://profiles.csh.rit.edu/image/{{m['value']}}"> {{m['label']}}
                         </td>
                         <td>
                             <input type="checkbox" name="{{ m['value'] }}" autocomplete="off">
@@ -40,7 +40,7 @@ House Meeting Attendance
                 </tbody>
             </table>
         </div>
-        <input type="submit" role="button" class="btn btn-raised btn-primary mt-4 w-100" value="Submit Form"/>
+        <input type="submit" class="btn btn-raised btn-primary mt-4 w-100" value="Submit Form"/>
     </form>
 </div>
 {% endblock %}

@@ -19,7 +19,8 @@ Co-Op Management
             {% for c in co_op %}
             <tr id="coop-{{ c['uid'] }}">
                 <td>
-                    <img class="aspect aspect11 rounded-circle me-2" width="40" src="https://profiles.csh.rit.edu/image/{{ c['uid'] }}"> {{ get_member_name(c['uid']) }}
+                    <img class="aspect aspect11 rounded-circle me-2" width="40" alt="{{ m['value'] }}'s profile"
+                        src="https://profiles.csh.rit.edu/image/{{ c['uid'] }}"> {{ get_member_name(c['uid']) }}
                 </td>
                 <td>
                     {{ c['semester'] }}

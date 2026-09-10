@@ -16,9 +16,9 @@ Introductory Evaluations
                 <div class="collapse collapse-horizontal eval-blocks">
                     <div class="filler"></div>
                 </div>
-                <div class="rounded-circle bg-primary flex-shrink-0 btn" data-bs-toggle="collapse" data-bs-target=".eval-blocks" 
-                    role="button" aria-controls=".eval-blocks">
-                </div>
+                <button class="rounded-circle bg-primary flex-shrink-0 btn" data-bs-toggle="collapse" data-bs-target=".eval-blocks" 
+                    aria-controls=".eval-blocks">
+                </button>
                 <div class="position-absolute d-flex align-items-center justify-content-end z-n1 translate-middle top-50 start-50 h-75 filler">
                     <div class="bg-body-secondary rounded h-50 w-50">
                     </div>
@@ -136,7 +136,7 @@ Introductory Evaluations
                 {% if m['house_meetings_missed'] | length != 0 or m['technical_seminars'] | length != 0 or m['comments'] != "" %}
                 <div class="position-absolute bottom-0 d-flex toggle-btn">
                     <button class="btn text-center mx-auto px-5 py-2 mb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
-                            role="button" aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
+                            aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
                         <i class="bi bi-caret-down-fill"></i>
                     </button>
                 </div>
@@ -217,7 +217,7 @@ Introductory Evaluations
 
                         <div class="d-flex">
                             <button class="btn text-center mx-auto px-5 pt-1 pb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
-                                    role="button" aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
+                                    aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
                                 <i class="bi bi-caret-up-fill"></i>
                             </button>
                         </div>
