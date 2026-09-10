@@ -17,7 +17,7 @@ logger = structlog.get_logger()
 @gatekeep_bp.route('/gatekeep_status/')
 @auth.oidc_auth("default")
 @get_user
-def display_spring_evals(internal=False, user_dict=None):
+def display_spring_evals(internal=False, user_dict=None): # pylint: disable-msg=too-many-locals
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Gatekeep Status Listing')
 
