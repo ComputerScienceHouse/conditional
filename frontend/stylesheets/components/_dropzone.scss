@@ -313,3 +313,11 @@
     }
   }
 }
+
+[data-bs-theme=dark] {
+  .dropzone {
+    img {
+      filter: brightness(100);
+    }
+  }
+}
