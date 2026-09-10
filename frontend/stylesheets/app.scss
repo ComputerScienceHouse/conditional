@@ -19,9 +19,9 @@ $bootstrap-icons-font-dir: "../fonts/";
 @import 'components/dropzone';
 @import 'components/sweet-alert/sweet-alert-animations';
 @import 'components/choices';
+@import 'components/expand-toggle';
 
 // Pages
-@import 'pages/evals';
 @import 'pages/hm-attendance';
 @import 'pages/errors';
 @import 'components/reveal';

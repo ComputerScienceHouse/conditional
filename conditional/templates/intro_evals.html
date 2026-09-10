@@ -134,10 +134,11 @@ Introductory Evaluations
                 </div>
 
                 {% if m['house_meetings_missed'] | length != 0 or m['technical_seminars'] | length != 0 or m['comments'] != "" %}
-                <div class="position-absolute bottom-0 d-flex toggle-btn">
+                <div class="d-flex toggle-btn">
                     <button class="btn text-center mx-auto px-5 py-2 mb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
                             aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
-                        <i class="bi bi-caret-down-fill"></i>
+                        <i class="bi bi-chevron-down down"></i>
+                        <i class="bi bi-chevron-up up d-none"></i>
                     </button>
                 </div>
                 {% endif %}
@@ -148,23 +149,8 @@ Introductory Evaluations
                 <div class="collapse" id="{{ m['uid'] }}-extra-info">
                     <div class="p-0">
                         <div class="row">
-                            {% if m['house_meetings_missed'] | length > 0 %}
-                            <div class="col-md-6 col-12">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item bg-transparent">
-                                        <h4 class="mb-0">Missed House Meetings</h4>
-                                    </li>
-                                    {% for date in m['house_meetings_missed'] %}
-                                    <li class="list-group-item bg-transparent">
-                                        {{ date }}
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            {% endif %}
-
                             {% if m['technical_seminars'] | length > 0 %}
-                            <div class="col">
+                            <div class="col-md col-12">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item bg-transparent">
                                         <h4 class="mb-0">Technical Seminars</h4>
@@ -177,11 +163,26 @@ Introductory Evaluations
                                 </ul>
                             </div>
                             {% endif %}
+
+                            {% if m['house_meetings_missed'] | length > 0 %}
+                            <div class="col">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent">
+                                        <h4 class="mb-0">Missed House Meetings</h4>
+                                    </li>
+                                    {% for date in m['house_meetings_missed'] %}
+                                    <li class="list-group-item bg-transparent">
+                                        {{ date }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
                         </div>
 
+                        {% if m['social_events'] != "" %}
                         <hr class="my-1" />
 
-                        {% if m['social_events'] != "" %}
                         <div class="row mt-3">
                             <div class="col">
                                 <ul class="list-group list-group-flush">
@@ -194,11 +195,11 @@ Introductory Evaluations
                                 </ul>
                             </div>
                         </div>
-
-                        <hr class="my-1" />
                         {% endif %}
 
                         {% if m['comments'] != "" %}
+                        <hr class="my-1" />
+
                         <div class="row mt-3">
                             <div class="col">
                                 <ul class="list-group list-group-flush">
@@ -211,16 +212,7 @@ Introductory Evaluations
                                 </ul>
                             </div>
                         </div>
-
-                        <hr class="my-1" />
                         {% endif %}
-
-                        <div class="d-flex">
-                            <button class="btn text-center mx-auto px-5 pt-1 pb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
-                                    aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
-                                <i class="bi bi-caret-up-fill"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

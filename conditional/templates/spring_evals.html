@@ -101,10 +101,11 @@ Membership Evaluations
                 </div>
 
                 {% if m['house_meetings_missed'] | length != 0 or m['major_projects_len'] > 0 %}
-                <div class="position-absolute bottom-0 d-flex toggle-btn">
+                <div class="d-flex toggle-btn">
                     <button class="btn text-center mx-auto px-5 py-2 mb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
                             aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
-                        <i class="bi bi-caret-down-fill"></i>
+                        <i class="bi bi-chevron-down down"></i>
+                        <i class="bi bi-chevron-up up d-none"></i>
                     </button>
                 </div>
                 {% endif %}
@@ -129,9 +130,10 @@ Membership Evaluations
                                 </ul>
                             </div>
                         </div>
+                        {% endif %}
 
+                        {% if m['house_meetings_missed'] | length > 0 and m['major_projects_len'] > 0 %}
                         <hr class="my-1" />
-
                         {% endif %}
 
                         {% if m['major_projects_len'] > 0 %}
@@ -168,16 +170,7 @@ Membership Evaluations
                                 </ul>
                             </div>
                         </div>
-
-                        <hr class="my-1" />
                         {% endif %}
-
-                        <div class="d-flex">
-                            <button class="btn text-center mx-auto px-5 pt-1 pb-2" data-bs-toggle="collapse" data-bs-target="#{{ m['uid'] }}-extra-info" 
-                                    aria-expanded="false" aria-controls="#{{ m['uid'] }}-extra-info">
-                                <i class="bi bi-caret-up-fill"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
