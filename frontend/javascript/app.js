@@ -16,6 +16,8 @@ import "jquery";
 import "bootstrap";
 import "./modules";
 
+import 'csh-material-bootstrap/color-modes.js';
+
 import "masonry-layout";
 
 // Load fonts
