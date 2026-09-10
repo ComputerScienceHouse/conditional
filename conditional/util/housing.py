@@ -24,7 +24,6 @@ def get_housing_queue(is_eval_director=False):
     }
 
     queue = ldap.get_group_member_attributes(groups=['current_student'],
-                                             excluded_groups=[],
                                              attributes=['uid', 'housingPoints', 'cn', 'roomNumber'])
 
     # if the user is not evals, they should only see people in the queue without a room number

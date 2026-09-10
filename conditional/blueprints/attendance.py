@@ -36,7 +36,7 @@ def get_all_members(user_dict=None):
     log.info('Retrieve Technical Seminar Attendance List')
 
     members = ldap.get_group_member_attributes(groups=['current_student'],
-                                               excluded_groups=[], attributes=['uid', 'displayName'])
+                                               attributes=['uid', 'displayName'])
 
     named_members = [
         {
@@ -66,7 +66,7 @@ def get_non_alumni_non_coop(internal=False, user_dict=None):
 
     # Get all active members as a base house meeting attendance.
     active_members = ldap.get_group_member_attributes(groups=['active'],
-                                                      excluded_groups=[], attributes=['uid', 'displayName'])
+                                                      attributes=['uid', 'displayName'])
 
     if datetime.today() < datetime(start_of_year().year, 12, 31):
         semester = 'Fall'
@@ -111,7 +111,7 @@ def get_non_alumni(user_dict=None):
     log.info('Retrieve Committee Meeting Attendance List')
 
     current_students = ldap.get_group_member_attributes(groups=['current_student'],
-                                                        excluded_groups=[], attributes=['uid', 'displayName'])
+                                                        attributes=['uid', 'displayName'])
 
     eligible_members = [
         {
@@ -375,8 +375,8 @@ def alter_house_excuse(uid, hid, user_dict=None):
 @auth.oidc_auth("default")
 @get_user
 def attendance_history(user_dict=None):
-    member_names = { member['uid']: member['displayName'] 
-                    for member in ldap.get_group_member_attributes(groups=['current_student'], 
+    member_names = { member['uid']: member['displayName']
+                    for member in ldap.get_group_member_attributes(groups=['current_student'],
                                                                    attributes=['uid', 'displayName']) }
 
     def get_member_name(uid):

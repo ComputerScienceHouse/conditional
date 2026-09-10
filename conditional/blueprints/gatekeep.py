@@ -88,7 +88,7 @@ def display_spring_evals(internal=False, user_dict=None):
     ).all()}
 
     gk_members = []
-    for account in ldap.get_group_member_attributes(groups=['active'], excluded_groups=[], attributes=['uid', 'cn']):
+    for account in ldap.get_group_member_attributes(groups=['active'], attributes=['uid', 'cn']):
         uid = account['uid']
         name = account['cn']
 

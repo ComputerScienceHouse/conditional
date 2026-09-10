@@ -11,7 +11,6 @@ from conditional.util.flask import render_template
 from conditional.util.housing import get_housing_queue
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
-from conditional.util.ldap import ldap_get_roomnumber
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_set_active
 from conditional.util.user_dict import user_dict_is_eval_director
@@ -30,7 +29,7 @@ def display_housing(user_dict=None):
 
     housing = {}
     onfloors = ldap.get_group_member_attributes(groups=['onfloor', 'current_student'],
-                                                excluded_groups=[], attributes=['cn', 'roomNumber'])
+                                                attributes=['cn', 'roomNumber'])
     onfloor_freshmen = FreshmanAccount.query.filter(
         FreshmanAccount.room_number is not None
     )
@@ -137,7 +136,8 @@ def change_room_numbers(rmnumber, user_dict=None):
 def get_occupants(rmnumber):
 
     # Get the current list of people living on-floor.
-    current_students = ldap.get_group_member_attributes(groups=['current_student'], attributes=['uid', 'roomNumber', 'cn'])
+    current_students = ldap.get_group_member_attributes(groups=['current_student'],
+                                                        attributes=['uid', 'roomNumber', 'cn'])
 
     # Find the current occupants of the specified room.
     occupants = [account['uid'] for account in current_students

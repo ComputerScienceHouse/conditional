@@ -66,7 +66,7 @@ def display_member_management(user_dict=None):
     onfloor_members = set(ldap_get_onfloor_member_uids())
 
     member_list = ldap.get_group_member_attributes(groups=["current_student"],
-                                    excluded_groups=[], attributes=['uid', 'housingPoints', 'roomNumber', 'displayName'])
+                                    attributes=['uid', 'housingPoints', 'roomNumber', 'displayName'])
 
     for member in member_list:
         member['name'] = member['displayName']

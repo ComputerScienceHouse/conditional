@@ -154,7 +154,7 @@ def display_intro_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Intro Evals Listing')
 
-    members = ldap.get_group_member_attributes(groups=['intromembers'], excluded_groups=[], attributes=['uid', 'cn'])
+    members = ldap.get_group_member_attributes(groups=['intromembers'], attributes=['uid', 'cn'])
 
     ie_members = get_intro_members_without_accounts()
 

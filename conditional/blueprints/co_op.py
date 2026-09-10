@@ -3,7 +3,6 @@ from flask import Blueprint, request, jsonify
 
 from conditional import db, start_of_year, auth
 from conditional.models.models import CurrentCoops
-from conditional.util.member import req_cm
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
