@@ -32,7 +32,7 @@ export default class MemberSelect {
       .then(response => {
         this.members = response.members;
 
-        for (member of selectedMembers) {
+        for (const member of selectedMembers) {
           this.members.find((el) => el.value == member.value).selected = true;
         }
 

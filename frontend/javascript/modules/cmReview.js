@@ -66,7 +66,7 @@ export default class ReviewMeeting {
       const hostInput = this.modal.querySelector('[name="host"]');
 
       hostInput.dataset.src = "cm_members";
-      new MemberSelect(hostInput, this.data.host); // eslint-disable-line no-new
+      this.select = new MemberSelect(hostInput, this.data.host); // eslint-disable-line no-new
     } else { // Hide host section if not technical seminar
       this.modal.querySelector(".host-edit-row").style.display = "none";
     }
@@ -77,7 +77,7 @@ export default class ReviewMeeting {
 
     // Initialize selector control
     attendeesInput.dataset.src = "cm_members";
-    new MemberSelect(attendeesInput, this.data.attendees); // eslint-disable-line no-new
+    this.select = new MemberSelect(attendeesInput, this.data.attendees); // eslint-disable-line no-new
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
