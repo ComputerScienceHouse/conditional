@@ -7,40 +7,36 @@ Co-Op Submission
     <h3 class="page-title">Co-Op Submission</h3>
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    {% if not on_coop %}
-                    <p>Please select one of the following options below if you are going to be on co-op during either semester this year. In the case you are going to be on co-op for both semesters, please contact the Evaluations Director and have them remove you from Active status.</p>
-                    <p>By selecting an option and submitting this form you are forfeiting your right to vote in house matters during the selected period. You are not required to attend house meetings but are still eligible for directorship meeting attendance.</p>
-                    <form data-module="coopSubmitForm">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6">
-                                <div class="d-flex align-items-center px-3">
-                                    <input type="radio" name="semester" id="fall" value="Fall">
-                                    <label for="fall" class="ms-3">
-                                        <h4 class="list-group-item-heading">Fall Semester</h4>
-                                        <p class="">August - December {{year}}</p>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-6">
-                                <div class="d-flex align-items-center px-3">
-                                    <input type="radio" name="semester" id="spring" value="Spring">
-                                    <label for="spring" class="ms-3">
-                                        <h4 class="list-group-item-heading">Spring Semester</h4>
-                                        <p class="">January - May {{year + 1}}</p>
-                                    </label>
-                                </div>
-                            </div>
+            {% if not on_coop %}
+            <p>Please select one of the following options below if you are going to be on co-op during either semester this year. In the case you are going to be on co-op for both semesters, please contact the Evaluations Director and have them remove you from Active status.</p>
+            <p>By selecting an option and submitting this form you are forfeiting your right to vote in house matters during the selected period. You are not required to attend house meetings but are still eligible for directorship meeting attendance.</p>
+            <form data-module="coopSubmitForm">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="d-flex align-items-center px-3">
+                            <input type="radio" name="semester" id="fall" value="Fall">
+                            <label for="fall" class="ms-3">
+                                <h4 class="list-group-item-heading">Fall Semester</h4>
+                                <p class="">August - December {{year}}</p>
+                            </label>
                         </div>
-                        <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
-                    </form>
-                    {% else %}
-                    <p class="align-center">Thank you for submitting this form. Good luck on your {{on_coop.semester}} co-op!</p>
-                    <p class="align-center">If you submitted this form by mistake or your plans have changed, please contact the Evaluations Director.</p>
-                    {% endif %}
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="d-flex align-items-center px-3">
+                            <input type="radio" name="semester" id="spring" value="Spring">
+                            <label for="spring" class="ms-3">
+                                <h4 class="list-group-item-heading">Spring Semester</h4>
+                                <p class="">January - May {{year + 1}}</p>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <input type="submit" role="button" class="btn btn-raised btn-primary" style="width:100%;" value="Submit Form"/>
+            </form>
+            {% else %}
+            <p class="align-center">Thank you for submitting this form. Good luck on your {{on_coop.semester}} co-op!</p>
+            <p class="align-center">If you submitted this form by mistake or your plans have changed, please contact the Evaluations Director.</p>
+            {% endif %}
         </div>
     </div>
 </div>

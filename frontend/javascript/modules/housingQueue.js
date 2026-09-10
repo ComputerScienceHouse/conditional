@@ -57,7 +57,7 @@ export default class HousingQueue {
   }
 
   bindCheckboxes() {
-    this.queuePanel.querySelectorAll('.col-in-queue > input[type="checkbox"]')
+    this.queuePanel.querySelectorAll('#queue-table input[type="checkbox"]')
         .forEach(toggle => {
           toggle.addEventListener('click', () => {
             const row = toggle.parentNode.parentNode;
