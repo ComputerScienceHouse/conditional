@@ -30,12 +30,24 @@ logger = structlog.get_logger()
 
 major_project_bp = Blueprint("major_project_bp", __name__)
 
-@major_project_bp.route("/major_project/")
+@major_project_bp.route("/major_project/create")
 @auth.oidc_auth("default")
 @get_user
 def display_major_project(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info("Display Major Project Page")
+
+    # return names in 'first last (username)' format
+    return render_template(
+        "major_project_submission.html",
+        username=user_dict["username"])
+
+@major_project_bp.route("/major_project/history")
+@auth.oidc_auth("default")
+@get_user
+def display_major_project_history(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info("Display Major Project History Page")
 
     # There is probably a better way to do this, but it does work
     proj_list: list = get_project_list()
@@ -61,12 +73,11 @@ def display_major_project(user_dict=None):
         for p in proj_list
     ]
 
-    # return names in 'first last (username)' format
     return render_template(
-        "major_project_submission.html",
+        "major_project_history.html",
         major_projects=major_projects,
-        bucket_name=bucket,
         major_projects_len=len(major_projects),
+        bucket=bucket,
         username=user_dict["username"])
 
 @major_project_bp.route("/major_project/upload", methods=["POST"])
