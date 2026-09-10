@@ -37,32 +37,36 @@ export default class AttendanceForm {
 
     // Form submit handler
     this.form.querySelectorAll("input[type=submit]").forEach(submitBtn => {
-      submitBtn.addEventListener("click", e => {
-        e.preventDefault();
-        let payload = {};
+      submitBtn.addEventListener("click", this.submitButtonHandler);
+    });
+  }
 
-        Object.keys(this.fields).forEach(field => {
-          if (field === "attendees") {
-            let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
-              this.fields[field].value.split(',')
-            );
-            payload.freshmen = membersSplit.freshmen;
-            payload.members = membersSplit.upperclassmen;
-          } else if (field === "host") {
-            let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
-              this.fields[field].value.split(',')
-            );
-            payload.freshman_host = hostSplit.freshmen;
-            payload.member_host = hostSplit.upperclassmen;
-          } else {
-            payload[field] = this.fields[field].value;
-          }
-        });
+  submitButtonHandler(e) {
+    e.preventDefault();
+    let payload = {};
 
-        FetchUtil.post(this.endpoint, payload, {
-          successText: "Attendance has been submitted."
-        });
-      });
+    Object.keys(this.fields).forEach(field => {
+      if (field === "attendees") {
+        const selectedMembers = Array.from(this.fields[field].selectedOptions).map((opt) => opt.value);
+
+        let membersSplit = MemberUtil.splitFreshmenUpperclassmen(selectedMembers);
+        payload.freshmen = membersSplit.freshmen;
+        payload.members = membersSplit.upperclassmen;
+      } else if (field === "host") {
+        const selectedMembers = Array.from(this.fields[field].selectedOptions).map((opt) => opt.value);
+
+        let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
+          selectedMembers
+        );
+        payload.freshman_host = hostSplit.freshmen;
+        payload.member_host = hostSplit.upperclassmen;
+      } else {
+        payload[field] = this.fields[field].value;
+      }
+    });
+
+    FetchUtil.post(this.endpoint, payload, {
+      successText: "Attendance has been submitted."
     });
   }
 }

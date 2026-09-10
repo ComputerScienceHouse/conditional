@@ -3,7 +3,7 @@ import "whatwg-fetch";
 import FetchUtil from "../utils/fetchUtil";
 import Exception from "../exceptions/exception";
 import FetchException from "../exceptions/fetchException";
-import sweetAlert from "../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js"; // eslint-disable-line max-len
+import Swal from "sweetalert2";
 import _ from "lodash";
 import DatePicker from "./datepicker";
 
@@ -53,6 +53,9 @@ export default class EditUser {
   _renderModal() {
     // Clone template modal
     let modal = this.modal.cloneNode(true);
+
+    console.log(modal);
+
     modal.setAttribute("id",
         this.modal.getAttribute("id") + "-" + this.uid);
 
@@ -64,7 +67,7 @@ export default class EditUser {
     modal.querySelector('input[name=room]').value = this.data.room_number;
 
     // On-floor Status
-    modal.querySelector('input[name=onfloor]').checked =
+    modal.querySelector('input[name=onFloor]').checked =
         this.data.onfloor_status;
 
     // Dues
@@ -117,7 +120,8 @@ export default class EditUser {
     }
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e => {
+    modal.querySelector('input[type=submit]').addEventListener('click', e => {
+      e.preventDefault();
       this._submitForm("#" + this.modal.getAttribute("id") + "-" + this.uid);
     });
 
@@ -144,7 +148,7 @@ export default class EditUser {
     modal.querySelector('input[name=dues]').checked = this.data.active_member;
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e => {
+    modal.querySelector('button[type=submit]').addEventListener('click', e => {
       this._submitForm("#" + this.modal.getAttribute("id") + "-" + this.uid);
     });
 
@@ -183,7 +187,7 @@ export default class EditUser {
     modal.querySelector('input[name=room]').value = this.data.room_number;
 
     // On-floor Status
-    modal.querySelector('input[name=onfloor]').checked =
+    modal.querySelector('input[name=onFloor]').checked =
         this.data.onfloor_status;
 
     // Evaluation Date
@@ -238,12 +242,12 @@ export default class EditUser {
     }
 
     // Save button
-    modal.querySelector('button.save-btn').addEventListener('click', e =>
+    modal.querySelector('input[type=submit]').addEventListener('click', e =>
       this._submitForm()
     );
 
     // Delete button
-    modal.querySelector('button.delete-btn').addEventListener('click', e =>
+    modal.querySelector('input[type=button].btn-danger').addEventListener('click', e =>
       this._deleteFreshman()
     );
 
@@ -282,7 +286,7 @@ export default class EditUser {
       });
     } else {
       // Save missed house meetings
-      let missedHms = modal.querySelectorAll('.hm-wrapper');
+      let missedHms = modal.querySelectorAll('.missed-hm-tpl');
       missedHms.forEach(hm => {
         let payload = {
           id: hm.dataset.id,
@@ -306,13 +310,13 @@ export default class EditUser {
             .then(response => {
               if (!response.hasOwnProperty('success') ||
                   !response.success) {
-                sweetAlert("Uh oh...", "We're having trouble submitting this " +
+                Swal.fire("Uh oh...", "We're having trouble submitting this " +
                     "form right now. Please try again later.", "error");
                 throw new Exception(FetchException.REQUEST_FAILED, response);
               }
             })
             .catch(error => {
-              sweetAlert("Uh oh...", "We're having trouble submitting this " +
+              Swal.fire("Uh oh...", "We're having trouble submitting this " +
                   "form right now. Please try again later.", "error");
               throw new Exception(FetchException.REQUEST_FAILED, error);
             });
@@ -321,7 +325,7 @@ export default class EditUser {
       // Save user details
       let payload = {
         roomNumber: null,
-        onfloorStatus: modal.querySelector('input[name=onfloor]').checked
+        onfloorStatus: modal.querySelector('input[name=onFloor]').checked
       };
 
       if (this.type === "member") {

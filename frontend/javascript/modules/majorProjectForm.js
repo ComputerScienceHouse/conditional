@@ -6,7 +6,6 @@ export default class MajorProjectForm {
     constructor(form) {
         this.form = form;
         this.endpoint = '/major_project/submit';
-        this.tags_written = false;
         this.tag_keys = ["Enter", "Comma", "Tab"];
         this.render();
     }
@@ -14,9 +13,9 @@ export default class MajorProjectForm {
     render() {
         this.form.querySelector('input[type=submit]')
             .addEventListener('click', e => this._submitForm(e));
-        this.form.querySelector('input[id=skill-input]')
+        this.form.querySelector('input#skill-input')
             .addEventListener('focusout', e => this.onWriteSkill(e));
-        this.form.querySelector('input[id=skill-input]')
+        this.form.querySelector('input#skill-input')
             .addEventListener('keypress', e => this.onKeyPress(e));
     }
 
@@ -30,17 +29,17 @@ export default class MajorProjectForm {
 
     onWriteSkill(e) {
         let input = document.getElementById("skill-input")
-        if (!this.tags_written) {
-            this.tags_written = true
 
-            const firstTag = document.getElementsByClassName("skill-tag").item(0);
-            if (firstTag) firstTag.remove();
-        }
-        
         let txt = input.value.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
-        if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
-        let skills = this.form.getElementsByClassName("skill-tag")
-        skills.item(skills.length - 1).addEventListener('click', e => this.onRemoveTag(e));
+        if (txt) {
+            const skillBadge = document.createElement("span");
+            skillBadge.textContent = txt;
+            skillBadge.classList.add("skill-tag", "badge", "text-bg-primary", "me-2", "fs-6");
+
+            skillBadge.addEventListener('click', e => this.onRemoveTag(e));
+
+            document.getElementById("skills-container").append(skillBadge);
+        }
         input.value = "";
     }
 
@@ -56,7 +55,7 @@ export default class MajorProjectForm {
         for (const tag of this.form.getElementsByClassName('skill-tag')) {
             skills.push(tag.textContent);
         }
-        
+
         let projectName = this.form.querySelector('input[name=name]').value;
         let projectTldr = this.form.querySelector('input[name=tldr]').value;
         let projectTimeSpent = this.form.querySelector('textarea[name=time-commitment]').value;

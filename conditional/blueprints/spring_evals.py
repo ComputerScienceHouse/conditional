@@ -21,7 +21,7 @@ def display_spring_evals(internal=False, user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Membership Evaluations Listing')
 
-    active_members = ldap.get_group_member_attributes(groups=['active'], excluded_groups=[], attributes=['uid', 'cn'])
+    active_members = ldap.get_group_member_attributes(groups=['active'], attributes=['uid', 'cn'])
 
     cm_count = dict([tuple(row) for row in MemberCommitteeAttendance.query.join(
         CommitteeMeeting,
@@ -72,7 +72,8 @@ def display_spring_evals(internal=False, user_dict=None):
         major_projects.get(project.uid).append({
             'name': project.name,
             'status': project.status,
-            'description': project.description
+            'description': project.description,
+            'tldr': project.tldr
         })
 
     sp_members = []
