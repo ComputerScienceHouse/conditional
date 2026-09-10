@@ -120,7 +120,7 @@ export default class EditHousing {
               .then(FetchUtil.checkStatus)
               .then(FetchUtil.parseJSON)
               .then(data => {
-                var newName = document.createElement("div");
+                const newName = document.createElement("div");
                 newName.appendChild(document.createTextNode(data.name));
                 newName.setAttribute("class", "m-2");
                 occupantList.appendChild(newName);
@@ -128,10 +128,10 @@ export default class EditHousing {
           });
         } else {
           // The room is new and needs to be created.
-          var roomTable = document.getElementById("housing-table");
-          var newRoom = document.createElement("tr");
-          var newRoomNbrCol = document.createElement("td");
-          var newRoomNbr = document.createElement("h3");
+          const roomTable = document.getElementById("housing-table");
+          const newRoom = document.createElement("tr");
+          const newRoomNbrCol = document.createElement("td");
+          const newRoomNbr = document.createElement("h3");
           newRoomNbr.appendChild(document.createTextNode(room));
           newRoomNbr.classList.add("mb-0", "text-center");
           newRoomNbrCol.appendChild(newRoomNbr);
@@ -139,8 +139,8 @@ export default class EditHousing {
           newRoom.appendChild(newRoomNbrCol);
 
           // Add new occupants to room.
-          var newOccupantCol = document.createElement("td");
-          var newOccupantList = document.createElement("div");
+          const newOccupantCol = document.createElement("td");
+          const newOccupantList = document.createElement("div");
           newOccupantList.setAttribute("id", room);
           payload.occupants.forEach(occupant => {
             fetch(this.endpoints.memberDetails + occupant, {
@@ -153,7 +153,7 @@ export default class EditHousing {
               .then(FetchUtil.checkStatus)
               .then(FetchUtil.parseJSON)
               .then(data => {
-                var newName = document.createElement("div");
+                const newName = document.createElement("div");
                 newName.appendChild(document.createTextNode(data.name));
                 newName.classList.add("m-2");
                 newOccupantList.appendChild(newName);
@@ -164,9 +164,9 @@ export default class EditHousing {
           newRoom.appendChild(newOccupantCol);
 
           // Add edit button for new room.
-          var newEditCol = document.createElement("td");
-          var editBtn = document.getElementById("rm-edit-btn");
-          var newEditBtn = editBtn.cloneNode(true);
+          const newEditCol = document.createElement("td");
+          const editBtn = document.getElementById("rm-edit-btn");
+          const newEditBtn = editBtn.cloneNode(true);
           newEditBtn.setAttribute("data-rmnumber", room);
           new EditHousing(newEditBtn); // eslint-disable-no-new
           newEditCol.appendChild(newEditBtn);

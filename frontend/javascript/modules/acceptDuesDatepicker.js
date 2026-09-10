@@ -16,7 +16,7 @@ export default class DatePicker {
   }
 
   render() {
-    new Datepicker(this.input, {
+    this.datepicker = new Datepicker(this.input, {
       buttonClass: 'btn',
       todayButton: true,
       format: 'yyyy-mm-dd',

@@ -12,33 +12,39 @@ export default class MemberSelect {
     this.dataSrc = element.dataset.src;
 
     if (this.dataSrc) {
-      fetch('/attendance/' + this.dataSrc, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'same-origin'
-      })
-        .then(FetchUtil.checkResponse)
-        .then(FetchUtil.parseJSON)
-        .then(response => {
-          this.members = response.members;
-          selectedMembers.forEach((member) => {
-            this.members.find((el) => el.value == member.value).selected = true;
-          });
-          this.render(element);
-        })
-        .catch(error => {
-          throw new Exception(FetchException.REQUEST_FAILED, error);
-        });
+      this.getData(selectedMembers);
     } else {
       throw new Exception(AttendanceException.NO_SRC_ATTRIBUTE);
     }
   }
 
-  render(element) {
-    const target = new Choices(element, {
+  getData(selectedMembers) {
+    fetch('/attendance/' + this.dataSrc, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'same-origin'
+    })
+      .then(FetchUtil.checkResponse)
+      .then(FetchUtil.parseJSON)
+      .then(response => {
+        this.members = response.members;
+
+        for (member of selectedMembers) {
+          this.members.find((el) => el.value == member.value).selected = true;
+        }
+
+        this.render();
+      })
+      .catch(error => {
+        throw new Exception(FetchException.REQUEST_FAILED, error);
+      });
+  }
+
+  render() {
+    const target = new Choices(this.element, {
       choices: this.members,
       removeItemButton: true,
       searchFloor: -1,
@@ -78,7 +84,7 @@ export default class MemberSelect {
       }
     });
 
-    element.addEventListener('addItem', () => {
+    this.element.addEventListener('addItem', () => {
       requestAnimationFrame(() => {
         target.choiceList.element.scrollTop = 0;
       });

@@ -34,12 +34,12 @@ export default class ReviewMeeting {
         },
         credentials: 'same-origin'
       })
-          .then(FetchUtil.checkStatus)
-          .then(FetchUtil.parseJSON)
-          .then(data => {
-            this.data = data;
-            this._renderModal();
-          });
+      .then(FetchUtil.checkStatus)
+      .then(FetchUtil.parseJSON)
+      .then(data => {
+        this.data = data;
+        this._renderModal();
+      });
     });
   }
 
