@@ -212,3 +212,6 @@ wheel==0.47.0
     # via pip-tools
 wrapt==2.1.2
     # via -r requirements.in
+
+markdown==3.10.3
+    # added manually :3

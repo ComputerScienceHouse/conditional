@@ -7,6 +7,9 @@ from flask import request
 from flask import jsonify
 from flask import redirect
 
+import markdown
+import html
+
 import requests
 import boto3
 import structlog
@@ -52,7 +55,7 @@ def display_major_project(user_dict=None):
             "tldr": p.tldr,
             "time_spent": p.time_spent,
             "skills": p.skills,
-            "desc": p.description,
+            "desc": markdown.markdown(html.escape(p.description)),
             "links": [] if p.links is None else list(filter(None, p.links.split("\n"))),
             "status": p.status,
             "is_owner": bool(user_dict["username"] == p.uid),
