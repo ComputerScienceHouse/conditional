@@ -30,3 +30,4 @@ structlog~=25.5.0
 Werkzeug~=3.1.6
 wrapt~=2.1.2
 click~=8.1
+markdown~=3.10.3
