@@ -2,13 +2,13 @@ import collections
 import json
 import os
 
+import html
+import markdown
+
 from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import redirect
-
-import markdown
-import html
 
 import requests
 import boto3
