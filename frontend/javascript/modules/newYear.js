@@ -1,7 +1,7 @@
 import FetchUtil from '../utils/fetchUtil';
 import Exception from "../exceptions/exception";
 import FetchException from "../exceptions/fetchException";
-import sweetAlert from "../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js"; // eslint-disable-line max-len
+import Swal from "sweetalert2";
 
 export default class NewYear {
   constructor(link) {
@@ -38,7 +38,7 @@ export default class NewYear {
               $("#new-current").fadeIn();
             })
             ).catch(error => {
-              sweetAlert("Uh oh...", "We're having trouble submitting that " +
+              Swal.fire("Uh oh...", "We're having trouble submitting that " +
                           "action right now. Please try again later.", "error");
               throw new Exception(FetchException.REQUEST_FAILED, error);
             });
@@ -54,7 +54,7 @@ export default class NewYear {
             var userRow = $('#row-' + this.uid)[0];
             userRow.style.setProperty("text-decoration", "line-through");
           }).catch(error => {
-            sweetAlert("Uh oh...", "We're having trouble submitting that " +
+            Swal.fire("Uh oh...", "We're having trouble submitting that " +
                         "action right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, error);
           });
@@ -68,7 +68,7 @@ export default class NewYear {
             var lineRow = $('#row-' + this.uid)[0];
             lineRow.style.setProperty("text-decoration", "none");
           }).catch(error => {
-            sweetAlert("Uh oh...", "We're having trouble submitting that " +
+            Swal.fire("Uh oh...", "We're having trouble submitting that " +
                         "action right now. Please try again later.", "error");
             throw new Exception(FetchException.REQUEST_FAILED, error);
           });

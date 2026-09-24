@@ -3,7 +3,7 @@ import 'whatwg-fetch';
 import Exception from '../exceptions/exception';
 import FetchException from '../exceptions/fetchException';
 import FetchUtil from '../utils/fetchUtil';
-import sweetAlert from '../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js'; // eslint-disable-line max-len
+import Swal from "sweetalert2";
 
 export default class HousingQueue {
   constructor(queuePanel) {
@@ -57,7 +57,7 @@ export default class HousingQueue {
   }
 
   bindCheckboxes() {
-    this.queuePanel.querySelectorAll('.col-in-queue > input[type="checkbox"]')
+    this.queuePanel.querySelectorAll('#queue-table input[type="checkbox"]')
         .forEach(toggle => {
           toggle.addEventListener('click', () => {
             const row = toggle.parentNode.parentNode;
@@ -92,13 +92,13 @@ export default class HousingQueue {
             row.classList.add('disabled');
           }
         } else {
-          sweetAlert('Uh oh...', 'We\'re having trouble updating ' +
+          Swal.fire('Uh oh...', 'We\'re having trouble updating ' +
             'the queue right now. Please try again later.', 'error');
           throw new Exception(FetchException.REQUEST_FAILED, response);
         }
       })
       .catch(error => {
-        sweetAlert('Uh oh...', 'We\'re having trouble updating ' +
+        Swal.fire('Uh oh...', 'We\'re having trouble updating ' +
           'the queue right now. Please try again later.', 'error');
         throw new Exception(FetchException.REQUEST_FAILED, error);
       });
