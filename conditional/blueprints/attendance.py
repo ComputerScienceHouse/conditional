@@ -110,8 +110,10 @@ def get_non_alumni(user_dict=None):
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Retrieve Committee Meeting Attendance List')
 
-    current_students = ldap.get_group_member_attributes(groups=['current_student'],
-                                                        excluded_groups=[], attributes=['uid', 'displayName'])
+    current_students = ldap.get_group_member_attributes(
+        groups=['current_student'],
+        excluded_groups=[],
+        attributes=['uid', 'displayName', 'nsAccountLock'])
 
     eligible_members = [
         {
@@ -122,6 +124,9 @@ def get_non_alumni(user_dict=None):
             FreshmanAccount.eval_date > datetime.now())]
 
     for account in current_students:
+        if 'nsAccountLock' in account and account['nsAccountLock'].upper() == "TRUE":
+            continue
+
         eligible_members.append(
             {
                 'display': account['displayName'],
