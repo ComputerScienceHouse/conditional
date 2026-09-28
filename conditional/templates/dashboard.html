@@ -6,9 +6,9 @@ Dashboard
 <div class="container main mt-4">
     <div class="card mb-4 bg-body-tertiary">
         <div class="card-body dashboard-user">
-            <div class="row">
-                <div class="col-lg-2 col-sm-3 col-xs-12">
-                    <img class="object-fit-contain rounded-circle w-100 h-100" alt="{{ username }}'s profile" src="https://profiles.csh.rit.edu/image/{{username}}">
+            <div class="row text-center text-sm-start">
+                <div class="col-lg-2 col-sm-3 col-xs-12 mb-3 mb-sm-0">
+                    <img class="object-fit-contain rounded-circle w-100 h-100" style="max-width: 200px;" alt="{{ username }}'s profile" src="https://profiles.csh.rit.edu/image/{{username}}">
                 </div>
                 <div class="col-xs-12 col-sm-9 col-lg-10 d-flex flex-column justify-content-center">
                     <h3 class="username">{{ get_member_name(username) }}</h3>

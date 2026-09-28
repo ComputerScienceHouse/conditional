@@ -8,8 +8,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div id="navbar" class="navbar-collapse collapse text-light">
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item dropdown mx-1">
+            <ul class="navbar-nav align-items-start align-items-lg-center">
+                <li class="nav-item dropdown mx-1 my-1 my-lg-0">
                     <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-bar-chart-fill"></i> Evals
                     </button>
@@ -21,7 +21,7 @@
                         </li>
                         <li>
                             <a href="/spring_evals" class="dropdown-item">
-                                <i class="bi bi-tree-fill"></i> Membership Evaluations
+                                <i class="bi bi-tree-fill"></i> Spring Evals
                             </a>
                         </li>
                         <li>
@@ -36,7 +36,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown mx-1">
+                <li class="nav-item dropdown mx-1 my-1 my-lg-0">
                     <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-list-ul"></i> Forms
                     </button>
@@ -63,13 +63,13 @@
                     </ul>
                 </li>
 
-                <li class="nav-item mx-1">
+                <li class="nav-item mx-1 my-1 my-lg-0">
                     <a href="/housing" class="nav-link link-light">
                         <i class="bi bi-house-door-fill"></i> Housing
                     </a>
                 </li>
 
-                <li class="nav-item dropdown mx-1">
+                <li class="nav-item dropdown mx-1 my-1 my-lg-0">
                     <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-check2"></i> Attendance
                         {% if is_eboard and pending_review != 0 %}
@@ -105,7 +105,7 @@
                 </li>
 
                 {% if is_eboard or is_rtp%}
-                <li class="nav-item dropdown mx-1">
+                <li class="nav-item dropdown mx-1 my-1 my-lg-0">
                     <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bi bi-wrench"></i> Admin
                     </button>
@@ -163,8 +163,8 @@
                 {% endif %}
 
             </ul>
-            <div class="navbar-nav ms-auto align-items-center">
-                <div class="nav-item dropdown bd-theme">
+            <div class="navbar-nav ms-auto align-items-start align-items-lg-center">
+                <div class="nav-item dropdown bd-theme my-1 my-lg-0">
                     <button class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="theme-icon-active bi bi-circle-half"></i>
                         <span class="bd-theme-text">
@@ -186,7 +186,7 @@
                         </button>
                     </ul>
                 </div>
-                <div class="nav-item dropdown">
+                <div class="nav-item dropdown my-1 my-lg-0">
                     <button class="dropdown-toggle nav-link link-light" data-bs-toggle="dropdown" aria-expanded="false">
                         <img alt="{{ username }}'s profile" src="https://profiles.csh.rit.edu/image/{{username}}" class="rounded-circle" width="30px" height="30px">
                         <span>

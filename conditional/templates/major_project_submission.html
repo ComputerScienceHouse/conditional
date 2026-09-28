@@ -11,9 +11,8 @@ Major Project Form
 
 {% block body %}
 
-<div class="container my-5">
-    
-    <h3 class="mb-4">Major Project Form</h3>
+<div class="container main">
+    <h3 class="page-title">Major Project Form</h3>
     
     <p class="mb-4">
         Welcome to the Major Project submission form! We're excited to read about what you've
@@ -34,36 +33,44 @@ Major Project Form
     <form data-module="majorProjectForm">
         <div class="card mb-4 mp-form bg-body-tertiary">
             <div class="card-body">
-                <label for="name" class="form-label d-block h5 mt-4">
-                    Project Name
-                </label>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="name" class="form-label d-block h5">
+                            Project Name
+                        </label>
+                        
+                        <input
+                            class="form-control bg-body-secondary"
+                            id="name"
+                            name="name"
+                            type="text"
+                            maxlength="64"
+                            placeholder="A clever name for your project, sometimes people will come up with an acronym."
+                            required
+                        >
+                    </div>
+                </div>
                 
-                <input
-                    class="form-control mb-4 bg-body-secondary"
-                    id="name"
-                    name="name"
-                    type="text"
-                    maxlength="64"
-                    placeholder="A clever name for your project, sometimes people will come up with an acronym."
-                    required
-                >
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <label for="tldr" class="d-block h5">
+                            Short Description / TL;DR
+                        </label>
+                        
+                        <input
+                            class="form-control bg-body-secondary"
+                            id="tldr"
+                            name="tldr"
+                            type="text"
+                            maxlength="64"
+                            placeholder="A quick, one-sentence pitch for your project and what it does."
+                            required
+                        >
+                    </div>
+                </div>
                 
-                <label for="tldr" class="d-block h5 mt-4 mb-2">
-                    Short Description / TL;DR
-                </label>
-                
-                <input
-                    class="form-control bg-body-secondary"
-                    id="tldr"
-                    name="tldr"
-                    type="text"
-                    maxlength="64"
-                    placeholder="A quick, one-sentence pitch for your project and what it does."
-                    required
-                >
-                
-                <div class="row mt-4">
-                    <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-6 mt-3">
                         
                         <label for="skill-input" class="d-block h5 mb-0">
                             Skills Applied &MediumSpace;
@@ -95,7 +102,7 @@ Major Project Form
                         </div>
                     </div>
                     
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 mt-3">
                         <label for="time-commitment" class="d-block h5 mb-2">
                             Time Commitment
                         </label>
@@ -110,22 +117,26 @@ Major Project Form
                         ></textarea>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <label for="description" class="d-block h5 mb-2">
+                            Detailed Description
+                        </label>
+                        
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="6"
+                            class="form-control mb-extra bg-body-secondary"
+                            placeholder="Tell us everything! More information is better than less."
+                            required
+                        ></textarea>
+                    </div>
+                </div>
                 
-                <label for="description" class="d-block h5 mb-2">
-                    Detailed Description
-                </label>
-                
-                <textarea
-                    id="description"
-                    name="description"
-                    rows="6"
-                    class="form-control mb-extra bg-body-secondary"
-                    placeholder="Tell us everything! More information is better than less."
-                    required
-                ></textarea>
-                
-                <div class="row mt-3">
-                    <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-6 mt-3">
                         <label for="links" class="d-block h5 mb-2">
                             Project Links
                         </label>
@@ -139,8 +150,12 @@ Major Project Form
                         ></textarea>
                     </div>
                     
-                    <div class="col-lg-6">
-                        <div class="dropzone border rounded text-center p-4 bg-body-secondary" id="project-files">
+                    <div class="col-lg-6 mt-3">
+                        <label for="project-files" class="d-block h5 mb-2">
+                            Upload Media
+                        </label>
+
+                        <div class="dropzone border rounded text-center bg-body-secondary m-0" id="project-files">
                             <div class="dz-message">
                                 <img src="../images/photo_video.svg" width="72" alt="" class="mb-2">
                                 
@@ -268,19 +283,19 @@ Major Project Form
         <div class="collapse" id="evalsCollapse-{{p['id']}}">
             <div class="container-fluid px-3 border-top pt-3">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-2">
                         <h5><strong>TLDR</strong></h5>
                         <p class="h6 mb-0">{{p['tldr']}}</p>
                     </div>
                     
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-2">
                         <h5><strong>Time Commitment</strong></h5>
                         <p class="h6 mb-0">{{p['time_spent']}}</p>
                     </div>
                 </div>
                 
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-2">
                         <h5><strong>Skills</strong></h5>
                         <div class="skill-group">
                             {% for s in p['skills'] %}
@@ -291,7 +306,7 @@ Major Project Form
                         </div>
                     </div>
                     
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-2">
                         <h5><strong>Links</strong></h5>
                         {% for l in p['links'] %}
                             {% set href = l %}
@@ -304,7 +319,7 @@ Major Project Form
                 </div>
                 
                 <div class="row">
-                    <div class="col-md-12 ">
+                    <div class="col-md-12">
                         <h5><strong>Description</strong></h5>
                         <p class="6 text-wrap">{{p['desc']}}</p>
                     </div>
