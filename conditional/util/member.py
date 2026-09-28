@@ -307,7 +307,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberCommitteeAttendance.uid == username,
-            bool(CommitteeMeeting.approved),
+            CommitteeMeeting.approved,
             CommitteeMeeting.timestamp >= semester_start,
         )
         .count()
@@ -320,7 +320,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberSeminarAttendance.uid == username,
-            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.approved,
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()
@@ -333,7 +333,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberSeminarHost.uid == username,
-            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.approved,
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()
