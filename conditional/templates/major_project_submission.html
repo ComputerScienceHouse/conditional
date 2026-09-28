@@ -185,7 +185,8 @@ Major Project Form
             parallelUploads: 2,
             uploadMultiple: true,
             acceptedFiles: "image/*",
-            previewsContainer: null
+            previewsContainer: null,
+            addRemoveLinks: true,
         }
     </script>
     <hr class="my-5">
@@ -321,7 +322,8 @@ Major Project Form
                 <div class="row">
                     <div class="col-md-12">
                         <h5><strong>Description</strong></h5>
-                        <p class="6 text-wrap">{{p['desc']}}</p>
+
+                        <p class="text-wrap">{{p['desc'] | safe}}</p>
                     </div>
                 </div>
                 
