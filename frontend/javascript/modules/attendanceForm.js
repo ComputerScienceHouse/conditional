@@ -37,7 +37,7 @@ export default class AttendanceForm {
 
     // Form submit handler
     this.form.querySelectorAll("input[type=submit]").forEach(submitBtn => {
-      submitBtn.addEventListener("click", this.submitButtonHandler);
+      submitBtn.addEventListener("click", (e) => this.submitButtonHandler(e));
     });
   }
 
