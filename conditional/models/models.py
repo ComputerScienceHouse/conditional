@@ -58,12 +58,14 @@ class CommitteeMeeting(db.Model):
                             'R&D', 'House Improvements', 'Financial',
                             'Public Relations', 'Chairman', 'Ad-Hoc', name="committees_enum"),
                        nullable=False)
+    adhoc = Column(String, nullable=True)
     timestamp = Column(DateTime, nullable=False)
     approved = Column(Boolean, nullable=False)
     active = Column(Boolean)
 
-    def __init__(self, committee, timestamp, approved):
+    def __init__(self, committee, adhoc, timestamp, approved):
         self.committee = committee
+        self.adhoc = adhoc
         self.timestamp = timestamp
         self.approved = approved
         self.active = True

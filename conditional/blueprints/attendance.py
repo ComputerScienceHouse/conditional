@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import structlog
 from flask import Blueprint, jsonify, redirect, request
@@ -177,6 +177,25 @@ def display_attendance_hm(user_dict=None):
                            members=get_non_alumni_non_coop(internal=True))
 
 
+@attendance_bp.route('/attendance/adhoc_history', methods=['GET'])
+@auth.oidc_auth("default")
+@get_user
+def get_adhoc_history(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Retrieve Ad-Hoc Committee Meeting History')
+
+    adhoc_meetings = db.session.query(CommitteeMeeting.adhoc).filter(
+        CommitteeMeeting.adhoc.isnot(None),
+        CommitteeMeeting.timestamp > datetime.now() - timedelta(days=365)
+    ).distinct().all()
+
+    print(adhoc_meetings)
+
+    adhoc_names = [row[0] for row in adhoc_meetings]
+
+    return jsonify({"adhocs": adhoc_names}), 200
+
+
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
@@ -190,11 +209,12 @@ def submit_committee_attendance(user_dict=None):
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
     timestamp = post_data['timestamp']
+    adhoc = post_data.get('adhoc', None)
 
     log.info(f'Submit {committee} Meeting Attendance')
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
-    meeting = CommitteeMeeting(committee, timestamp, approved)
+    meeting = CommitteeMeeting(committee, adhoc, timestamp, approved)
 
     db.session.add(meeting)
     db.session.flush()
