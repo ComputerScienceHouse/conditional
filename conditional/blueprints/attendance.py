@@ -189,8 +189,6 @@ def get_adhoc_history(user_dict=None):
         CommitteeMeeting.timestamp > datetime.now() - timedelta(days=365)
     ).distinct().all()
 
-    print(adhoc_meetings)
-
     adhoc_names = [row[0] for row in adhoc_meetings]
 
     return jsonify({"adhocs": adhoc_names}), 200
@@ -445,6 +443,7 @@ def attendance_history(user_dict=None):
     limit = int(page)*10
     all_cm = [{"id": m.id,
                "name": m.committee,
+               "adhoc": m.adhoc,
                "dt_obj": m.timestamp,
                "date": m.timestamp.strftime("%a %m/%d/%Y"),
                "attendees": get_meeting_attendees(m.id),
@@ -464,6 +463,7 @@ def attendance_history(user_dict=None):
                    TechnicalSeminar.approved).all()]
     pend_cm = [{"id": m.id,
                 "name": m.committee,
+                "adhoc": m.adhoc,
                 "dt_obj": m.timestamp,
                 "date": m.timestamp.strftime("%a %m/%d/%Y"),
                 "attendees": get_meeting_attendees(m.id)

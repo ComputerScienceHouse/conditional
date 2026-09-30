@@ -15,9 +15,6 @@ export default class AttendanceForm {
     if (this.form.dataset.type === "committee") {
       this.endpoint = '/attendance/submit/cm';
       this.fields.committee = this.form.elements.committee;
-      if (this.fields.committee.value === "Ad-Hoc") {
-        this.fields.adhoc = this.form.elements.adhoc;
-      }
     } else if (this.form.dataset.type === "seminar") {
       this.endpoint = '/attendance/submit/ts';
       this.fields.name = this.form.elements.name;
@@ -43,6 +40,11 @@ export default class AttendanceForm {
       submitBtn.addEventListener("click", e => {
         e.preventDefault();
         let payload = {};
+
+
+        if (this.fields.committee.value === "Ad-Hoc") {
+          this.fields.adhoc = this.form.elements.adhoc;
+        }
 
         Object.keys(this.fields).forEach(field => {
           if (field === "attendees") {

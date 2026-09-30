@@ -505,7 +505,7 @@ Dashboard
             <tbody>
                 {% for meeting in cm_attendance %}
                 <tr>
-                    <td>{{meeting['committee']}}</td>
+                    <td class="text-truncate">{{meeting['committee']}}{% if meeting['committee'] == "Ad-Hoc" %} - {{meeting['adhoc']}}{% endif %}</td>
                     <td>{{meeting['timestamp'].strftime('%Y-%m-%d')}}</td>
                 </tr>
                 {% endfor %}
