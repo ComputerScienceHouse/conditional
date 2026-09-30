@@ -11,7 +11,12 @@ Attendance History
         <div class="panel-body eval-panel">
             <div class="container-fluid">
             	<div class="col-xs-12 col-sm-3 vcenter">
-                    <h5 class="text-truncate">{{meeting["name"]}}{% if meeting["name"] == "Ad-Hoc" %} - {{meeting["adhoc"]}}{% endif %}</h5>
+                    <h5 class="text-truncate">
+                        {{meeting["name"]}}
+                        {% if meeting["name"] == "Ad-Hoc" %}
+                         - {{meeting["adhoc"]}}
+                        {% endif %}
+                    </h5>
             		<p>{{meeting["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
@@ -69,7 +74,12 @@ Attendance History
         <div class="panel-body eval-panel">
             <div class="container-fluid">
             	<div class="col-xs-12 col-sm-3 vcenter">
-                    <h5 class="text-truncate">{{meeting["name"]}}{% if meeting["name"] == "Ad-Hoc" %} - {{meeting["adhoc"]}}{% endif %}</h5>
+                    <h5 class="text-truncate">
+                        {{meeting["name"]}}
+                        {% if meeting["name"] == "Ad-Hoc" %}
+                         - {{meeting["adhoc"]}}
+                        {% endif %}
+                    </h5>
             		<p>{{meeting["date"]}}<p>
             	</div><!--
                 --><div class="com-xs-12 col-sm-7 vcenter">
