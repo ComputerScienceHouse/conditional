@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import structlog
 from flask import Blueprint, jsonify, redirect, request
@@ -186,7 +186,7 @@ def get_adhoc_history(user_dict=None):
 
     adhoc_meetings = db.session.query(CommitteeMeeting.adhoc).filter(
         CommitteeMeeting.adhoc.isnot(None),
-        CommitteeMeeting.timestamp > datetime.now() - timedelta(days=365)
+        CommitteeMeeting.timestamp > start_of_year()
     ).distinct().all()
 
     adhoc_names = [row[0] for row in adhoc_meetings]
