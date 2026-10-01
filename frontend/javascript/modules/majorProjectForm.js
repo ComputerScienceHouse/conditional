@@ -1,13 +1,20 @@
 import FetchUtil from "../utils/fetchUtil";
 
-export default class MajorProjectForm {
+const CACHE_KEY = "majorProjectCache"
 
+export default class MajorProjectForm {
 
     constructor(form) {
         this.form = form;
         this.endpoint = '/major_project/submit';
         this.tags_written = false;
         this.tag_keys = ["Enter", "Comma", "Tab"];
+	this.saveState;
+	try {
+	    this.saveState = JSON.parse(localStorage.getItem(CACHE_KEY));
+	} catch (e) {
+	    console.error(e)
+	}
         this.render();
     }
 
@@ -18,7 +25,27 @@ export default class MajorProjectForm {
             .addEventListener('focusout', e => this.onWriteSkill(e));
         this.form.querySelector('input[id=skill-input]')
             .addEventListener('keypress', e => this.onKeyPress(e));
+	this.form.addEventListener('input', e => this.onInput());
+	if (this.saveState) {
+	    for (const [key, value] of Object.entries(this.saveState)) {
+		if (key === 'skill-list') {
+		    value.forEach((skill) => this.addSkill(skill));
+		    this.tags_written = true;
+		    continue;
+		}
+	        this.form.querySelector(`*[name=${key}]`).value = value;
+	    }
+	}
     }
+
+    onInput() {
+        const formData = new FormData(this.form);
+	const cachedSkills = JSON.parse(localStorage.getItem(CACHE_KEY))["skill-list"];
+        const formDataObject = Object.fromEntries(formData.entries());
+	formDataObject['skill-list'] = this.getSkills();
+	localStorage.setItem(CACHE_KEY, JSON.stringify(formDataObject));
+    }
+
 
     onKeyPress(e) {
         if (this.tag_keys.includes(e.code)) {
@@ -26,6 +53,24 @@ export default class MajorProjectForm {
             this.onWriteSkill(e);
         }
         return false;
+    }
+
+    getSkills() {
+	let skills = [];
+
+        for (const tag of this.form.getElementsByClassName('skill-tag')) {
+            skills.push(tag.textContent);
+        }
+
+	return skills;
+    }
+
+    addSkill(skill) {
+        let input = document.getElementById("skill-input")
+        let txt = skill.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters Skillslist
+        if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
+        let skills = this.form.getElementsByClassName("skill-tag")
+        skills.item(skills.length - 1).addEventListener('click', e => this.onRemoveTag(e));
     }
 
     onWriteSkill(e) {
@@ -36,27 +81,23 @@ export default class MajorProjectForm {
             const firstTag = document.getElementsByClassName("skill-tag").item(0);
             if (firstTag) firstTag.remove();
         }
-        
-        let txt = input.value.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
-        if (txt) input.insertAdjacentHTML("beforebegin", '<span class="skill-tag" id=f"ski">' + txt + '</span>');
-        let skills = this.form.getElementsByClassName("skill-tag")
-        skills.item(skills.length - 1).addEventListener('click', e => this.onRemoveTag(e));
+        this.addSkill(input.value);
         input.value = "";
+	this.onInput()
+
     }
 
     onRemoveTag(e) {
         e.target.remove();
+        this.onInput();
     }
 
     _submitForm(e) {
         e.preventDefault();
 
-        let skills = [];
+        const skills = this.getSkills();
 
-        for (const tag of this.form.getElementsByClassName('skill-tag')) {
-            skills.push(tag.textContent);
-        }
-        
+
         let projectName = this.form.querySelector('input[name=name]').value;
         let projectTldr = this.form.querySelector('input[name=tldr]').value;
         let projectTimeSpent = this.form.querySelector('textarea[name=time-commitment]').value;
