@@ -40,7 +40,6 @@ export default class MajorProjectForm {
 
     onInput() {
         const formData = new FormData(this.form);
-	const cachedSkills = JSON.parse(localStorage.getItem(CACHE_KEY))["skill-list"];
         const formDataObject = Object.fromEntries(formData.entries());
 	formDataObject['skill-list'] = this.getSkills();
 	localStorage.setItem(CACHE_KEY, JSON.stringify(formDataObject));
@@ -92,6 +91,21 @@ export default class MajorProjectForm {
         this.onInput();
     }
 
+    clearForm() {
+        const skills = this.form.getElementsByClassName("skill-tag");
+        Array.from(skills).forEach(tag => tag.remove());
+        for (const [key, value] of Object.entries(this.saveState)) {
+	    if (key === 'skill-list') {
+		// We already cleaned the skills ^^
+		continue;
+	    }
+	    this.form.querySelector(`*[name=${key}]`).value = "";
+	}
+	this.tags_written = false;
+        localStorage.removeItem(CACHE_KEY);
+    }
+
+
     _submitForm(e) {
         e.preventDefault();
 
@@ -131,6 +145,6 @@ export default class MajorProjectForm {
             warningText: "You will not be able to edit your " +
                 "project once it has been submitted.",
             successText: "Your project has been submitted."
-        });
+        }, () => this.clearForm());
     }
 }
