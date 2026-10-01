@@ -30,13 +30,27 @@ Directorship Meeting Attendance
                 </div>
             </div>
         </div>
+        <!-- Ad-Hoc Name -->
+        <div class="row" id="adhoc-row" style="display: none;">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="padding-top:10px;">
+                        <div class="form-group">
+                            <label for="adhoc" class="control-label" id="adhocLabel">Ad-Hoc Name</label>
+                            <input type="text" name="adhoc" class="form-control" data-src="adhoc_history" data-follow="select[name=committee]" data-parent="adhoc-row" data-module="adhoc" list="adhoc-options" placeholder="Enter the Ad-Hoc name here."/>
+                            <datalist id="adhoc-options"></datalist>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Date -->
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:10px;">
                         <div class="form-group is-empty">
-                            <label for="date" class=" control-label">Date</label>
+                            <label for="date" class="control-label">Date</label>
                             <input type="text" name="date" class="form-control" value="{{date}}" data-module="datepicker"/>
                         </div>
                     </div>
@@ -49,7 +63,7 @@ Directorship Meeting Attendance
                 <div class="panel panel-default">
                     <div class="panel-body" style="padding-top:20px;">
                         <div class="form-group is-empty">
-                            <label for="attendees" class=" control-label" id="attendeeLabel">Attendees</label>
+                            <label for="attendees" class="control-label" id="attendeeLabel">Attendees</label>
                             <input type="text" name="attendees" class="form-control" data-module="memberSelect" data-src="cm_members"/>
                         </div>
                     </div>
