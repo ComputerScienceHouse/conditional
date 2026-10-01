@@ -156,6 +156,7 @@ class MajorProject(db.Model):
     uid = Column(String(32), nullable=False, index=True)
     name = Column(String(64), nullable=False)
     tldr = Column(String(128), nullable=True)
+    ai_usage = Column(Text, nullable=False)
     time_spent = Column(Text, nullable=True)
     description = Column(Text, nullable=False)
     links = Column(Text, nullable=True)
@@ -164,11 +165,12 @@ class MajorProject(db.Model):
                          name="major_project_enum"),
                     nullable=False)
 
-    def __init__(self, uid, name, tldr, time_spent, description, links): # pylint: disable=too-many-positional-arguments
+    def __init__(self, uid, name, tldr, ai_usage, time_spent, description, links): # pylint: disable=too-many-positional-arguments
         self.uid = uid
         self.date = datetime.now()
         self.name = name
         self.tldr = tldr
+        self.ai_usage = ai_usage
         self.time_spent = time_spent
         self.description = description
         self.links = links
