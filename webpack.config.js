@@ -2,10 +2,13 @@ const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin')
 const path = require('path');
 const sass = require('sass');
+const dotenv = require('dotenv');
 
 var jsSrc = path.resolve('./frontend');
 var jsDest = path.resolve('./conditional/static');
 var publicPath = 'static/js';
+
+dotenv.config();
 
 var babelQuery = {
   "presets": ["@babel/preset-env"],
@@ -25,7 +28,8 @@ var webpackConfig = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production')
+        'NODE_ENV': JSON.stringify('production'),
+        'SENTRY_ENV': JSON.stringify(process.env.CONDITIONAL_SENTRY_ENV || "local-development")
       }
     }),
     new CopyPlugin({
