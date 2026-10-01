@@ -9,12 +9,12 @@ export default class MajorProjectForm {
         this.endpoint = '/major_project/submit';
         this.tags_written = false;
         this.tag_keys = ["Enter", "Comma", "Tab"];
-	this.saveState;
-	try {
-	    this.saveState = JSON.parse(localStorage.getItem(CACHE_KEY));
-	} catch (e) {
-	    console.error(e)
-	}
+        try {
+            this.saveState = JSON.parse(localStorage.getItem(CACHE_KEY));
+        } catch (e) {
+            console.error(e);
+            this.saveState = {};
+        }
         this.render();
     }
 
@@ -25,24 +25,24 @@ export default class MajorProjectForm {
             .addEventListener('focusout', e => this.onWriteSkill(e));
         this.form.querySelector('input[id=skill-input]')
             .addEventListener('keypress', e => this.onKeyPress(e));
-	this.form.addEventListener('input', e => this.onInput());
-	if (this.saveState) {
-	    for (const [key, value] of Object.entries(this.saveState)) {
-		if (key === 'skill-list') {
-		    value.forEach((skill) => this.addSkill(skill));
-		    this.tags_written = true;
-		    continue;
-		}
-	        this.form.querySelector(`*[name=${key}]`).value = value;
-	    }
-	}
+        this.form.addEventListener('input', e => this.onInput());
+        if (this.saveState) {
+            for (const [key, value] of Object.entries(this.saveState)) {
+                if (key === 'skill-list') {
+                    value.forEach((skill) => this.addSkill(skill));
+                    this.tags_written = true;
+                    continue;
+                }
+                this.form.querySelector(`*[name=${key}]`).value = value;
+            }
+        }
     }
 
     onInput() {
         const formData = new FormData(this.form);
         const formDataObject = Object.fromEntries(formData.entries());
-	formDataObject['skill-list'] = this.getSkills();
-	localStorage.setItem(CACHE_KEY, JSON.stringify(formDataObject));
+        formDataObject['skill-list'] = this.getSkills();
+        localStorage.setItem(CACHE_KEY, JSON.stringify(formDataObject));
     }
 
 
@@ -55,13 +55,13 @@ export default class MajorProjectForm {
     }
 
     getSkills() {
-	let skills = [];
+        let skills = [];
 
         for (const tag of this.form.getElementsByClassName('skill-tag')) {
             skills.push(tag.textContent);
         }
 
-	return skills;
+        return skills;
     }
 
     addSkill(skill) {
@@ -82,7 +82,7 @@ export default class MajorProjectForm {
         }
         this.addSkill(input.value);
         input.value = "";
-	this.onInput()
+        this.onInput()
 
     }
 
@@ -95,13 +95,13 @@ export default class MajorProjectForm {
         const skills = this.form.getElementsByClassName("skill-tag");
         Array.from(skills).forEach(tag => tag.remove());
         for (const [key, value] of Object.entries(this.saveState)) {
-	    if (key === 'skill-list') {
-		// We already cleaned the skills ^^
-		continue;
-	    }
-	    this.form.querySelector(`*[name=${key}]`).value = "";
-	}
-	this.tags_written = false;
+            if (key === 'skill-list') {
+                // We already cleaned the skills ^^
+                continue;
+            }
+            this.form.querySelector(`*[name=${key}]`).value = "";
+        }
+        this.tags_written = false;
         localStorage.removeItem(CACHE_KEY);
     }
 
