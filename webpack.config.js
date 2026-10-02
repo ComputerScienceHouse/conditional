@@ -29,7 +29,7 @@ var webpackConfig = {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production'),
-        'SENTRY_ENV': JSON.stringify(process.env.CONDITIONAL_SENTRY_ENV || "local-development")
+        'SENTRY_ENV': JSON.stringify(process.env.CONDITIONAL_SENTRY_ENV ?? "local-development")
       }
     }),
     new CopyPlugin({
