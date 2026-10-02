@@ -65,7 +65,7 @@ def get_freshman_data(user_name):
     return freshman
 
 def get_onfloor_members() -> set[str]:
-    return set(ldap.get_group_member_uids(groups=['onfloor', 'active'], excluded_groups=[]))
+    return set(ldap.get_group_member_uids(groups=['onfloor', 'active']))
 
 def get_cm(member):
     query_result = CommitteeMeeting.query.join(

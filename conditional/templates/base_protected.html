@@ -18,8 +18,7 @@
     </head>
 
     <body>
-        {% block nav %}
-        {% endblock %}
+        {% include "nav.html" %}
         {% if not lockdown %}
             {% block body %}
             {% endblock %}
@@ -35,8 +34,9 @@
         </div>
         {% endif %}
 
-        <footer>
-            <a class="footer-version" href="https://github.com/ComputerScienceHouse/conditional/tree/v{{config["VERSION"]}}">Conditional (v{{config["VERSION"]}})</a>
+        <footer class="text-center mt-5 mb-4">
+            <a class="link-primary text-body-secondary text-decoration-none text-center"
+                href="https://github.com/ComputerScienceHouse/conditional/tree/v{{config["VERSION"]}}">Conditional (v{{config["VERSION"]}})</a>
         </footer>
         <script src="/static/js/app.js"></script>
     </body>
