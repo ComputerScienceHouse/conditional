@@ -13,6 +13,9 @@ Attendance History
                 <div class="col-xs-12 col-sm-3 d-flex flex-column justify-content-center">
                     <h5 class="mb-0">
                         {{ meeting["name"] }}
+                        {% if meeting["name"] == "Ad-Hoc" %}
+                         - {{ meeting["adhoc"] }}
+                        {% endif %}
                     </h5>
                     <p class="mb-0">
                         {{ meeting["date"] }}
@@ -83,6 +86,9 @@ Attendance History
                 <div class="col-xs-12 col-sm-3 d-flex flex-column justify-content-center">
                     <h5 class="mb-0">
                         {{ meeting["name"] }}
+                        {% if meeting["name"] == "Ad-Hoc" %}
+                         - {{ meeting["adhoc"] }}
+                        {% endif %}
                     </h5>
                     <p class="mb-0">
                         {{ meeting["date"] }}

@@ -22,6 +22,12 @@ Directorship Meeting Attendance
                 <option value="Public Relations">Public Relations</option>
             </select>
         </div>
+        <!-- Ad-Hoc Name -->
+        <div class="form-group mb-3 d-none" id="adhoc-row">
+            <label for="adhoc" class="form-label">Ad-Hoc Name</label>
+            <input type="text" name="adhoc" class="form-control" data-src="adhoc_history" data-follow="select[name=committee]" data-parent="adhoc-row" data-module="adhoc" list="adhoc-options" placeholder="Enter the Ad-Hoc name here."/>
+            <datalist id="adhoc-options"></datalist>
+        </div>
         <!-- Date -->
         <div class="form-group mb-3">
             <label for="date" class="form-label">Date</label>

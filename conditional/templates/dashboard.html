@@ -537,6 +537,9 @@ Dashboard
                             <tr>
                                 <td>
                                     {{ meeting['committee'] }}
+                                    {% if meeting['committee'] == "Ad-Hoc" %}
+                                     - {{ meeting['adhoc'] }}
+                                    {% endif %}
                                 </td>
                                 <td data-sort="{{ meeting['timestamp'] }}">
                                     {{ meeting['timestamp'].strftime('%Y-%m-%d') }}

@@ -180,6 +180,23 @@ def display_attendance_hm(user_dict=None):
                            members=members)
 
 
+@attendance_bp.route('/attendance/adhoc_history', methods=['GET'])
+@auth.oidc_auth("default")
+@get_user
+def get_adhoc_history(user_dict=None):
+    log = logger.new(request=request, auth_dict=user_dict)
+    log.info('Retrieve Ad-Hoc Committee Meeting History')
+
+    adhoc_meetings = db.session.query(CommitteeMeeting.adhoc).filter(
+        CommitteeMeeting.adhoc.isnot(None),
+        CommitteeMeeting.timestamp > start_of_year()
+    ).distinct().all()
+
+    adhoc_names = [row[0] for row in adhoc_meetings]
+
+    return jsonify({"adhocs": adhoc_names}), 200
+
+
 @attendance_bp.route('/attendance/submit/cm', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
@@ -193,11 +210,12 @@ def submit_committee_attendance(user_dict=None):
     m_attendees = post_data['members']
     f_attendees = post_data['freshmen']
     timestamp = post_data['timestamp']
+    adhoc = post_data.get('adhoc', None)
 
     log.info(f'Submit {committee} Meeting Attendance')
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d")
-    meeting = CommitteeMeeting(committee, timestamp, approved)
+    meeting = CommitteeMeeting(committee, adhoc, timestamp, approved)
 
     db.session.add(meeting)
     db.session.flush()
@@ -448,6 +466,7 @@ def attendance_history(user_dict=None):
     limit = int(page) * page_size
     all_cm = [{"id": m.id,
                "name": m.committee,
+               "adhoc": m.adhoc,
                "dt_obj": m.timestamp,
                "date": m.timestamp.strftime("%a %m/%d/%Y"),
                "attendees": get_meeting_attendees(m.id),
@@ -469,6 +488,7 @@ def attendance_history(user_dict=None):
 
     pend_cm = [{"id": m.id,
                 "name": m.committee,
+                "adhoc": m.adhoc,
                 "dt_obj": m.timestamp,
                 "date": m.timestamp.strftime("%a %m/%d/%Y"),
                 "attendees": get_meeting_attendees(m.id)
