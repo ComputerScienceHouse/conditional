@@ -4,18 +4,18 @@ const path = require('path');
 const sass = require('sass');
 const dotenv = require('dotenv');
 
-var jsSrc = path.resolve('./frontend');
-var jsDest = path.resolve('./conditional/static');
-var publicPath = 'static/js';
+const jsSrc = path.resolve('./frontend');
+const jsDest = path.resolve('./conditional/static');
+const publicPath = 'static/js';
 
 dotenv.config();
-
-var babelQuery = {
+const babelQuery = {
+  bootstrap-5
   "presets": ["@babel/preset-env"],
   "plugins": []
 }
 
-var webpackConfig = {
+const webpackConfig = {
   context: jsSrc,
   entry: ["./javascript/app.js"],
   devtool: "source-map",
@@ -82,9 +82,9 @@ var webpackConfig = {
         options: {
           sassOptions: {
             loadPaths: [
-              "./node_modules/csh-material-bootstrap/dist",
-              "./node_modules/csh-material-bootstrap/dist/css",
-              "./node_modules/datatables.net-bs/css",
+              // "./node_modules/csh-material-bootstrap/dist",
+              // "./node_modules/csh-material-bootstrap/dist/css",
+              "./node_modules/datatables.net-bs5/css",
               "./node_modules/bootstrap-material-datetimepicker/css",
               "./node_modules/load-awesome/css",
               "./node_modules/reveal.js/css",
@@ -112,8 +112,3 @@ var webpackConfig = {
 };
 
 module.exports = webpackConfig;
-//
-// webpack(webpackConfig, (err, stats) => {
-//   console.log("Done!")
-//   console.log(err, stats)
-// });
