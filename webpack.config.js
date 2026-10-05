@@ -10,7 +10,6 @@ const publicPath = 'static/js';
 
 dotenv.config();
 const babelQuery = {
-  bootstrap-5
   "presets": ["@babel/preset-env"],
   "plugins": []
 }
