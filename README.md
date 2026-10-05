@@ -70,7 +70,10 @@ python -m gunicorn
 
 ## Config
 
-You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
+Either copy `.env.example` to `.env` or `config.env.py` to `config.py`, and change the variables in the newly copied file accordingly. The only two variables you should need to change are:
+- LDAP_BIND_DN, replacing `<you>` for your username
+- LDAP_BIND_PW, your password
+- OIDC_CLIENT_SECRET, from the Wiki
 
 ### Add OIDC Config
 Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth

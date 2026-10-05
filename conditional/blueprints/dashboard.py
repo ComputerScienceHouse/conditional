@@ -54,9 +54,9 @@ def display_dashboard(user_dict=None):
                             "Active Members": len(ldap_get_active_member_uids())}
     # freshman shit
     if user_dict_is_intromember(user_dict):
-        data['freshman'] = get_freshman_data(uid)
+        data['intro'] = get_freshman_data(uid)
     else:
-        data['freshman'] = None
+        data['intro'] = None
 
     spring = {}
     c_meetings = get_cm(user_dict['account'])
@@ -163,8 +163,9 @@ def display_dashboard(user_dict=None):
 
     data['cm_attendance'] = c_meetings
     data['cm_attendance_len'] = len(c_meetings)
-    data['hm_attendance'] = hm_attendance
-    data['hm_attendance_len'] = len(hm_attendance)
+
+    data['missed_hm'] = hm_attendance
+    data['missed_hm_len'] = len(hm_attendance)
 
     gatekeep_info = gatekeep_values(uid)
     gatekeep_result = 'disenfranchised'
