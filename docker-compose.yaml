@@ -12,6 +12,9 @@ services:
         required: false
     volumes:
       - ./migrations:/opt/conditional/migrations
+    post_start:
+      - command: "flask db upgrade" 
+        working_dir: /opt/conditional
     develop:
       watch:
         - action: sync+restart
