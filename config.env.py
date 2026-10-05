@@ -9,11 +9,12 @@ with open(os.path.join(os.getcwd(), "package.json")) as package_file:
 
 # Flask config
 DEBUG = env.get("CONDITIONAL_DEBUG", "false").lower() == "true"
-HOST_NAME = env.get("CONDITIONAL_HOST_NAME", "conditional.csh.rit.edu")
-SERVER_NAME = env.get('CONDITIONAL_SERVER_NAME', 'conditional.csh.rit.edu')
+HOST_NAME = env.get("CONDITIONAL_HOST_NAME", "localhost:8080")
+SERVER_NAME = env.get("CONDITIONAL_SERVER_NAME", "localhost:8080")
 APP_NAME = "conditional"
 IP = env.get("CONDITIONAL_IP", "0.0.0.0")
-PORT = env.get("CONDITIONAL_PORT", 6969)
+PORT = env.get("CONDITIONAL_PORT", 8080)
+# This is for Slack, it can safely be blank
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
 DEV_DISABLE_SLACK_PING = env.get("DEV_DISABLE_SLACK_PING", "false") == "true"
 PROFILING = env.get("CONDITIONAL_PROFILING", "false").lower() == "true"
@@ -24,8 +25,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # LDAP config
 LDAP_RO = env.get("CONDITIONAL_LDAP_RO", "true").lower() == "true"
-LDAP_BIND_DN = env.get("CONDITIONAL_LDAP_BIND_DN", "cn=conditional,ou=Apps,dc=csh,dc=rit,dc=edu")
-LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "")
+LDAP_BIND_DN = env.get("CONDITIONAL_LDAP_BIND_DN", "uid=<you>,cn=users,cn=accounts,dc=csh,dc=rit,dc=edu")
+LDAP_BIND_PW = env.get("CONDITIONAL_LDAP_BIND_PW", "<your password>")
 
 # S3 information
 S3_URI = env.get("S3_URI", "https://s3.csh.rit.edu") # URL for where the s3 bucket is hosted
@@ -36,11 +37,11 @@ AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
 
 # Sentry config
 # Not required for local development, but if you set it, make sure the
-# SENTRY_ENV is 'local-development'
+# SENTRY_ENV is "local-development"
 SENTRY_DSN = env.get("CONDITIONAL_SENTRY_DSN", "")
 SENTRY_CONFIG = {
-    'dsn': env.get("CONDITIONAL_SENTRY_LEGACY_DSN", ""),
-    'release': VERSION,
+    "dsn": env.get("CONDITIONAL_SENTRY_LEGACY_DSN", ""),
+    "release": VERSION,
 }
 SENTRY_ENV = env.get("CONDITIONAL_SENTRY_ENV", "local-development")
 
@@ -48,15 +49,14 @@ SENTRY_ENV = env.get("CONDITIONAL_SENTRY_ENV", "local-development")
 OIDC_ISSUER = env.get("CONDITIONAL_OIDC_ISSUER", "https://sso.csh.rit.edu/auth/realms/csh")
 
 OIDC_CLIENT_CONFIG = {
-    'client_id': env.get("CONDITIONAL_OIDC_CLIENT_ID", "conditional"),
-    'client_secret': env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
-    'post_logout_redirect_uris': [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://0.0.0.0:8080/logout")],
+    "client_id": env.get("CONDITIONAL_OIDC_CLIENT_ID", "develop"),
+    "client_secret": env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
+    "redirect_uri": env.get("CONDITIONAL_OIDC_CLIENT_REDIRECT", "http://localhost:8080/redirect_uri"),
+    "post_logout_redirect_uris": [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://localhost:8080/logout")],
 }
 
-OIDC_REDIRECT_URI = env.get("CONDITIONAL_OIDC_REDIRECT_URI", "http://localhost:8080/redirect_uri")
-
 # Openshift secret
-SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default=''.join(secrets.token_hex(16)))
+SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default="".join(secrets.token_hex(16)))
 
 # General config
 DUES_PER_SEMESTER = env.get("CONDITIONAL_DUES_PER_SEMESTER", 80)
