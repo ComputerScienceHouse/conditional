@@ -98,13 +98,17 @@ AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
 ```
 
-### Database 
+### Database
 You can either develop using the dev database, or use the local database provided in the docker compose file
 
 Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
 
 ### Forcing evals/rtp or anything else
 All of the role checking is done in `conditional/utils/user_dict.py`, and you can change the various functions to `return True` for debugging
+
+### Using Sentry
+If you want to opt-into logging errors through Sentry then set the `CONDITIONAL_SENTRY_ENV` environment variable to anything other than `local-development`.
+Setting it to `local-development` or having the environment variable unset disables Sentry in both the frontend and backend (Re-building the container may be required).
 
 
 
