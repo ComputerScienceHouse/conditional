@@ -41,6 +41,11 @@ export default class AttendanceForm {
         e.preventDefault();
         let payload = {};
 
+
+        if (this.fields.committee.value === "Ad-Hoc") {
+          this.fields.adhoc = this.form.elements.adhoc;
+        }
+
         Object.keys(this.fields).forEach(field => {
           if (field === "attendees") {
             let membersSplit = MemberUtil.splitFreshmenUpperclassmen(

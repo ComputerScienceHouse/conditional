@@ -74,7 +74,8 @@ def get_cm(member):
     ).with_entities(
         MemberCommitteeAttendance.uid,
         CommitteeMeeting.timestamp,
-        CommitteeMeeting.committee
+        CommitteeMeeting.committee,
+        CommitteeMeeting.adhoc
     ).filter(
         CommitteeMeeting.timestamp > start_of_year(),
         MemberCommitteeAttendance.uid == member.uid,
@@ -84,7 +85,8 @@ def get_cm(member):
     c_meetings = [{
         "uid": cm.uid,
         "timestamp": cm.timestamp,
-        "committee": cm.committee
+        "committee": cm.committee,
+        "adhoc": cm.adhoc
     } for cm in query_result]
 
     return c_meetings
@@ -307,7 +309,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberCommitteeAttendance.uid == username,
-            bool(CommitteeMeeting.approved),
+            CommitteeMeeting.approved,
             CommitteeMeeting.timestamp >= semester_start,
         )
         .count()
@@ -320,7 +322,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberSeminarAttendance.uid == username,
-            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.approved,
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()
@@ -333,7 +335,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberSeminarHost.uid == username,
-            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.approved,
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()
