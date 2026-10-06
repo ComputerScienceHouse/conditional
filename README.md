@@ -141,7 +141,7 @@ If the database schema is changed after initializing the database, you must migr
 
 ```sh
 flask db upgrade
-# or, to run it inside the container for use with local databases (DO THIS
+# or, to run it inside the container for use with local databases (DO THIS)
 podman exec conditional flask db upgrade
 ```
 
@@ -150,8 +150,16 @@ At the same time, if you change the database schema, you must generate a new mig
 
 ```sh
 flask db migrate
-# or, to run it inside the container for use with local databases (DO THIS
+# or, to run it inside the container for use with local databases (DO THIS)
 podman exec conditional flask db migrate
+```
+
+If the migration doesn't get created you can also try 
+
+```sh 
+flask db revision --message "MESSAGE"
+# or, to run it inside the container for use with local databases (DO THIS)
+podman exec conditional flask db revision --message "MESSAGE"
 ```
 
 The new migration script in `migrations/versions` should be verified before being committed, as Alembic may not detect every change you make to the models.
