@@ -1,9 +1,8 @@
-/* global fetch */
 import 'whatwg-fetch';
 import Exception from '../exceptions/exception';
 import FetchException from '../exceptions/fetchException';
 import FetchUtil from '../utils/fetchUtil';
-import sweetAlert from '../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js'; // eslint-disable-line max-len
+import sweetAlert from '../../../node_modules/bootstrap-sweetalert/dev/sweetalert.es6.js';
 
 export default class HousingQueue {
   constructor(queuePanel) {
@@ -28,8 +27,8 @@ export default class HousingQueue {
     $(this.queueTable).off('init.dt');
 
     // Retrieve the queue table's DataTables API object
-    this.queueTableApi = $(this.queueTable).DataTable({ // eslint-disable-line new-cap
-      retrieve: true
+    this.queueTableApi = $(this.queueTable).DataTable({
+      retrieve: true,
     });
 
     // Add custom filtering function
@@ -43,12 +42,16 @@ export default class HousingQueue {
     const filterButton = this.queuePanel.querySelector('#queueFilterToggle');
     filterButton.addEventListener('click', () => {
       if (this.queueTable.dataset.show === 'all') {
-        filterButton.innerHTML =
-            filterButton.innerHTML.replace('Show Current Queue', 'Show All');
+        filterButton.innerHTML = filterButton.innerHTML.replace(
+          'Show Current Queue',
+          'Show All',
+        );
         this.queueTable.dataset.show = 'current';
       } else {
-        filterButton.innerHTML =
-            filterButton.innerHTML.replace('Show All', 'Show Current Queue');
+        filterButton.innerHTML = filterButton.innerHTML.replace(
+          'Show All',
+          'Show Current Queue',
+        );
         this.queueTable.dataset.show = 'all';
       }
 
@@ -57,49 +60,57 @@ export default class HousingQueue {
   }
 
   bindCheckboxes() {
-    this.queuePanel.querySelectorAll('.col-in-queue > input[type="checkbox"]')
-        .forEach(toggle => {
-          toggle.addEventListener('click', () => {
-            const row = toggle.parentNode.parentNode;
-            this.updateInQueue(toggle.dataset.uid, toggle.checked, row);
-          });
+    this.queuePanel
+      .querySelectorAll('.col-in-queue > input[type="checkbox"]')
+      .forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const row = toggle.parentNode.parentNode;
+          this.updateInQueue(toggle.dataset.uid, toggle.checked, row);
         });
+      });
   }
 
   updateInQueue(uid, inQueue, row) {
-    let payload = {
+    const payload = {
       uid: uid,
-      inQueue: inQueue
+      inQueue: inQueue,
     };
 
     fetch(this.endpoint, {
       method: 'PUT',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       credentials: 'same-origin',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     })
       .then(FetchUtil.checkStatus)
       .then(FetchUtil.parseJSON)
       .then(response => {
-        if (response.hasOwnProperty('success') &&
-          response.success === true) {
+        if (Object.hasOwn(response, 'success') && response.success === true) {
           if (inQueue) {
             row.classList.remove('disabled');
           } else {
             row.classList.add('disabled');
           }
         } else {
-          sweetAlert('Uh oh...', 'We\'re having trouble updating ' +
-            'the queue right now. Please try again later.', 'error');
+          sweetAlert(
+            'Uh oh...',
+            "We're having trouble updating " +
+              'the queue right now. Please try again later.',
+            'error',
+          );
           throw new Exception(FetchException.REQUEST_FAILED, response);
         }
       })
       .catch(error => {
-        sweetAlert('Uh oh...', 'We\'re having trouble updating ' +
-          'the queue right now. Please try again later.', 'error');
+        sweetAlert(
+          'Uh oh...',
+          "We're having trouble updating " +
+            'the queue right now. Please try again later.',
+          'error',
+        );
         throw new Exception(FetchException.REQUEST_FAILED, error);
       });
   }
@@ -110,8 +121,9 @@ export default class HousingQueue {
   static _inQueueFilter(settings, data, dataIndex) {
     // Check to see if we should apply the filter
     if (settings.nTable.dataset.show === 'current') {
-      return settings.aoData[dataIndex].anCells[2]
-            .querySelector('input[type=checkbox]').checked;
+      return settings.aoData[dataIndex].anCells[2].querySelector(
+        'input[type=checkbox]',
+      ).checked;
     }
 
     return true;
