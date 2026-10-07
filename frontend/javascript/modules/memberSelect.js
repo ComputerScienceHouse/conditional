@@ -1,10 +1,9 @@
-/* global fetch */
-import "whatwg-fetch";
-import "@selectize/selectize";
-import FetchUtil from "../utils/fetchUtil";
-import Exception from "../exceptions/exception";
-import AttendanceException from "../exceptions/attendanceException";
-import FetchException from "../exceptions/fetchException";
+import 'whatwg-fetch';
+import '@selectize/selectize';
+import FetchUtil from '../utils/fetchUtil';
+import Exception from '../exceptions/exception';
+import AttendanceException from '../exceptions/attendanceException';
+import FetchException from '../exceptions/fetchException';
 
 export default class MemberSelect {
   constructor(element) {
@@ -15,10 +14,10 @@ export default class MemberSelect {
       fetch('/attendance/' + this.dataSrc, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-        credentials: 'same-origin'
+        credentials: 'same-origin',
       })
         .then(FetchUtil.checkResponse)
         .then(FetchUtil.parseJSON)
@@ -44,7 +43,7 @@ export default class MemberSelect {
       labelField: 'display',
       searchField: 'display',
       selectOnTab: true,
-      options: this.members
+      options: this.members,
     });
   }
 }

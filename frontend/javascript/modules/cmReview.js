@@ -1,10 +1,9 @@
-/* global fetch */
 import 'whatwg-fetch';
-import Exception from "../exceptions/exception";
-import CmAttendanceException from "../exceptions/cmAttendanceException";
-import FetchUtil from "../utils/fetchUtil";
-import MemberUtil from "../utils/memberUtil";
-import MemberSelect from "./memberSelect";
+import Exception from '../exceptions/exception';
+import CmAttendanceException from '../exceptions/cmAttendanceException';
+import FetchUtil from '../utils/fetchUtil';
+import MemberUtil from '../utils/memberUtil';
+import MemberSelect from './memberSelect';
 
 export default class ReviewMeeting {
   constructor(link) {
@@ -17,7 +16,7 @@ export default class ReviewMeeting {
 
     this.endpoints = {
       meetingDetails: '/attendance/' + this.meeting + '/',
-      alterAttendance: '/attendance/alter/' + this.meeting + '/'
+      alterAttendance: '/attendance/alter/' + this.meeting + '/',
     };
 
     this.render();
@@ -30,73 +29,75 @@ export default class ReviewMeeting {
       fetch(this.endpoints.meetingDetails + this.cid, {
         method: 'GET',
         headers: {
-          Accept: 'application/json'
+          Accept: 'application/json',
         },
-        credentials: 'same-origin'
+        credentials: 'same-origin',
       })
-          .then(FetchUtil.checkStatus)
-          .then(FetchUtil.parseJSON)
-          .then(data => {
-            this.data = data;
-            this._renderModal();
-          });
+        .then(FetchUtil.checkStatus)
+        .then(FetchUtil.parseJSON)
+        .then(data => {
+          this.data = data;
+          this._renderModal();
+        });
     });
   }
 
   _renderModal() {
     // Clone template modal
     this.modal = this.modalTpl.cloneNode(true);
-    this.modal.setAttribute('id',
-        this.modal.getAttribute('id') + '-' + this.cid);
+    this.modal.setAttribute(
+      'id',
+      this.modal.getAttribute('id') + '-' + this.cid,
+    );
 
     // Submit button
-    this.modal.querySelector('input[type="submit"]').addEventListener('click',
-      e => {
+    this.modal
+      .querySelector('input[type="submit"]')
+      .addEventListener('click', e => {
         e.preventDefault();
         this._submitForm();
       });
 
     // Delete Button
-    this.modal.querySelector('button.delete-btn').addEventListener('click', e =>
-      this._deleteMeeting()
-    );
+    this.modal
+      .querySelector('button.delete-btn')
+      .addEventListener('click', () => this._deleteMeeting());
 
-    if (this.meeting == "ts") {
+    if (this.meeting === 'ts') {
       // Host
       const hostInput = this.modal.querySelector('input[name="host"]');
-      let hostStr = "";
+      let hostStr = '';
       this.data.host.forEach(h => {
-        hostStr += h.value + ",";
+        hostStr += h.value + ',';
       });
       hostInput.value = hostStr;
 
-
-      hostInput.dataset.src = "cm_members";
-      new MemberSelect(hostInput); // eslint-disable-line no-new
-    } else { // Hide host section if not technical seminar
-      this.modal.querySelector(".host-edit-row").style.display = "none";
+      hostInput.dataset.src = 'cm_members';
+      new MemberSelect(hostInput);
+    } else {
+      // Hide host section if not technical seminar
+      this.modal.querySelector('.host-edit-row').style.display = 'none';
     }
-    
 
     // Attendees
     const attendeesInput = this.modal.querySelector('input[name="attendees"]');
-    let attendeesStr = "";
+    let attendeesStr = '';
     this.data.attendees.forEach(attendee => {
-      attendeesStr += attendee.value + ",";
+      attendeesStr += attendee.value + ',';
     });
     attendeesInput.value = attendeesStr;
 
     // Initialize selector control
-    attendeesInput.dataset.src = "cm_members";
-    new MemberSelect(attendeesInput); // eslint-disable-line no-new
+    attendeesInput.dataset.src = 'cm_members';
+    new MemberSelect(attendeesInput);
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
     $(this.modal)
-        .on('hidden.bs.modal', e => {
-          document.getElementsByTagName('body')[0].removeChild(e.target);
-        })
-        .modal('show');
+      .on('hidden.bs.modal', e => {
+        document.getElementsByTagName('body')[0].removeChild(e.target);
+      })
+      .modal('show');
   }
 
   _submitForm() {
@@ -106,12 +107,12 @@ export default class ReviewMeeting {
       });
 
       // Save details
-      let payload = {};
-      let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
-        this.modal.querySelector('input[name="attendees"]').value.split(',')
+      const payload = {};
+      const membersSplit = MemberUtil.splitFreshmenUpperclassmen(
+        this.modal.querySelector('input[name="attendees"]').value.split(','),
       );
-      let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
-        this.modal.querySelector('input[name="host"]').value.split(",")
+      const hostSplit = MemberUtil.splitFreshmenUpperclassmen(
+        this.modal.querySelector('input[name="host"]').value.split(','),
       );
       payload.freshmen = membersSplit.freshmen;
       payload.members = membersSplit.upperclassmen;
@@ -121,17 +122,22 @@ export default class ReviewMeeting {
       fetch(this.endpoints.meetingDetails + this.cid + '/approve', {
         method: 'POST',
         headers: {
-          Accept: 'application/json'
+          Accept: 'application/json',
         },
-        credentials: 'same-origin'
+        credentials: 'same-origin',
       });
 
-      FetchUtil.post(this.endpoints.alterAttendance + this.cid, payload, {
-        successText: 'Attendance has been updated.'
-      }, () => {
-        $(this.modal).modal('hide');
-        window.location.reload();
-      });
+      FetchUtil.post(
+        this.endpoints.alterAttendance + this.cid,
+        payload,
+        {
+          successText: 'Attendance has been updated.',
+        },
+        () => {
+          $(this.modal).modal('hide');
+          window.location.reload();
+        },
+      );
     } else {
       throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
     }
@@ -144,17 +150,20 @@ export default class ReviewMeeting {
       });
 
       // Delete details
-      FetchUtil.fetchWithWarning(this.endpoints.meetingDetails + this.cid, {
-        method: 'DELETE',
-        warningText: "Attendance will be permanently deleted.",
-        successText: "Attendance has been deleted."
-      }, () => {
-        $(this.modal).modal('hide');
-        window.location.reload();
-      });
+      FetchUtil.fetchWithWarning(
+        this.endpoints.meetingDetails + this.cid,
+        {
+          method: 'DELETE',
+          warningText: 'Attendance will be permanently deleted.',
+          successText: 'Attendance has been deleted.',
+        },
+        () => {
+          $(this.modal).modal('hide');
+          window.location.reload();
+        },
+      );
     } else {
       throw new Exception(CmAttendanceException.SUBMIT_BEFORE_RENDER);
     }
   }
-
 }

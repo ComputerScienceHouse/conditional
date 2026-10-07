@@ -1,5 +1,5 @@
-import FetchUtil from "../utils/fetchUtil";
-import MemberUtil from "../utils/memberUtil";
+import FetchUtil from '../utils/fetchUtil';
+import MemberUtil from '../utils/memberUtil';
 
 export default class AttendanceForm {
   constructor(form) {
@@ -7,15 +7,15 @@ export default class AttendanceForm {
 
     this.fields = {
       timestamp: this.form.elements.date,
-      attendees: this.form.elements.attendees
+      attendees: this.form.elements.attendees,
     };
 
     this.endpoint = '';
 
-    if (this.form.dataset.type === "committee") {
+    if (this.form.dataset.type === 'committee') {
       this.endpoint = '/attendance/submit/cm';
       this.fields.committee = this.form.elements.committee;
-    } else if (this.form.dataset.type === "seminar") {
+    } else if (this.form.dataset.type === 'seminar') {
       this.endpoint = '/attendance/submit/ts';
       this.fields.name = this.form.elements.name;
       this.fields.host = this.form.elements.host;
@@ -27,35 +27,39 @@ export default class AttendanceForm {
   render() {
     // Prevent the form from submitting if the user hits the enter key
     ['keyup', 'keypress'].forEach(keyevent =>
-      this.form.addEventListener(keyevent, event => {
-        let keyCode = event.keyCode || event.which;
-        if (keyCode === 13) {
-          event.preventDefault();
-          return false;
-        }
-      }, true));
+      this.form.addEventListener(
+        keyevent,
+        event => {
+          const keyCode = event.keyCode || event.which;
+          if (keyCode === 13) {
+            event.preventDefault();
+            return false;
+          }
+        },
+        true,
+      ),
+    );
 
     // Form submit handler
-    this.form.querySelectorAll("input[type=submit]").forEach(submitBtn => {
-      submitBtn.addEventListener("click", e => {
+    this.form.querySelectorAll('input[type=submit]').forEach(submitBtn => {
+      submitBtn.addEventListener('click', e => {
         e.preventDefault();
-        let payload = {};
+        const payload = {};
 
-
-        if (this.fields.committee.value === "Ad-Hoc") {
+        if (this.fields.committee.value === 'Ad-Hoc') {
           this.fields.adhoc = this.form.elements.adhoc;
         }
 
         Object.keys(this.fields).forEach(field => {
-          if (field === "attendees") {
-            let membersSplit = MemberUtil.splitFreshmenUpperclassmen(
-              this.fields[field].value.split(',')
+          if (field === 'attendees') {
+            const membersSplit = MemberUtil.splitFreshmenUpperclassmen(
+              this.fields[field].value.split(','),
             );
             payload.freshmen = membersSplit.freshmen;
             payload.members = membersSplit.upperclassmen;
-          } else if (field === "host") {
-            let hostSplit = MemberUtil.splitFreshmenUpperclassmen(
-              this.fields[field].value.split(',')
+          } else if (field === 'host') {
+            const hostSplit = MemberUtil.splitFreshmenUpperclassmen(
+              this.fields[field].value.split(','),
             );
             payload.freshman_host = hostSplit.freshmen;
             payload.member_host = hostSplit.upperclassmen;
@@ -65,7 +69,7 @@ export default class AttendanceForm {
         });
 
         FetchUtil.post(this.endpoint, payload, {
-          successText: "Attendance has been submitted."
+          successText: 'Attendance has been submitted.',
         });
       });
     });

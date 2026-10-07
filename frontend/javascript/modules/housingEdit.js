@@ -1,9 +1,8 @@
-/* global fetch */
 import 'whatwg-fetch';
-import Exception from "../exceptions/exception";
-import HousingException from "../exceptions/housingException";
-import FetchUtil from "../utils/fetchUtil";
-import MemberSelect from "./memberSelect";
+import Exception from '../exceptions/exception';
+import HousingException from '../exceptions/housingException';
+import FetchUtil from '../utils/fetchUtil';
+import MemberSelect from './memberSelect';
 
 export default class EditHousing {
   constructor(link) {
@@ -16,7 +15,7 @@ export default class EditHousing {
     this.endpoints = {
       roomDetails: '/housing/room/',
       alterRoom: '/housing/update/',
-      memberDetails: '/member/'
+      memberDetails: '/member/',
     };
 
     this.render();
@@ -26,7 +25,7 @@ export default class EditHousing {
     this.link.addEventListener('click', e => {
       e.preventDefault();
 
-      if (this.rmnumber === "") {
+      if (this.rmnumber === '') {
         this.data = {};
         this.data.occupants = [];
         this._renderModal();
@@ -34,16 +33,16 @@ export default class EditHousing {
         fetch(this.endpoints.roomDetails + this.rmnumber, {
           method: 'GET',
           headers: {
-            Accept: 'application/json'
+            Accept: 'application/json',
           },
-          credentials: 'same-origin'
+          credentials: 'same-origin',
         })
-            .then(FetchUtil.checkStatus)
-            .then(FetchUtil.parseJSON)
-            .then(data => {
-              this.data = data;
-              this._renderModal();
-            });
+          .then(FetchUtil.checkStatus)
+          .then(FetchUtil.parseJSON)
+          .then(data => {
+            this.data = data;
+            this._renderModal();
+          });
       }
     });
   }
@@ -51,12 +50,15 @@ export default class EditHousing {
   _renderModal() {
     // Clone template modal
     this.modal = this.modalTpl.cloneNode(true);
-    this.modal.setAttribute('id',
-        this.modal.getAttribute('id') + '-' + this.rmnumber);
+    this.modal.setAttribute(
+      'id',
+      this.modal.getAttribute('id') + '-' + this.rmnumber,
+    );
 
     // Submit button
-    this.modal.querySelector('input[type="submit"]').addEventListener('click',
-      e => {
+    this.modal
+      .querySelector('input[type="submit"]')
+      .addEventListener('click', e => {
         e.preventDefault();
         this._submitForm();
       });
@@ -67,23 +69,23 @@ export default class EditHousing {
 
     // Occupants
     const occupantsInput = this.modal.querySelector('input[name="occupants"]');
-    let occupantsStr = "";
+    let occupantsStr = '';
     this.data.occupants.forEach(occupant => {
-      occupantsStr += occupant + ",";
+      occupantsStr += occupant + ',';
     });
     occupantsInput.value = occupantsStr;
 
     // Initialize selector control
-    occupantsInput.dataset.src = "cm_members";
-    new MemberSelect(occupantsInput); // eslint-disable-line no-new
+    occupantsInput.dataset.src = 'cm_members';
+    new MemberSelect(occupantsInput);
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
     $(this.modal)
-        .on('hidden.bs.modal', e => {
-          document.getElementsByTagName('body')[0].removeChild(e.target);
-        })
-        .modal('show');
+      .on('hidden.bs.modal', e => {
+        document.getElementsByTagName('body')[0].removeChild(e.target);
+      })
+      .modal('show');
   }
 
   _submitForm() {
@@ -93,86 +95,93 @@ export default class EditHousing {
       });
 
       // Save details
-      let payload = {};
-      payload.occupants = this.modal.querySelector('input[name="occupants"]').value.split(','); // eslint-disable-line max-len
-      let room = this.modal.querySelector('input[name="rmnumber"]').value;
+      const payload = {};
+      payload.occupants = this.modal
+        .querySelector('input[name="occupants"]')
+        .value.split(',');
+      const room = this.modal.querySelector('input[name="rmnumber"]').value;
 
-      FetchUtil.post(this.endpoints.alterRoom + room, payload, {
-        successText: 'Occupants have been updated.'
-      }, () => {
-        // Hide the modal.
-        $(this.modal).modal('hide');
+      FetchUtil.post(
+        this.endpoints.alterRoom + room,
+        payload,
+        {
+          successText: 'Occupants have been updated.',
+        },
+        () => {
+          // Hide the modal.
+          $(this.modal).modal('hide');
 
-        // Update the DOM to reflect the new occupants.
-        var occupantList = document.getElementById(room);
-        if (occupantList) {
-          // The room already exists in the list, update it.
-          occupantList.innerHTML = '';
-          payload.occupants.forEach(occupant => {
-            fetch(this.endpoints.memberDetails + occupant, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json'
-              },
-              credentials: 'same-origin'
-            })
+          // Update the DOM to reflect the new occupants.
+          const occupantList = document.getElementById(room);
+          if (occupantList) {
+            // The room already exists in the list, update it.
+            occupantList.innerHTML = '';
+            payload.occupants.forEach(occupant => {
+              fetch(this.endpoints.memberDetails + occupant, {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                },
+                credentials: 'same-origin',
+              })
                 .then(FetchUtil.checkStatus)
                 .then(FetchUtil.parseJSON)
                 .then(data => {
-                  var newName = document.createElement("li");
+                  const newName = document.createElement('li');
                   newName.appendChild(document.createTextNode(data.name));
-                  newName.setAttribute("class", "room-name");
+                  newName.setAttribute('class', 'room-name');
                   occupantList.appendChild(newName);
                 });
-          });
-        } else {
-          // The room is new and needs to be created.
-          var roomTable = document.getElementById("housing-table");
-          var newRoom = document.createElement("tr");
-          var newRoomNbrCol = document.createElement("td");
-          var newRoomNbr = document.createElement("h3");
-          newRoomNbr.appendChild(document.createTextNode(room));
-          newRoomNbr.setAttribute("class", "room-number");
-          newRoomNbrCol.appendChild(newRoomNbr);
-          newRoomNbrCol.setAttribute("class", "new-table-col");
-          newRoom.appendChild(newRoomNbrCol);
-          // Add new occupants to room.
-          var newOccupantCol = document.createElement("td");
-          var newOccupantList = document.createElement("ul");
-          newOccupantList.setAttribute("id", room);
-          newOccupantList.setAttribute("class", "occupant-list");
-          payload.occupants.forEach(occupant => {
-            fetch(this.endpoints.memberDetails + occupant, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json'
-              },
-              credentials: 'same-origin'
-            })
+            });
+          } else {
+            // The room is new and needs to be created.
+            const roomTable = document.getElementById('housing-table');
+            const newRoom = document.createElement('tr');
+            const newRoomNbrCol = document.createElement('td');
+            const newRoomNbr = document.createElement('h3');
+            newRoomNbr.appendChild(document.createTextNode(room));
+            newRoomNbr.setAttribute('class', 'room-number');
+            newRoomNbrCol.appendChild(newRoomNbr);
+            newRoomNbrCol.setAttribute('class', 'new-table-col');
+            newRoom.appendChild(newRoomNbrCol);
+            // Add new occupants to room.
+            const newOccupantCol = document.createElement('td');
+            const newOccupantList = document.createElement('ul');
+            newOccupantList.setAttribute('id', room);
+            newOccupantList.setAttribute('class', 'occupant-list');
+            payload.occupants.forEach(occupant => {
+              fetch(this.endpoints.memberDetails + occupant, {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                },
+                credentials: 'same-origin',
+              })
                 .then(FetchUtil.checkStatus)
                 .then(FetchUtil.parseJSON)
                 .then(data => {
-                  var newName = document.createElement("li");
+                  const newName = document.createElement('li');
                   newName.appendChild(document.createTextNode(data.name));
-                  newName.setAttribute("class", "room-name");
+                  newName.setAttribute('class', 'room-name');
                   newOccupantList.appendChild(newName);
                 });
-          });
-          newOccupantCol.appendChild(newOccupantList);
-          newOccupantCol.setAttribute("class", "new-table-col");
-          newRoom.appendChild(newOccupantCol);
-          // Add edit button for new room.
-          var newEditCol = document.createElement("td");
-          var editBtn = document.getElementById("rm-edit-btn");
-          var newEditBtn = editBtn.cloneNode(true);
-          newEditBtn.setAttribute("data-rmnumber", room);
-          new EditHousing(newEditBtn); // eslint-disable-no-new
-          newEditCol.appendChild(newEditBtn);
-          newEditCol.setAttribute("class", "new-table-col");
-          newRoom.appendChild(newEditCol);
-          roomTable.appendChild(newRoom);
-        }
-      });
+            });
+            newOccupantCol.appendChild(newOccupantList);
+            newOccupantCol.setAttribute('class', 'new-table-col');
+            newRoom.appendChild(newOccupantCol);
+            // Add edit button for new room.
+            const newEditCol = document.createElement('td');
+            const editBtn = document.getElementById('rm-edit-btn');
+            const newEditBtn = editBtn.cloneNode(true);
+            newEditBtn.setAttribute('data-rmnumber', room);
+            new EditHousing(newEditBtn); // eslint-disable-no-new
+            newEditCol.appendChild(newEditBtn);
+            newEditCol.setAttribute('class', 'new-table-col');
+            newRoom.appendChild(newEditCol);
+            roomTable.appendChild(newRoom);
+          }
+        },
+      );
     } else {
       throw new Exception(HousingException.SUBMIT_BEFORE_RENDER);
     }

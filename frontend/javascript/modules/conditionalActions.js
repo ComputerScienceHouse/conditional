@@ -18,26 +18,30 @@ export default class ConditionalActions {
   _handleAction(e) {
     const action = e.target.dataset.action;
 
-    if (action === "delete") {
-      FetchUtil.fetchWithWarning(this.deleteEndpoint, {
-        method: 'DELETE',
-        warningText: "Are you sure you want to delete this conditional?",
-        successText: "The conditional has been deleted."
-      }, () => {
-        $(e.target.closest("tr")).hide();
-      });
+    if (action === 'delete') {
+      FetchUtil.fetchWithWarning(
+        this.deleteEndpoint,
+        {
+          method: 'DELETE',
+          warningText: 'Are you sure you want to delete this conditional?',
+          successText: 'The conditional has been deleted.',
+        },
+        () => {
+          $(e.target.closest('tr')).hide();
+        },
+      );
     } else {
-      const actionExt = (action === "pass") ? "Passed" : "Failed";
-      let payload = {
+      const actionExt = action === 'pass' ? 'Passed' : 'Failed';
+      const payload = {
         id: this.id,
-        status: actionExt
+        status: actionExt,
       };
 
       FetchUtil.postWithWarning(this.endpoint, payload, {
-        warningText: "Are you sure you want to " + action +
-          " this conditional?",
-        successText: "The conditional has been marked as " +
-          actionExt.toLowerCase() + "."
+        warningText:
+          'Are you sure you want to ' + action + ' this conditional?',
+        successText:
+          'The conditional has been marked as ' + actionExt.toLowerCase() + '.',
       });
     }
   }

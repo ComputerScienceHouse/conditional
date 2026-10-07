@@ -13,11 +13,11 @@ export default class EvalToggle {
 
   _toggleTable() {
     if (this.toggle.checked) {
-      $("#eval-blocks").hide();
-      $("#eval-table").show();
+      $('#eval-blocks').hide();
+      $('#eval-table').show();
     } else {
-      $("#eval-table").hide();
-      $("#eval-blocks").show();
+      $('#eval-table').hide();
+      $('#eval-blocks').show();
     }
   }
 }

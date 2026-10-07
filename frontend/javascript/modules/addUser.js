@@ -1,4 +1,4 @@
-import FetchUtil from "../utils/fetchUtil";
+import FetchUtil from '../utils/fetchUtil';
 
 export default class AddUser {
   constructor(form) {
@@ -8,21 +8,22 @@ export default class AddUser {
   }
 
   render() {
-    this.form.querySelector('input[type=submit]')
+    this.form
+      .querySelector('input[type=submit]')
       .addEventListener('click', e => this._submitForm(e));
   }
 
   _submitForm(e) {
     e.preventDefault();
 
-    let payload = {
+    const payload = {
       name: this.form.querySelector('input[name=name]').value,
       onfloor: this.form.querySelector('input[name=onfloor]').checked,
-      roomNumber: this.form.querySelector('input[name=room]').value
+      roomNumber: this.form.querySelector('input[name=room]').value,
     };
 
     FetchUtil.post(this.endpoint, payload, {
-      successText: "User has been created."
+      successText: 'User has been created.',
     });
   }
 }

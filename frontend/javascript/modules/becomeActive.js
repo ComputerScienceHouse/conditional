@@ -1,4 +1,4 @@
-import FetchUtil from "../utils/fetchUtil";
+import FetchUtil from '../utils/fetchUtil';
 
 export default class becomeActive {
   constructor(link) {
@@ -14,13 +14,18 @@ export default class becomeActive {
   _delete(e) {
     e.preventDefault();
 
-    FetchUtil.postWithWarning(this.endpoint, {}, {
-      warningText: "Becoming an active member means that you will be charged" +
-                    " dues, which are detailed in the CSH Constitution.",
-      successText: "You are now an active member."
-    }, () => {
-      document.getElementById('becomeActive').remove();
-    });
+    FetchUtil.postWithWarning(
+      this.endpoint,
+      {},
+      {
+        warningText:
+          'Becoming an active member means that you will be charged' +
+          ' dues, which are detailed in the CSH Constitution.',
+        successText: 'You are now an active member.',
+      },
+      () => {
+        document.getElementById('becomeActive').remove();
+      },
+    );
   }
 }
-
