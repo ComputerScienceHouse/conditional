@@ -1,10 +1,9 @@
-/* global fetch */
-import "whatwg-fetch";
-import Choices from "choices.js";
-import FetchUtil from "../utils/fetchUtil";
-import Exception from "../exceptions/exception";
-import AttendanceException from "../exceptions/attendanceException";
-import FetchException from "../exceptions/fetchException";
+import 'whatwg-fetch';
+import Choices from 'choices.js';
+import FetchUtil from '../utils/fetchUtil';
+import Exception from '../exceptions/exception';
+import AttendanceException from '../exceptions/attendanceException';
+import FetchException from '../exceptions/fetchException';
 
 export default class MemberSelect {
   constructor(element, selectedMembers = []) {
@@ -22,10 +21,10 @@ export default class MemberSelect {
     fetch('/attendance/' + this.dataSrc, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      credentials: 'same-origin'
+      credentials: 'same-origin',
     })
       .then(FetchUtil.checkResponse)
       .then(FetchUtil.parseJSON)
@@ -33,16 +32,21 @@ export default class MemberSelect {
         this.members = response.members;
 
         for (const member of selectedMembers) {
-          this.members.find((el) => el.value == member.value).selected = true;
+          this.members.find(el => el.value === member.value).selected = true;
         }
 
         const hasSelection = this.members.some(m => m.selected);
 
         if (!this.element.multiple) {
           this.members = [
-            { value: '', label: 'Select a member', placeholder: true, selected: !hasSelection },
+            {
+              value: '',
+              label: 'Select a member',
+              placeholder: true,
+              selected: !hasSelection,
+            },
             ...this.members,
-          ]
+          ];
         }
 
         this.render();
@@ -90,11 +94,11 @@ export default class MemberSelect {
         addChoice: ['choices__item--selectable', 'add-choice'],
         noResults: ['has-no-results', 'text-muted'],
         noChoices: ['has-no-choices', 'text-muted'],
-      }
+      },
     });
 
-    if (target._elementType == "select-one") {
-      target.setChoiceByValue("");
+    if (target._elementType === 'select-one') {
+      target.setChoiceByValue('');
     }
 
     this.element.addEventListener('addItem', () => {
@@ -106,7 +110,7 @@ export default class MemberSelect {
     target.containerOuter.element.addEventListener('keydown', event => {
       // only make tab do stuff if it's actually tab and the dropdown is donw
       // otherwise people will get angryyyy
-      if (event.key != "Tab") return;
+      if (event.key != 'Tab') return;
       if (!target.dropdown.isActive) return;
 
       const enterEvent = new KeyboardEvent('keydown', {
@@ -122,7 +126,6 @@ export default class MemberSelect {
 
       event.preventDefault();
     });
-
 
     this.element.choices = target;
     return target;

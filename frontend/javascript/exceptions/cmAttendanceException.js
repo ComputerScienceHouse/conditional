@@ -1,7 +1,9 @@
-import { Enumify } from 'enumify';
+import {Enumify} from 'enumify';
 
 export default class CmAttendanceException extends Enumify {
-  SUBMIT_BEFORE_RENDER = CmAttendanceException("Cannot submit updated attendance before the modal renders.");
+  SUBMIT_BEFORE_RENDER = CmAttendanceException(
+    'Cannot submit updated attendance before the modal renders.',
+  );
   _ = CmAttendanceException.closeEnum();
 
   constructor(message) {
@@ -9,4 +11,3 @@ export default class CmAttendanceException extends Enumify {
     this.message = message;
   }
 }
-
