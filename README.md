@@ -73,7 +73,7 @@ python -m gunicorn
 You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
 
 ### Add OIDC Config
-Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
+Check the [SSO wiki page](https://wiki.csh.rit.edu/wiki/SSO#Where_can_I_get_credentials?) for development credentials.
 ```py
 # OIDC Config
 OIDC_ISSUER = "https://sso.csh.rit.edu/auth/realms/csh"
