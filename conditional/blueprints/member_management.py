@@ -39,6 +39,7 @@ from conditional.util.ldap import ldap_set_non_current_student
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_current_students
+from conditional.util.ldap import ldap_get_slack_uid
 from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
 from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 
@@ -46,6 +47,8 @@ from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
 from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_current_student, \
     user_dict_is_eval_director, user_dict_is_financial_director
+
+from conditional.util.slack import add_active_usergroup_user, add_meetings_usergroup_user, purge_active_usergroup, purge_frosh_usergroup, purge_meetings_usergroup
 
 logger = structlog.get_logger()
 
@@ -526,9 +529,16 @@ def member_management_make_user_active(user_dict=None):
             or user_dict_is_active(user_dict) \
             or user_dict_is_bad_standing(user_dict):
         return "must be current student, not in bad standing and not active", 403
-
+    
     ldap_set_active(user_dict['account'])
     log.info(f"Make user {user_dict['username']} active")
+
+    account = user_dict['account']
+    slack_uid = ldap_get_slack_uid(account)
+    add_active_usergroup_user(slack_uid)
+    log.info(f"Add user {user_dict['username']} to @active group")
+    add_meetings_usergroup_user(slack_uid)
+    log.info(f"Add user {user_dict['username']} to @meetings group")
 
     clear_members_cache()
     return jsonify({"success": True}), 200
@@ -570,6 +580,15 @@ def clear_active_members(user_dict=None):
         if account.uid != user_dict['username']:
             log.info(f'Remove {account.uid} from Active Status')
             ldap_set_inactive(account)
+
+    # Clear the @active, @meetings, and @frosh Slack group
+    account = user_dict['account']
+    slack_uid = ldap_get_slack_uid(account)
+    purge_active_usergroup(slack_uid)
+    purge_meetings_usergroup(slack_uid)
+    purge_frosh_usergroup(slack_uid)
+    log.info(f"Purged users from @active, @meetings, and @frosh for the new year")
+     
     return jsonify({"success": True}), 200
 
 

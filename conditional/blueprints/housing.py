@@ -10,8 +10,10 @@ from conditional.util.housing import get_housing_queue
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_roomnumber
+from conditional.util.ldap import ldap_get_slack_uid
 from conditional.util.ldap import ldap_is_eval_director
 from conditional.util.ldap import ldap_set_active
+from conditional.util.slack import add_active_usergroup_user, add_meetings_usergroup_user
 from conditional.util.user_dict import user_dict_is_eval_director
 
 logger = structlog.get_logger()
@@ -114,7 +116,12 @@ def change_room_numbers(rmnumber, user_dict=None):
             log.info(f'{occupant} assigned to room {rmnumber}')
             ldap_set_active(account)
             log.info(f'{occupant} marked as active because of room assignment')
-    # Delete any old occupants that are no longer in room.
+            slack_uid = ldap_get_slack_uid(account)
+            add_active_usergroup_user(slack_uid)
+            log.info(f"Add user {user_dict['username']} to @active group")
+            add_meetings_usergroup_user(slack_uid)
+            log.info(f"Add user {user_dict['username']} to @meetings group")
+        # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students
                              if ldap_get_roomnumber(account) == str(rmnumber)
                              and account.uid not in update["occupants"]]:

@@ -72,6 +72,13 @@ def ldap_get_roomnumber(account) -> str:
         return ""
 
 @service_cache(maxsize=128)
+def ldap_get_slack_uid(account) -> str:
+    try:
+        return account.get("slackUID")[0]
+    except KeyError:
+        return ""
+
+@service_cache(maxsize=128)
 def ldap_is_active(account) -> bool:
     return _ldap_is_member_of_group(account, 'active')
 
