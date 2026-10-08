@@ -61,3 +61,4 @@ def purge_frosh_usergroup(slack_uid):
 
 def purge_meetings_usergroup(slack_uid):
     return purge_usergroup_users(meetings_usergroup_id, slack_uid)
+    
