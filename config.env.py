@@ -17,6 +17,7 @@ PORT = env.get("CONDITIONAL_PORT", 6969)
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
 DEV_DISABLE_SLACK_PING = env.get("DEV_DISABLE_SLACK_PING", "false") == "true"
 PROFILING = env.get("CONDITIONAL_PROFILING", "false").lower() == "true"
+SLACK_APP_TOKEN = env.get("CONDITIONAL_SLACK_APP_TOKEN", "INSERT TOKEN HERE")
 
 # DB Info
 SQLALCHEMY_DATABASE_URI = env.get("SQLALCHEMY_DATABASE_URI", "postgresql://conditional:fancypantspassword@conditional-postgres:5432/conditional")
