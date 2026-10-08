@@ -117,14 +117,11 @@ def change_room_numbers(rmnumber, user_dict=None):
             ldap_set_active(account)
             log.info(f'{occupant} marked as active because of room assignment')
             slack_uid = ldap_get_slack_uid(account)
-            try:
-                add_active_usergroup_user(slack_uid)
-                log.info(f"Add user {user_dict['username']} to @active group")
-                add_meetings_usergroup_user(slack_uid)
-                log.info(f"Add user {user_dict['username']} to @meetings group")
-            except Exception as e:
-                print("change_room_numbers error:", e)
-    # Delete any old occupants that are no longer in room.
+            add_active_usergroup_user(slack_uid)
+            log.info(f"Add user {user_dict['username']} to @active group")
+            add_meetings_usergroup_user(slack_uid)
+            log.info(f"Add user {user_dict['username']} to @meetings group")
+        # Delete any old occupants that are no longer in room.
         for old_occupant in [account for account in current_students
                              if ldap_get_roomnumber(account) == str(rmnumber)
                              and account.uid not in update["occupants"]]:

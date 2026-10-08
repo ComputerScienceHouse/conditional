@@ -533,15 +533,12 @@ def member_management_make_user_active(user_dict=None):
     ldap_set_active(user_dict['account'])
     log.info(f"Make user {user_dict['username']} active")
 
-    try:
-        account = user_dict['account']
-        slack_uid = ldap_get_slack_uid(account)
-        add_active_usergroup_user(slack_uid)
-        log.info(f"Add user {user_dict['username']} to @active group")
-        add_meetings_usergroup_user(slack_uid)
-        log.info(f"Add user {user_dict['username']} to @meetings group")
-    except Exception as e:
-        print("make_user_active error:", e)
+    account = user_dict['account']
+    slack_uid = ldap_get_slack_uid(account)
+    add_active_usergroup_user(slack_uid)
+    log.info(f"Add user {user_dict['username']} to @active group")
+    add_meetings_usergroup_user(slack_uid)
+    log.info(f"Add user {user_dict['username']} to @meetings group")
 
     clear_members_cache()
     return jsonify({"success": True}), 200
@@ -584,16 +581,13 @@ def clear_active_members(user_dict=None):
             log.info(f'Remove {account.uid} from Active Status')
             ldap_set_inactive(account)
 
-    try:
-        # Clear the @active, @meetings, and @frosh Slack group
-        account = user_dict['account']
-        slack_uid = ldap_get_slack_uid(account)
-        purge_active_usergroup(slack_uid)
-        purge_meetings_usergroup(slack_uid)
-        purge_frosh_usergroup(slack_uid)
-        log.info(f"Purged users from @active, @meetings, and @frosh for the new year")
-    except Exception as e:
-        print("clear_active_members error:", e)
+    # Clear the @active, @meetings, and @frosh Slack group
+    account = user_dict['account']
+    slack_uid = ldap_get_slack_uid(account)
+    purge_active_usergroup(slack_uid)
+    purge_meetings_usergroup(slack_uid)
+    purge_frosh_usergroup(slack_uid)
+    log.info(f"Purged users from @active, @meetings, and @frosh for the new year")
      
     return jsonify({"success": True}), 200
 
