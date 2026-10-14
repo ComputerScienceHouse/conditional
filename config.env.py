@@ -51,9 +51,10 @@ OIDC_ISSUER = env.get("CONDITIONAL_OIDC_ISSUER", "https://sso.csh.rit.edu/auth/r
 OIDC_CLIENT_CONFIG = {
     "client_id": env.get("CONDITIONAL_OIDC_CLIENT_ID", "develop"),
     "client_secret": env.get("CONDITIONAL_OIDC_CLIENT_SECRET", ""),
-    "redirect_uri": env.get("CONDITIONAL_OIDC_CLIENT_REDIRECT", "http://localhost:8080/redirect_uri"),
     "post_logout_redirect_uris": [env.get("CONDITIONAL_OIDC_CLIENT_LOGOUT", "http://localhost:8080/logout")],
 }
+
+OIDC_REDIRECT_URI = env.get("CONDITIONAL_OIDC_CLIENT_REDIRECT", "http://localhost:8080/redirect_uri")
 
 # Openshift secret
 SECRET_KEY = env.get("CONDITIONAL_SECRET_KEY", default="".join(secrets.token_hex(16)))
