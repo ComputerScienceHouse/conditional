@@ -1,10 +1,10 @@
 @import "choices.js/src/styles/choices";
 
 .choices__input {
-  background-color: unset;
+  background-color: transparent!important;
 }
 
-._choices__inner .choices__list .choices__item {
+.choices[data-type="select-multiple"] ._choices__inner .choices__list .choices__item {
   background-color: rgba(var(--bs-primary-rgb), 1);
 
   border: none;

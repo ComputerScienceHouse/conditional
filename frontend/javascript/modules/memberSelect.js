@@ -36,6 +36,15 @@ export default class MemberSelect {
           this.members.find((el) => el.value == member.value).selected = true;
         }
 
+        const hasSelection = this.members.some(m => m.selected);
+
+        if (!this.element.multiple) {
+          this.members = [
+            { value: '', label: 'Select a member', placeholder: true, selected: !hasSelection },
+            ...this.members,
+          ]
+        }
+
         this.render();
       })
       .catch(error => {
@@ -84,6 +93,10 @@ export default class MemberSelect {
       }
     });
 
+    if (target._elementType == "select-one") {
+      target.setChoiceByValue("");
+    }
+
     this.element.addEventListener('addItem', () => {
       requestAnimationFrame(() => {
         target.choiceList.element.scrollTop = 0;
@@ -110,6 +123,8 @@ export default class MemberSelect {
       event.preventDefault();
     });
 
+
+    this.element.choices = target;
     return target;
   }
 }

@@ -58,26 +58,27 @@ Conditionals
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="createConditional" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title mb-0" id="editUserTitle">Conditional</h4>
+                <h4 class="modal-title" id="editUserTitle">Conditional</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form data-module="conditionalForm" method="post">
                 <div class="modal-body">
-                    <div class="row">
-                        <label class="control-label" for="memberName">Member Name</label>
-                        <select name="uid" id="memberName" class="form-control" data-module="memberSelect" data-src="cm_members"></select>
+                    <div class="form-group mb-4">
+                        <label class="form-label" for="memberName">Member Name</label>
+                        <select name="uid" id="memberName" class="form-select" data-module="memberSelect" data-src="cm_members"></select>
                     </div>
 
-                    <div class="row">
-                        <label class="control-label" for="due_date">Due Date</label>
+                    <div class="form-group mb-4">
+                        <label class="form-label" for="due_date">Due Date</label>
                         <input type="text" id="due_date" name="due_date" class="form-control" data-module="datepicker" />
                     </div>
-                    <div class="row">
-                        <label class="control-label" for="requirement">Requirement</label>
+                    <div class="form-group mb-4">
+                        <label class="form-label" for="requirement">Requirement</label>
                         <input type="text" class="form-control" id="requirement" name="description">
                     </div>
                 </div>

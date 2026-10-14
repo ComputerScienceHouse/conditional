@@ -1,4 +1,5 @@
 import FetchUtil from '../utils/fetchUtil';
+import { Modal } from 'bootstrap';
 import reveal from 'reveal.js';
 export default class Presentation {
   constructor(element) {
@@ -36,6 +37,7 @@ export default class Presentation {
         $(e.target).text("Passed").off("click").addClass("disabled");
         $(e.target).next().hide();
         reveal.right();
+        reveal.layout();
       });
     });
     $('.reveal button.fail').click(e => {
@@ -48,9 +50,10 @@ export default class Presentation {
         .attr("id", "conditional-" + uid)
         .off('click')
         .click(e => {
-          $('#createConditional').modal();
+          const modal = new Modal('#createConditional');
+          modal.show();
           $('#createConditional input[type="text"]').val('');
-          $('#createConditional input[name="uid"]').val(uid);
+          $('#createConditional select[name="uid"]')[0].choices.setChoiceByValue(uid);
         });
       $(e.target).click(e => {
         e.preventDefault();
@@ -68,5 +71,5 @@ export default class Presentation {
         });
       });
     });
-  }
+  };
 }
