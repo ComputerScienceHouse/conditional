@@ -70,7 +70,7 @@ python -m gunicorn
 
 ## Config
 
-Either copy `.env.example` to `.env` or `config.env.py` to `config.py`, and change the variables in the newly copied file accordingly. The only two variables you should need to change are:
+Either copy `.env.example` to `.env` or `config.env.py` to `config.py`, and change the variables in the newly copied file accordingly. The only three variables you should need to change are:
 - LDAP_BIND_DN, replacing `<you>` for your username
 - LDAP_BIND_PW, your password
 - OIDC_CLIENT_SECRET, from the Wiki
