@@ -16,11 +16,14 @@ const babelQuery = {
 
 const webpackConfig = {
   context: jsSrc,
-  entry: ["./javascript/app.js"],
+  entry: {
+    app: "./javascript/app.js",
+    "color-modes": "csh-material-bootstrap/color-modes.js",
+  },
   devtool: "source-map",
   output: {
     path: path.normalize(jsDest),
-    filename: 'js/app.js',
+    filename: 'js/[name].js',
     publicPath: publicPath,
     clean: true,
   },
