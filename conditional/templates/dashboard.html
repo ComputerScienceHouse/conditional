@@ -127,7 +127,7 @@ Dashboard
                     <li class="list-group-item">
                         {% if intro['ts_total']== 0 %}
                         <div class="alert alert-warning my-0" role="alert">
-                            <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                            <i class="bi bi-exclamation-circle me-1"></i>
                             You have not attended any technical seminars.</div>
                         {% else %}
                         <p class="mb-1">Technical Seminars - Attendance</p>
@@ -178,7 +178,7 @@ Dashboard
                     {% if ts_total == 0 %}
                     <li class="list-group-item bg-transparent">
                         <div class="alert alert-warning my-0" role="alert">
-                            <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                            <i class="bi bi-exclamation-circle me-1"></i>
                             You have not attended any technical seminars.
                         </div>
                     </li>
@@ -391,7 +391,7 @@ Dashboard
         {% if major_projects_count == 0 %}
         <div class="col-12 col-lg-6 mb-4">
             <div class="alert alert-warning my-0" role="alert">
-                <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                <i class="bi bi-exclamation-circle me-1"></i>
                 You have no major projects.
             </div>
         </div>
@@ -486,7 +486,8 @@ Dashboard
         {% if missed_hm_len == 0 and active %}
         <div class="col-12 col-lg-6 mb-4">
             <div class="alert alert-success my-0">
-                <i class="bi bi-check-circlce white" style="padding-right:5px"> </i> You haven't missed any house meetings.
+                <i class="bi bi-check-circle me-1"</i> 
+                You haven't missed any house meetings.
             </div>
         </div>
         {% elif missed_hm_len > 0 and active %}
@@ -514,7 +515,7 @@ Dashboard
         {% if cm_attendance_len == 0 and active %}
         <div class="col-12 col-lg-6 mb-4">
             <div class="alert alert-warning">
-                <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                <i class="bi bi-exclamation-circle me-1"></i>
                 You have not attended any directorship meetings.
             </div>
         </div>
