@@ -1,0 +1,9 @@
+.toggle-btn .btn[data-bs-toggle=collapse][aria-expanded=true] {
+  i.down {
+    display: none!important;
+  }
+
+  i.up {
+    display: inline-block!important;
+  }
+}
