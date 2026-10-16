@@ -53,14 +53,14 @@ export default class AdHoc {
 
     document.querySelectorAll(this.followSelector).forEach(input => {
       if (input.value === "Ad-Hoc") {
-          parentElem.style.display = "block";
+        parentElem.classList.remove("d-none");
       }
 
       input.addEventListener("change", event => {
         if (event.target.value === "Ad-Hoc") {
-          parentElem.style.display = "block";
+          parentElem.classList.remove("d-none");
         } else {
-          parentElem.style.display = "none";
+          parentElem.classList.add("d-none");
         }
       });
     });

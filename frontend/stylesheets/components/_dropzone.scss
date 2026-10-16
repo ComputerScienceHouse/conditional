@@ -91,6 +91,7 @@
     margin: 16px;
     min-height: 100px;
     vertical-align: top;
+
     &:hover {
       // Making sure that always the hovered preview element is on top
       z-index: 1000;
@@ -111,14 +112,13 @@
       .dz-image {
         border-radius: $image-border-radius;
         background: linear-gradient(to bottom, #eee, #ddd);
-        background-color: #999;
       }
       .dz-details {
         opacity: 1;
       }
     }
     &.dz-image-preview {
-      background: #fff;
+      background: transparent;
       .dz-details {
         transition: opacity .2s linear;
       }
@@ -310,6 +310,14 @@
         height: 0;
         content: '';
       }
+    }
+  }
+}
+
+[data-bs-theme=dark] {
+  .dropzone {
+    img {
+      filter: brightness(100);
     }
   }
 }
