@@ -7,7 +7,6 @@ export default class MajorProjectForm {
     constructor(form) {
         this.form = form;
         this.endpoint = '/major_project/submit';
-        this.tags_written = false;
         this.tag_keys = ["Enter", "Comma", "Tab"];
         try {
             this.saveState = JSON.parse(localStorage.getItem(CACHE_KEY));
@@ -21,9 +20,9 @@ export default class MajorProjectForm {
     render() {
         this.form.querySelector('input[type=submit]')
             .addEventListener('click', e => this._submitForm(e));
-        this.form.querySelector('input[id=skill-input]')
+        this.form.querySelector('input#skill-input')
             .addEventListener('focusout', e => this.onWriteSkill(e));
-        this.form.querySelector('input[id=skill-input]')
+        this.form.querySelector('input#skill-input')
             .addEventListener('keypress', e => this.onKeyPress(e));
         this.form.addEventListener('input', e => this.onInput());
         if (this.saveState) {
@@ -74,6 +73,17 @@ export default class MajorProjectForm {
 
     onWriteSkill(e) {
         let input = document.getElementById("skill-input")
+
+        let txt = input.value.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
+        if (txt) {
+            const skillBadge = document.createElement("span");
+            skillBadge.textContent = txt;
+            skillBadge.classList.add("skill-tag", "badge", "text-bg-primary", "me-2", "fs-6");
+
+            skillBadge.addEventListener('click', e => this.onRemoveTag(e));
+
+            document.getElementById("skills-container").append(skillBadge);
+        }
         if (!this.tags_written) {
             this.tags_written = true
 
@@ -110,6 +120,10 @@ export default class MajorProjectForm {
         e.preventDefault();
 
         const skills = this.getSkills();
+
+        for (const tag of this.form.getElementsByClassName('skill-tag')) {
+            skills.push(tag.textContent);
+        }
 
 
         let projectName = this.form.querySelector('input[name=name]').value;
