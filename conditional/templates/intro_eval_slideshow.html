@@ -1,4 +1,4 @@
-{% extends "base_protected.html" %}
+{% extends "base_slideshow.html" %}
 {% block title %}
 Introductory Evaluations Slideshow
 {% endblock %}
@@ -12,10 +12,10 @@ Introductory Evaluations Slideshow
     {% for m in members %}
     <section id="slide-{{m['uid']}}">
       <section>
-        <img class="eval-user-img" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" />
+        <img class="aspect aspect1x1 rounded-circle" alt="{{m['uid']}}" src="https://profiles.csh.rit.edu/image/{{m['uid']}}" />
         <h1 class="member-name">{{m['name']}}</h1>
-          <div class="row">
-            <div class="col-xs-12 col-md-3">
+          <div class="row justify-content-center mb-5">
+            <div class="col-xs-12 col-md-2">
               {% set packet_passed = m['signatures_missed'] == 0 %}
               <div class="item{% if packet_passed %} passed{% endif %}" >
                 {% if packet_passed %}
@@ -27,7 +27,7 @@ Introductory Evaluations Slideshow
                 <p>Signatures Missed</p>
               </div>
             </div>
-            <div class="col-xs-12 col-md-3">
+            <div class="col-xs-12 col-md-2">
               {% set committee_meetings_passed = m['committee_meetings'] >= 6 %}
               <div class="item{% if committee_meetings_passed %} passed{% endif %}" >
                 {% if committee_meetings_passed %}
@@ -36,10 +36,10 @@ Introductory Evaluations Slideshow
                 <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['committee_meetings']}}</h3>
-                <p>Meetings</p>
+                <p>Directorship Meetings</p>
               </div>
             </div>
-            <div class="col-xs-12 col-md-3">
+            <div class="col-xs-12 col-md-2">
               {% set house_meetings_passed = m['house_meetings_missed']|length == 0 %}
               <div class="item{% if house_meetings_passed %} passed{% endif %}">
                 {% if house_meetings_passed %}
@@ -48,19 +48,38 @@ Introductory Evaluations Slideshow
                 <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['house_meetings_missed']|length}}</h3>
-                <p>Absences</p>
+                <p>Missed HMs</p>
               </div>
             </div>
-            <div class="col-xs-12 col-md-3">
-              {% set technical_seminars_passed = m['technical_seminars']|length >= 2 or m['technical_seminars_hosted']|length >= 1 %}
-              <div class="item{% if technical_seminars_passed %} passed{% endif %}">
-                {% if technical_seminars_passed %}
+            {% set technical_seminars_passed = m['technical_seminars']|length >= 2 or m['technical_seminars_hosted']|length >= 1 %}
+            <div class="col-xs-12 col-md-2">
+              {% set attended_technical_seminars_passed = m['technical_seminars']|length >= 2 %}
+              <div class="item
+                {% if attended_technical_seminars_passed %} passed
+                {% elif technical_seminars_passed %} passed-yellow
+                {% endif %}
+              ">
+                {% if attended_technical_seminars_passed %}
                 <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
                 {% else %}
                 <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                 {% endif %}
                 <h3>{{m['technical_seminars']|length}}</h3>
                 <p>Seminars Attended</p>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              {% set host_technical_seminars_passed = m['technical_seminars_hosted']|length >= 1 %}
+              <div class="item
+                {% if host_technical_seminars_passed %} passed
+                {% elif technical_seminars_passed %} passed-yellow
+                {% endif %}
+              ">
+                {% if host_technical_seminars_passed %}
+                <i class="bi bi-check-circle-fill passed" aria-hidden="true"></i>
+                {% else %}
+                <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+                {% endif %}
                 <h3>{{m['technical_seminars_hosted']|length}}</h3>
                 <p>Seminars Hosted</p>
               </div>
@@ -103,32 +122,6 @@ Introductory Evaluations Slideshow
   </div>
 </div>
 
-<div class="modal fade" id="createConditional" tabindex="-1">
-    <div class="vertical-alignment-helper">
-        <div class="modal-dialog vertical-align-center">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editUserTitle">Conditional</h4>
-                </div>
-                <form data-module="conditionalForm" method="post" autocomplete="off">
-                    <div class="modal-body">
-                        <input type="hidden" name="uid">
-                        <div class="row user-edit-row">
-                            <label class="control-label" for="due_date">Due Date</label>
-                            <input type="text" id="due_date" name="due_date" class="form-control" data-module="datepicker" />
-                        </div>
-                        <div class="row user-edit-row">
-                            <label class="control-label" for="requirement">Requirement</label>
-                            <input type="text" class="form-control" id="requirement" name="description">
-                        </div>
-                    </div>
-                    <div class="modal-footer">  
-                        <input type="submit" class="btn btn-primary" value="Create">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+{% include "conditional_modal.html" %}
+
 {% endblock %}

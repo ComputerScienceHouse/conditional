@@ -1,3 +1,7 @@
 // Reveal.js
+@use 'pkg:csh-material-bootstrap';
+
 @import 'reveal.scss';
 @import 'components/reveal/white';
+
+@import 'components/choices';
