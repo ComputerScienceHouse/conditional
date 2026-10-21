@@ -1,10 +1,10 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 export default class MemberUtil {
   static splitFreshmenUpperclassmen(memberIds) {
-    let result = {
+    const result = {
       freshmen: [],
-      upperclassmen: []
+      upperclassmen: [],
     };
 
     memberIds.forEach(memberId => {
