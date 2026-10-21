@@ -110,7 +110,7 @@ export default class MemberSelect {
     target.containerOuter.element.addEventListener('keydown', event => {
       // only make tab do stuff if it's actually tab and the dropdown is donw
       // otherwise people will get angryyyy
-      if (event.key != 'Tab') return;
+      if (event.key !== 'Tab') return;
       if (!target.dropdown.isActive) return;
 
       const enterEvent = new KeyboardEvent('keydown', {

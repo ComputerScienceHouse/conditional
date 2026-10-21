@@ -1,4 +1,3 @@
-/* global fetch */
 import 'whatwg-fetch';
 import Exception from '../exceptions/exception';
 import FetchException from '../exceptions/fetchException';
@@ -89,7 +88,7 @@ export default class HousingQueue {
       .then(FetchUtil.checkStatus)
       .then(FetchUtil.parseJSON)
       .then(response => {
-        if (response.hasOwnProperty('success') && response.success === true) {
+        if (Object.hasOwn(response, 'success') && response.success === true) {
           if (inQueue) {
             row.classList.remove('disabled');
           } else {

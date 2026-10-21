@@ -1,4 +1,3 @@
-/* global fetch */
 import 'whatwg-fetch';
 import FetchUtil from '../utils/fetchUtil';
 import Exception from '../exceptions/exception';
@@ -151,7 +150,7 @@ export default class EditUser {
     modal.querySelector('input[name=dues]').checked = this.data.active_member;
 
     // Save button
-    modal.querySelector('button[type=submit]').addEventListener('click', e => {
+    modal.querySelector('button[type=submit]').addEventListener('click', () => {
       this._submitForm('#' + this.modal.getAttribute('id') + '-' + this.uid);
     });
 
@@ -253,17 +252,17 @@ export default class EditUser {
     // Save button
     modal
       .querySelector('input[type=submit]')
-      .addEventListener('click', e => this._submitForm());
+      .addEventListener('click', () => this._submitForm());
 
     // Delete button
     modal
       .querySelector('input[type=button].btn-danger')
-      .addEventListener('click', e => this._deleteFreshman());
+      .addEventListener('click', () => this._deleteFreshman());
 
     // Upgrade button
     modal
       .querySelector('button.upgrade-btn')
-      .addEventListener('click', e => this._upgradeFreshman());
+      .addEventListener('click', () => this._upgradeFreshman());
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(modal);
@@ -275,8 +274,9 @@ export default class EditUser {
   }
 
   _submitForm() {
-    const modal = document.querySelector('#' + this.modal.getAttribute('id') +
-        '-' + this.uid);
+    const modal = document.querySelector(
+      '#' + this.modal.getAttribute('id') + '-' + this.uid,
+    );
 
     modal.querySelectorAll('button').forEach(btn => {
       btn.disabled = true;
@@ -304,10 +304,10 @@ export default class EditUser {
       missedHms.forEach(hm => {
         const payload = {
           id: hm.dataset.id,
-          status: hm.querySelector('input[name=hm-excused]').checked ?
+          status: hm.querySelector('input[name=hm-excused]').checked
             ? 'Excused'
             : 'Absent',
-          excuse: hm.querySelector('.hm-reason').value
+          excuse: hm.querySelector('.hm-reason').value,
         };
 
         fetch(
@@ -325,7 +325,7 @@ export default class EditUser {
           .then(FetchUtil.checkStatus)
           .then(FetchUtil.parseJSON)
           .then(response => {
-            if (!response.hasOwnProperty('success') || !response.success) {
+            if (!Object.hasOwn(response, 'success') || !response.success) {
               Swal.fire(
                 'Uh oh...',
                 "We're having trouble submitting this " +
@@ -380,8 +380,9 @@ export default class EditUser {
   }
 
   _deleteFreshman() {
-    const modal = document.querySelector('#' + this.modal.getAttribute('id') +
-        '-' + this.uid);
+    const modal = document.querySelector(
+      '#' + this.modal.getAttribute('id') + '-' + this.uid,
+    );
 
     FetchUtil.fetchWithWarning(
       this.endpoints.userDetails + this.uid,
@@ -398,8 +399,9 @@ export default class EditUser {
   }
 
   _upgradeFreshman() {
-    const modal = document.querySelector('#' + this.modal.getAttribute('id') +
-        '-' + this.uid);
+    const modal = document.querySelector(
+      '#' + this.modal.getAttribute('id') + '-' + this.uid,
+    );
 
     const payload = {
       fid: this.uid,

@@ -28,10 +28,10 @@ export default class MajorProjectForm {
     return false;
   }
 
-  onWriteSkill(e) {
+  onWriteSkill() {
     const input = document.getElementById('skill-input');
 
-    const txt = input.value.replaceAll(/[^a-zA-Z0-9\+\-\.\# ]/g, ''); // allowed characters list
+    const txt = input.value.replaceAll(/[^a-zA-Z0-9+\-.# ]/g, ''); // allowed characters list
     if (txt) {
       const skillBadge = document.createElement('span');
       skillBadge.textContent = txt;

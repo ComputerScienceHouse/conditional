@@ -1,4 +1,3 @@
-/* global fetch */
 import 'whatwg-fetch';
 import '@selectize/selectize';
 import FetchUtil from '../utils/fetchUtil';

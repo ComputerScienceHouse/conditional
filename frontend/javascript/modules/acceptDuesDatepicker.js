@@ -1,4 +1,3 @@
-/* global $ */
 import 'whatwg-fetch';
 import FetchUtil from '../utils/fetchUtil';
 import Exception from '../exceptions/exception';
@@ -26,7 +25,7 @@ export default class DatePicker {
     });
 
     this.input.addEventListener('hide', event => {
-      if (event.detail.date.getTime() != this.selectedDate.getTime()) {
+      if (event.detail.date.getTime() !== this.selectedDate.getTime()) {
         this._updateSetting();
       }
     });
@@ -49,7 +48,7 @@ export default class DatePicker {
       .then(FetchUtil.checkStatus)
       .then(FetchUtil.parseJSON)
       .then(response => {
-        if (!response.hasOwnProperty('success') || !response.success) {
+        if (!Object.hasOwn(response, 'success') || !response.success) {
           Swal.fire(
             'Uh oh...',
             "We're having trouble submitting this " +

@@ -1,4 +1,3 @@
-/* global fetch */
 import 'whatwg-fetch';
 import Exception from '../exceptions/exception';
 import HousingException from '../exceptions/housingException';

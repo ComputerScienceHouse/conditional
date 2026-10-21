@@ -1,4 +1,3 @@
-/* global fetch */
 import 'whatwg-fetch';
 import Exception from '../exceptions/exception';
 import CmAttendanceException from '../exceptions/cmAttendanceException';
@@ -62,9 +61,9 @@ export default class ReviewMeeting {
     // Delete Button
     this.modal
       .querySelector('button.btn-danger')
-      .addEventListener('click', e => this._deleteMeeting());
+      .addEventListener('click', () => this._deleteMeeting());
 
-    if (this.meeting == 'ts') {
+    if (this.meeting === 'ts') {
       // Host
       const hostInput = this.modal.querySelector('[name="host"]');
 

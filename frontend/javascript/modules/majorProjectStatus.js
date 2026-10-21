@@ -1,4 +1,3 @@
-/* global fetch */
 import 'whatwg-fetch';
 import Exception from '../exceptions/exception';
 import FetchException from '../exceptions/fetchException';
@@ -70,7 +69,7 @@ export default class MajorProjectStatus {
         .then(FetchUtil.checkStatus)
         .then(FetchUtil.parseJSON)
         .then(response => {
-          if (response.hasOwnProperty('success') && response.success === true) {
+          if (Object.hasOwn(response, 'success') && response.success === true) {
             const toggle = this.control.querySelector('.dropdown-toggle');
             ['btn-success', 'btn-danger', 'btn-warning'].forEach(
               classToRemove => toggle.classList.remove(classToRemove),
