@@ -1,5 +1,5 @@
-import _ from "lodash";
-import FetchUtil from "../utils/fetchUtil";
+import _ from 'lodash';
+import FetchUtil from '../utils/fetchUtil';
 
 export default class HouseMeetingForm {
   constructor(form) {
@@ -7,7 +7,7 @@ export default class HouseMeetingForm {
 
     this.endpoint = '/attendance/submit/hm';
     this.fields = {
-      timestamp: this.form.elements.date
+      timestamp: this.form.elements.date,
     };
 
     this.render();
@@ -16,40 +16,45 @@ export default class HouseMeetingForm {
   render() {
     // Prevent the form from submitting if the user hits the enter key
     ['keyup', 'keypress'].forEach(keyevent =>
-      this.form.addEventListener(keyevent, event => {
-        let keyCode = event.keyCode || event.which;
-        if (keyCode === 13) {
-          event.preventDefault();
-          return false;
-        }
-      }, true));
+      this.form.addEventListener(
+        keyevent,
+        event => {
+          const keyCode = event.keyCode || event.which;
+          if (keyCode === 13) {
+            event.preventDefault();
+            return false;
+          }
+        },
+        true,
+      ),
+    );
 
     // Form submit handler
-    this.form.querySelectorAll("input[type=submit]").forEach(submitBtn => {
-      submitBtn.addEventListener("click", e => {
+    this.form.querySelectorAll('input[type=submit]').forEach(submitBtn => {
+      submitBtn.addEventListener('click', e => {
         e.preventDefault();
 
-        let payload = {};
+        const payload = {};
         Object.keys(this.fields).forEach(field => {
           payload[field] = this.fields[field].value;
         });
 
-        let freshmen = [];
-        let upperclassmen = [];
+        const freshmen = [];
+        const upperclassmen = [];
 
-        this.form.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
+        this.form.querySelectorAll('input[type=checkbox]').forEach(checkbox => {
           const uid = checkbox.name;
-          const status = checkbox.checked ? "Attended" : "Absent";
+          const status = checkbox.checked ? 'Attended' : 'Absent';
 
           if (_.isNaN(_.toNumber(uid))) {
             upperclassmen.push({
               uid: uid,
-              status: status
+              status: status,
             });
           } else {
             freshmen.push({
               id: uid,
-              status: status
+              status: status,
             });
           }
         });
@@ -58,9 +63,10 @@ export default class HouseMeetingForm {
         payload.members = upperclassmen;
 
         FetchUtil.postWithWarning(this.endpoint, payload, {
-          warningText: "You will not be able to unmark a member as present " +
-                        "once attendance has been recorded.",
-          successText: "Attendance has been submitted."
+          warningText:
+            'You will not be able to unmark a member as present ' +
+            'once attendance has been recorded.',
+          successText: 'Attendance has been submitted.',
         });
       });
     });
