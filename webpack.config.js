@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const CopyPlugin = require('copy-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const sass = require('sass');
 const dotenv = require('dotenv');
@@ -10,17 +10,17 @@ const publicPath = 'static/js';
 
 dotenv.config();
 const babelQuery = {
-  "presets": ["@babel/preset-env"],
-  "plugins": []
-}
+  presets: ['@babel/preset-env'],
+  plugins: [],
+};
 
 const webpackConfig = {
   context: jsSrc,
   entry: {
-    app: "./javascript/app.js",
-    "color-modes": "csh-material-bootstrap/color-modes.js",
+    app: './javascript/app.js',
+    'color-modes': 'csh-material-bootstrap/color-modes.js',
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   output: {
     path: path.normalize(jsDest),
     filename: 'js/[name].js',
@@ -30,15 +30,15 @@ const webpackConfig = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production'),
-        'SENTRY_ENV': JSON.stringify(process.env.CONDITIONAL_SENTRY_ENV ?? "local-development")
-      }
+        NODE_ENV: JSON.stringify('production'),
+        SENTRY_ENV: JSON.stringify(
+          process.env.CONDITIONAL_SENTRY_ENV ?? 'local-development',
+        ),
+      },
     }),
     new CopyPlugin({
-      patterns: [
-        { from: "images", to: "images" },
-      ],
-    })
+      patterns: [{from: 'images', to: 'images'}],
+    }),
   ],
   mode: 'production',
   module: {
@@ -47,13 +47,13 @@ const webpackConfig = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-        options: babelQuery
+        options: babelQuery,
       },
       {
-        test: require.resolve("jquery"),
+        test: require.resolve('jquery'),
         loader: 'expose-loader',
         options: {
-          exposes: ["$", "jQuery"],
+          exposes: ['$', 'jQuery'],
         },
       },
       {
@@ -72,45 +72,43 @@ const webpackConfig = {
       {
         test: /bootstrap-sweetalert.*$/,
         loader: 'babel-loader',
-        options: babelQuery
+        options: babelQuery,
       },
       {
         test: /\.s[ac]ss$/i,
-        loader: "sass-loader",
-        type: "asset/resource",
+        loader: 'sass-loader',
+        type: 'asset/resource',
         generator: {
-          filename: "css/[name].css",
+          filename: 'css/[name].css',
         },
         options: {
           sassOptions: {
             loadPaths: [
-              // "./node_modules/csh-material-bootstrap/dist",
-              // "./node_modules/csh-material-bootstrap/dist/css",
-              "./node_modules/datatables.net-bs5/css",
-              "./node_modules/bootstrap-material-datetimepicker/css",
-              "./node_modules/load-awesome/css",
-              "./node_modules/reveal.js/css",
-              "./node_modules",
-              ".",
+              // './node_modules/csh-material-bootstrap/dist',
+              // './node_modules/csh-material-bootstrap/dist/css',
+              './node_modules/datatables.net-bs5/css',
+              './node_modules/bootstrap-material-datetimepicker/css',
+              './node_modules/load-awesome/css',
+              './node_modules/reveal.js/css',
+              './node_modules',
+              '.',
             ],
-            importers: [
-              new sass.NodePackageImporter()
-            ],
-          }
-        }
+            importers: [new sass.NodePackageImporter()],
+          },
+        },
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: "asset/resource",
+        type: 'asset/resource',
         generator: {
-          filename: "fonts/[name][ext]",
+          filename: 'fonts/[name][ext]',
         },
-      }
-    ]
+      },
+    ],
   },
   optimization: {
     emitOnErrors: true,
-  }
+  },
 };
 
 module.exports = webpackConfig;

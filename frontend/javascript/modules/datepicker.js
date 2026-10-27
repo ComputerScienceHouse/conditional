@@ -1,5 +1,4 @@
-/* global $ */
-import { Datepicker } from "vanillajs-datepicker";
+import {Datepicker} from 'vanillajs-datepicker';
 
 export default class DatePicker {
   constructor(input) {
@@ -13,7 +12,7 @@ export default class DatePicker {
       buttonClass: 'btn',
       todayButton: true,
       format: 'yyyy-mm-dd',
-      autohide: true
-    })
+      autohide: true,
+    });
   }
 }
