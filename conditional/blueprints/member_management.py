@@ -1,7 +1,6 @@
 import csv
 import io
 from datetime import datetime
-from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error,deprecated-module
 
 import structlog
 from flask import Blueprint, request, jsonify, make_response
@@ -36,8 +35,6 @@ from conditional.util.ldap import ldap_set_non_current_student
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
-from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum

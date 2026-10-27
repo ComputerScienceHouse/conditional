@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import func, or_
 
-from conditional import start_of_year, ldap
+from conditional import start_of_year
 from conditional.models.models import CommitteeMeeting, FreshmanAccount
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
