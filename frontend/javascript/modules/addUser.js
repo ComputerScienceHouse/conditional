@@ -19,7 +19,7 @@ export default class AddUser {
 
     const payload = {
       name: this.form.querySelector('input[name=name]').value,
-      roomNumber: this.form.querySelector('input[name=room]').value
+      roomNumber: this.form.querySelector('input[name=room]').value,
     };
 
     if (payload.name === '') {
