@@ -64,12 +64,15 @@ def display_member_management(user_dict=None):
     member_list = ldap.get_group_member_attributes(groups=["current_student"],
                                     attributes=['uid', 'housingPoints', 'roomNumber', 'displayName'])
 
+    on_floor_member_count = 0
+
     for member in member_list:
         member['name'] = member['displayName']
         member['active'] = member['uid'] in active_members
 
         if 'roomNumber' in member:
             member['room'] = member['roomNumber']
+            on_floor_member_count += 1
 
 
     freshmen = FreshmanAccount.query
@@ -83,6 +86,9 @@ def display_member_management(user_dict=None):
             "eval_date": freshman_user.eval_date
         })
 
+        if freshman_user.room_number is not None:
+            on_floor_member_count += 1
+
     settings = EvalSettings.query.first()
     if settings:
         lockdown = settings.site_lockdown
@@ -92,8 +98,6 @@ def display_member_management(user_dict=None):
         lockdown = False
         intro_form = False
         accept_dues_until = datetime.now()
-
-    on_floor_member_count = 0
 
     return render_template("member_management.html",
                            username=user_dict['username'],
