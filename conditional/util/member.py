@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import func, or_
 
-from conditional import start_of_year, ldap
+from conditional import start_of_year
 from conditional.models.models import CommitteeMeeting, FreshmanAccount
 from conditional.models.models import CurrentCoops
 from conditional.models.models import FreshmanEvalData
@@ -63,9 +63,6 @@ def get_freshman_data(user_name):
     freshman['sig_missed'] = freshman_data.signatures_missed
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
-
-def get_onfloor_members() -> set[str]:
-    return set(ldap.get_group_member_uids(groups=['onfloor', 'active']))
 
 def get_cm(member):
     query_result = CommitteeMeeting.query.join(

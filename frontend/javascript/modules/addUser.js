@@ -19,7 +19,6 @@ export default class AddUser {
 
     const payload = {
       name: this.form.querySelector('input[name=name]').value,
-      onfloor: this.form.querySelector('input[name=onFloor]').checked,
       roomNumber: this.form.querySelector('input[name=room]').value,
     };
 
