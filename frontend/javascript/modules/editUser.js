@@ -66,10 +66,6 @@ export default class EditUser {
     // Room Number
     modal.querySelector('input[name=room]').value = this.data.room_number;
 
-    // On-floor Status
-    modal.querySelector('input[name=onFloor]').checked =
-        this.data.onfloor_status;
-
     // Dues
     modal.querySelector('input[name=dues]').checked =
         this.data.active_member;
@@ -185,10 +181,6 @@ export default class EditUser {
 
     // Room Number
     modal.querySelector('input[name=room]').value = this.data.room_number;
-
-    // On-floor Status
-    modal.querySelector('input[name=onFloor]').checked =
-        this.data.onfloor_status;
 
     // Evaluation Date
     modal.querySelector('input[name=evalDate]').value =
@@ -325,7 +317,6 @@ export default class EditUser {
       // Save user details
       let payload = {
         roomNumber: null,
-        onfloorStatus: modal.querySelector('input[name=onFloor]').checked
       };
 
       if (this.type === "member") {

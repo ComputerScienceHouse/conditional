@@ -12,7 +12,6 @@ from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_current_students
 from conditional.util.ldap import ldap_get_intro_members
 from conditional.util.ldap import ldap_get_member
-from conditional.util.ldap import ldap_get_onfloor_members
 from conditional.util.user_dict import user_dict_is_eval_director, user_dict_is_rtp
 
 logger = structlog.get_logger()
@@ -52,7 +51,6 @@ def clear_members_cache():
     ldap_get_active_members.cache_clear()
     ldap_get_current_students.cache_clear()
     ldap_get_intro_members.cache_clear()
-    ldap_get_onfloor_members.cache_clear()
 
 
 def clear_committee_cache():

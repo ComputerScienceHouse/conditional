@@ -64,9 +64,6 @@ def get_freshman_data(user_name):
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
 
-def get_onfloor_members() -> set[str]:
-    return set(ldap.get_group_member_uids(groups=['onfloor', 'active']))
-
 def get_cm(member):
     query_result = CommitteeMeeting.query.join(
         MemberCommitteeAttendance,

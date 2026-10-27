@@ -2,8 +2,7 @@ from datetime import datetime
 
 from conditional import ldap
 
-from conditional.models.models import InHousingQueue
-from conditional.models.models import OnFloorStatusAssigned
+from conditional.models.models import HousingQueueAssignment, InHousingQueue
 
 def get_housing_queue(is_eval_director=False):
 
@@ -13,13 +12,13 @@ def get_housing_queue(is_eval_director=False):
     # both the member's UID and their on-floor datetime.
     in_queue = {
         entry.uid: {
-            'time': entry.onfloor_granted
+            'time': entry.housing_queue_joined
         } for entry in InHousingQueue.query.outerjoin(
-            OnFloorStatusAssigned,
-            OnFloorStatusAssigned.uid == InHousingQueue.uid
+            HousingQueueAssignment,
+            HousingQueueAssignment.uid == InHousingQueue.uid
         ).with_entities(
             InHousingQueue.uid,
-            OnFloorStatusAssigned.onfloor_granted
+            HousingQueueAssignment.housing_queue_joined
         ).all()
     }
 

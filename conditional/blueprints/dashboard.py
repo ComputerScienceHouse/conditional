@@ -16,8 +16,7 @@ from conditional.util.ldap import ldap_get_active_member_uids, ldap_is_uid_activ
 from conditional.util.major_project import get_project_list
 from conditional.util.member import gatekeep_values, get_freshman_data, get_voting_members, \
     get_cm, get_hm, is_gatekeep_active, req_cm
-from conditional.util.user_dict import user_dict_is_intromember, \
-    user_dict_is_onfloor
+from conditional.util.user_dict import user_dict_is_intromember
 
 logger = structlog.get_logger()
 
@@ -40,14 +39,11 @@ def display_dashboard(user_dict=None):
 
     can_vote = get_voting_members()
 
-    on_floor = user_dict_is_onfloor(user_dict)
-
     data = {}
     data['username'] = uid
 
     data['active'] = ldap_is_uid_active(uid)
     data['bad_standing'] = ldap_is_uid_bad_standing(uid)
-    data['onfloor'] = on_floor
     data['voting'] = bool(uid in can_vote)
 
     data['voting_count'] = {"Voting Members": len(can_vote),
@@ -74,14 +70,10 @@ def display_dashboard(user_dict=None):
 
     data['spring'] = spring
 
-    # only show housing if member has onfloor status
-    if on_floor:
-        housing = {}
-        housing['points'] = user_dict['account'].housingPoints
-        housing['room'] = user_dict['account'].roomNumber
-        housing['queue_pos'] = get_queue_position(uid)
-    else:
-        housing = None
+    housing = {}
+    housing['points'] = user_dict['account'].housingPoints
+    housing['room'] = user_dict['account'].roomNumber
+    housing['queue_pos'] = get_queue_position(uid)
 
     data['housing'] = housing
 
