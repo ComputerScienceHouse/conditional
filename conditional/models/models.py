@@ -13,16 +13,14 @@ class FreshmanAccount(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(64), nullable=False)
     eval_date = Column(Date, nullable=False)
-    onfloor_status = Column(Boolean)
     room_number = Column(String)
     signatures_missed = Column(Integer)
     rit_username = Column(String(10), nullable=True)
 
-    def __init__(self, name, onfloor, room=None, missed=None, rit_username=None): # pylint: disable=too-many-positional-arguments
+    def __init__(self, name, room=None, missed=None, rit_username=None): # pylint: disable=too-many-positional-arguments
         self.name = name
         today = date.fromtimestamp(time.time())
         self.eval_date = today + timedelta(weeks=6)
-        self.onfloor_status = onfloor
         self.room_number = room
         self.signatures_missed = missed
         self.rit_username = rit_username
@@ -242,14 +240,14 @@ class CurrentCoops(db.Model):
         self.semester = semester
 
 
-class OnFloorStatusAssigned(db.Model):
-    __tablename__ = 'onfloor_datetime'
+class HousingQueueAssignment(db.Model):
+    __tablename__ = 'housing_queue_assignment'
     uid = Column(String(32), primary_key=True)
-    onfloor_granted = Column(DateTime, primary_key=True)
+    housing_queue_joined = Column(DateTime, primary_key=True)
 
     def __init__(self, uid, time_granted):
         self.uid = uid
-        self.onfloor_granted = time_granted
+        self.housing_queue_joined = time_granted
 
 
 class Conditional(db.Model):

@@ -49,14 +49,6 @@ def ldap_get_intro_member_uids() -> list[str]:
     return _ldap_get_group_member_uids("intromembers")
 
 @service_cache(maxsize=1024)
-def ldap_get_onfloor_members() -> list[CSHMember]:
-    return _ldap_get_group_members("onfloor")
-
-@service_cache(maxsize=1024)
-def ldap_get_onfloor_member_uids() -> list[str]:
-    return _ldap_get_group_member_uids("onfloor")
-
-@service_cache(maxsize=1024)
 def ldap_get_current_students() -> list[CSHMember]:
     return _ldap_get_group_members("current_student")
 
@@ -104,11 +96,6 @@ def ldap_is_rtp(account) -> bool:
 @service_cache(maxsize=128)
 def ldap_is_intromember(account) -> bool:
     return _ldap_is_member_of_group(account, 'intromembers')
-
-
-@service_cache(maxsize=128)
-def ldap_is_onfloor(account) -> bool:
-    return _ldap_is_member_of_group(account, 'onfloor')
 
 
 @service_cache(maxsize=128)
@@ -183,10 +170,4 @@ def ldap_set_failed(account):
 
 def ldap_set_bad_standing(account):
     _ldap_add_member_to_group(account, 'bad_standing')
-    ldap_get_member.cache_clear()
-
-
-def ldap_set_onfloor(account):
-    _ldap_add_member_to_group(account, 'onfloor')
-    ldap_get_onfloor_members.cache_clear()
     ldap_get_member.cache_clear()

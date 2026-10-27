@@ -17,7 +17,7 @@ Administration
                         <div class="stat-number">{{num_active}}</div>
                         <div class="stat-title">Active Members</div>
                     </div>
-                     <div class="col-xs-6 col-sm-2">
+                    <div class="col-xs-6 col-sm-2">
                         <div class="stat-number">{{num_onfloor}}</div>
                         <div class="stat-title">On-Floor Members</div>
                     </div>
@@ -76,13 +76,6 @@ Administration
                                 <input class="form-control" id="addUserRoom" name="room" type="text">
                             </div>
 
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" name="onFloor" id="onFloor">
-                                <label class="form-check-label" for="onFloor">
-                                    On-Floor
-                                </label>
-                            </div>
-
                             <input class="btn btn-primary w-100" type="submit" value="Create New User">
                         </form>
                     </div>
@@ -109,7 +102,6 @@ Administration
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>On Floor</th>
                             <th>Room</th>
                             <th>Evaluation Date</th>
                         </tr>
@@ -121,9 +113,6 @@ Administration
                                 <a href="#" data-module="editUser" data-modal="editFreshmanModal" data-uid="{{f['id']}}">
                                     {{f['name']}}
                                 </a>
-                            </td>
-                            <td>
-                                {% if f['onfloor'] %} &#10003; {% endif %}
                             </td>
                             <td>{{f['room']}}</td>
                             <td>{{f['eval_date']}}</td>
@@ -155,7 +144,6 @@ Administration
                         <tr>
                             <th>Name</th>
                             <th>Active</th>
-                            <th>On Floor</th>
                             <th>Room</th>
                             <th>Points</th>
                         </tr>
@@ -171,9 +159,6 @@ Administration
                             </td>
                             <td>
                                 {% if m['active'] %} &#x2605; {% endif %}
-                            </td>
-                            <td>
-                                {% if m['onfloor'] %} &#10003; {% endif %}
                             </td>
                             <td>{% if m['room'] %}{{m['room']}}{% endif %}</td>
                             <td>{{m['housingPoints']}}</td>
@@ -212,13 +197,6 @@ Administration
                 </div>
 
                 <div class="mb-3 p-1 d-flex">
-                    <div class="form-check flex-grow-1">
-                        <input class="form-check-input" type="checkbox" value="" name="onFloor" id="onFloor">
-                        <label class="form-check-label" for="onFloor">
-                            On-Floor
-                        </label>
-                    </div>
-
                     <div class="form-check flex-grow-1">
                         <input class="form-check-input" type="checkbox" value="" name="dues" id="dues">
                         <label class="form-check-label" for="dues">
@@ -284,13 +262,6 @@ Administration
                 <div class="mb-3">
                     <label class="form-label" for="sigMissed">Signatures Missed:</label>
                     <input class="form-control" id="sigMissed" name="sigMissed" type="number">
-                </div>
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="" name="onFloor" id="onFloor">
-                    <label class="form-check-label" for="onFloor">
-                        On-Floor
-                    </label>
                 </div>
 
                 <p class="lead">Missed House Meetings</p>
