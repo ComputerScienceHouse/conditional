@@ -67,8 +67,6 @@ flask-sqlalchemy==3.1.1
     #   flask-migrate
 future==1.0.0
     # via pyjwkest
-greenlet==3.5.6
-    # via sqlalchemy
 gunicorn==26.2.0
     # via -r requirements.in
 idna==3.20
@@ -120,12 +118,16 @@ packaging==26.3
     # via
     #   build
     #   wheel
+pip==26.2.2
+    # via pip-tools
 pip-tools==7.5.3
     # via -r requirements.in
 platformdirs==4.13.6
     # via pylint
-psycopg2-binary==2.9.13
+psycopg==3.3.6
     # via -r requirements.in
+psycopg-binary==3.3.6
+    # via psycopg
 pyasn1==0.6.5
     # via
     #   pyasn1-modules
@@ -167,14 +169,16 @@ requests==2.34.2
     #   pyjwkest
 s3transfer==0.10.4
     # via boto3
-sentry-sdk[flask]==2.63.0
+sentry-sdk==2.63.0
     # via -r requirements.in
+setuptools==84.2.1
+    # via pip-tools
 six==1.17.0
     # via
     #   -r requirements.in
     #   pyjwkest
     #   python-dateutil
-sqlalchemy==2.0.55
+sqlalchemy==2.1.6
     # via
     #   -r requirements.in
     #   alembic
