@@ -1,4 +1,4 @@
-{% extends "base_protected.html" %}
+{% extends "base_slideshow.html" %}
 {% block title %}
 Membership Evaluations Slideshow
 {% endblock %}
@@ -85,32 +85,6 @@ Membership Evaluations Slideshow
   </div>
 </div>
 
-<div class="modal fade" id="createConditional" tabindex="-1">
-    <div class="vertical-alignment-helper">
-        <div class="modal-dialog vertical-align-center">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="editUserTitle">Conditional</h4>
-                </div>
-                <form data-module="conditionalForm" method="post" autocomplete="off">
-                    <div class="modal-body">
-                        <input type="hidden" name="uid">
-                        <div class="row user-edit-row">
-                            <label class="control-label" for="due_date">Due Date</label>
-                            <input type="text" id="due_date" name="due_date" class="form-control" data-module="datepicker" />
-                        </div>
-                        <div class="row user-edit-row">
-                            <label class="control-label" for="requirement">Requirement</label>
-                            <input type="text" class="form-control" id="requirement" name="description">
-                        </div>
-                    </div>
-                    <div class="modal-footer">  
-                        <input type="submit" class="btn btn-primary" value="Create">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+{% include "conditional_modal.html" %}
+
 {% endblock %}

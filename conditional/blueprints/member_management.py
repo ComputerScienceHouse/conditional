@@ -1,12 +1,11 @@
 import csv
 import io
 from datetime import datetime
-from distutils.util import strtobool  # pylint: disable=no-name-in-module,import-error,deprecated-module
 
 import structlog
 from flask import Blueprint, request, jsonify, make_response
 
-from conditional import app, get_user, auth, db, start_of_year
+from conditional import app, get_user, auth, db, start_of_year, ldap
 
 from conditional.models.models import FreshmanAccount
 from conditional.models.models import FreshmanEvalData
@@ -20,29 +19,22 @@ from conditional.models.models import FreshmanHouseMeetingAttendance
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.models.models import HouseMeeting
 from conditional.models.models import EvalSettings
-from conditional.models.models import OnFloorStatusAssigned
 from conditional.models.models import SpringEval
 from conditional.models.models import CurrentCoops
 
 from conditional.blueprints.cache_management import clear_members_cache
 
-from conditional.util.ldap import ldap_is_eval_director
+from conditional.util.ldap import ldap_get_active_member_uids, ldap_is_eval_director
 from conditional.util.ldap import ldap_is_active
-from conditional.util.ldap import ldap_is_onfloor
 from conditional.util.ldap import ldap_set_roomnumber
 from conditional.util.ldap import ldap_set_active
 from conditional.util.ldap import ldap_set_inactive
-from conditional.util.ldap import ldap_set_onfloor
 from conditional.util.ldap import ldap_set_housingpoints
 from conditional.util.ldap import ldap_set_current_student
 from conditional.util.ldap import ldap_set_non_current_student
 from conditional.util.ldap import ldap_get_active_members
 from conditional.util.ldap import ldap_get_member
 from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import _ldap_add_member_to_group as ldap_add_member_to_group
-from conditional.util.ldap import _ldap_remove_member_from_group as ldap_remove_member_from_group
-
-from conditional.util.member import get_members_info_active_and_onfloor
 
 from conditional.util.flask import render_template
 from conditional.models.models import attendance_enum
@@ -64,7 +56,21 @@ def display_member_management(user_dict=None):
     if not user_dict_is_eval_director(user_dict) and not user_dict_is_financial_director(user_dict):
         return "must be eval director", 403
 
-    member_list, active_members, onfloor_members = get_members_info_active_and_onfloor()
+    active_members = set(ldap_get_active_member_uids())
+
+    member_list = ldap.get_group_member_attributes(groups=["current_student"],
+                                    attributes=['uid', 'housingPoints', 'roomNumber', 'displayName'])
+
+    on_floor_member_count = 0
+
+    for member in member_list:
+        member['name'] = member['displayName']
+        member['active'] = member['uid'] in active_members
+
+        if 'roomNumber' in member:
+            member['room'] = member['roomNumber']
+            on_floor_member_count += 1
+
 
     freshmen = FreshmanAccount.query
     freshmen_list = []
@@ -73,10 +79,12 @@ def display_member_management(user_dict=None):
         freshmen_list.append({
             "id": freshman_user.id,
             "name": freshman_user.name,
-            "onfloor": freshman_user.onfloor_status,
             "room": "" if freshman_user.room_number is None else freshman_user.room_number,
             "eval_date": freshman_user.eval_date
         })
+
+        if freshman_user.room_number is not None:
+            on_floor_member_count += 1
 
     settings = EvalSettings.query.first()
     if settings:
@@ -92,9 +100,9 @@ def display_member_management(user_dict=None):
                            username=user_dict['username'],
                            active=member_list,
                            num_current=len(member_list),
+                           num_onfloor=on_floor_member_count,
                            num_active=len(active_members),
                            num_fresh=len(freshmen_list),
-                           num_onfloor=len(onfloor_members),
                            freshmen=freshmen_list,
                            site_lockdown=lockdown,
                            accept_dues_until=accept_dues_until,
@@ -167,7 +175,6 @@ def member_management_adduser(user_dict=None):
     post_data = request.get_json()
 
     name = post_data['name']
-    onfloor_status = post_data['onfloor']
     room_number = post_data['roomNumber']
     log.info(f'Create Freshman Account for {name}')
 
@@ -175,7 +182,7 @@ def member_management_adduser(user_dict=None):
     if room_number == "":
         room_number = None
 
-    db.session.add(FreshmanAccount(name, onfloor_status, room_number))
+    db.session.add(FreshmanAccount(name, room_number))
     db.session.flush()
     db.session.commit()
     return jsonify({"success": True}), 200
@@ -200,7 +207,6 @@ def member_management_uploaduser(user_dict=None):
 
         for new_user in csv_input:
             name = new_user[0]
-            onfloor_status = strtobool(new_user[1])
 
             if new_user[2]:
                 room_number = new_user[2]
@@ -213,7 +219,7 @@ def member_management_uploaduser(user_dict=None):
                 rit_username = None
 
             log.info(f'Create Freshman Account for {name} via CSV Upload')
-            db.session.add(FreshmanAccount(name, onfloor_status, room_number, None, rit_username))
+            db.session.add(FreshmanAccount(name, room_number, None, rit_username))
 
         db.session.flush()
         db.session.commit()
@@ -248,24 +254,10 @@ def edit_uid(uid, flask_request, username):
     current_account = ldap_get_member(username)
     if ldap_is_eval_director(current_account):
         room_number = post_data['roomNumber']
-        onfloor_status = post_data['onfloorStatus']
         housing_points = post_data['housingPoints']
-        log.info(f'Edit {uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Points: {post_data['housingPoints']}') #pylint: disable=line-too-long
+        log.info(f'Edit {uid} - Room: {post_data['roomNumber']} Points: {post_data['housingPoints']}') #pylint: disable=line-too-long
 
         ldap_set_roomnumber(account, room_number)
-        if onfloor_status:
-            # If a OnFloorStatusAssigned object exists, don't make another
-            if not ldap_is_onfloor(account):
-                db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-                ldap_add_member_to_group(account, "onfloor")
-        else:
-            for ofs in OnFloorStatusAssigned.query.filter(OnFloorStatusAssigned.uid == uid):
-                db.session.delete(ofs)
-            db.session.flush()
-            db.session.commit()
-
-            if ldap_is_onfloor(account):
-                ldap_remove_member_from_group(account, "onfloor")
         ldap_set_housingpoints(account, housing_points)
 
     # Only update if there's a diff
@@ -292,7 +284,7 @@ def edit_fid(uid, flask_request):
     log = logger.new(request=flask_request, auth_dict={'username': uid})
     post_data = flask_request.get_json()
 
-    log.info(f'Edit freshman-{uid} - Room: {post_data['roomNumber']} On-Floor: {post_data['onfloorStatus']} Eval: {post_data['evalDate']} SigMiss: {post_data['sigMissed']}') #pylint: disable=line-too-long
+    log.info(f'Edit freshman-{uid} - Room: {post_data['roomNumber']} Eval: {post_data['evalDate']} SigMiss: {post_data['sigMissed']}') #pylint: disable=line-too-long
 
     name = post_data['name']
 
@@ -301,7 +293,6 @@ def edit_fid(uid, flask_request):
     else:
         room_number = post_data['roomNumber']
 
-    onfloor_status = post_data['onfloorStatus']
     eval_date = post_data['evalDate']
 
     if post_data['sigMissed'] == "":
@@ -312,7 +303,6 @@ def edit_fid(uid, flask_request):
     FreshmanAccount.query.filter(FreshmanAccount.id == uid).update({
         'name': name,
         'eval_date': datetime.strptime(eval_date, "%Y-%m-%d"),
-        'onfloor_status': onfloor_status,
         'room_number': room_number,
         'signatures_missed': sig_missed
     })
@@ -362,7 +352,6 @@ def member_management_getuserinfo(uid, user_dict=None):
                 'name': acct.name,
                 'eval_date': acct.eval_date.strftime("%Y-%m-%d"),
                 'missed_hm': hms_missed,
-                'onfloor_status': acct.onfloor_status,
                 'room_number': acct.room_number,
                 'sig_missed': acct.signatures_missed
             }), 200
@@ -386,9 +375,8 @@ def member_management_getuserinfo(uid, user_dict=None):
                 hms_missed.append(hm)
         return jsonify(
             {
-                'name': account.cn,
+                'name': account.displayName,
                 'room_number': account.roomNumber,
-                'onfloor_status': ldap_is_onfloor(account),
                 'housing_points': account.housingPoints,
                 'active_member': ldap_is_active(account),
                 'missed_hm': hms_missed,
@@ -397,7 +385,7 @@ def member_management_getuserinfo(uid, user_dict=None):
 
     return jsonify(
         {
-            'name': account.cn,
+            'name': account.displayName,
             'active_member': ldap_is_active(account),
             'user': 'financial'
         }), 200
@@ -485,9 +473,6 @@ def member_management_upgrade_user(user_dict=None):
             log.info(f'Duplicate house meeting attendance! fid: {fid}, uid: {uid}, id: {fhm.meeting_id}')
 
     new_account = ldap_get_member(uid)
-    if acct.onfloor_status:
-        db.session.add(OnFloorStatusAssigned(uid, datetime.now()))
-        ldap_set_onfloor(new_account)
 
     if acct.room_number:
         ldap_set_roomnumber(new_account, acct.room_number)

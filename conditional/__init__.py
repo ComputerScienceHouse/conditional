@@ -39,11 +39,12 @@ if app.config['PROFILING']:
     )
 
 # Sentry setup
-sentry_sdk.init(
-    dsn=app.config['SENTRY_DSN'],
-    integrations=[FlaskIntegration(), SqlalchemyIntegration()],
-    environment=app.config['SENTRY_ENV'],
-)
+if app.config['SENTRY_ENV'] != "local-development":
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+        environment=app.config['SENTRY_ENV'],
+    )
 
 ldap = CSHLDAP(app.config['LDAP_BIND_DN'],
                app.config['LDAP_BIND_PW'],

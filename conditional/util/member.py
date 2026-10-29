@@ -12,48 +12,9 @@ from conditional.models.models import MemberSeminarAttendance
 from conditional.models.models import MemberSeminarHost
 from conditional.models.models import TechnicalSeminar
 from conditional.util.cache import service_cache
-from conditional.util.ldap import ldap_get_active_members
-from conditional.util.ldap import ldap_get_current_students
-from conditional.util.ldap import ldap_get_intro_members
-from conditional.util.ldap import ldap_get_onfloor_members
-from conditional.util.ldap import ldap_is_active
+from conditional.util.ldap import ldap_get_active_member_uids, ldap_get_intro_member_uids, ldap_is_active
 from conditional.util.ldap import ldap_is_intromember
 from conditional.util.ldap import ldap_get_member
-
-
-@service_cache(maxsize=1024)
-def get_members_info_active_and_onfloor():
-    members = ldap_get_current_students()
-    member_list = []
-
-    onfloor_set = set()
-    active_set = set()
-
-    for account in members:
-        uid = account.uid
-        name = account.cn
-        groups = "".join(account.groups())
-        active = "active" in groups
-        onfloor = "onfloor" in groups
-
-        if active:
-            active_set.add(uid)
-
-        if onfloor:
-            onfloor_set.add(uid)
-
-        room = account.roomNumber
-        hp = account.housingPoints
-        member_list.append({
-            "uid": uid,
-            "name": name,
-            "active": active,
-            "onfloor": onfloor,
-            "room": room,
-            "hp": hp
-        })
-
-    return member_list, active_set, onfloor_set
 
 def get_freshman_data(user_name):
     freshman = {}
@@ -103,22 +64,6 @@ def get_freshman_data(user_name):
     freshman['eval_date'] = freshman_data.eval_date
     return freshman
 
-@service_cache(maxsize=1024)
-def get_active_members() -> set[str]:
-    return {members.uid for members in ldap_get_active_members()}
-
-@service_cache(maxsize=1024)
-def get_intro_members() -> set[str]:
-    return {member.uid for member in ldap_get_intro_members()}
-
-@service_cache(maxsize=1024)
-def get_all_onfloor_members() -> set[str]:
-    return {members.uid for members in ldap_get_onfloor_members()}
-
-@service_cache(maxsize=1024)
-def get_onfloor_members() -> set[str]:
-    return get_active_members() & get_all_onfloor_members()
-
 def get_cm(member):
     query_result = CommitteeMeeting.query.join(
         MemberCommitteeAttendance,
@@ -126,7 +71,8 @@ def get_cm(member):
     ).with_entities(
         MemberCommitteeAttendance.uid,
         CommitteeMeeting.timestamp,
-        CommitteeMeeting.committee
+        CommitteeMeeting.committee,
+        CommitteeMeeting.adhoc
     ).filter(
         CommitteeMeeting.timestamp > start_of_year(),
         MemberCommitteeAttendance.uid == member.uid,
@@ -136,7 +82,8 @@ def get_cm(member):
     c_meetings = [{
         "uid": cm.uid,
         "timestamp": cm.timestamp,
-        "committee": cm.committee
+        "committee": cm.committee,
+        "adhoc": cm.adhoc
     } for cm in query_result]
 
     return c_meetings
@@ -207,8 +154,8 @@ def get_semester_info() -> tuple[str, datetime]:
 def get_voting_members():
     semester, semester_start = get_semester_info()
 
-    active_members = get_active_members()
-    intro_members = get_intro_members()
+    active_members = set(ldap_get_active_member_uids())
+    intro_members = set(ldap_get_intro_member_uids())
 
     coop_members = CurrentCoops.query.filter(
         CurrentCoops.date_created > start_of_year(),
@@ -359,7 +306,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberCommitteeAttendance.uid == username,
-            bool(CommitteeMeeting.approved),
+            CommitteeMeeting.approved,
             CommitteeMeeting.timestamp >= semester_start,
         )
         .count()
@@ -372,7 +319,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberSeminarAttendance.uid == username,
-            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.approved,
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()
@@ -385,7 +332,7 @@ def gatekeep_values(username):
         )
         .filter(
             MemberSeminarHost.uid == username,
-            bool(TechnicalSeminar.approved),
+            TechnicalSeminar.approved,
             TechnicalSeminar.timestamp >= semester_start,
         )
         .count()

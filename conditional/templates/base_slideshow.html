@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+        <link rel="shortcut icon" href="https://assets.csh.rit.edu/uploads/favicon.ico" type="image/x-icon">
+        <link href="/static/css/app.css" rel="stylesheet">
+        {% block extraHeader %}
+        {% endblock %}
+
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+
+    <body>
+        {% if not lockdown %}
+            {% block body %}
+            {% endblock %}
+        {% else %}
+        <div class="container main error-page align-center">
+            <div class="col-xs-12">
+                <img src="/static/images/material_lock.svg" alt="Attention!">
+                <h1>Congratulations or I'm Sorry...</h1>
+                <h2>We cannot reveal the results of your evaluation!</h2>
+                <h3>Evaluations underway:</h3>
+                <p>Conditional is in Lockdown</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <script src="/static/js/app.js"></script>
+    </body>
+</html>

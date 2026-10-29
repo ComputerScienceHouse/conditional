@@ -9,6 +9,8 @@
         <meta name="author" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
+        <script src="/static/js/color-modes.js"></script>
+
         <link rel="shortcut icon" href="https://assets.csh.rit.edu/uploads/favicon.ico" type="image/x-icon">
         <link href="/static/css/app.css" rel="stylesheet">
         {% block extraHeader %}
@@ -18,8 +20,7 @@
     </head>
 
     <body>
-        {% block nav %}
-        {% endblock %}
+        {% include "nav.html" %}
         {% if not lockdown %}
             {% block body %}
             {% endblock %}
@@ -35,8 +36,9 @@
         </div>
         {% endif %}
 
-        <footer>
-            <a class="footer-version" href="https://github.com/ComputerScienceHouse/conditional/tree/v{{config["VERSION"]}}">Conditional (v{{config["VERSION"]}})</a>
+        <footer class="text-center mt-5 mb-4">
+            <a class="link-primary text-body-secondary text-decoration-none text-center"
+                href="https://github.com/ComputerScienceHouse/conditional/tree/v{{config["VERSION"]}}">Conditional (v{{config["VERSION"]}})</a>
         </footer>
         <script src="/static/js/app.js"></script>
     </body>

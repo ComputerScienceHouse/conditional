@@ -70,10 +70,13 @@ python -m gunicorn
 
 ## Config
 
-You must create `config.py` in the top-level directory with the appropriate credentials for the application to run. See `config.env.py` for an example.
+Either copy `.env.example` to `.env` or `config.env.py` to `config.py`, and change the variables in the newly copied file accordingly. The only three variables you should need to change are:
+- LDAP_BIND_DN, replacing `<you>` for your username
+- LDAP_BIND_PW, your password
+- OIDC_CLIENT_SECRET, from the Wiki
 
 ### Add OIDC Config
-Reach out to an RTP to get OIDC credentials that will allow you to develop locally behind OIDC auth
+Check the [SSO wiki page](https://wiki.csh.rit.edu/wiki/SSO#Where_can_I_get_credentials?) for development credentials.
 ```py
 # OIDC Config
 OIDC_ISSUER = "https://sso.csh.rit.edu/auth/realms/csh"
@@ -98,13 +101,17 @@ AWS_ACCESS_KEY_ID = env.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = env.get("AWS_SECRET_ACCESS_KEY", "")
 ```
 
-### Database 
+### Database
 You can either develop using the dev database, or use the local database provided in the docker compose file
 
 Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
 
 ### Forcing evals/rtp or anything else
 All of the role checking is done in `conditional/utils/user_dict.py`, and you can change the various functions to `return True` for debugging
+
+### Using Sentry
+If you want to opt-into logging errors through Sentry then set the `CONDITIONAL_SENTRY_ENV` environment variable to anything other than `local-development`.
+Setting it to `local-development` or having the environment variable unset disables Sentry in both the frontend and backend (Re-building the container may be required).
 
 
 

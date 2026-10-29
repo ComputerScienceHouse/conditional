@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from conditional.models.models import InHousingQueue
-from conditional.models.models import OnFloorStatusAssigned
-from conditional.util.ldap import ldap_get_current_students, ldap_get_member, ldap_is_current_student
+from conditional import ldap
 
+from conditional.models.models import HousingQueueAssignment, InHousingQueue
 
 def get_housing_queue(is_eval_director=False):
 
@@ -13,43 +12,37 @@ def get_housing_queue(is_eval_director=False):
     # both the member's UID and their on-floor datetime.
     in_queue = {
         entry.uid: {
-            'time': entry.onfloor_granted
+            'time': entry.housing_queue_joined
         } for entry in InHousingQueue.query.outerjoin(
-            OnFloorStatusAssigned,
-            OnFloorStatusAssigned.uid == InHousingQueue.uid
+            HousingQueueAssignment,
+            HousingQueueAssignment.uid == InHousingQueue.uid
         ).with_entities(
             InHousingQueue.uid,
-            OnFloorStatusAssigned.onfloor_granted
+            HousingQueueAssignment.housing_queue_joined
         ).all()
     }
 
-    # CSHMember accounts that are in queue
-    potential_accounts = []
+    queue = ldap.get_group_member_attributes(groups=['current_student'],
+                                             attributes=['uid', 'housingPoints', 'cn', 'roomNumber'])
 
-    if is_eval_director:
-        potential_accounts = ldap_get_current_students()
-    else:
-        potential_accounts = [ldap_get_member(username) for username in in_queue]
+    # if the user is not evals, they should only see people in the queue without a room number
+    if not is_eval_director:
+        def member_in_queue(member):
+            return (
+               member['uid'] in in_queue
+               and ('roomNumber' not in member or member['roomNumber'] is not None)
+            )
+        queue = list(filter(member_in_queue, queue))
 
-        potential_accounts = [user for user in potential_accounts if ldap_is_current_student(user)]
-
-    # Populate a list of dictionaries containing the name, username,
-    # and on-floor datetime for each current studetn who has on-floor status
-    # and is not already assigned to a room
-    queue = [
-        {
-            "uid": account.uid,
-            "name": account.cn,
-            "points": account.housingPoints,
-            "time": in_queue.get(account.uid, {}).get('time', datetime.now()) or datetime.now(),
-            "in_queue": account.uid in in_queue
-        } for account in potential_accounts
-        if is_eval_director or account.roomNumber is None
-    ]
+    # set the time they were added to the queue
+    # i'm sorry this is cursed, it's this way because of database structure or something
+    for member in queue:
+        member['time'] = in_queue.get(member['uid'], {}).get('time', datetime.now()) or datetime.now()
+        member['in_queue'] = member['uid'] in in_queue.keys()
 
     # Sort based on time (ascending) and then points (decending).
     queue.sort(key=lambda m: m['time'])
-    queue.sort(key=lambda m: m['points'], reverse=True)
+    queue.sort(key=lambda m: m['housingPoints'], reverse=True)
 
     return queue
 

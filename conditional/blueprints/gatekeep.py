@@ -2,13 +2,12 @@ import structlog
 from flask import Blueprint, request
 from sqlalchemy import func
 
-from conditional import start_of_year, auth
+from conditional import start_of_year, auth, ldap
 from conditional.models.models import CommitteeMeeting, HouseMeeting, MemberCommitteeAttendance, \
     MemberSeminarAttendance, MemberSeminarHost, TechnicalSeminar
 from conditional.models.models import MemberHouseMeetingAttendance
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
-from conditional.util.ldap import ldap_get_active_members
 from conditional.util.member import get_semester_info, is_gatekeep_active
 
 gatekeep_bp = Blueprint('gatekeep_bp', __name__)
@@ -18,7 +17,7 @@ logger = structlog.get_logger()
 @gatekeep_bp.route('/gatekeep_status/')
 @auth.oidc_auth("default")
 @get_user
-def display_spring_evals(internal=False, user_dict=None):
+def display_gatekeep(internal=False, user_dict=None): # pylint: disable-msg=too-many-locals
     log = logger.new(request=request, auth_dict=user_dict)
     log.info('Display Gatekeep Status Listing')
 
@@ -89,9 +88,9 @@ def display_spring_evals(internal=False, user_dict=None):
     ).all()}
 
     gk_members = []
-    for account in ldap_get_active_members():
-        uid = account.uid
-        name = account.cn
+    for account in ldap.get_group_member_attributes(groups=['active'], attributes=['uid', 'cn']):
+        uid = account['uid']
+        name = account['cn']
 
         member_missed_hms = []
 
@@ -119,10 +118,16 @@ def display_spring_evals(internal=False, user_dict=None):
         if passing:
             status = 'passed'
 
+        status_int = 0
+
+        if passing:
+            status_int = 1
+
         member = {
             'name': name,
             'uid': uid,
             'status': status,
+            'status_int': status_int,
             'committee_meetings': cm_attended_count,
             'technical_seminars': ts_attended_count,
             'technical_seminars_hosted': ts_hosted_count,
@@ -137,6 +142,7 @@ def display_spring_evals(internal=False, user_dict=None):
     gk_members.sort(key=lambda x: x['committee_meetings'], reverse=True)
     gk_members.sort(key=lambda x: x['technical_seminars'], reverse=True)
     gk_members.sort(key=lambda x: len(x['house_meetings_missed']))
+    gk_members.sort(key=lambda x: x['status_int'], reverse=True)
     # return names in 'first last (username)' format
     if internal:
         return gk_members

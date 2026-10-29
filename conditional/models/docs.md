@@ -33,6 +33,7 @@ This table stores a list of committee meetings.
 | ------------- | ------------- | ------------------- |
 | `id`  | `INTEGER`  | Autoincrementing primary key.
 | `committee` | `ENUM` | The committee the meeting belongs to.
+| `adhoc` | `STRING` | The Ad-Hoc committee's name when applicable.
 | `timestamp` | `TIMESTAMP` | The date and time of the meeting.
 | `active` | `BOOLEAN` | Whether the meeting applies to the current year or not.
 

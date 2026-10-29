@@ -12,11 +12,11 @@ from conditional.models.models import SpringEval
 from conditional.util.auth import get_user
 from conditional.util.flask import render_template
 from conditional.util.housing import get_queue_position
+from conditional.util.ldap import ldap_get_active_member_uids, ldap_is_uid_active, ldap_is_uid_bad_standing
 from conditional.util.major_project import get_project_list
-from conditional.util.member import gatekeep_values, get_active_members, get_freshman_data, get_voting_members, \
+from conditional.util.member import gatekeep_values, get_freshman_data, get_voting_members, \
     get_cm, get_hm, is_gatekeep_active, req_cm
-from conditional.util.user_dict import user_dict_is_active, user_dict_is_bad_standing, user_dict_is_intromember, \
-    user_dict_is_onfloor
+from conditional.util.user_dict import user_dict_is_intromember
 
 logger = structlog.get_logger()
 
@@ -39,22 +39,20 @@ def display_dashboard(user_dict=None):
 
     can_vote = get_voting_members()
 
-    on_floor = user_dict_is_onfloor(user_dict)
-
     data = {}
     data['username'] = uid
-    data['active'] = user_dict_is_active(user_dict)
-    data['bad_standing'] = user_dict_is_bad_standing(user_dict)
-    data['onfloor'] = on_floor
+
+    data['active'] = ldap_is_uid_active(uid)
+    data['bad_standing'] = ldap_is_uid_bad_standing(uid)
     data['voting'] = bool(uid in can_vote)
 
     data['voting_count'] = {"Voting Members": len(can_vote),
-                            "Active Members": len(get_active_members())}
+                            "Active Members": len(ldap_get_active_member_uids())}
     # freshman shit
     if user_dict_is_intromember(user_dict):
-        data['freshman'] = get_freshman_data(uid)
+        data['intro'] = get_freshman_data(uid)
     else:
-        data['freshman'] = None
+        data['intro'] = None
 
     spring = {}
     c_meetings = get_cm(user_dict['account'])
@@ -72,14 +70,10 @@ def display_dashboard(user_dict=None):
 
     data['spring'] = spring
 
-    # only show housing if member has onfloor status
-    if on_floor:
-        housing = {}
-        housing['points'] = user_dict['account'].housingPoints
-        housing['room'] = user_dict['account'].roomNumber
-        housing['queue_pos'] = get_queue_position(uid)
-    else:
-        housing = None
+    housing = {}
+    housing['points'] = user_dict['account'].housingPoints
+    housing['room'] = user_dict['account'].roomNumber
+    housing['queue_pos'] = get_queue_position(uid)
 
     data['housing'] = housing
 
@@ -161,8 +155,9 @@ def display_dashboard(user_dict=None):
 
     data['cm_attendance'] = c_meetings
     data['cm_attendance_len'] = len(c_meetings)
-    data['hm_attendance'] = hm_attendance
-    data['hm_attendance_len'] = len(hm_attendance)
+
+    data['missed_hm'] = hm_attendance
+    data['missed_hm_len'] = len(hm_attendance)
 
     gatekeep_info = gatekeep_values(uid)
     gatekeep_result = 'disenfranchised'
