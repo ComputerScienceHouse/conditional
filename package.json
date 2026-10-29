@@ -18,23 +18,24 @@
   },
   "scripts": {
     "webpack": "webpack-cli",
-    "build": "npm run webpack && npm run scss && cp -r node_modules/bootstrap-icons/font/fonts conditional/static/css/fonts"
+    "build": "npm run webpack && npm run scss && cp -r node_modules/bootstrap-icons/font/fonts conditional/static/css/fonts",
+    "lint": "eslint",
+    "fix": "eslint --fix"
   },
   "dependencies": {
     "@selectize/selectize": "^0.15.2",
     "@sentry/browser": "10.22.0",
-    "bootstrap": "^3.4.1",
-    "bootstrap-material-datetimepicker": "https://github.com/T00rk/bootstrap-material-datetimepicker.git#gh-pages",
-    "bootstrap-sass": "^3.4.1",
-    "bootstrap-sweetalert": "^1.0.1",
-    "csh-material-bootstrap": "1.0.0",
-    "datatables.net-bs": "^2.3.7",
+    "bootstrap": "5.3.8",
+    "choices.js": "^11.2.3",
+    "csh-material-bootstrap": "5.3.11",
+    "datatables.net-bs5": "^2.3.7",
     "dropzone": "^5.9.3",
     "enumify": "^2.0.0",
     "jquery": "^3.7.1",
     "lodash": "4.18.1",
+    "masonry-layout": "^4.2.2",
     "reveal.js": "^5.2.1",
-    "simple-masonry": "1.0.5",
+    "sweetalert2": "^11.26.25",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
@@ -44,12 +45,15 @@
     "bootstrap-icons": "^1.13.1",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
-    "eslint-config-google": "^0.14.0",
+    "dotenv": "^18.0.5",
+    "eslint": "^10.12.0",
     "expose-loader": "^5.0.1",
+    "gts": "^7.0.0",
     "imports-loader": "^5.0.0",
     "sass": "^1.93.3",
     "sass-loader": "^16.0.7",
     "style-loader": "^4.0.0",
+    "vanillajs-datepicker": "^1.3.4",
     "webpack": "^5.105.3",
     "webpack-cli": "^6.0.1"
   }

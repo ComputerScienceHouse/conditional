@@ -13,7 +13,7 @@ export default class ErrorReport {
 
   _invokeSentryModal() {
     Sentry.showReportDialog({
-      eventId: this.eventId
+      eventId: this.eventId,
     });
   }
 }

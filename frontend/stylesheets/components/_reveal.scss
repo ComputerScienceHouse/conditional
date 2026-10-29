@@ -115,8 +115,11 @@ $yellow: #f1c40f;
     &.passed {
       border-color: $green;
     }
+    &.passed-yellow {
+      border-color: $yellow;
+    }
     & h3 {
-      font-size: 3em;
+      font-size: 2.5em;
       font-weight: bolder;
     }
     & p {
