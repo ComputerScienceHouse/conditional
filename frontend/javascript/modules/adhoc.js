@@ -1,5 +1,4 @@
 import 'whatwg-fetch';
-import '@selectize/selectize';
 import FetchUtil from '../utils/fetchUtil';
 import Exception from '../exceptions/exception';
 import AttendanceException from '../exceptions/attendanceException';
