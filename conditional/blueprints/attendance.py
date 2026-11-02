@@ -339,7 +339,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
         log.info(f'Mark {uid} Present for House Meeting ID: {hid}')
         member_meeting = MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
-            MemberHouseMeetingAttendance.meeting_id == hid
+            MemberHouseMeetingAttendance.meeting_id == int(hid)
         ).first()
         member_meeting.attendance_status = "Attended"
         db.session.commit()
@@ -348,7 +348,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
     log.info(f'Mark freshman-{uid} Present for House Meeting ID: {hid}')
     freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == uid,
-        FreshmanHouseMeetingAttendance.meeting_id == hid
+        FreshmanHouseMeetingAttendance.meeting_id == int(hid)
     ).first()
 
     freshman_meeting.attendance_status = "Attended"
@@ -373,7 +373,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
         log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
         MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
-            MemberHouseMeetingAttendance.meeting_id == hid
+            MemberHouseMeetingAttendance.meeting_id == int(hid)
         ).update({
             'excuse': hm_excuse,
             'attendance_status': hm_status
@@ -382,7 +382,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
         log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
         FreshmanHouseMeetingAttendance.query.filter(
             FreshmanHouseMeetingAttendance.fid == uid,
-            FreshmanHouseMeetingAttendance.meeting_id == hid
+            FreshmanHouseMeetingAttendance.meeting_id == int(hid)
         ).update({
             'excuse': hm_excuse,
             'attendance_status': hm_status
