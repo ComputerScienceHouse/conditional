@@ -96,7 +96,7 @@ mako==1.4.3
     #   -r requirements.in
     #   alembic
     #   oic
-markdown==3.10.3
+markdown==3.11.2
     # via -r requirements.in
 markupsafe==3.0.4
     # via
