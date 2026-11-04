@@ -89,14 +89,14 @@ jmespath==1.1.0
     # via
     #   boto3
     #   botocore
-lazy-object-proxy==1.12.0
+lazy-object-proxy==1.13.0
     # via -r requirements.in
 mako==1.4.3
     # via
     #   -r requirements.in
     #   alembic
     #   oic
-markdown==3.10.3
+markdown==3.11.2
     # via -r requirements.in
 markupsafe==3.0.4
     # via
@@ -118,7 +118,7 @@ packaging==26.3
     # via
     #   build
     #   wheel
-pip-tools==7.5.3
+pip-tools==7.6.2
     # via -r requirements.in
 platformdirs==4.13.6
     # via pylint
@@ -167,7 +167,7 @@ requests==2.34.2
     #   pyjwkest
 s3transfer==0.10.4
     # via boto3
-sentry-sdk[flask]==2.63.0
+sentry-sdk[flask]==2.73.0
     # via -r requirements.in
 six==1.17.0
     # via
