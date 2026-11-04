@@ -118,7 +118,7 @@ packaging==26.3
     # via
     #   build
     #   wheel
-pip-tools==7.5.3
+pip-tools==7.6.2
     # via -r requirements.in
 platformdirs==4.13.6
     # via pylint
