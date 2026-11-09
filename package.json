@@ -23,7 +23,7 @@
     "fix": "eslint --fix"
   },
   "dependencies": {
-    "@sentry/browser": "10.22.0",
+    "@sentry/browser": "11.11.0",
     "bootstrap": "5.3.8",
     "choices.js": "^11.2.3",
     "csh-material-bootstrap": "5.3.11",
