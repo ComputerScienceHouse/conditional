@@ -5,6 +5,8 @@ import FetchUtil from '../utils/fetchUtil';
 import MemberUtil from '../utils/memberUtil';
 import MemberSelect from './memberSelect';
 
+import { Modal } from 'bootstrap';
+
 export default class ReviewMeeting {
   constructor(link) {
     this.link = link;
@@ -25,8 +27,7 @@ export default class ReviewMeeting {
   render() {
     this.link.addEventListener('click', e => {
       e.preventDefault();
-
-      fetch(this.endpoints.meetingDetails + this.cid, {
+        fetch(this.endpoints.meetingDetails + this.cid, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -83,11 +84,13 @@ export default class ReviewMeeting {
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
-    $(this.modal)
-      .on('hidden.bs.modal', e => {
-        document.getElementsByTagName('body')[0].removeChild(e.target);
-      })
-      .modal('show');
+
+    this.modal.addEventListener('hidden.bs.modal', e => {
+      document.getElementsByTagName('body')[0].removeChild(e.target);
+    });
+
+    this.bsModal = new Modal(this.modal);
+    this.bsModal.show();
   }
 
   _submitForm() {
@@ -129,7 +132,7 @@ export default class ReviewMeeting {
           successText: 'Attendance has been updated.',
         },
         () => {
-          $(this.modal).modal('hide');
+          this.bsModal.hide();
           window.location.reload();
         },
       );
@@ -153,7 +156,7 @@ export default class ReviewMeeting {
           successText: 'Attendance has been deleted.',
         },
         () => {
-          $(this.modal).modal('hide');
+          this.bsModal.hide();
           window.location.reload();
         },
       );

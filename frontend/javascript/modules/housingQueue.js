@@ -4,6 +4,8 @@ import FetchException from '../exceptions/fetchException';
 import FetchUtil from '../utils/fetchUtil';
 import Swal from 'sweetalert2';
 
+import $ from 'jquery';
+
 export default class HousingQueue {
   constructor(queuePanel) {
     this.queuePanel = queuePanel;

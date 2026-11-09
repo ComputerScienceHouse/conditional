@@ -4,6 +4,9 @@ import HousingException from '../exceptions/housingException';
 import FetchUtil from '../utils/fetchUtil';
 import MemberSelect from './memberSelect';
 
+import $ from 'jquery';
+import { Modal } from 'bootstrap';
+
 export default class EditHousing {
   constructor(link) {
     this.link = link;
@@ -68,7 +71,7 @@ export default class EditHousing {
     roomInput.value = this.rmnumber;
 
     // Occupants
-    const occupantsInput = this.modal.querySelector('input[name="occupants"]');
+    const occupantsInput = this.modal.querySelector('select[name="occupants"]');
     let occupantsStr = '';
     this.data.occupants.forEach(occupant => {
       occupantsStr += occupant + ',';
@@ -77,15 +80,17 @@ export default class EditHousing {
 
     // Initialize selector control
     occupantsInput.dataset.src = 'cm_members';
-    new MemberSelect(occupantsInput);
+    console.log(this.data.occupants);
+    new MemberSelect(occupantsInput, this.data.occupants);
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
-    $(this.modal)
-      .on('hidden.bs.modal', e => {
-        document.getElementsByTagName('body')[0].removeChild(e.target);
-      })
-      .modal('show');
+    this.modal.addEventListener('hidden.bs.modal', e => {
+      document.getElementsByTagName('body')[0].removeChild(e.target);
+    });
+
+    this.bsModal = new Modal(this.modal);
+    this.bsModal.show();
   }
 
   _submitForm() {
@@ -96,9 +101,9 @@ export default class EditHousing {
 
       // Save details
       const payload = {};
-      payload.occupants = this.modal
-        .querySelector('input[name="occupants"]')
-        .value.split(',');
+      payload.occupants = Array.from(
+        this.modal.querySelector('select[name="occupants"]').selectedOptions,
+      ).map(opt => opt.value);
       const room = this.modal.querySelector('input[name="rmnumber"]').value;
       const occupantList = document.getElementById(room);
 
@@ -111,7 +116,7 @@ export default class EditHousing {
         },
         () => {
           // Hide the modal.
-          $(this.modal).modal('hide');
+          this.bsModal.hide();
 
           // Update the DOM to reflect the new occupants.
           if (occupantList) {

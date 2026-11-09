@@ -326,7 +326,7 @@ def submit_house_attendance(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/alter/hm/<int:uid>/<int:hid>', methods=['GET'])
+@attendance_bp.route('/attendance/alter/hm/<uid>/<int:hid>', methods=['GET'])
 @auth.oidc_auth("default")
 @get_user
 def alter_house_attendance(uid, hid, user_dict=None):
@@ -347,7 +347,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
 
     log.info(f'Mark freshman-{uid} Present for House Meeting ID: {hid}')
     freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
-        FreshmanHouseMeetingAttendance.fid == uid,
+        FreshmanHouseMeetingAttendance.fid == int(uid),
         FreshmanHouseMeetingAttendance.meeting_id == hid
     ).first()
 
@@ -356,7 +356,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/alter/hm/<int:uid>/<int:hid>', methods=['POST'])
+@attendance_bp.route('/attendance/alter/hm/<uid>/<int:hid>', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def alter_house_excuse(uid, hid, user_dict=None):
@@ -381,8 +381,8 @@ def alter_house_excuse(uid, hid, user_dict=None):
     else:
         log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
         FreshmanHouseMeetingAttendance.query.filter(
-            FreshmanHouseMeetingAttendance.fid == uid,
-            FreshmanHouseMeetingAttendance.meeting_id == int(hid)
+            FreshmanHouseMeetingAttendance.fid == int(uid),
+            FreshmanHouseMeetingAttendance.meeting_id == hid
         ).update({
             'excuse': hm_excuse,
             'attendance_status': hm_status
@@ -619,10 +619,10 @@ def alter_seminar_attendance(sid, user_dict=None):
     for f in f_attendees:
         if f in f_host:
             continue
-        db.session.add(FreshmanSeminarAttendance(f, meeting_id))
+        db.session.add(FreshmanSeminarAttendance(int(f), meeting_id))
 
     for f in f_host:
-        db.session.add(FreshmanSeminarHost(f, meeting_id))
+        db.session.add(FreshmanSeminarHost(int(f), meeting_id))
 
     db.session.flush()
     db.session.commit()

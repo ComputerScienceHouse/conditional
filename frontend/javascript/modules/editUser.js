@@ -6,6 +6,10 @@ import Swal from 'sweetalert2';
 import _ from 'lodash';
 import DatePicker from './datepicker';
 
+import $ from 'jquery';
+
+import { Modal } from 'bootstrap';
+
 export default class EditUser {
   constructor(link) {
     this.link = link;
@@ -52,8 +56,6 @@ export default class EditUser {
   _renderModal() {
     // Clone template modal
     const modal = this.modal.cloneNode(true);
-
-    console.log(modal);
 
     modal.setAttribute('id', this.modal.getAttribute('id') + '-' + this.uid);
 
@@ -126,11 +128,12 @@ export default class EditUser {
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(modal);
-    $('#' + this.modal.getAttribute('id') + '-' + this.uid)
-      .on('hidden.bs.modal', e => {
-        document.getElementsByTagName('body')[0].removeChild(e.target);
-      })
-      .modal('show');
+    modal.addEventListener('hidden.bs.modal', e => {
+      document.getElementsByTagName('body')[0].removeChild(e.target);
+    });
+
+    this.bsModal = new Modal(modal);
+    this.bsModal.show();
   }
 
   _renderFinancialModal() {
@@ -152,11 +155,12 @@ export default class EditUser {
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(modal);
-    $('#' + this.modal.getAttribute('id') + '-' + this.uid)
-      .on('hidden.bs.modal', e => {
-        document.getElementsByTagName('body')[0].removeChild(e.target);
-      })
-      .modal('show');
+    modal.addEventListener('hidden.bs.modal', e => {
+      document.getElementsByTagName('body')[0].removeChild(e.target);
+    });
+
+    this.bsModal = new Modal(modal);
+    this.bsModal.show();
   }
 
   _markMissedHmAsPresent(id) {
@@ -258,11 +262,12 @@ export default class EditUser {
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(modal);
-    $('#' + this.modal.getAttribute('id') + '-' + this.uid)
-      .on('hidden.bs.modal', e => {
-        document.getElementsByTagName('body')[0].removeChild(e.target);
-      })
-      .modal('show');
+    modal.addEventListener('hidden.bs.modal', e => {
+      document.getElementsByTagName('body')[0].removeChild(e.target);
+    });
+
+    this.bsModal = new Modal(modal);
+    this.bsModal.show();
   }
 
   _submitForm() {
@@ -287,7 +292,7 @@ export default class EditUser {
           successText: 'User details have been updated.',
         },
         () => {
-          $(modal).modal('hide');
+          this.bsModal.hide();
         },
       );
     } else {
@@ -364,17 +369,13 @@ export default class EditUser {
           successText: 'User details have been updated.',
         },
         () => {
-          $(modal).modal('hide');
+          this.bsModal.hide();
         },
       );
     }
   }
 
   _deleteFreshman() {
-    const modal = document.querySelector(
-      '#' + this.modal.getAttribute('id') + '-' + this.uid,
-    );
-
     FetchUtil.fetchWithWarning(
       this.endpoints.userDetails + this.uid,
       {
@@ -383,7 +384,7 @@ export default class EditUser {
         successText: 'Freshman account has been deleted.',
       },
       () => {
-        $(modal).modal('hide');
+        this.bsModal.hide();
         window.location.reload();
       },
     );
@@ -410,7 +411,7 @@ export default class EditUser {
         successText: 'Account has been upgraded.',
       },
       () => {
-        $(modal).modal('hide');
+        this.bsModal.hide();
         window.location.reload();
       },
     );

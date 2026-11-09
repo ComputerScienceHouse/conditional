@@ -4,6 +4,8 @@ import FetchException from '../exceptions/fetchException';
 import FetchUtil from '../utils/fetchUtil';
 import Swal from 'sweetalert2';
 
+import $ from 'jquery';
+
 export default class MajorProjectStatus {
   constructor(control) {
     this.control = control;
@@ -20,7 +22,7 @@ export default class MajorProjectStatus {
       options.forEach(option => {
         option.addEventListener('click', e => {
           e.preventDefault();
-          this._changeStatus(e.target.dataset.option);
+          this._changeStatus(option.dataset.option);
         });
       });
     } else {

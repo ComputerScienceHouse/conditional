@@ -200,7 +200,7 @@ def major_project_review(user_dict=None):
 
     log.info(f"{status} Major Project ID: {pid}")
 
-    MajorProject.query.filter(MajorProject.id == pid).update({"status": status})
+    MajorProject.query.filter(MajorProject.id == int(pid)).update({"status": status})
 
     db.session.flush()
     db.session.commit()

@@ -13,7 +13,6 @@ if (process.env.SENTRY_ENV !== 'local-development') {
 }
 
 // Load the rest of the modules
-import 'jquery';
 import 'bootstrap';
 import './modules';
 
