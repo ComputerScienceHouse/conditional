@@ -4,7 +4,6 @@ import HousingException from '../exceptions/housingException';
 import FetchUtil from '../utils/fetchUtil';
 import MemberSelect from './memberSelect';
 
-import $ from 'jquery';
 import { Modal } from 'bootstrap';
 
 export default class EditHousing {
@@ -80,8 +79,7 @@ export default class EditHousing {
 
     // Initialize selector control
     occupantsInput.dataset.src = 'cm_members';
-    console.log(this.data.occupants);
-    new MemberSelect(occupantsInput, this.data.occupants);
+    this.select = new MemberSelect(occupantsInput, this.data.occupants);
 
     // Add to DOM and show, then remove on hide
     document.getElementsByTagName('body')[0].appendChild(this.modal);
