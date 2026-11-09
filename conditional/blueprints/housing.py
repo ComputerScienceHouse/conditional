@@ -150,7 +150,7 @@ def get_occupants(rmnumber):
                  if 'roomNumber' in account and account['roomNumber'] == rmnumber]
 
     for occupant in FreshmanAccount.query.filter(FreshmanAccount.room_number == rmnumber).all():
-      occupants.append({'value': occupant.id, 'display': occupant.name})
+        occupants.append({'value': occupant.id, 'display': occupant.name})
 
     return jsonify({"room": rmnumber, "occupants": occupants}), 200
 
