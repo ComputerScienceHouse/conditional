@@ -50,7 +50,7 @@ export default class AttendanceForm {
     e.preventDefault();
     const payload = {};
 
-    if (this.fields.committee.value === 'Ad-Hoc') {
+    if (this.fields.committee && this.fields.committee.value === 'Ad-Hoc') {
       this.fields.adhoc = this.form.elements.adhoc;
     }
 
