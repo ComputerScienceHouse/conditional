@@ -29,4 +29,4 @@ SQLAlchemy~=2.1.6
 structlog~=26.1.0
 Werkzeug~=3.1.9
 click~=8.1
-markdown~=3.11.2
+markdown~=3.11.3
