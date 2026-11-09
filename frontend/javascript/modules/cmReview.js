@@ -27,7 +27,7 @@ export default class ReviewMeeting {
   render() {
     this.link.addEventListener('click', e => {
       e.preventDefault();
-        fetch(this.endpoints.meetingDetails + this.cid, {
+      fetch(this.endpoints.meetingDetails + this.cid, {
         method: 'GET',
         headers: {
           Accept: 'application/json',

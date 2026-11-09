@@ -1,5 +1,5 @@
 import FetchUtil from '../utils/fetchUtil';
-import { Modal } from 'bootstrap';
+import {Modal} from 'bootstrap';
 import reveal from 'reveal.js';
 
 import $ from 'jquery';
@@ -41,11 +41,12 @@ export default class Presentation {
           warningText: 'Are you sure you want to pass ' + cn + '?',
           successText: cn + ' has been marked as passed.',
         },
-        () => setTimeout(() => {
-          $(e.target).text('Passed').off('click').addClass('disabled');
-          $(e.target).next().hide();
-          reveal.right();
-        }, 200),
+        () =>
+          setTimeout(() => {
+            $(e.target).text('Passed').off('click').addClass('disabled');
+            $(e.target).next().hide();
+            reveal.right();
+          }, 200),
       );
     });
     $('.reveal button.fail').click(e => {
@@ -79,11 +80,12 @@ export default class Presentation {
             warningText: 'Are you sure you want to fail ' + cn + '?',
             successText: cn + ' has been marked as failed.',
           },
-          () => setTimeout(() => {
-            $(e.target).text('Failed').off('click').addClass('disabled');
-            $(e.target).next().hide();
-            reveal.right();
-          }, 200),
+          () =>
+            setTimeout(() => {
+              $(e.target).text('Failed').off('click').addClass('disabled');
+              $(e.target).next().hide();
+              reveal.right();
+            }, 200),
         );
       });
     });
