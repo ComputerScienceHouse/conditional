@@ -120,7 +120,7 @@ def conditional_review(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
+@conditionals_bp.route('/conditionals/delete/<int:cid>', methods=['DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def conditional_delete(cid, user_dict=None):

@@ -92,7 +92,7 @@ def change_queue_state(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@housing_bp.route('/housing/update/<rmnumber>', methods=['POST'])
+@housing_bp.route('/housing/update/<int:rmnumber>', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def change_room_numbers(rmnumber, user_dict=None):
@@ -131,7 +131,7 @@ def change_room_numbers(rmnumber, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@housing_bp.route('/housing/room/<rmnumber>', methods=['GET'])
+@housing_bp.route('/housing/room/<int:rmnumber>', methods=['GET'])
 @auth.oidc_auth("default")
 def get_occupants(rmnumber):
 

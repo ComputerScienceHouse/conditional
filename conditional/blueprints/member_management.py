@@ -228,7 +228,7 @@ def member_management_uploaduser(user_dict=None):
         return "file could not be processed", 400
 
 
-@member_management_bp.route('/manage/user/<uid>', methods=['POST'])
+@member_management_bp.route('/manage/user/<int:uid>', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def member_management_edituser(uid, user_dict=None):
@@ -308,7 +308,7 @@ def edit_fid(uid, flask_request):
     })
 
 
-@member_management_bp.route('/manage/user/<uid>', methods=['GET'])
+@member_management_bp.route('/manage/user/<int:uid>', methods=['GET'])
 @auth.oidc_auth("default")
 @get_user
 def member_management_getuserinfo(uid, user_dict=None):
@@ -391,7 +391,7 @@ def member_management_getuserinfo(uid, user_dict=None):
         }), 200
 
 
-@member_management_bp.route('/manage/user/<fid>', methods=['DELETE'])
+@member_management_bp.route('/manage/user/<int:fid>', methods=['DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def member_management_deleteuser(fid, user_dict=None):
@@ -508,7 +508,7 @@ def member_management_make_user_active(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@member_management_bp.route('/member/<uid>', methods=['GET'])
+@member_management_bp.route('/member/<int:uid>', methods=['GET'])
 @auth.oidc_auth("default")
 @get_user
 def get_member(uid, user_dict=None):
@@ -574,7 +574,7 @@ def export_active_list():
     return output
 
 
-@member_management_bp.route('/manage/current/<uid>', methods=['POST', 'DELETE'])
+@member_management_bp.route('/manage/current/<int:uid>', methods=['POST', 'DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def remove_current_student(uid, user_dict=None):

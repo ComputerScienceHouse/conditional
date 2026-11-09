@@ -109,7 +109,6 @@ structlog.configure(processors=[
 logger = structlog.get_logger()
 
 # pylint: disable=wrong-import-order
-from conditional.util import context_processors
 from conditional.util.auth import get_user
 from conditional.util.member import gatekeep_status, get_voting_members
 from .blueprints.dashboard import dashboard_bp  # pylint: disable=ungrouped-imports
@@ -169,7 +168,7 @@ def health():
     return {'status': 'ok'}
 
 
-@app.route("/gatekeep/<username>")
+@app.route("/gatekeep/<int:username>")
 def gatekeep_user(username):
     token = request.headers.get("X-VOTE-TOKEN", "")
     if token != app.config["VOTE_TOKEN"]:

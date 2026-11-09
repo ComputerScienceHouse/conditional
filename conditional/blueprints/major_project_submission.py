@@ -208,7 +208,7 @@ def major_project_review(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@major_project_bp.route("/major_project/delete/<pid>", methods=["DELETE"])
+@major_project_bp.route("/major_project/delete/<int:pid>", methods=["DELETE"])
 @auth.oidc_auth("default")
 @get_user
 def major_project_delete(pid, user_dict=None):

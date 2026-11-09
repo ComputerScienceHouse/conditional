@@ -326,7 +326,7 @@ def submit_house_attendance(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['GET'])
+@attendance_bp.route('/attendance/alter/hm/<int:uid>/<int:hid>', methods=['GET'])
 @auth.oidc_auth("default")
 @get_user
 def alter_house_attendance(uid, hid, user_dict=None):
@@ -339,7 +339,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
         log.info(f'Mark {uid} Present for House Meeting ID: {hid}')
         member_meeting = MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
-            MemberHouseMeetingAttendance.meeting_id == int(hid)
+            MemberHouseMeetingAttendance.meeting_id == hid
         ).first()
         member_meeting.attendance_status = "Attended"
         db.session.commit()
@@ -348,7 +348,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
     log.info(f'Mark freshman-{uid} Present for House Meeting ID: {hid}')
     freshman_meeting = FreshmanHouseMeetingAttendance.query.filter(
         FreshmanHouseMeetingAttendance.fid == uid,
-        FreshmanHouseMeetingAttendance.meeting_id == int(hid)
+        FreshmanHouseMeetingAttendance.meeting_id == hid
     ).first()
 
     freshman_meeting.attendance_status = "Attended"
@@ -356,7 +356,7 @@ def alter_house_attendance(uid, hid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/alter/hm/<uid>/<hid>', methods=['POST'])
+@attendance_bp.route('/attendance/alter/hm/<int:uid>/<int:hid>', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def alter_house_excuse(uid, hid, user_dict=None):
@@ -373,7 +373,7 @@ def alter_house_excuse(uid, hid, user_dict=None):
         log.info(f'Mark {uid} as {hm_status} for HM ID: {hid}')
         MemberHouseMeetingAttendance.query.filter(
             MemberHouseMeetingAttendance.uid == uid,
-            MemberHouseMeetingAttendance.meeting_id == int(hid)
+            MemberHouseMeetingAttendance.meeting_id == hid
         ).update({
             'excuse': hm_excuse,
             'attendance_status': hm_status
@@ -547,7 +547,7 @@ def attendance_history(user_dict=None):
                            current_page=int(page),
                            page_sizes=page_size_options)
 
-@attendance_bp.route('/attendance/alter/cm/<cid>', methods=['POST'])
+@attendance_bp.route('/attendance/alter/cm/<int:cid>', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def alter_committee_attendance(cid, user_dict=None):
@@ -579,7 +579,7 @@ def alter_committee_attendance(cid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/alter/ts/<sid>', methods=['POST'])
+@attendance_bp.route('/attendance/alter/ts/<int:sid>', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def alter_seminar_attendance(sid, user_dict=None):
@@ -629,7 +629,7 @@ def alter_seminar_attendance(sid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/ts/<sid>', methods=['GET', 'DELETE'])
+@attendance_bp.route('/attendance/ts/<int:sid>', methods=['GET', 'DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def get_cm_attendees(sid, user_dict=None):
@@ -683,7 +683,7 @@ def get_cm_attendees(sid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/cm/<cid>', methods=['GET', 'DELETE'])
+@attendance_bp.route('/attendance/cm/<int:cid>', methods=['GET', 'DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def get_ts_attendees(cid, user_dict=None):
@@ -720,7 +720,7 @@ def get_ts_attendees(cid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/cm/<cid>/approve', methods=['POST'])
+@attendance_bp.route('/attendance/cm/<int:cid>/approve', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def approve_cm(cid, user_dict=None):
@@ -738,7 +738,7 @@ def approve_cm(cid, user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@attendance_bp.route('/attendance/ts/<sid>/approve', methods=['POST'])
+@attendance_bp.route('/attendance/ts/<int:sid>/approve', methods=['POST'])
 @auth.oidc_auth("default")
 @get_user
 def approve_ts(sid, user_dict=None):
