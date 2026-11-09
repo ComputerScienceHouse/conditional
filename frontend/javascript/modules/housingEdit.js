@@ -4,7 +4,7 @@ import HousingException from '../exceptions/housingException';
 import FetchUtil from '../utils/fetchUtil';
 import MemberSelect from './memberSelect';
 
-import { Modal } from 'bootstrap';
+import {Modal} from 'bootstrap';
 
 export default class EditHousing {
   constructor(link) {

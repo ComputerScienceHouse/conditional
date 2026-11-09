@@ -1,7 +1,7 @@
 import FetchUtil from '../utils/fetchUtil';
 import reveal from 'reveal.js';
 
-import { Modal } from 'bootstrap';
+import {Modal} from 'bootstrap';
 
 import $ from 'jquery';
 
@@ -39,7 +39,7 @@ export default class ConditionalForm {
         successText: 'The conditional has been created.',
       },
       () => {
-        (new Modal(this.form.closest('.modal'))).hide();
+        new Modal(this.form.closest('.modal')).hide();
 
         this.form.reset();
         if (location.pathname.split('/')[1] === 'slideshow') {

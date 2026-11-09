@@ -523,19 +523,19 @@ def get_member(uid, user_dict=None):
     account_dict = {}
 
     if uid.isnumeric():
-      faccount = FreshmanAccount.query.filter(FreshmanAccount.id == int(uid)).scalar()
-      account_dict = {
-        'uid': faccount.id,
-        'name': faccount.name,
-        'display': faccount.name
-      }
+        faccount = FreshmanAccount.query.filter(FreshmanAccount.id == int(uid)).scalar()
+        account_dict = {
+            'uid': faccount.id,
+            'name': faccount.name,
+            'display': faccount.name
+        }
     else:
-      member = ldap_get_member(uid)
-      account_dict = {
-          "uid": member.uid,
-          "name": member.cn,
-          "display": member.displayName
-      }
+        member = ldap_get_member(uid)
+        account_dict = {
+            "uid": member.uid,
+            "name": member.cn,
+            "display": member.displayName
+        }
 
     return jsonify(account_dict), 200
 

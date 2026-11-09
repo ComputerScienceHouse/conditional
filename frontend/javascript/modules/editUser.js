@@ -8,7 +8,7 @@ import DatePicker from './datepicker';
 
 import $ from 'jquery';
 
-import { Modal } from 'bootstrap';
+import {Modal} from 'bootstrap';
 
 export default class EditUser {
   constructor(link) {

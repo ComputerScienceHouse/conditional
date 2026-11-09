@@ -5,7 +5,7 @@ import FetchUtil from '../utils/fetchUtil';
 import MemberUtil from '../utils/memberUtil';
 import MemberSelect from './memberSelect';
 
-import { Modal } from 'bootstrap';
+import {Modal} from 'bootstrap';
 
 export default class ReviewMeeting {
   constructor(link) {

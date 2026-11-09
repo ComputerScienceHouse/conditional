@@ -122,16 +122,16 @@ def change_room_numbers(rmnumber, user_dict=None):
     # Set the new room number for each person in the list.
     for occupant in update["occupants"]:
         if occupant != "":
-          if occupant.isnumeric():
-            FreshmanAccount.query.filter(FreshmanAccount.id == int(occupant)).update({
-              'room_number': rmnumber
-            })
-          else:
-            account = ldap_get_member(occupant)
-            account.roomNumber = rmnumber
-            ldap_set_active(account)
-            log.info(f'{occupant} marked as active because of room assignment')
-          log.info(f'{occupant} assigned to room {rmnumber}')
+            if occupant.isnumeric():
+                FreshmanAccount.query.filter(FreshmanAccount.id == int(occupant)).update({
+                    'room_number': rmnumber
+                })
+            else:
+                account = ldap_get_member(occupant)
+                account.roomNumber = rmnumber
+                ldap_set_active(account)
+                log.info(f'{occupant} marked as active because of room assignment')
+            log.info(f'{occupant} assigned to room {rmnumber}')
 
     return jsonify({"success": True}), 200
 
