@@ -174,7 +174,7 @@ six==1.17.0
     #   -r requirements.in
     #   pyjwkest
     #   python-dateutil
-sqlalchemy==2.1.6
+sqlalchemy==2.1.8
     # via
     #   -r requirements.in
     #   alembic
