@@ -203,6 +203,10 @@ export default class FetchUtil {
           });
       },
     }).then(response => {
+      if (response.isDismissed) {
+        return;
+      }
+
       if (
         Object.hasOwn(response.value, 'success') &&
         response.value.success === true

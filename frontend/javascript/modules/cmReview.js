@@ -143,10 +143,6 @@ export default class ReviewMeeting {
 
   _deleteMeeting() {
     if (this.modal) {
-      this.modal.querySelectorAll('button').forEach(btn => {
-        btn.disabled = true;
-      });
-
       // Delete details
       FetchUtil.fetchWithWarning(
         this.endpoints.meetingDetails + this.cid,
