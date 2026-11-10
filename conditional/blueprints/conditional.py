@@ -89,6 +89,8 @@ def conditional_review(user_dict=None):
     cid = post_data['id']
     status = post_data['status']
 
+    cid = int(cid)
+
     log.info(f'Updated conditional-{cid} to {status}')
     conditional = Conditional.query.filter(Conditional.id == cid)
     cond_obj = conditional.first()
@@ -120,7 +122,7 @@ def conditional_review(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@conditionals_bp.route('/conditionals/delete/<cid>', methods=['DELETE'])
+@conditionals_bp.route('/conditionals/delete/<int:cid>', methods=['DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def conditional_delete(cid, user_dict=None):

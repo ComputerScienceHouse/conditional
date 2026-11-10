@@ -200,7 +200,7 @@ def major_project_review(user_dict=None):
 
     log.info(f"{status} Major Project ID: {pid}")
 
-    MajorProject.query.filter(MajorProject.id == pid).update({"status": status})
+    MajorProject.query.filter(MajorProject.id == int(pid)).update({"status": status})
 
     db.session.flush()
     db.session.commit()
@@ -208,7 +208,7 @@ def major_project_review(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@major_project_bp.route("/major_project/delete/<pid>", methods=["DELETE"])
+@major_project_bp.route("/major_project/delete/<int:pid>", methods=["DELETE"])
 @auth.oidc_auth("default")
 @get_user
 def major_project_delete(pid, user_dict=None):

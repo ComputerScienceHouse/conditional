@@ -3,6 +3,8 @@ import Exception from '../exceptions/exception';
 import FetchException from '../exceptions/fetchException';
 import Swal from 'sweetalert2';
 
+import $ from 'jquery';
+
 export default class NewYear {
   constructor(link) {
     this.link = link;

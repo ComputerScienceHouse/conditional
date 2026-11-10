@@ -238,7 +238,7 @@ def member_management_edituser(uid, user_dict=None):
     if not uid.isdigit():
         edit_uid(uid, request, user_dict['username'])
     else:
-        edit_fid(uid, request)
+        edit_fid(int(uid), request)
 
     db.session.flush()
     db.session.commit()
@@ -321,7 +321,7 @@ def member_management_getuserinfo(uid, user_dict=None):
     acct = None
     if uid.isnumeric():
         acct = FreshmanAccount.query.filter(
-            FreshmanAccount.id == uid).first()
+            FreshmanAccount.id == int(uid)).first()
 
     # missed hm
     def get_hm_date(hm_id):
@@ -404,6 +404,8 @@ def member_management_deleteuser(fid, user_dict=None):
     if not fid.isdigit():
         return "can only delete freshman accounts", 400
 
+    fid = int(fid)
+
     log.info('backend', action=f"delete freshman account {fid}")
 
     for fca in FreshmanCommitteeAttendance.query.filter(FreshmanCommitteeAttendance.fid == fid):
@@ -439,7 +441,7 @@ def member_management_upgrade_user(user_dict=None):
 
     post_data = request.get_json()
 
-    fid = post_data['fid']
+    fid = int(post_data['fid'])
     uid = post_data['uid']
     signatures_missed = post_data['sigsMissed']
 
@@ -518,12 +520,22 @@ def get_member(uid, user_dict=None):
     if not user_dict_is_eval_director(user_dict):
         return "must be eval director", 403
 
-    member = ldap_get_member(uid)
-    account_dict = {
-        "uid": member.uid,
-        "name": member.cn,
-        "display": member.displayName
-    }
+    account_dict = {}
+
+    if uid.isnumeric():
+        faccount = FreshmanAccount.query.filter(FreshmanAccount.id == int(uid)).scalar()
+        account_dict = {
+            'uid': faccount.id,
+            'name': faccount.name,
+            'display': faccount.name
+        }
+    else:
+        member = ldap_get_member(uid)
+        account_dict = {
+            "uid": member.uid,
+            "name": member.cn,
+            "display": member.displayName
+        }
 
     return jsonify(account_dict), 200
 

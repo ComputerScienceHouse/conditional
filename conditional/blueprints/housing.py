@@ -122,11 +122,16 @@ def change_room_numbers(rmnumber, user_dict=None):
     # Set the new room number for each person in the list.
     for occupant in update["occupants"]:
         if occupant != "":
-            account = ldap_get_member(occupant)
-            account.roomNumber = rmnumber
+            if occupant.isnumeric():
+                FreshmanAccount.query.filter(FreshmanAccount.id == int(occupant)).update({
+                    'room_number': rmnumber
+                })
+            else:
+                account = ldap_get_member(occupant)
+                account.roomNumber = rmnumber
+                ldap_set_active(account)
+                log.info(f'{occupant} marked as active because of room assignment')
             log.info(f'{occupant} assigned to room {rmnumber}')
-            ldap_set_active(account)
-            log.info(f'{occupant} marked as active because of room assignment')
 
     return jsonify({"success": True}), 200
 
@@ -140,8 +145,13 @@ def get_occupants(rmnumber):
                                                         attributes=['uid', 'roomNumber', 'cn'])
 
     # Find the current occupants of the specified room.
-    occupants = [account['uid'] for account in current_students
-                 if 'roomNumber' in account and account['roomNumber'] == str(rmnumber)]
+    occupants = [{'value': account['uid'], 'display': account['cn']}
+                 for account in current_students
+                 if 'roomNumber' in account and account['roomNumber'] == rmnumber]
+
+    for occupant in FreshmanAccount.query.filter(FreshmanAccount.room_number == rmnumber).all():
+        occupants.append({'value': occupant.id, 'display': occupant.name})
+
     return jsonify({"room": rmnumber, "occupants": occupants}), 200
 
 

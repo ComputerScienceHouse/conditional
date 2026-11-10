@@ -16,7 +16,7 @@ IP = env.get("CONDITIONAL_IP", "0.0.0.0")
 PORT = env.get("CONDITIONAL_PORT", 8080)
 # This is for Slack, it can safely be blank
 WEBHOOK_URL = env.get("CONDITIONAL_WEBHOOK_URL", "INSERT URL HERE")
-DEV_DISABLE_SLACK_PING = env.get("DEV_DISABLE_SLACK_PING", "false") == "true"
+DEV_DISABLE_SLACK_PING = env.get("DEV_DISABLE_SLACK_PING", "true") == "true"
 PROFILING = env.get("CONDITIONAL_PROFILING", "false").lower() == "true"
 
 # DB Info

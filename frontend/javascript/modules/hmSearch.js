@@ -1,6 +1,8 @@
 import Exception from '../exceptions/exception';
 import HmSearchException from '../exceptions/hmSearchException';
 
+import $ from 'jquery';
+
 export default class HouseMeetingSearch {
   constructor(input) {
     this.input = input;
