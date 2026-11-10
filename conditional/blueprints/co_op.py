@@ -61,7 +61,7 @@ def submit_co_op_form(user_dict=None):
     return jsonify({"success": True}), 200
 
 
-@co_op_bp.route('/co_op/<int:uid>', methods=['DELETE'])
+@co_op_bp.route('/co_op/<uid>', methods=['DELETE'])
 @auth.oidc_auth("default")
 @get_user
 def delete_co_op(uid, user_dict=None):
