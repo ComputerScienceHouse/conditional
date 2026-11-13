@@ -122,9 +122,9 @@ pip-tools==7.6.2
     # via -r requirements.in
 platformdirs==4.13.6
     # via pylint
-psycopg[binary]==3.3.6
+psycopg[binary]==3.3.8
     # via -r requirements.in
-psycopg-binary==3.3.6
+psycopg-binary==3.3.8
     # via psycopg
 pyasn1==0.6.5
     # via
