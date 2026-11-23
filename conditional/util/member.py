@@ -150,7 +150,6 @@ def get_semester_info() -> tuple[str, datetime]:
 
     return (semester, semester_start)
 
-@service_cache(maxsize=256)
 def get_voting_members():
     semester, semester_start = get_semester_info()
 
